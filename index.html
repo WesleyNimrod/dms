@@ -307,6 +307,19 @@
             height: 80vh;
             border: none;
         }
+        
+        .info-alert {
+            background-color: #f8f9fa;
+            border-left: 4px solid #0d6efd;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.25rem;
+        }
+        
+        .dark .info-alert {
+            background-color: #2d3748;
+            border-left: 4px solid #90cdf4;
+        }
     </style>
 </head>
 <body class="bg-gray-50 transition-colors duration-200 font-tahoma">
@@ -345,6 +358,9 @@
                 <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="rategrid">
                     <i class="fas fa-table mr-2"></i>Rate Grid
                 </button>
+                <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="share">
+                    <i class="fas fa-share-alt mr-2"></i>Share
+                </button>
             </div>
             
             <!-- WhatsApp Input and Button Group -->
@@ -358,19 +374,6 @@
                         <i class="fas fa-address-book"></i>
                     </button>
                 </div>
-            </div>
-            
-            <!-- Action Buttons -->
-            <div class="flex justify-center gap-2 mt-2">
-                <button id="shareBtn" class="custom-btn text-white p-2 rounded-md text-sm">
-                    <i class="fas fa-share-alt mr-1"></i> Share
-                </button>
-                <button id="showEmiChartBtn" class="custom-btn text-white p-2 rounded-md text-sm">
-                    <i class="fas fa-chart-bar mr-1"></i> EMI Chart
-                </button>
-                <button id="loanComparisonBtn" class="custom-btn text-white p-2 rounded-md text-sm">
-                    <i class="fas fa-balance-scale mr-1"></i> Compare
-                </button>
             </div>
         </div>
         
@@ -675,13 +678,38 @@
         
         <!-- Data Sheet Tab -->
         <div id="tab-datasheet" class="tab-content">
-            <iframe src="https://script.google.com/macros/s/AKfycbyt6zvvO5POe2jMnyaR2bJOPu09L2f2Rr3Aeh72_APIR1C-6JVzSDOZvGfi4ZOZbQL0/exec" title="Data Sheet"></iframe>
+            <div class="info-alert mb-4">
+                <p class="mb-2 font-bold">Data Sheet Access Information</p>
+                <p>The Data Sheet is a Google Sheets document that provides additional data and information.</p>
+                <p>Due to security restrictions, the embedded sheet cannot be displayed directly. Please use one of these options:</p>
+                <ul class="list-disc pl-5 mt-2">
+                    <li>Access the sheet directly at <a href="https://script.google.com/macros/s/AKfycbyt6zvvO5POe2jMnyaR2bJOPu09L2f2Rr3Aeh72_APIR1C-6JVzSDOZvGfi4ZOZbQL0/exec" target="_blank" class="text-blue-600 dark:text-blue-400 underline">Google Sheets Link</a></li>
+                    <li>Contact your administrator for access to the latest data sheet information</li>
+                </ul>
+            </div>
+            
+            <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+                <h2 class="text-xl font-bold text-primary dark:text-white mb-4">Data Sheet Information</h2>
+                <p class="text-gray-700 dark:text-gray-300 mb-3">The Data Sheet contains the following information:</p>
+                <ul class="list-disc pl-5 text-gray-700 dark:text-gray-300">
+                    <li>Current interest rates from different banks</li>
+                    <li>Processing fee structures</li>
+                    <li>Eligibility criteria</li>
+                    <li>Special promotions and offers</li>
+                    <li>Documentation requirements</li>
+                </ul>
+            </div>
         </div>
         
         <!-- EMI Chart Tab (Shows the same chart as in the main tab, but standalone) -->
         <div id="tab-emichart" class="tab-content">
             <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                 <h2 class="text-xl font-bold text-primary dark:text-white mb-4">EMI PAYMENT SCHEDULE</h2>
+                
+                <button id="showEmiChartBtnTab" class="custom-btn text-white p-2 rounded-md text-sm mb-4">
+                    <i class="fas fa-chart-bar mr-1"></i> Generate EMI Chart
+                </button>
+                
                 <div class="relative" style="height: 400px;">
                     <canvas id="emiChartStandalone"></canvas>
                 </div>
@@ -786,12 +814,43 @@
         
         <!-- Advanced Calculator Tab -->
         <div id="tab-advcalc" class="tab-content">
-            <iframe src="advcalc.html" title="Advanced Calculator"></iframe>
+            <div class="info-alert">
+                <p>Advanced Calculator content would be loaded here.</p>
+            </div>
         </div>
         
         <!-- Rate Grid Tab -->
         <div id="tab-rategrid" class="tab-content">
-            <iframe src="rategrid.html" title="Rate Grid"></iframe>
+            <div class="info-alert">
+                <p>Rate Grid content would be loaded here.</p>
+            </div>
+        </div>
+        
+        <!-- Share Tab -->
+        <div id="tab-share" class="tab-content">
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                <h2 class="text-xl font-bold text-primary dark:text-white mb-4">SHARE LOAN INFORMATION</h2>
+                
+                <button id="shareTabBtn" class="custom-btn text-white p-2 rounded-md text-sm mb-4">
+                    <i class="fas fa-share-alt mr-1"></i> Share Loan Information
+                </button>
+                
+                <div class="text-gray-700 dark:text-gray-300 mt-4">
+                    <p class="mb-2">Click the Share button above to view and share the full loan information, including:</p>
+                    <ul class="list-disc ml-5 space-y-1">
+                        <li>Loan details (amount, type, tenure)</li>
+                        <li>Interest rates (reducing and flat)</li>
+                        <li>EMI and payment details</li>
+                        <li>Processing fees and charges</li>
+                        <li>Complete EMI schedule</li>
+                    </ul>
+                    
+                    <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <p class="text-blue-800 dark:text-blue-300 font-medium">Share Options:</p>
+                        <p class="text-sm mt-1">You can export as PDF, print directly, or send information via WhatsApp using the number field at the top of the page.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -1150,7 +1209,7 @@
             
             // Chart & Other Elements
             const emiChartSection = document.getElementById('emiChartSection');
-            const showEmiChartBtn = document.getElementById('showEmiChartBtn');
+            const showEmiChartBtnTab = document.getElementById('showEmiChartBtnTab');
             const sendWhatsAppBtn = document.getElementById('sendWhatsAppBtn');
             const whatsappNumberInput = document.getElementById('whatsappNumber');
             const contactsBtn = document.getElementById('contactsBtn');
@@ -1160,9 +1219,8 @@
             const removeAddbackBtn = document.getElementById('removeAddbackBtn');
             
             // Modal related elements
-            const shareBtn = document.getElementById('shareBtn');
+            const shareBtn = document.getElementById('shareTabBtn');
             const shareModal = document.getElementById('shareModal');
-            const loanComparisonBtn = document.getElementById('loanComparisonBtn');
             const loanComparisonModal = document.getElementById('loanComparisonModal');
             const exportPdfBtn = document.getElementById('exportPdfBtn');
             const printPageBtn = document.getElementById('printPageBtn');
@@ -1437,6 +1495,44 @@
                         }
                     }
                     
+                    // Handle add-back data if it exists in profile
+                    if (profileData.addbackData && Object.keys(profileData.addbackData).length > 0) {
+                        addbackData = profileData.addbackData;
+                        
+                        // Reset existing addbacks first
+                        while (addbacksContainer.children.length > 1) {
+                            addbacksContainer.removeChild(addbacksContainer.lastChild);
+                        }
+                        dynamicAddbackFields.innerHTML = '';
+                        
+                        // Set the first addback from the profile data
+                        const firstAddbackEntry = addbacksContainer.querySelector('.addback-entry');
+                        if (addbackData[0]) {
+                            const firstAddbackSelect = firstAddbackEntry.querySelector('.addback-type');
+                            firstAddbackSelect.value = addbackData[0].type;
+                            
+                            // Create fields for this addback
+                            createAddbackTypeFields(firstAddbackSelect);
+                            
+                            // Add additional addbacks if needed
+                            let maxIndex = Math.max(...Object.keys(addbackData).map(Number));
+                            addbackCount = 1;
+                            
+                            for (let i = 1; i <= maxIndex; i++) {
+                                if (addbackData[i]) {
+                                    addMoreAddbackBtn.click();
+                                    
+                                    const addbackEntries = addbacksContainer.querySelectorAll('.addback-entry');
+                                    const lastAddbackEntry = addbackEntries[addbackEntries.length - 1];
+                                    const lastAddbackSelect = lastAddbackEntry.querySelector('.addback-type');
+                                    
+                                    lastAddbackSelect.value = addbackData[i].type;
+                                    createAddbackTypeFields(lastAddbackSelect);
+                                }
+                            }
+                        }
+                    }
+                    
                     // Save as last used profile
                     localStorage.setItem('lastUsedProfile', selectedProfile);
                     
@@ -1617,6 +1713,38 @@
                                 settleBtn.textContent = 'Unsettle';
                                 settleBtn.classList.remove('custom-btn');
                                 settleBtn.classList.add('bg-gradient-to-r', 'from-red-500', 'to-red-600');
+                            }
+                        }
+                    }
+                    
+                    // Handle add-back data if it exists
+                    if (tempState.addbackData && Object.keys(tempState.addbackData).length > 0) {
+                        addbackData = tempState.addbackData;
+                        
+                        // Set the first addback from the temp state data
+                        const firstAddbackEntry = addbacksContainer.querySelector('.addback-entry');
+                        if (addbackData[0]) {
+                            const firstAddbackSelect = firstAddbackEntry.querySelector('.addback-type');
+                            firstAddbackSelect.value = addbackData[0].type;
+                            
+                            // Create fields for this addback
+                            createAddbackTypeFields(firstAddbackSelect);
+                            
+                            // Add additional addbacks if needed
+                            let maxIndex = Math.max(...Object.keys(addbackData).map(Number));
+                            addbackCount = 1;
+                            
+                            for (let i = 1; i <= maxIndex; i++) {
+                                if (addbackData[i]) {
+                                    addMoreAddbackBtn.click();
+                                    
+                                    const addbackEntries = addbacksContainer.querySelectorAll('.addback-entry');
+                                    const lastAddbackEntry = addbackEntries[addbackEntries.length - 1];
+                                    const lastAddbackSelect = lastAddbackEntry.querySelector('.addback-type');
+                                    
+                                    lastAddbackSelect.value = addbackData[i].type;
+                                    createAddbackTypeFields(lastAddbackSelect);
+                                }
                             }
                         }
                     }
@@ -1826,6 +1954,28 @@
                         amountInput.addEventListener('input', updateGrossSalary);
                     }
                 }
+                
+                // If addbackData has values for this type, fill in the form fields
+                if (addbackData[index] && addbackData[index].values) {
+                    if (addbackType === 'hra' || addbackType === 'airfare') {
+                        if (addbackData[index].values.period === 'yearly') {
+                            yearlyRadio.checked = true;
+                        } else if (addbackData[index].values.period === 'monthly') {
+                            monthlyRadio.checked = true;
+                        }
+                        
+                        if (addbackData[index].values.amount) {
+                            amountInput.value = addbackData[index].values.amount;
+                        }
+                    } else if (['overtime', 'servicecharge', 'incentives', 'telephone'].includes(addbackType)) {
+                        for (let i = 1; i <= 6; i++) {
+                            if (addbackData[index].values[`month${i}`]) {
+                                const amountInput = fieldsContainer.querySelector(`.${addbackType}-amount-${i}`);
+                                amountInput.value = addbackData[index].values[`month${i}`];
+                            }
+                        }
+                    }
+                }
             }
             
             // Function to calculate gross salary from salary and add-backs
@@ -1841,30 +1991,46 @@
                     if (fieldsContainer) {
                         if (addback.type === 'hra' || addback.type === 'airfare') {
                             const yearlyRadio = document.getElementById(`${addback.type}Yearly-${index}`);
+                            const monthlyRadio = document.getElementById(`${addback.type}Monthly-${index}`);
                             const amountInput = fieldsContainer.querySelector(`.${addback.type}-amount`);
                             const amount = parseFloat(amountInput.value) || 0;
+                            
+                            // Save the values in addbackData
+                            addbackData[index].values = {
+                                period: yearlyRadio && yearlyRadio.checked ? 'yearly' : 
+                                        (monthlyRadio && monthlyRadio.checked ? 'monthly' : ''),
+                                amount: amount
+                            };
                             
                             if (amount > 0) {
                                 if (yearlyRadio && yearlyRadio.checked) {
                                     // Yearly amount / 12
                                     totalAddbacks += amount / 12;
-                                } else {
+                                } else if (monthlyRadio && monthlyRadio.checked) {
                                     // Monthly amount as is
                                     totalAddbacks += amount;
                                 }
                             }
                         } else if (['overtime', 'servicecharge', 'incentives', 'telephone'].includes(addback.type)) {
                             let sixMonthTotal = 0;
+                            const monthValues = {};
                             
                             // Sum up all 6 months
                             for (let i = 1; i <= 6; i++) {
                                 const amountInput = fieldsContainer.querySelector(`.${addback.type}-amount-${i}`);
-                                sixMonthTotal += parseFloat(amountInput.value) || 0;
+                                const monthAmount = parseFloat(amountInput.value) || 0;
+                                sixMonthTotal += monthAmount;
+                                
+                                // Save each month's value
+                                monthValues[`month${i}`] = monthAmount;
                             }
+                            
+                            // Save the values in addbackData
+                            addbackData[index].values = monthValues;
                             
                             // For Telephone Allowance, add directly to calculation
                             if (addback.type === 'telephone') {
-                                totalAddbacks += sixMonthTotal;
+                                totalAddbacks += sixMonthTotal / 6; // Average the monthly amount
                             } else {
                                 // For others, divide by 6
                                 totalAddbacks += sixMonthTotal / 6;
@@ -3293,30 +3459,8 @@
             // Find Optimal Loan button
             findOptimalLoanBtn.addEventListener('click', findOptimalLoanAmount);
             
-            // Show EMI Chart button
-            showEmiChartBtn.addEventListener('click', displayEMIChart);
-            
-            // Loan Comparison button
-            loanComparisonBtn.addEventListener('click', function() {
-                // Pre-fill Bank 1 with current values from main form
-                const loanAmount = loanAmountInput.value;
-                const tenureMonths = tenureMonthsInput.value;
-                const reducingRate = reducingRateInput.value;
-                
-                if (loanAmount && tenureMonths && reducingRate) {
-                    bank1NameModal.value = "ADCB";
-                    bank1LoanAmountModal.value = loanAmount;
-                    bank1TenureModal.value = tenureMonths;
-                    bank1RateModal.value = reducingRate;
-                    
-                    // Trigger calculation for the bank comparison
-                    updateBankComparisonModal();
-                    syncModalToTabComparison();
-                }
-                
-                // Show the modal
-                loanComparisonModal.classList.remove('hidden');
-            });
+            // EMI Chart buttons
+            showEmiChartBtnTab.addEventListener('click', displayEMIChartStandalone);
             
             // Send to WhatsApp button
             sendWhatsAppBtn.addEventListener('click', function() {
