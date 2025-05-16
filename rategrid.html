@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Loan Rate Calculator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Select2 for searchable dropdown -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE', // Changed to match requested color
+                        secondary: '#6938B8', // Changed to purple
+                        accent: '#4F46E5', // Changed to indigo
+                        light: '#F5F5F5',
+                        warning: '#FFC107',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom styling for Select2 */
+        .select2-container {
+            width: 100% !important;
+        }
+        .select2-container--default .select2-selection--single {
+            height: 42px;
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+            border-color: #D1D5DB;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 42px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 24px;
+        }
+        
+        /* Dark mode support */
+        .dark .select2-container--default .select2-selection--single {
+            background-color: #374151;
+            border-color: #4B5563;
+            color: white;
+        }
+        .dark .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: white;
+        }
+        .dark .select2-dropdown {
+            background-color: #374151;
+            color: white;
+            border-color: #4B5563;
+        }
+        .dark .select2-search__field {
+            background-color: #1F2937;
+            color: white;
+        }
+        .dark .select2-results__option {
+            color: white;
+        }
+        .dark .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #4B5563;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 transition-colors duration-200 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-primary dark:text-white">Personal Loan Pricing Calculator</h1>
+            <p class="text-gray-600 dark:text-gray-300 mt-2">Calculate loan interest rates based on customer profile</p>
+        </header>
+
+        <!-- Main Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+            <!-- Banner/Header -->
+            <div class="bg-gradient-to-r from-blue-400 to-purple-900 p-4 flex justify-between items-center">
+                <h2 id="pricingTitle" class="text-xl font-bold text-white">PIL Pricing</h2>
+                <a href="index.html" class="bg-white text-purple-900 hover:bg-gray-200 font-medium py-1 px-4 rounded-md transition-all duration-200">
+                    Back to Home
+                </a>
+            </div>
+
+            <!-- Form Section -->
+            <div class="p-6">
+                <form id="rateCalculatorForm" class="space-y-6">
+                    <!-- Nationality (Moved up) -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <label for="nationality" class="text-gray-700 dark:text-gray-300 font-medium">Nationality:</label>
+                        <div class="md:col-span-2">
+                            <select id="nationality" name="nationality" class="w-full">
+                                <!-- Will be populated with countries -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Non-UAE Fields -->
+                    <div id="nonUaeFields">
+                        <!-- Risk Band -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                            <label for="riskBand" class="text-gray-700 dark:text-gray-300 font-medium">Risk Band (ECB Score):</label>
+                            <select id="riskBand" name="riskBand" 
+                                class="md:col-span-2 border border-gray-300 dark:border-gray-600 rounded-md p-2 
+                                focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+                                <option value="" disabled selected>Select Risk Band</option>
+                                <option value="NS">No Score (NS)</option>
+                                <option value="VLR">Very Low Risk (VLR)</option>
+                                <option value="LR">Low Risk (LR)</option>
+                                <option value="MR">Medium Risk (MR)</option>
+                                <option value="HR">High Risk (HR)</option>
+                                <option value="VHR">Very High Risk (VHR)</option>
+                            </select>
+                        </div>
+                        
+                        <!-- ADCB Score (Added) -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mt-6">
+                            <label for="adcbScore" class="text-gray-700 dark:text-gray-300 font-medium">ADCB Score:</label>
+                            <select id="adcbScore" name="adcbScore" 
+                                class="md:col-span-2 border border-gray-300 dark:border-gray-600 rounded-md p-2 
+                                focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+                                <option value="" disabled selected>Select ADCB Score</option>
+                                <option value="VLR">Very Low Risk (VLR)</option>
+                                <option value="LR">Low Risk (LR)</option>
+                                <option value="MR">Medium Risk (MR)</option>
+                                <option value="HR">High Risk (HR)</option>
+                                <option value="VHR">Very High Risk (VHR)</option>
+                            </select>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mt-6">
+                            <label for="category" class="text-gray-700 dark:text-gray-300 font-medium">Category:</label>
+                            <select id="category" name="category" 
+                                class="md:col-span-2 border border-gray-300 dark:border-gray-600 rounded-md p-2 
+                                focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+                                <option value="" disabled selected>Select Category</option>
+                                <option value="CAT A">CAT A</option>
+                                <option value="CAT B">CAT B</option>
+                                <option value="CAT C">CAT C</option>
+                                <option value="CAT D">CAT D</option>
+                                <option value="CAT E">CAT E</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Salary (Common field) -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <label for="salary" class="text-gray-700 dark:text-gray-300 font-medium">Salary (AED):</label>
+                        <input type="number" id="salary" name="salary" placeholder="Enter monthly salary" min="5000" 
+                            class="md:col-span-2 border border-gray-300 dark:border-gray-600 rounded-md p-2 
+                            focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+                    </div>
+
+                    <!-- Discount Rate (New Field) -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <label for="discountRate" class="text-gray-700 dark:text-gray-300 font-medium">Discount Rate (%):</label>
+                        <input type="number" id="discountRate" name="discountRate" placeholder="Optional discount rate" step="0.01" min="0" max="5"
+                            class="md:col-span-2 border border-gray-300 dark:border-gray-600 rounded-md p-2 
+                            focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+                    </div>
+
+                    <!-- Salary Range (Hidden) -->
+                    <div class="hidden">
+                        <input type="text" id="salaryRange" name="salaryRange" readonly>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsSection" class="p-6 border-t-2 border-primary">
+                <h3 class="text-xl font-bold text-primary dark:text-white mb-4">Calculated Interest Rate</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Customer Information Summary -->
+                    <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-md shadow">
+                        <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-3">Customer Profile</h4>
+                        <ul class="space-y-2">
+                            <li id="resultRiskBandRow" class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Risk Band (ECB):</span>
+                                <span id="resultRiskBand" class="font-medium text-gray-800 dark:text-white"></span>
+                            </li>
+                            <li id="resultADCBScoreRow" class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">ADCB Score:</span>
+                                <span id="resultADCBScore" class="font-medium text-gray-800 dark:text-white"></span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Salary:</span>
+                                <span id="resultSalary" class="font-medium text-gray-800 dark:text-white"></span>
+                            </li>
+                            <li id="resultCategoryRow" class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Category:</span>
+                                <span id="resultCategory" class="font-medium text-gray-800 dark:text-white"></span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Nationality:</span>
+                                <span id="resultNationality" class="font-medium text-gray-800 dark:text-white"></span>
+                            </li>
+                            <li id="resultMaxMultiplesRow" class="flex justify-between border-t border-gray-200 dark:border-gray-600 pt-2 mt-2">
+                                <span class="text-gray-600 dark:text-gray-400">Max Multiples:</span>
+                                <span id="resultMaxMultiples" class="font-medium text-gray-800 dark:text-white"></span>
+                            </li>
+                            <li id="resultMaxLoanRow" class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Maximum Loan Amount:</span>
+                                <span id="resultMaxLoan" class="font-medium text-gray-800 dark:text-white"></span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Rate Information -->
+                    <div class="bg-primary bg-opacity-10 dark:bg-gray-700 p-4 rounded-md shadow border-l-4 border-primary">
+                        <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-3">Interest Rate Details</h4>
+                        <div class="space-y-3">
+                            <div id="baseRateContainer" class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Base Rate:</span>
+                                <span id="baseRate" class="font-medium text-gray-800 dark:text-white"></span>
+                            </div>
+                            <div id="categoryModifierContainer" class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Category Modifier:</span>
+                                <span id="categoryModifier" class="font-medium text-gray-800 dark:text-white"></span>
+                            </div>
+                            <div id="discountRateContainer" class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Discount Rate:</span>
+                                <span id="discountRateDisplay" class="font-medium text-gray-800 dark:text-white"></span>
+                            </div>
+                            <div class="flex justify-between pt-2 border-t border-gray-300 dark:border-gray-600">
+                                <span class="text-primary dark:text-white font-bold">Final Rate:</span>
+                                <span id="finalRate" class="font-bold text-primary dark:text-white text-xl"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rate Grid Information (Collapsible) -->
+        <div class="mt-8">
+            <button id="toggleRateGrid" class="flex items-center justify-between w-full bg-secondary text-white p-3 rounded-t-lg">
+                <span class="font-semibold">View Rate Grid</span>
+                <svg id="gridToggleIcon" class="w-5 h-5 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+            
+            <div id="rateGridContainer" class="bg-white dark:bg-gray-800 p-4 rounded-b-lg shadow hidden">
+                <!-- Non-UAE Rate Grid -->
+                <div id="nonUaeRateGrid">
+                    <h3 class="text-center font-bold text-lg text-primary dark:text-white mb-3">CAT A&B</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full border-collapse border border-gray-300 dark:border-gray-700">
+                            <thead>
+                                <tr class="bg-secondary text-white text-center">
+                                    <th class="border border-gray-300 dark:border-gray-700 p-2">Salary Range</th>
+                                    <th class="border border-gray-300 dark:border-gray-700 p-2">VHR</th>
+                                    <th class="border border-gray-300 dark:border-gray-700 p-2">HR</th>
+                                    <th class="border border-gray-300 dark:border-gray-700 p-2">MR</th>
+                                    <th class="border border-gray-300 dark:border-gray-700 p-2">LR</th>
+                                    <th class="border border-gray-300 dark:border-gray-700 p-2">VLR</th>
+                                    <th class="border border-gray-300 dark:border-gray-700 p-2">NS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="text-center bg-gray-50 dark:bg-gray-700">
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">5K-8K</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">12.00%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">11.00%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">10.50%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">10.00%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">9.50%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">10.50%</td>
+                                </tr>
+                                <tr class="text-center">
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">8K-12K</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">11.50%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">10.50%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">10.00%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">9.50%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">9.00%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">10.00%</td>
+                                </tr>
+                                <tr class="text-center bg-gray-50 dark:bg-gray-700">
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">12K-20K</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">11.00%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">10.00%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">8.50%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">8.00%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">7.50%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">8.50%</td>
+                                </tr>
+                                <tr class="text-center">
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">20K-30K</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">9.00%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">8.00%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">7.50%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">7.25%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">7.00%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">7.50%</td>
+                                </tr>
+                                
+                                <!-- Visual indicator for the matrix in the UI -->
+                                <style>
+                                    .na-cell {
+                                        background-color: black;
+                                        color: white;
+                                        font-weight: bold;
+                                    }
+                                </style>
+                                <tr class="text-center bg-gray-50 dark:bg-gray-700">
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">30K-50K</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">9.00%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">8.00%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">7.00%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">6.50%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">6.25%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">7.00%</td>
+                                </tr>
+                                <tr class="text-center">
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">50K & Above</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">9.00%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">8.00%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">6.50%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">6.25%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">5.99%</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">6.50%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Category Adjustments -->
+                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-md">
+                            <h4 class="font-bold text-primary dark:text-white">CAT C</h4>
+                            <p class="dark:text-gray-300">Pricing for CAT C is 50 bps higher than CAT A&B</p>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-md">
+                            <h4 class="font-bold text-primary dark:text-white">CAT D/E/Others</h4>
+                            <p class="dark:text-gray-300">Pricing is 200 bps higher than CAT A&B</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Maximum Loan Amount Table -->
+                    <div class="mt-6">
+                        <h3 class="text-center font-bold text-lg text-primary dark:text-white mb-3">Maximum Loan Amount</h3>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full border-collapse border border-gray-300 dark:border-gray-700">
+                                <thead>
+                                    <tr class="bg-secondary text-white text-center">
+                                        <th class="border border-gray-300 dark:border-gray-700 p-2">Category</th>
+                                        <th class="border border-gray-300 dark:border-gray-700 p-2">With ECB Score</th>
+                                        <th class="border border-gray-300 dark:border-gray-700 p-2">ECB No Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="text-center bg-gray-50 dark:bg-gray-700">
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">A</td>
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2">1,500,000</td>
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2">750,000</td>
+                                    </tr>
+                                    <tr class="text-center">
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">B</td>
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2">1,500,000</td>
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2">750,000</td>
+                                    </tr>
+                                    <tr class="text-center bg-gray-50 dark:bg-gray-700">
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">C</td>
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2">1,000,000</td>
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2">500,000</td>
+                                    </tr>
+                                    <tr class="text-center">
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">D</td>
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2">400,000</td>
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2">150,000</td>
+                                    </tr>
+                                    <tr class="text-center bg-gray-50 dark:bg-gray-700">
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">E</td>
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2">150,000</td>
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2">150,000</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UAE Rate Grid -->
+                <div id="uaeRateGrid" class="hidden">
+                    <h3 class="text-center font-bold text-lg text-primary dark:text-white mb-3">UAE Nationals</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full border-collapse border border-gray-300 dark:border-gray-700">
+                            <thead>
+                                <tr class="bg-secondary text-white text-center">
+                                    <th class="border border-gray-300 dark:border-gray-700 p-2">Salary</th>
+                                    <th class="border border-gray-300 dark:border-gray-700 p-2">STD ROI</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="text-center bg-gray-50 dark:bg-gray-700">
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">&lt;20K</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">6.49%</td>
+                                </tr>
+                                <tr class="text-center">
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">20K-40K</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">5.99%</td>
+                                </tr>
+                                <tr class="text-center bg-gray-50 dark:bg-gray-700">
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">40K-70K</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">5.74%</td>
+                                </tr>
+                                <tr class="text-center">
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">&gt;=70K/Excellency</td>
+                                    <td class="border border-gray-300 dark:border-gray-600 p-2">5.49%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
+            <p>Personal Loan Rate Calculator © 2025</p>
+            <p class="mt-1">All rates shown are for illustration purposes only. Actual rates may vary.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Define the rate grid based on the provided image
+        const rateGrid = {
+            "5K-8K": {"VHR": 12.00, "HR": 11.00, "MR": 10.50, "LR": 10.00, "VLR": 9.50, "NS": 10.50},
+            "8K-12K": {"VHR": 11.50, "HR": 10.50, "MR": 10.00, "LR": 9.50, "VLR": 9.00, "NS": 10.00},
+            "12K-20K": {"VHR": 11.00, "HR": 10.00, "MR": 8.50, "LR": 8.00, "VLR": 7.50, "NS": 8.50},
+            "20K-30K": {"VHR": 9.00, "HR": 8.00, "MR": 7.50, "LR": 7.25, "VLR": 7.00, "NS": 7.50},
+            "30K-50K": {"VHR": 9.00, "HR": 8.00, "MR": 7.00, "LR": 6.50, "VLR": 6.25, "NS": 7.00},
+            "50K & Above": {"VHR": 9.00, "HR": 8.00, "MR": 6.50, "LR": 6.25, "VLR": 5.99, "NS": 6.50}
+        };
+        
+        // ADCB Matrix for Max Multiples
+        // First key is ADCB Score (rows), second key is ECB Score (columns)
+        // Black cells are marked as "N/A"
+        const adcbMatrix = {
+            "CAT A & B": {
+                "VHR": {"VHR": "N/A", "HR": "N/A", "MR": "5X", "LR": "10X", "VLR": "10X", "NS": "N/A"},
+                "HR": {"VHR": "N/A", "HR": "N/A", "MR": "5X", "LR": "10X", "VLR": "15X", "NS": "N/A"},
+                "MR": {"VHR": "N/A", "HR": "10X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "5X"},
+                "LR": {"VHR": "10X", "HR": "15X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "10X"},
+                "VLR": {"VHR": "10X", "HR": "15X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "15X"}
+            },
+            "CAT C": {
+                "VHR": {"VHR": "N/A", "HR": "N/A", "MR": "5X", "LR": "5X", "VLR": "5X", "NS": "N/A"},
+                "HR": {"VHR": "N/A", "HR": "N/A", "MR": "5X", "LR": "10X", "VLR": "15X", "NS": "N/A"},
+                "MR": {"VHR": "N/A", "HR": "5X", "MR": "10X", "LR": "20X", "VLR": "20X", "NS": "5X"},
+                "LR": {"VHR": "5X", "HR": "10X", "MR": "15X", "LR": "20X", "VLR": "20X", "NS": "10X"},
+                "VLR": {"VHR": "5X", "HR": "15X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "10X"}
+            },
+            "CAT D & E": {
+                "VHR": {"VHR": "N/A", "HR": "N/A", "MR": "N/A", "LR": "5X", "VLR": "5X", "NS": "N/A"},
+                "HR": {"VHR": "N/A", "HR": "N/A", "MR": "5X", "LR": "5X", "VLR": "10X", "NS": "N/A"},
+                "MR": {"VHR": "N/A", "HR": "5X", "MR": "5X", "LR": "10X", "VLR": "10X", "NS": "5X"},
+                "LR": {"VHR": "N/A", "HR": "5X", "MR": "10X", "LR": "15X", "VLR": "15X", "NS": "5X"},
+                "VLR": {"VHR": "N/A", "HR": "10X", "MR": "10X", "LR": "15X", "VLR": "15X", "NS": "5X"}
+            }
+        };
+        
+        // Maximum loan amount based on category and ECB score
+        const maxLoanAmounts = {
+            "CAT A": {"withECB": "1,500,000", "noECB": "750,000"},
+            "CAT B": {"withECB": "1,500,000", "noECB": "750,000"},
+            "CAT C": {"withECB": "1,000,000", "noECB": "500,000"},
+            "CAT D": {"withECB": "400,000", "noECB": "150,000"},
+            "CAT E": {"withECB": "150,000", "noECB": "150,000"}
+        };
+
+        // Define UAE Nationals rate grid
+        const uaeRateGrid = {
+            "<20K": 6.49,
+            "20K-40K": 5.99,
+            "40K-70K": 5.74,
+            ">=70K": 5.49
+        };
+        
+        // Define high-risk nationalities
+        const highRiskNationalities = [
+            "United States", "Canada", 
+            // North, Central, and South American countries
+            "Antigua and Barbuda", "Argentina", "Bahamas", "Barbados", "Belize", "Bolivia", 
+            "Brazil", "Chile", "Colombia", "Costa Rica", "Cuba", "Dominica", "Dominican Republic", 
+            "Ecuador", "El Salvador", "Grenada", "Guatemala", "Guyana", "Haiti", "Honduras", 
+            "Jamaica", "Mexico", "Nicaragua", "Panama", "Paraguay", "Peru", "Saint Kitts and Nevis", 
+            "Saint Lucia", "Saint Vincent and the Grenadines", "Suriname", "Trinidad and Tobago", 
+            "Uruguay", "Venezuela",
+            // Syria
+            "Syria"
+        ];
+
+        // Countries list for the nationality dropdown
+        const countries = [
+            "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria", 
+            "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan", 
+            "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia", 
+            "Cameroon", "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo", "Costa Rica", 
+            "Croatia", "Cuba", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "East Timor", "Ecuador", 
+            "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Fiji", "Finland", "France", 
+            "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", 
+            "Guyana", "Haiti", "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", 
+            "Israel", "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Korea, North", "Korea, South", 
+            "Kosovo", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", 
+            "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", 
+            "Mauritius", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", 
+            "Namibia", "Nauru", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Macedonia", "Norway", 
+            "Oman", "Pakistan", "Palau", "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", 
+            "Portugal", "Qatar", "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", "Samoa", "San Marino", 
+            "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", 
+            "Somalia", "South Africa", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", 
+            "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", 
+            "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", 
+            "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
+        ];
+
+        // Function to create visual matrix with black cells for N/A
+        function createVisualMultiplesMatrix() {
+            const matrices = {
+                "CAT A & B": adcbMatrix["CAT A & B"],
+                "CAT C": adcbMatrix["CAT C"],
+                "CAT D & E": adcbMatrix["CAT D & E"]
+            };
+            
+            const container = document.createElement('div');
+            container.className = "mt-6";
+            
+            for (const [categoryGroup, matrix] of Object.entries(matrices)) {
+                const matrixTitle = document.createElement('h3');
+                matrixTitle.className = "text-center font-bold text-lg text-primary dark:text-white mb-3";
+                matrixTitle.textContent = `Decision Matrix - ${categoryGroup}`;
+                
+                const tableWrapper = document.createElement('div');
+                tableWrapper.className = "overflow-x-auto mb-6";
+                
+                const table = document.createElement('table');
+                table.className = "min-w-full border-collapse border border-gray-300 dark:border-gray-700";
+                
+                // Create header
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                headerRow.className = "bg-secondary text-white text-center";
+                
+                // Add header cell for ADCB Score
+                const cornerCell = document.createElement('th');
+                cornerCell.className = "border border-gray-300 dark:border-gray-700 p-2";
+                cornerCell.textContent = "ADCB Score ↓ ECB Score →";
+                headerRow.appendChild(cornerCell);
+                
+                // Add ECB score headers
+                const ecbScores = ["VHR", "HR", "MR", "LR", "VLR", "NS"];
+                ecbScores.forEach(ecbScore => {
+                    const th = document.createElement('th');
+                    th.className = "border border-gray-300 dark:border-gray-700 p-2";
+                    th.textContent = ecbScore;
+                    headerRow.appendChild(th);
+                });
+                
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+                
+                // Create table body
+                const tbody = document.createElement('tbody');
+                
+                // ADCB Scores as rows
+                const adcbScores = ["VHR", "HR", "MR", "LR", "VLR"];
+                let rowIndex = 0;
+                
+                adcbScores.forEach(adcbScore => {
+                    const row = document.createElement('tr');
+                    row.className = rowIndex % 2 === 0 ? 
+                        "text-center bg-gray-50 dark:bg-gray-700" : 
+                        "text-center";
+                    
+                    // Add row header (ADCB Score)
+                    const rowHeader = document.createElement('td');
+                    rowHeader.className = "border border-gray-300 dark:border-gray-600 p-2 font-medium";
+                    rowHeader.textContent = adcbScore;
+                    row.appendChild(rowHeader);
+                    
+                    // Add cells for each ECB score
+                    ecbScores.forEach(ecbScore => {
+                        const cell = document.createElement('td');
+                        cell.className = "border border-gray-300 dark:border-gray-600 p-2";
+                        
+                        const value = matrix[adcbScore][ecbScore];
+                        cell.textContent = value;
+                        
+                        // Make cells with "N/A" black
+                        if (value === "N/A") {
+                            cell.className += " na-cell";
+                        }
+                        
+                        row.appendChild(cell);
+                    });
+                    
+                    tbody.appendChild(row);
+                    rowIndex++;
+                });
+                
+                table.appendChild(tbody);
+                tableWrapper.appendChild(table);
+                
+                container.appendChild(matrixTitle);
+                container.appendChild(tableWrapper);
+            }
+            
+            return container;
+        }
+
+        // Initialize the Select2 dropdown for nationality when the document is ready
+        $(document).ready(function() {
+            // Populate the nationality dropdown
+            let nationalityDropdown = $('#nationality');
+            countries.forEach(country => {
+                nationalityDropdown.append(new Option(country, country));
+            });
+            
+            // Initialize Select2
+            nationalityDropdown.select2({
+                placeholder: "Select or search nationality",
+                allowClear: true
+            });
+
+            // Create and add visual matrices
+            const matricesContainer = createVisualMultiplesMatrix();
+            $('#nonUaeRateGrid').append(matricesContainer);
+
+            // Set up dark mode detection for Select2
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+            }
+            
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+                if (event.matches) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            });
+            
+            // Add event listeners for automatic calculation
+            $('#nationality, #riskBand, #adcbScore, #category, #salary, #discountRate').on('change input', function() {
+                calculateRate();
+            });
+            
+            // Handle nationality change for showing/hiding fields
+            $('#nationality').on('change', function() {
+                const nationality = $(this).val();
+                if (nationality === "United Arab Emirates") {
+                    // UAE Nationals - show special fields
+                    $('#nonUaeFields').hide();
+                    $('#pricingTitle').text('PIL Pricing - UAE Nationals');
+                    $('#nonUaeRateGrid').hide();
+                    $('#uaeRateGrid').show();
+                    $('#resultRiskBandRow, #resultADCBScoreRow, #resultCategoryRow').hide();
+                } else {
+                    // Non-UAE - show standard fields
+                    $('#nonUaeFields').show();
+                    $('#pricingTitle').text('PIL Pricing - Expats');
+                    $('#nonUaeRateGrid').show();
+                    $('#uaeRateGrid').hide();
+                    $('#resultRiskBandRow, #resultADCBScoreRow, #resultCategoryRow').show();
+                }
+                calculateRate();
+            });
+            
+            // Toggle rate grid visibility
+            $('#toggleRateGrid').on('click', function() {
+                $('#rateGridContainer').toggleClass('hidden');
+                $('#gridToggleIcon').toggleClass('rotate-180');
+            });
+        });
+
+        // Function to determine the salary range based on salary input
+        function updateSalaryRange() {
+            const salary = parseFloat($('#salary').val());
+            let range = '';
+            const nationality = $('#nationality').val();
+            
+            if (nationality === "United Arab Emirates") {
+                // UAE Nationals salary ranges
+                if (!salary || salary < 5000) {
+                    range = 'Minimum salary required is 5,000 AED';
+                } else if (salary < 20000) {
+                    range = '<20K';
+                } else if (salary >= 20000 && salary < 40000) {
+                    range = '20K-40K';
+                } else if (salary >= 40000 && salary < 70000) {
+                    range = '40K-70K';
+                } else if (salary >= 70000) {
+                    range = '>=70K';
+                }
+            } else {
+                // Non-UAE salary ranges
+                if (!salary || salary < 5000) {
+                    range = 'Minimum salary required is 5,000 AED';
+                } else if (salary >= 5000 && salary < 8000) {
+                    range = '5K-8K';
+                } else if (salary >= 8000 && salary < 12000) {
+                    range = '8K-12K';
+                } else if (salary >= 12000 && salary < 20000) {
+                    range = '12K-20K';
+                } else if (salary >= 20000 && salary < 30000) {
+                    range = '20K-30K';
+                } else if (salary >= 30000 && salary < 50000) {
+                    range = '30K-50K';
+                } else if (salary >= 50000) {
+                    range = '50K & Above';
+                }
+            }
+            
+            $('#salaryRange').val(range);
+            return range;
+        }
+        
+        // Function to check if the nationality is in the high-risk list
+        function isHighRiskNationality(nationality, salary) {
+            if (highRiskNationalities.includes(nationality)) {
+                return true;
+            }
+            
+            // Special handling for Philippines and Pakistan with salary < 12K
+            if ((nationality === "Philippines" || nationality === "Pakistan") && salary < 12000) {
+                return true;
+            }
+            
+            return false;
+        }
+        
+        // Function to determine the category group for ADCB matrix
+        function getCategoryGroup(category) {
+            if (category === "CAT A" || category === "CAT B") {
+                return "CAT A & B";
+            } else if (category === "CAT C") {
+                return "CAT C";
+            } else {
+                return "CAT D & E";
+            }
+        }
+        
+        // Function to determine max multiples and max loan amount
+        function calculateMaximumValues(nationality, ecbScore, adcbScore, category, salary) {
+            let maxMultiples = "N/A";
+            let maxLoanAmount = "N/A";
+            
+            // Get the category key for lookup
+            const categoryKey = category;
+            
+            // Check if the values are N/A first
+            if (ecbScore && adcbScore && category) {
+                const categoryGroup = getCategoryGroup(category);
+                // Try to get the multiples from the matrix - note that ADCB Score is rows, ECB Score is columns
+                if (adcbMatrix[categoryGroup] && 
+                    adcbMatrix[categoryGroup][adcbScore] && 
+                    adcbMatrix[categoryGroup][adcbScore][ecbScore]) {
+                    maxMultiples = adcbMatrix[categoryGroup][adcbScore][ecbScore];
+                }
+                
+                // If it's high risk nationality and not LR/VLR combo, limit to 5X or 250,000
+                if (isHighRiskNationality(nationality, salary)) {
+                    if (!((ecbScore === "LR" || ecbScore === "VLR") && 
+                          (adcbScore === "LR" || adcbScore === "VLR"))) {
+                        if (maxMultiples !== "N/A") {
+                            maxMultiples = "5X";
+                        }
+                        maxLoanAmount = "250,000";
+                    }
+                }
+                
+                // Get maximum loan amount from the matrix
+                if (maxLoanAmounts[categoryKey]) {
+                    if (ecbScore === "NS") {
+                        maxLoanAmount = maxLoanAmounts[categoryKey]["noECB"];
+                    } else {
+                        maxLoanAmount = maxLoanAmounts[categoryKey]["withECB"];
+                    }
+                }
+                
+                // Display N/A in a visually distinctive way (like black cells in the matrix)
+                if (maxMultiples === "N/A") {
+                    $('#resultMaxMultiples').addClass('bg-black text-white px-2 py-1 rounded');
+                } else {
+                    $('#resultMaxMultiples').removeClass('bg-black text-white px-2 py-1 rounded');
+                }
+            }
+            
+            return { maxMultiples, maxLoanAmount };
+        }
+
+        // Function to calculate the interest rate
+        function calculateRate() {
+            // Get form values
+            const nationality = $('#nationality').val();
+            const salary = parseFloat($('#salary').val());
+            const discountRate = parseFloat($('#discountRate').val()) || 0;
+            
+            // Skip calculation if essential data is missing
+            if (!nationality || !salary || isNaN(salary)) {
+                return;
+            }
+            
+            // Update and get salary range
+            const salaryRange = updateSalaryRange();
+            
+            if (salaryRange.includes('Minimum')) {
+                return;
+            }
+            
+            let baseRate = 0;
+            let categoryModifier = 0;
+            let finalRate = 0;
+            
+            if (nationality === "United Arab Emirates") {
+                // UAE Nationals calculation
+                baseRate = uaeRateGrid[salaryRange];
+                finalRate = Math.max(0, baseRate - discountRate);
+                
+                // Show/hide appropriate containers
+                $('#categoryModifierContainer').hide();
+                $('#baseRateContainer').show();
+                $('#discountRateContainer').toggle(discountRate > 0);
+                
+                // Update results section
+                $('#resultSalary').text(`${salary.toLocaleString()} AED`);
+                $('#resultNationality').text(nationality);
+                $('#baseRate').text(`${baseRate.toFixed(2)}%`);
+                
+                if (discountRate > 0) {
+                    $('#discountRateDisplay').text(`-${discountRate.toFixed(2)}%`);
+                }
+                
+                $('#finalRate').text(`${finalRate.toFixed(2)}%`);
+                
+                // Hide Max Multiples for UAE Nationals
+                $('#resultMaxMultiplesRow').hide();
+                $('#resultMaxLoanRow').hide();
+            } else {
+                // Non-UAE calculation
+                const ecbScore = $('#riskBand').val();
+                const adcbScore = $('#adcbScore').val();
+                const category = $('#category').val();
+                
+                // Skip calculation if essential data is missing
+                if (!ecbScore || !category) {
+                    return;
+                }
+                
+                // Get base rate from the grid
+                baseRate = rateGrid[salaryRange][ecbScore];
+                
+                // Apply category adjustments
+                if (category === 'CAT C') {
+                    categoryModifier = 0.50;
+                } else if (category === 'CAT D' || category === 'CAT E') {
+                    categoryModifier = 2.00;
+                }
+                
+                // Calculate final rate with discount
+                finalRate = Math.max(0, baseRate + categoryModifier - discountRate);
+                
+                // Show appropriate UI elements for non-UAE
+                $('#categoryModifierContainer').toggle(categoryModifier > 0);
+                $('#discountRateContainer').toggle(discountRate > 0);
+                $('#baseRateContainer').show();
+                
+                // Update results section
+                $('#resultRiskBand').text(ecbScore);
+                $('#resultADCBScore').text(adcbScore || "Not Selected");
+                $('#resultSalary').text(`${salary.toLocaleString()} AED`);
+                $('#resultCategory').text(category);
+                $('#resultNationality').text(nationality);
+                
+                $('#baseRate').text(`${baseRate.toFixed(2)}%`);
+                
+                if (categoryModifier > 0) {
+                    $('#categoryModifier').text(`+${categoryModifier.toFixed(2)}%`);
+                }
+                
+                if (discountRate > 0) {
+                    $('#discountRateDisplay').text(`-${discountRate.toFixed(2)}%`);
+                }
+                
+                $('#finalRate').text(`${finalRate.toFixed(2)}%`);
+                
+                // Calculate Max Multiples and Max Loan Amount
+                const { maxMultiples, maxLoanAmount } = calculateMaximumValues(nationality, ecbScore, adcbScore, category, salary);
+                
+                // Show Max Multiples and Max Loan Amount
+                $('#resultMaxMultiplesRow').show();
+                $('#resultMaxLoanRow').show();
+                $('#resultMaxMultiples').text(maxMultiples);
+                $('#resultMaxLoan').text(maxLoanAmount);
+            }
+            
+            // Show results section
+            $('#resultsSection').show();
+        }
+    </script>
+</body>
+</html>
