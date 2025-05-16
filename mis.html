@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Management Information System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6F2C4F',
+                        secondary: '#262a5a',
+                        lightblue: '#caf0f8',
+                        lightgreen: '#d8f3dc',
+                        lightyellow: '#ffedd8',
+                        lightred: '#ffccd5',
+                        lightgray: '#f3f4f6'
+                    },
+                    fontFamily: {
+                        tahoma: ['Tahoma', 'Geneva', 'sans-serif']
+                    }
+                }
+            },
+            darkMode: 'class'
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tahoma:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Tahoma', Geneva, sans-serif;
+        }
+        
+        .custom-btn {
+            background: linear-gradient(135deg, #6F2C4F 0%, #262a5a 100%);
+            transition: all 0.3s;
+        }
+        
+        .custom-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: #2D336B !important;
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        
+        .gradient-primary {
+            background: linear-gradient(135deg, #6F2C4F 0%, #262a5a 100%);
+        }
+        
+        .success-indicator {
+            background: rgb(22, 163, 74);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            animation: fadeOut 2s forwards;
+            animation-delay: 1s;
+            z-index: 100;
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        .loading-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #6F2C4F;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-field {
+            border-color: #ef4444 !important;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background-color: #6F2C4F;
+            color: white;
+            text-align: left;
+            padding: 8px;
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .data-table tr:hover {
+            background-color: #ddd;
+        }
+
+        .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .required::after {
+            content: " *";
+            color: #ef4444;
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 transition-colors duration-200 font-tahoma">
+    <!-- Theme toggle -->
+    <div class="flex justify-end items-center p-2">
+        <span class="mr-2 text-gray-700 dark:text-gray-300"><i class="fas fa-sun"></i></span>
+        <label class="toggle-switch">
+            <input type="checkbox" id="themeToggle">
+            <span class="toggle-slider"></span>
+        </label>
+        <span class="ml-2 text-gray-700 dark:text-gray-300"><i class="fas fa-moon"></i></span>
+    </div>
+    
+    <div class="container mx-auto px-3 py-2 max-w-6xl">
+        <h1 class="text-2xl md:text-3xl font-bold text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">Management Information System</h1>
+        
+        <!-- Section Navigation Buttons -->
+        <div class="mb-4 flex justify-center gap-4">
+            <button id="showEntryBtn" class="custom-btn text-white py-2 px-6 rounded-md flex items-center">
+                <i class="fas fa-file-alt mr-2"></i> Data Entry
+            </button>
+            <button id="showViewBtn" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-6 rounded-md flex items-center">
+                <i class="fas fa-table mr-2"></i> View Data
+            </button>
+            <button id="showSearchBtn" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-6 rounded-md flex items-center">
+                <i class="fas fa-search mr-2"></i> Search
+            </button>
+        </div>
+        
+        <!-- Section Content Containers -->
+        <div id="entrySection" class="section active">
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                <h2 class="text-xl font-bold text-primary dark:text-white mb-4">Customer Data Entry</h2>
+                
+                <form id="entryForm" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Left Column -->
+                        <div class="space-y-4">
+                            <!-- CID -->
+                            <div>
+                                <label for="cid" class="block text-gray-700 dark:text-gray-300 font-medium required">CID</label>
+                                <input type="number" id="cid" name="cid" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" required>
+                                <p id="cidError" class="text-red-500 text-sm hidden">CID must be unique</p>
+                            </div>
+                            
+                            <!-- App ID -->
+                            <div>
+                                <label for="appId" class="block text-gray-700 dark:text-gray-300 font-medium">App ID</label>
+                                <input type="number" id="appId" name="appId" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                            </div>
+                            
+                            <!-- Proposition -->
+                            <div>
+                                <label class="block text-gray-700 dark:text-gray-300 font-medium required">Proposition</label>
+                                <div class="flex space-x-4 mt-2">
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="proposition" value="Conventional" class="form-radio" checked>
+                                        <span class="ml-2 text-gray-700 dark:text-gray-300">Conventional</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="proposition" value="Islamic" class="form-radio">
+                                        <span class="ml-2 text-gray-700 dark:text-gray-300">Islamic</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="proposition" value="Both" class="form-radio">
+                                        <span class="ml-2 text-gray-700 dark:text-gray-300">Both</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Date -->
+                            <div>
+                                <label for="date" class="block text-gray-700 dark:text-gray-300 font-medium required">Date</label>
+                                <input type="date" id="date" name="date" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" required>
+                            </div>
+                            
+                            <!-- Salary -->
+                            <div>
+                                <label for="salary" class="block text-gray-700 dark:text-gray-300 font-medium required">Salary</label>
+                                <input type="number" id="salary" name="salary" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" required>
+                            </div>
+                            
+                            <!-- Customer Name -->
+                            <div>
+                                <label for="customerName" class="block text-gray-700 dark:text-gray-300 font-medium required">Customer Name</label>
+                                <input type="text" id="customerName" name="customerName" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" required>
+                                <p id="nameError" class="text-red-500 text-sm hidden">Customer name must be unique</p>
+                            </div>
+                            
+                            <!-- Mobile -->
+                            <div>
+                                <label for="mobile" class="block text-gray-700 dark:text-gray-300 font-medium required">Mobile</label>
+                                <input type="number" id="mobile" name="mobile" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" required>
+                                <p id="mobileError" class="text-red-500 text-sm hidden">Mobile number must be unique</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Right Column -->
+                        <div class="space-y-4">
+                            <!-- Products -->
+                            <div>
+                                <label class="block text-gray-700 dark:text-gray-300 font-medium required">Products</label>
+                                <div class="grid grid-cols-2 gap-2 mt-2">
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="products" value="ACC" class="form-checkbox" id="productACC">
+                                        <span class="ml-2 text-gray-700 dark:text-gray-300">ACC</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="products" value="CC" class="form-checkbox" id="productCC">
+                                        <span class="ml-2 text-gray-700 dark:text-gray-300">CC</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="products" value="2ndCC" class="form-checkbox" id="product2ndCC">
+                                        <span class="ml-2 text-gray-700 dark:text-gray-300">2nd CC</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="products" value="BT/CCL" class="form-checkbox">
+                                        <span class="ml-2 text-gray-700 dark:text-gray-300">BT/CCL</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="products" value="PL" class="form-checkbox" id="productPL">
+                                        <span class="ml-2 text-gray-700 dark:text-gray-300">PL</span>
+                                    </label>
+                                </div>
+                                <p id="productsError" class="text-red-500 text-sm hidden">Please select at least one product</p>
+                            </div>
+                            
+                            <!-- Product Options Container -->
+                            <div id="productOptionsContainer" class="space-y-3">
+                                <!-- Product-specific dropdown sections will be added here dynamically -->
+                            </div>
+                            
+                            <!-- Loan Amount (Only shown for PL) -->
+                            <div id="loanAmountSection" class="hidden">
+                                <label for="loanAmount" class="block text-gray-700 dark:text-gray-300 font-medium">Loan Amount</label>
+                                <input type="number" id="loanAmount" name="loanAmount" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                            </div>
+                            
+                            <!-- Banking -->
+                            <div>
+                                <label for="banking" class="block text-gray-700 dark:text-gray-300 font-medium">Banking</label>
+                                <select id="banking" name="banking" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                                    <option value="SELECT">SELECT</option>
+                                    <option value="ADCB">ADCB</option>
+                                    <option value="ENBD">ENBD</option>
+                                    <option value="EIB">EIB</option>
+                                    <option value="FAB">FAB</option>
+                                    <option value="DIB">DIB</option>
+                                    <option value="MASHREQ">MASHREQ</option>
+                                    <option value="ADIB">ADIB</option>
+                                    <option value="RAK">RAK</option>
+                                    <option value="CBD">CBD</option>
+                                    <option value="HSBC">HSBC</option>
+                                    <option value="CITI">CITI</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <div id="otherBankingSection" class="mt-2 hidden">
+                                    <input type="text" id="otherBanking" name="otherBanking" placeholder="Specify bank" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                                </div>
+                            </div>
+                            
+                            <!-- Company Name -->
+                            <div>
+                                <label for="companyName" class="block text-gray-700 dark:text-gray-300 font-medium">Company Name</label>
+                                <input type="text" id="companyName" name="companyName" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                            </div>
+                            
+                            <!-- Scheme -->
+                            <div>
+                                <label class="block text-gray-700 dark:text-gray-300 font-medium required">Scheme</label>
+                                <div class="flex flex-wrap gap-4 mt-2">
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="scheme" value="TML ALL" class="form-radio" checked>
+                                        <span class="ml-2 text-gray-700 dark:text-gray-300">TML ALL</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="scheme" value="TML CC" class="form-radio">
+                                        <span class="ml-2 text-gray-700 dark:text-gray-300">TML CC</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="scheme" value="TM SELECT" class="form-radio">
+                                        <span class="ml-2 text-gray-700 dark:text-gray-300">TM SELECT</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="scheme" value="NTML" class="form-radio">
+                                        <span class="ml-2 text-gray-700 dark:text-gray-300">NTML</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Status -->
+                            <div>
+                                <label for="status" class="block text-gray-700 dark:text-gray-300 font-medium required">Status</label>
+                                <select id="status" name="status" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" required>
+                                    <option value="">Select Status</option>
+                                    <option value="Draft">Draft</option>
+                                    <option value="Under Review">Under Review</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="HR CPV">HR CPV</option>
+                                    <option value="Compliance">Compliance</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <div id="otherStatusSection" class="mt-2 hidden">
+                                    <input type="text" id="otherStatus" name="otherStatus" placeholder="Specify status" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                                </div>
+                            </div>
+                            
+                            <!-- Activation -->
+                            <div>
+                                <label class="block text-gray-700 dark:text-gray-300 font-medium required">Activation</label>
+                                <div class="flex space-x-4 mt-2">
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="activation" value="Non Activated" class="form-radio" checked>
+                                        <span class="ml-2 text-gray-700 dark:text-gray-300">Non Activated</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="activation" value="Activated" class="form-radio">
+                                        <span class="ml-2 text-gray-700 dark:text-gray-300">Activated</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Points (System Generated) -->
+                            <div>
+                                <label for="points" class="block text-gray-700 dark:text-gray-300 font-medium">Points (System Generated)</label>
+                                <input type="text" id="points" name="points" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white bg-gray-100" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Form Action Buttons -->
+                    <div class="flex justify-center gap-4 mt-6">
+                        <button type="submit" id="submitBtn" class="custom-btn text-white py-2 px-6 rounded-md flex items-center">
+                            <i class="fas fa-save mr-2"></i> Save Data
+                        </button>
+                        <button type="button" id="updateBtn" class="custom-btn bg-blue-600 text-white py-2 px-6 rounded-md flex items-center hidden">
+                            <i class="fas fa-edit mr-2"></i> Update Data
+                        </button>
+                        <button type="button" id="deleteBtn" class="bg-red-600 text-white py-2 px-6 rounded-md flex items-center hover:bg-red-700 hidden">
+                            <i class="fas fa-trash-alt mr-2"></i> Delete Data
+                        </button>
+                        <button type="button" id="resetBtn" class="bg-gray-600 text-white py-2 px-6 rounded-md flex items-center hover:bg-gray-700">
+                            <i class="fas fa-redo-alt mr-2"></i> Reset Form
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- View Data Section -->
+        <div id="viewSection" class="section">
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-primary dark:text-white">View All Records</h2>
+                    <button id="refreshDataBtn" class="custom-btn text-white py-2 px-4 rounded-md flex items-center">
+                        <i class="fas fa-sync-alt mr-2"></i> Refresh Data
+                    </button>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table id="dataTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>CID</th>
+                                <th>Customer Name</th>
+                                <th>Mobile</th>
+                                <th>Products</th>
+                                <th>Banking</th>
+                                <th>Status</th>
+                                <th>Points</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody">
+                            <!-- Data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Search Section -->
+        <div id="searchSection" class="section">
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                <h2 class="text-xl font-bold text-primary dark:text-white mb-4">Search Records</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div>
+                        <label for="searchCID" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">Search by CID</label>
+                        <input type="number" id="searchCID" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                    </div>
+                    <div>
+                        <label for="searchName" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">Search by Customer Name</label>
+                        <input type="text" id="searchName" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                    </div>
+                    <div>
+                        <label for="searchMobile" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">Search by Mobile</label>
+                        <input type="number" id="searchMobile" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                    </div>
+                </div>
+                
+                <div class="flex justify-center mb-6">
+                    <button id="searchBtn" class="custom-btn text-white py-2 px-6 rounded-md flex items-center">
+                        <i class="fas fa-search mr-2"></i> Search
+                    </button>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>CID</th>
+                                <th>Customer Name</th>
+                                <th>Mobile</th>
+                                <th>Products</th>
+                                <th>Banking</th>
+                                <th>Status</th>
+                                <th>Points</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="searchResultsBody">
+                            <!-- Search results will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Indicator -->
+    <div id="successIndicator" class="success-indicator hidden">
+        <span id="successMessage">Operation successful!</span>
+    </div>
+    
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="loading-indicator hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        // ==========================================
+        // THEME AND UI FUNCTIONALITY
+        // ==========================================
+
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        
+        // Check for dark mode preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+            themeToggle.checked = true;
+        }
+
+        // Listen for theme changes
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
+        // Listen for system preference changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+                themeToggle.checked = true;
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeToggle.checked = false;
+            }
+        });
+
+        // Section navigation
+        const showEntryBtn = document.getElementById('showEntryBtn');
+        const showViewBtn = document.getElementById('showViewBtn');
+        const showSearchBtn = document.getElementById('showSearchBtn');
+        
+        const entrySection = document.getElementById('entrySection');
+        const viewSection = document.getElementById('viewSection');
+        const searchSection = document.getElementById('searchSection');
+        
+        function showSection(section) {
+            // Hide all sections
+            entrySection.classList.remove('active');
+            viewSection.classList.remove('active');
+            searchSection.classList.remove('active');
+            
+            // Reset button styles
+            showEntryBtn.classList.remove('custom-btn');
+            showViewBtn.classList.remove('custom-btn');
+            showSearchBtn.classList.remove('custom-btn');
+            
+            showEntryBtn.classList.add('bg-gray-500', 'hover:bg-gray-600');
+            showViewBtn.classList.add('bg-gray-500', 'hover:bg-gray-600');
+            showSearchBtn.classList.add('bg-gray-500', 'hover:bg-gray-600');
+            
+            // Show selected section and highlight button
+            if (section === 'entry') {
+                entrySection.classList.add('active');
+                showEntryBtn.classList.remove('bg-gray-500', 'hover:bg-gray-600');
+                showEntryBtn.classList.add('custom-btn');
+            } else if (section === 'view') {
+                viewSection.classList.add('active');
+                showViewBtn.classList.remove('bg-gray-500', 'hover:bg-gray-600');
+                showViewBtn.classList.add('custom-btn');
+                fetchAllData();
+            } else if (section === 'search') {
+                searchSection.classList.add('active');
+                showSearchBtn.classList.remove('bg-gray-500', 'hover:bg-gray-600');
+                showSearchBtn.classList.add('custom-btn');
+            }
+        }
+        
+        showEntryBtn.addEventListener('click', () => showSection('entry'));
+        showViewBtn.addEventListener('click', () => showSection('view'));
+        showSearchBtn.addEventListener('click', () => showSection('search'));
+
+        // Show success indicator
+        function showSuccess(message) {
+            const indicator = document.getElementById('successIndicator');
+            const messageEl = document.getElementById('successMessage');
+            
+            messageEl.textContent = message;
+            indicator.classList.remove('hidden');
+            
+            setTimeout(() => {
+                indicator.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Show loading indicator
+        function showLoading() {
+            document.getElementById('loadingIndicator').classList.remove('hidden');
+        }
+
+        // Hide loading indicator
+        function hideLoading() {
+            document.getElementById('loadingIndicator').classList.add('hidden');
+        }
+
+        // ==========================================
+        // FORM HANDLING AND VALIDATION
+        // ==========================================
+
+        // Get all form elements
+        const entryForm = document.getElementById('entryForm');
+        const cidInput = document.getElementById('cid');
+        const appIdInput = document.getElementById('appId');
+        const dateInput = document.getElementById('date');
+        const salaryInput = document.getElementById('salary');
+        const customerNameInput = document.getElementById('customerName');
+        const mobileInput = document.getElementById('mobile');
+        const bankingSelect = document.getElementById('banking');
+        const otherBankingSection = document.getElementById('otherBankingSection');
+        const otherBankingInput = document.getElementById('otherBanking');
+        const companyNameInput = document.getElementById('companyName');
+        const statusSelect = document.getElementById('status');
+        const otherStatusSection = document.getElementById('otherStatusSection');
+        const otherStatusInput = document.getElementById('otherStatus');
+        const pointsInput = document.getElementById('points');
+        const productACC = document.getElementById('productACC');
+        const productCC = document.getElementById('productCC');
+        const product2ndCC = document.getElementById('product2ndCC');
+        const productPL = document.getElementById('productPL');
+        const loanAmountSection = document.getElementById('loanAmountSection');
+        const loanAmountInput = document.getElementById('loanAmount');
+        const productOptionsContainer = document.getElementById('productOptionsContainer');
+        
+        // Reset button
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            resetForm();
+        });
+
+        // Form reset function
+        function resetForm() {
+            entryForm.reset();
+            productOptionsContainer.innerHTML = '';
+            loanAmountSection.classList.add('hidden');
+            otherBankingSection.classList.add('hidden');
+            otherStatusSection.classList.add('hidden');
+            
+            // Reset validation error messages
+            document.getElementById('cidError').classList.add('hidden');
+            document.getElementById('nameError').classList.add('hidden');
+            document.getElementById('mobileError').classList.add('hidden');
+            document.getElementById('productsError').classList.add('hidden');
+
+            // Hide update and delete buttons, show submit button
+            document.getElementById('submitBtn').classList.remove('hidden');
+            document.getElementById('updateBtn').classList.add('hidden');
+            document.getElementById('deleteBtn').classList.add('hidden');
+
+            // Clear points
+            pointsInput.value = '';
+            
+            // Clear any error styling
+            document.querySelectorAll('.error-field').forEach(field => {
+                field.classList.remove('error-field');
+            });
+        }
+
+        // Banking select change event
+        bankingSelect.addEventListener('change', function() {
+            if (this.value === 'Other') {
+                otherBankingSection.classList.remove('hidden');
+            } else {
+                otherBankingSection.classList.add('hidden');
+            }
+        });
+
+        // Status select change event
+        statusSelect.addEventListener('change', function() {
+            if (this.value === 'Other') {
+                otherStatusSection.classList.remove('hidden');
+            } else {
+                otherStatusSection.classList.add('hidden');
+            }
+        });
+
+        // Product checkbox change events
+        productPL.addEventListener('change', function() {
+            if (this.checked) {
+                loanAmountSection.classList.remove('hidden');
+            } else {
+                loanAmountSection.classList.add('hidden');
+                loanAmountInput.value = '';
+            }
+            updateProductOptions();
+        });
+
+        productACC.addEventListener('change', function() {
+            updateProductOptions();
+        });
+
+        productCC.addEventListener('change', function() {
+            updateProductOptions();
+            // Enable/disable 2nd CC checkbox based on CC checkbox
+            product2ndCC.disabled = !this.checked;
+            if (!this.checked) {
+                product2ndCC.checked = false;
+            }
+        });
+
+        product2ndCC.addEventListener('change', function() {
+            updateProductOptions();
+        });
+
+        // Proposition radio button change event
+        document.querySelectorAll('input[name="proposition"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                updateProductOptions();
+            });
+        });
+
+        // Salary input change event
+        salaryInput.addEventListener('input', function() {
+            updateProductOptions();
+        });
+
+        // Set today's date as the default date
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.value = today;
+            
+            // Disable 2nd CC initially
+            product2ndCC.disabled = true;
+        });
+
+        // ==========================================
+        // PRODUCT OPTIONS AND POINTS CALCULATION
+        // ==========================================
+
+        // Store current selections for dropdowns
+        let currentSelections = {
+            ACC: '',
+            CC: '',
+            PL: ''
+        };
+
+        // Initialize product options when proposition or products change
+        function updateProductOptions() {
+            // Save current dropdown selections before updating
+            const accSelect = document.getElementById('ACCSelect');
+            const ccSelect = document.getElementById('CCSelect');
+            const plSelect = document.getElementById('PLSelect');
+            
+            if (accSelect) currentSelections.ACC = accSelect.value;
+            if (ccSelect) currentSelections.CC = ccSelect.value;
+            if (plSelect) currentSelections.PL = plSelect.value;
+            
+            productOptionsContainer.innerHTML = '';
+            const proposition = document.querySelector('input[name="proposition"]:checked').value;
+            const salary = parseFloat(salaryInput.value) || 0;
+            
+            // Process ACC product
+            if (productACC.checked) {
+                const accOptions = getACCOptions(proposition, salary);
+                if (accOptions.length > 0) {
+                    const accDiv = createProductOptionDiv('ACC', accOptions);
+                    productOptionsContainer.appendChild(accDiv);
+                    
+                    // Add change event to ACC select
+                    const newAccSelect = accDiv.querySelector('select');
+                    newAccSelect.addEventListener('change', calculateTotalPoints);
+                    
+                    // Restore previous selection if it exists
+                    if (currentSelections.ACC && newAccSelect.querySelector(`option[value="${currentSelections.ACC}"]`)) {
+                        newAccSelect.value = currentSelections.ACC;
+                    }
+                }
+            }
+            
+            // Process CC product
+            if (productCC.checked) {
+                const ccOptions = getCCOptions(proposition);
+                if (ccOptions.length > 0) {
+                    const ccDiv = createProductOptionDiv('CC', ccOptions);
+                    productOptionsContainer.appendChild(ccDiv);
+                    
+                    // Add change event to CC select
+                    const newCcSelect = ccDiv.querySelector('select');
+                    newCcSelect.addEventListener('change', calculateTotalPoints);
+                    
+                    // Restore previous selection if it exists
+                    if (currentSelections.CC && newCcSelect.querySelector(`option[value="${currentSelections.CC}"]`)) {
+                        newCcSelect.value = currentSelections.CC;
+                    }
+                }
+            }
+            
+            // Process PL product
+            if (productPL.checked) {
+                const plOptions = getPLOptions(proposition);
+                if (plOptions.length > 0) {
+                    const plDiv = createProductOptionDiv('PL', plOptions);
+                    productOptionsContainer.appendChild(plDiv);
+                    
+                    // Add change event to PL select
+                    const newPlSelect = plDiv.querySelector('select');
+                    newPlSelect.addEventListener('change', calculateTotalPoints);
+                    
+                    // Restore previous selection if it exists
+                    if (currentSelections.PL && newPlSelect.querySelector(`option[value="${currentSelections.PL}"]`)) {
+                        newPlSelect.value = currentSelections.PL;
+                    }
+                    
+                    // Add change event to Loan Amount input
+                    loanAmountInput.addEventListener('input', calculateTotalPoints);
+                }
+            }
+            
+            // Calculate total points
+            calculateTotalPoints();
+        }
+
+        // Create a product option div with dropdown
+        function createProductOptionDiv(productType, options) {
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <label for="${productType}Select" class="block text-gray-700 dark:text-gray-300 font-medium">${productType} Option</label>
+                <select id="${productType}Select" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" data-product="${productType}">
+                    <option value="">Select ${productType} Option</option>
+                    ${options.map(option => `<option value="${option.value}" data-points="${option.points}" data-paid="${option.paid || false}">${option.text}</option>`).join('')}
+                </select>
+            `;
+            return div;
+        }
+
+        // Get ACC options based on proposition and salary
+        function getACCOptions(proposition, salary) {
+            const options = [];
+            
+            // Common options for all propositions based on salary
+            if (salary >= 5000 && salary < 10000) {
+                options.push({ value: "Aspire5K-10K", text: "Aspire 5K-10K", points: 150 });
+            }
+            if (salary >= 10000 && salary < 20000) {
+                options.push({ value: "Aspire10K-20K", text: "Aspire 10K-20K", points: 350 });
+            }
+            if (salary >= 20000 && salary < 30000) {
+                options.push({ value: "Privilege20K-30K", text: "Privilege 20K-30K", points: 450 });
+            }
+            if (salary >= 30000 && salary < 75000) {
+                options.push({ value: "Privilege30K-75K", text: "Privilege 30K-75K", points: 750 });
+            }
+            if (salary >= 75000) {
+                options.push({ value: "Privilege75K+", text: "Privilege 75K & Above", points: 1300 });
+            }
+            
+            // Add Islamic-specific option
+            if (proposition === "Islamic" || proposition === "Both") {
+                options.push({ value: "MDSA", text: "MDSA", points: 150 });
+            }
+            
+            return options;
+        }
+
+        // Get CC options based on proposition
+        function getCCOptions(proposition) {
+            if (proposition === "Conventional") {
+                return [
+                    { value: "TouchpointsGoldVisa", text: "Touchpoints Gold Visa", points: 250, paid: false },
+                    { value: "TouchpointsTitaniumMC", text: "Touchpoints Titanium MC", points: 250, paid: false },
+                    { value: "EssientialCashbackMC", text: "Essiential Cashback MC", points: 250, paid: false },
+                    { value: "TalabatMC", text: "Talabat MC", points: 250, paid: false },
+                    { value: "LuluTitaniumMC", text: "Lulu Titanium MC", points: 250, paid: false },
+                    { value: "LuluPlatinumMC", text: "Lulu Platinum MC", points: 250, paid: false },
+                    { value: "TouchpointsPlatinumMC", text: "Touchpoints Platinum MC", points: 400, paid: true },
+                    { value: "365CashbackVisa", text: "365 Cashback Visa", points: 500, paid: true },
+                    { value: "ShukranPlatinumVisa", text: "Shukran Platinum Visa", points: 500, paid: true },
+                    { value: "EtihadGuestPlatinumVisa", text: "Etihad Guest Platinum Visa", points: 500, paid: true },
+                    { value: "AllSignatureVisa", text: "All Signature Visa", points: 750, paid: true },
+                    { value: "AllInfiniteVisa", text: "All Infinite Visa", points: 750, paid: true },
+                    { value: "EtihadGuestSignatureVisa", text: "Etihad Guest Signature Visa", points: 750, paid: true },
+                    { value: "EtihadGuestInfiniteVisa", text: "Etihad Guest Infinite Visa", points: 750, paid: true },
+                    { value: "TouchpointsInfiniteVisa", text: "Touchpoints Infinite Visa", points: 750, paid: true },
+                    { value: "TravellerMCWorldElite", text: "Traveller MC World Elite", points: 750, paid: true },
+                    { value: "BetaqtiMCWorldElite", text: "Betaqti MC World Elite", points: 1000, paid: true }
+                ];
+            } else if (proposition === "Islamic") {
+                return [
+                    { value: "TouchpointsGoldVisa", text: "Touchpoints Gold Visa", points: 250, paid: false },
+                    { value: "TalabatMC", text: "Talabat MC", points: 250, paid: false },
+                    { value: "TouchpointsPlatinumVisa", text: "Touchpoints Platinum Visa", points: 500, paid: true },
+                    { value: "365CashbackVisa", text: "365 Cashback Visa", points: 500, paid: true },
+                    { value: "ShukranPlatinumVisa", text: "Shukran Platinum Visa", points: 500, paid: true },
+                    { value: "EtihadGuestPlatinumVisa", text: "Etihad Guest Platinum Visa", points: 500, paid: true },
+                    { value: "EtihadGuestSignatureVisa", text: "Etihad Guest Signature Visa", points: 750, paid: true },
+                    { value: "TouchpointsInfiniteVisa", text: "Touchpoints Infinite Visa", points: 750, paid: true },
+                    { value: "EtihadGuestInfiniteVisa", text: "Etihad Guest Infinite Visa", points: 750, paid: true },
+                    { value: "EmiratiIslamicInfiniteVisa", text: "Emirati Islamic Infinite Visa", points: 750, paid: true }
+                ];
+            } else if (proposition === "Both") {
+                // Combine both lists and remove duplicates
+                const conventional = getCCOptions("Conventional");
+                const islamic = getCCOptions("Islamic");
+                const combinedOptions = [...conventional];
+                
+                // Add Islamic options that don't exist in conventional
+                islamic.forEach(islamicOption => {
+                    if (!conventional.some(convOption => convOption.value === islamicOption.value)) {
+                        combinedOptions.push(islamicOption);
+                    }
+                });
+                
+                return combinedOptions;
+            }
+            
+            return [];
+        }
+
+        // Get PL options based on proposition
+        function getPLOptions(proposition) {
+            // Same options for all propositions
+            return [
+                { value: "AspireCatAB", text: "Asipire Cat A & B", points: "0.50%" },
+                { value: "PrivilegeCatAB", text: "Privilege Cat A & B", points: "0.50%" },
+                { value: "AspireCatCBelow", text: "Aspire Cat C & Below", points: "0.25%" },
+                { value: "PrivilegeCatCBelow", text: "Privilege Cat C & Below", points: "0.25%" }
+            ];
+        }
+
+        // Calculate total points based on selected options
+        function calculateTotalPoints() {
+            let totalPoints = 0;
+            
+            // Calculate points for ACC
+            if (productACC.checked) {
+                const accSelect = document.getElementById('ACCSelect');
+                if (accSelect && accSelect.value) {
+                    const selectedOption = accSelect.options[accSelect.selectedIndex];
+                    totalPoints += parseInt(selectedOption.dataset.points) || 0;
+                }
+            }
+            
+            // Calculate points for CC
+            if (productCC.checked) {
+                const ccSelect = document.getElementById('CCSelect');
+                if (ccSelect && ccSelect.value) {
+                    const selectedOption = ccSelect.options[ccSelect.selectedIndex];
+                    totalPoints += parseInt(selectedOption.dataset.points) || 0;
+                    
+                    // Check for 2nd CC
+                    if (product2ndCC.checked) {
+                        const isPaid = selectedOption.dataset.paid === "true";
+                        totalPoints += isPaid ? 250 : 125;
+                    }
+                }
+            }
+            
+            // Calculate points for PL
+            if (productPL.checked) {
+                const plSelect = document.getElementById('PLSelect');
+                const loanAmount = parseFloat(loanAmountInput.value) || 0;
+                
+                if (plSelect && plSelect.value && loanAmount > 0) {
+                    const selectedOption = plSelect.options[plSelect.selectedIndex];
+                    const pointsPercentage = selectedOption.dataset.points;
+                    
+                    if (pointsPercentage === "0.50%") {
+                        totalPoints += loanAmount * 0.005;
+                    } else if (pointsPercentage === "0.25%") {
+                        totalPoints += loanAmount * 0.0025;
+                    }
+                }
+            }
+            
+            // Update points input
+            pointsInput.value = totalPoints.toFixed(2);
+        }
+
+        // ==========================================
+        // GOOGLE SHEETS INTEGRATION
+        // ==========================================
+
+        // Google Apps Script Web App URL
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbznPCS1h9sLrnGOFy5Ps0JeinCHQ6JEV0jzZViiDKnT3MO4hJzn2BdIGQyrS2Pu32pCLQ/exec';
+
+        // Fetch all data from Google Sheets
+        async function fetchAllData() {
+            showLoading();
+            try {
+                const response = await fetch(`${scriptURL}?action=getAll`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayData(data.data, 'dataTableBody');
+                } else {
+                    showSuccess(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                showSuccess('Error fetching data from server');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Search for data
+        async function searchData() {
+            const cid = document.getElementById('searchCID').value;
+            const name = document.getElementById('searchName').value;
+            const mobile = document.getElementById('searchMobile').value;
+            
+            if (!cid && !name && !mobile) {
+                showSuccess('Please enter at least one search criteria');
+                return;
+            }
+            
+            showLoading();
+            try {
+                const response = await fetch(`${scriptURL}?action=search&cid=${cid}&name=${encodeURIComponent(name)}&mobile=${mobile}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayData(data.data, 'searchResultsBody');
+                } else {
+                    showSuccess(`Error: ${data.error}`);
+                    document.getElementById('searchResultsBody').innerHTML = '<tr><td colspan="8" class="text-center py-4">No matching records found</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error searching data:', error);
+                showSuccess('Error searching data');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Display data in table
+        function displayData(data, targetTableId) {
+            const tableBody = document.getElementById(targetTableId);
+            tableBody.innerHTML = '';
+            
+            if (data.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="8" class="text-center py-4">No records found</td></tr>';
+                return;
+            }
+            
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.cid}</td>
+                    <td>${row.customerName}</td>
+                    <td>${row.mobile}</td>
+                    <td>${row.productList || ''}</td>
+                    <td>${row.banking}</td>
+                    <td>${row.status}</td>
+                    <td>${row.points}</td>
+                    <td>
+                        <button class="edit-btn bg-blue-600 text-white p-1 rounded mr-1" data-cid="${row.cid}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-btn bg-red-600 text-white p-1 rounded" data-cid="${row.cid}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+            
+            // Add event listeners to edit and delete buttons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const cid = this.getAttribute('data-cid');
+                    editRecord(cid);
+                });
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const cid = this.getAttribute('data-cid');
+                    if (confirm('Are you sure you want to delete this record?')) {
+                        deleteRecord(cid);
+                    }
+                });
+            });
+        }
+
+        // Submit form data
+async function submitFormData(formData) {
+    showLoading();
+    
+    // Log the form data before sending
+    console.log("Submitting form data:");
+    for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+    }
+    
+    try {
+        const response = await fetch(scriptURL, {
+            method: 'POST',
+            body: formData
+        });
+        
+        console.log("Response status:", response.status);
+        const responseText = await response.text();
+        console.log("Raw response:", responseText);
+        
+        let data;
+        try {
+            data = JSON.parse(responseText);
+            console.log("Parsed response:", data);
+        } catch (parseError) {
+            console.error("Error parsing response:", parseError);
+            showSuccess('Error: Could not parse server response');
+            hideLoading();
+            return;
+        }
+        
+        if (data.success) {
+            showSuccess('Data submitted successfully!');
+            resetForm();
+            fetchAllData(); // Refresh data table
+        } else {
+            showSuccess(`Error: ${data.error}`);
+        }
+    } catch (error) {
+        console.error('Error submitting form:', error);
+        showSuccess('Error submitting data: ' + error.message);
+    } finally {
+        hideLoading();
+    }
+}
+
+        // Update existing record
+        async function updateRecord(formData) {
+            showLoading();
+            try {
+                formData.append('action', 'update');
+                
+                const response = await fetch(scriptURL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showSuccess('Record updated successfully!');
+                    resetForm();
+                    fetchAllData(); // Refresh data table
+                } else {
+                    showSuccess(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                console.error('Error updating record:', error);
+                showSuccess('Error updating record');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Delete record
+        async function deleteRecord(cid) {
+            showLoading();
+            try {
+                const response = await fetch(`${scriptURL}?action=delete&cid=${cid}`, {
+                    method: 'GET'
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showSuccess('Record deleted successfully!');
+                    resetForm();
+                    fetchAllData(); // Refresh data table
+                } else {
+                    showSuccess(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                console.error('Error deleting record:', error);
+                showSuccess('Error deleting record');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Edit record (fetch and populate form)
+        async function editRecord(cid) {
+            showLoading();
+            try {
+                const response = await fetch(`${scriptURL}?action=getById&cid=${cid}`);
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    populateForm(data.data);
+                    
+                    // Switch to entry section
+                    showSection('entry');
+                    
+                    // Show update and delete buttons, hide submit button
+                    document.getElementById('submitBtn').classList.add('hidden');
+                    document.getElementById('updateBtn').classList.remove('hidden');
+                    document.getElementById('deleteBtn').classList.remove('hidden');
+                } else {
+                    showSuccess(`Error: ${data.error || 'Record not found'}`);
+                }
+            } catch (error) {
+                console.error('Error fetching record:', error);
+                showSuccess('Error fetching record data');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Populate form with record data
+        function populateForm(data) {
+            // Clear form first
+            resetForm();
+            
+            // Populate basic fields
+            cidInput.value = data.cid;
+            cidInput.readOnly = true; // CID should not be editable during update
+            appIdInput.value = data.appId || '';
+            dateInput.value = data.date || '';
+            salaryInput.value = data.salary || '';
+            customerNameInput.value = data.customerName || '';
+            mobileInput.value = data.mobile || '';
+            companyNameInput.value = data.companyName || '';
+            pointsInput.value = data.points || '';
+            
+            // Set proposition
+            const propositionRadios = document.getElementsByName('proposition');
+            for (let radio of propositionRadios) {
+                if (radio.value === data.proposition) {
+                    radio.checked = true;
+                    break;
+                }
+            }
+            
+            // Set scheme
+            const schemeRadios = document.getElementsByName('scheme');
+            for (let radio of schemeRadios) {
+                if (radio.value === data.scheme) {
+                    radio.checked = true;
+                    break;
+                }
+            }
+            
+            // Set activation
+            const activationRadios = document.getElementsByName('activation');
+            for (let radio of activationRadios) {
+                if (radio.value === data.activation) {
+                    radio.checked = true;
+                    break;
+                }
+            }
+            
+            // Set banking
+            if (data.banking) {
+                if (['SELECT', 'ADCB', 'ENBD', 'EIB', 'FAB', 'DIB', 'MASHREQ', 'ADIB', 'RAK', 'CBD', 'HSBC', 'CITI'].includes(data.banking)) {
+                    bankingSelect.value = data.banking;
+                } else {
+                    bankingSelect.value = 'Other';
+                    otherBankingSection.classList.remove('hidden');
+                    otherBankingInput.value = data.banking;
+                }
+            }
+            
+            // Set status
+            if (data.status) {
+                if (['Draft', 'Under Review', 'Completed', 'HR CPV', 'Compliance'].includes(data.status)) {
+                    statusSelect.value = data.status;
+                } else {
+                    statusSelect.value = 'Other';
+                    otherStatusSection.classList.remove('hidden');
+                    otherStatusInput.value = data.status;
+                }
+            }
+            
+            // Set products and their options
+            const products = (data.productList || '').split(',').map(p => p.trim());
+            
+            // Reset product checkboxes
+            productACC.checked = false;
+            productCC.checked = false;
+            product2ndCC.checked = false;
+            productPL.checked = false;
+            
+            // Check appropriate product checkboxes
+            products.forEach(product => {
+                if (product === 'ACC') productACC.checked = true;
+                if (product === 'CC') productCC.checked = true;
+                if (product === '2ndCC') product2ndCC.checked = true;
+                if (product === 'PL') productPL.checked = true;
+                if (product === 'BT/CCL') {
+                    const btCclCheckbox = document.querySelector('input[value="BT/CCL"]');
+                    if (btCclCheckbox) btCclCheckbox.checked = true;
+                }
+            });
+            
+            // Show/hide loan amount section
+            if (productPL.checked) {
+                loanAmountSection.classList.remove('hidden');
+                loanAmountInput.value = data.loanAmount || '';
+            }
+            
+            // Enable/disable 2nd CC checkbox based on CC checkbox
+            product2ndCC.disabled = !productCC.checked;
+            
+            // Store product options for later use
+            if (data.accOption) currentSelections.ACC = data.accOption;
+            if (data.ccOption) currentSelections.CC = data.ccOption;
+            if (data.plOption) currentSelections.PL = data.plOption;
+            
+            // Update product options
+            updateProductOptions();
+            
+            // Recalculate points
+            setTimeout(calculateTotalPoints, 100);
+        }
+
+        // Check if CID, Customer Name, or Mobile already exists
+        async function checkUniqueness(cid, customerName, mobile) {
+            try {
+                const response = await fetch(`${scriptURL}?action=checkUnique&cid=${cid}&name=${encodeURIComponent(customerName)}&mobile=${mobile}`);
+                return await response.json();
+            } catch (error) {
+                console.error('Error checking uniqueness:', error);
+                showSuccess('Error checking uniqueness');
+                return { 
+                    success: false, 
+                    data: { cidExists: false, nameExists: false, mobileExists: false },
+                    error: error.message
+                };
+            }
+        }
+
+        // Validate form before submission
+        async function validateForm() {
+            let isValid = true;
+            
+            // Clear previous validation errors
+            document.getElementById('cidError').classList.add('hidden');
+            document.getElementById('nameError').classList.add('hidden');
+            document.getElementById('mobileError').classList.add('hidden');
+            document.getElementById('productsError').classList.add('hidden');
+            
+            // Basic field validation
+            if (!cidInput.value.trim()) {
+                cidInput.classList.add('error-field');
+                isValid = false;
+            } else {
+                cidInput.classList.remove('error-field');
+            }
+            
+            if (!dateInput.value) {
+                dateInput.classList.add('error-field');
+                isValid = false;
+            } else {
+                dateInput.classList.remove('error-field');
+            }
+            
+            if (!salaryInput.value.trim()) {
+                salaryInput.classList.add('error-field');
+                isValid = false;
+            } else {
+                salaryInput.classList.remove('error-field');
+            }
+            
+            if (!customerNameInput.value.trim()) {
+                customerNameInput.classList.add('error-field');
+                isValid = false;
+            } else {
+                customerNameInput.classList.remove('error-field');
+            }
+            
+            if (!mobileInput.value.trim()) {
+                mobileInput.classList.add('error-field');
+                isValid = false;
+            } else {
+                mobileInput.classList.remove('error-field');
+            }
+            
+            if (statusSelect.value === '') {
+                statusSelect.classList.add('error-field');
+                isValid = false;
+            } else {
+                statusSelect.classList.remove('error-field');
+            }
+            
+            // Product validation - at least one product must be selected
+            const productSelected = productACC.checked || productCC.checked || product2ndCC.checked || 
+                                    document.querySelector('input[value="BT/CCL"]').checked || productPL.checked;
+            
+            if (!productSelected) {
+                document.getElementById('productsError').classList.remove('hidden');
+                isValid = false;
+            }
+            
+            // For update operations, we don't need to check uniqueness for the current record
+            if (document.getElementById('updateBtn').classList.contains('hidden')) {
+                // Check uniqueness only if basic validation passes
+                if (isValid) {
+                    showLoading();
+                    const uniquenessCheck = await checkUniqueness(
+                        cidInput.value.trim(),
+                        customerNameInput.value.trim(),
+                        mobileInput.value.trim()
+                    );
+                    hideLoading();
+                    
+                    if (uniquenessCheck.success && uniquenessCheck.data) {
+                        if (uniquenessCheck.data.cidExists) {
+                            document.getElementById('cidError').classList.remove('hidden');
+                            cidInput.classList.add('error-field');
+                            isValid = false;
+                        }
+                        
+                        if (uniquenessCheck.data.nameExists) {
+                            document.getElementById('nameError').classList.remove('hidden');
+                            customerNameInput.classList.add('error-field');
+                            isValid = false;
+                        }
+                        
+                        if (uniquenessCheck.data.mobileExists) {
+                            document.getElementById('mobileError').classList.remove('hidden');
+                            mobileInput.classList.add('error-field');
+                            isValid = false;
+                        }
+                    } else if (!uniquenessCheck.success) {
+                        showSuccess(`Error checking uniqueness: ${uniquenessCheck.error}`);
+                        isValid = false;
+                    }
+                }
+            }
+            
+            return isValid;
+        }
+
+        // Collect form data for submission
+function collectFormData() {
+    const formData = new FormData();
+    
+    // Add basic fields with proper debugging
+    console.log("Collecting form data:");
+    
+    console.log("CID:", cidInput.value);
+    formData.append('cid', cidInput.value);
+    
+    console.log("App ID:", appIdInput.value);
+    formData.append('appId', appIdInput.value);
+    
+    const proposition = document.querySelector('input[name="proposition"]:checked').value;
+    console.log("Proposition:", proposition);
+    formData.append('proposition', proposition);
+    
+    console.log("Date:", dateInput.value);
+    formData.append('date', dateInput.value);
+    
+    console.log("Salary:", salaryInput.value);
+    formData.append('salary', salaryInput.value);
+    
+    console.log("Customer Name:", customerNameInput.value);
+    formData.append('customerName', customerNameInput.value);
+    
+    console.log("Mobile:", mobileInput.value);
+    formData.append('mobile', mobileInput.value);
+    
+    // Banking
+    let bankingValue = bankingSelect.value;
+    if (bankingValue === 'Other') {
+        bankingValue = otherBankingInput.value || 'Other';
+    }
+    console.log("Banking:", bankingValue);
+    formData.append('banking', bankingValue);
+    
+    // Company Name
+    console.log("Company Name:", companyNameInput.value);
+    formData.append('companyName', companyNameInput.value);
+    
+    // Scheme
+    const scheme = document.querySelector('input[name="scheme"]:checked').value;
+    console.log("Scheme:", scheme);
+    formData.append('scheme', scheme);
+    
+    // Status
+    let statusValue = statusSelect.value;
+    if (statusValue === 'Other') {
+        statusValue = otherStatusInput.value || 'Other';
+    }
+    console.log("Status:", statusValue);
+    formData.append('status', statusValue);
+    
+    // Activation
+    const activation = document.querySelector('input[name="activation"]:checked').value;
+    console.log("Activation:", activation);
+    formData.append('activation', activation);
+    
+    // Points
+    console.log("Points:", pointsInput.value);
+    formData.append('points', pointsInput.value);
+    
+    // Products
+    const selectedProducts = [];
+    if (productACC.checked) selectedProducts.push('ACC');
+    if (productCC.checked) selectedProducts.push('CC');
+    if (product2ndCC.checked) selectedProducts.push('2ndCC');
+    if (document.querySelector('input[value="BT/CCL"]').checked) selectedProducts.push('BT/CCL');
+    if (productPL.checked) selectedProducts.push('PL');
+    
+    const productList = selectedProducts.join(', ');
+    console.log("Product List:", productList);
+    formData.append('productList', productList);
+    
+    // Product options
+    if (productACC.checked) {
+        const accSelect = document.getElementById('ACCSelect');
+        if (accSelect && accSelect.value) {
+            console.log("ACC Option:", accSelect.value);
+            formData.append('accOption', accSelect.value);
+        }
+    }
+    
+    if (productCC.checked) {
+        const ccSelect = document.getElementById('CCSelect');
+        if (ccSelect && ccSelect.value) {
+            console.log("CC Option:", ccSelect.value);
+            formData.append('ccOption', ccSelect.value);
+        }
+    }
+    
+    if (productPL.checked) {
+        const plSelect = document.getElementById('PLSelect');
+        if (plSelect && plSelect.value) {
+            console.log("PL Option:", plSelect.value);
+            formData.append('plOption', plSelect.value);
+        }
+        console.log("Loan Amount:", loanAmountInput.value);
+        formData.append('loanAmount', loanAmountInput.value);
+    }
+    
+    return formData;
+}
+
+        // ==========================================
+        // EVENT LISTENERS
+        // ==========================================
+
+        // Form submit event
+        entryForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (await validateForm()) {
+                const formData = collectFormData();
+                formData.append('action', 'add');
+                await submitFormData(formData);
+            }
+        });
+
+        // Update button click event
+        document.getElementById('updateBtn').addEventListener('click', async function() {
+            if (await validateForm()) {
+                const formData = collectFormData();
+                await updateRecord(formData);
+            }
+        });
+
+        // Delete button click event
+        document.getElementById('deleteBtn').addEventListener('click', function() {
+            const cid = cidInput.value;
+            if (cid && confirm('Are you sure you want to delete this record?')) {
+                deleteRecord(cid);
+            }
+        });
+
+        // Refresh data button click event
+        document.getElementById('refreshDataBtn').addEventListener('click', function() {
+            fetchAllData();
+        });
+
+        // Search button click event
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            searchData();
+        });
+
+        // Initialize app on DOM load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default date
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.value = today;
+        });
+    </script>
+</body>
+</html>
