@@ -1,1 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced EMI Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#ff0066',
+                    }
+                }
+            },
+            darkMode: 'class'
+        }
+    </script>
+</head>
+<body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-200">
+    <div class="container mx-auto px-4 py-8 max-w-3xl">
+        <h1 class="text-3xl font-bold text-center mb-6">Advanced EMI Calculator</h1>
+        
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-2">What do you want to calculate?</label>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <button id="calcEMI" class="px-4 py-2 bg-primary text-white rounded-md font-medium">EMI</button>
+                    <button id="calcLoanAmount" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-md font-medium">Loan Amount</button>
+                    <button id="calcInterestRate" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-md font-medium">Interest Rate</button>
+                    <button id="calcTenure" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-md font-medium">Tenure</button>
+                </div>
+            </div>
+            
+            <div class="grid gap-4">
+                <div id="loanAmountField" class="mb-4">
+                    <label for="loanAmount" class="block text-sm font-medium mb-1">Loan Amount</label>
+                    <input type="number" id="loanAmount" class="w-full px-4 py-2 text-base rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary" value="100000">
+                </div>
+                
+                <div id="interestRateField" class="mb-4">
+                    <label for="interestRate" class="block text-sm font-medium mb-1">Interest Rate (% per annum)</label>
+                    <input type="number" id="interestRate" class="w-full px-4 py-2 text-base rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary" value="10.5" step="0.01">
+                </div>
+                
+                <div id="tenureField" class="mb-4">
+                    <label for="tenure" class="block text-sm font-medium mb-1">Tenure (months)</label>
+                    <input type="number" id="tenure" class="w-full px-4 py-2 text-base rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary" value="48">
+                </div>
+                
+                <div id="emiField" class="mb-4">
+                    <label for="emi" class="block text-sm font-medium mb-1">EMI</label>
+                    <input type="number" id="emi" class="w-full px-4 py-2 text-base rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary" value="">
+                </div>
+                
+                <button id="calculate" class="w-full bg-primary hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-md transition duration-200 ease-in-out mt-2">Calculate</button>
+            </div>
+        </div>
+        
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-bold mb-4">Result</h2>
+            <div id="result" class="text-lg font-semibold text-center py-4">-</div>
+            
+            <div class="mt-6">
+                <h3 class="text-lg font-semibold mb-3">Formula Used:</h3>
+                <div id="formulaExplanation" class="text-sm bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                    <p class="mb-2"><strong>Standard EMI Formula:</strong></p>
+                    <p class="font-mono bg-gray-100 dark:bg-gray-900 p-2 rounded mb-2 overflow-x-auto">EMI = P × r × (1+r)^n / [(1+r)^n - 1]</p>
+                    <p class="mb-2">Where:</p>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>P = Principal loan amount</li>
+                        <li>r = Monthly interest rate (Annual rate ÷ 12 ÷ 100)</li>
+                        <li>n = Loan tenure in months</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <script>
+        // Check for dark mode preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+        
+        // Variables
+        let calculationType = 'EMI';
+        const buttons = {
+            'EMI': document.getElementById('calcEMI'),
+            'LoanAmount': document.getElementById('calcLoanAmount'),
+            'InterestRate': document.getElementById('calcInterestRate'),
+            'Tenure': document.getElementById('calcTenure')
+        };
+        const fields = {
+            'LoanAmount': document.getElementById('loanAmountField'),
+            'InterestRate': document.getElementById('interestRateField'),
+            'Tenure': document.getElementById('tenureField'),
+            'EMI': document.getElementById('emiField')
+        };
+        
+        // Set calculator type and update UI
+        function setCalculationType(type) {
+            calculationType = type;
+            
+            // Update button styles
+            Object.keys(buttons).forEach(key => {
+                if (key === type) {
+                    buttons[key].classList.remove('bg-gray-200', 'dark:bg-gray-700');
+                    buttons[key].classList.add('bg-primary', 'text-white');
+                } else {
+                    buttons[key].classList.remove('bg-primary', 'text-white');
+                    buttons[key].classList.add('bg-gray-200', 'dark:bg-gray-700');
+                }
+            });
+            
+            // Show/hide appropriate fields
+            Object.keys(fields).forEach(key => {
+                if (key === type) {
+                    fields[key].classList.add('opacity-50');
+                    fields[key].querySelector('input').setAttribute('disabled', true);
+                } else {
+                    fields[key].classList.remove('opacity-50');
+                    fields[key].querySelector('input').removeAttribute('disabled');
+                }
+            });
+            
+            // Update formula explanation
+            updateFormulaExplanation(type);
+        }
+        
+        // Set initial calculation type
+        setCalculationType('EMI');
+        
+        // Add event listeners to buttons
+        buttons.EMI.addEventListener('click', () => setCalculationType('EMI'));
+        buttons.LoanAmount.addEventListener('click', () => setCalculationType('LoanAmount'));
+        buttons.InterestRate.addEventListener('click', () => setCalculationType('InterestRate'));
+        buttons.Tenure.addEventListener('click', () => setCalculationType('Tenure'));
+        
+        // Calculate button event listener
+        document.getElementById('calculate').addEventListener('click', performCalculation);
+        
+        function performCalculation() {
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                let loanAmount, interestRate, tenure, emi, monthlyRate, result;
+                
+                // Get values from form
+                if (calculationType !== 'LoanAmount') {
+                    loanAmount = parseFloat(document.getElementById('loanAmount').value);
+                    if (isNaN(loanAmount) || loanAmount <= 0) throw new Error("Please enter a valid loan amount");
+                }
+                
+                if (calculationType !== 'InterestRate') {
+                    interestRate = parseFloat(document.getElementById('interestRate').value);
+                    if (isNaN(interestRate) || interestRate <= 0) throw new Error("Please enter a valid interest rate");
+                    monthlyRate = interestRate / 12 / 100;
+                }
+                
+                if (calculationType !== 'Tenure') {
+                    tenure = parseInt(document.getElementById('tenure').value);
+                    if (isNaN(tenure) || tenure <= 0) throw new Error("Please enter a valid tenure");
+                }
+                
+                if (calculationType !== 'EMI') {
+                    emi = parseFloat(document.getElementById('emi').value);
+                    if (isNaN(emi) || emi <= 0) throw new Error("Please enter a valid EMI");
+                }
+                
+                // Perform calculation based on selected type
+                switch (calculationType) {
+                    case 'EMI':
+                        result = calculateEMI(loanAmount, monthlyRate, tenure);
+                        document.getElementById('emi').value = result.toFixed(2);
+                        resultDiv.innerHTML = `EMI = <span class="text-primary">${formatCurrency(result)}</span>`;
+                        break;
+                        
+                    case 'LoanAmount':
+                        result = calculateLoanAmount(emi, monthlyRate, tenure);
+                        document.getElementById('loanAmount').value = result.toFixed(2);
+                        resultDiv.innerHTML = `Loan Amount = <span class="text-primary">${formatCurrency(result)}</span>`;
+                        break;
+                        
+                    case 'InterestRate':
+                        result = calculateInterestRate(loanAmount, emi, tenure);
+                        document.getElementById('interestRate').value = result.toFixed(4);
+                        resultDiv.innerHTML = `Interest Rate = <span class="text-primary">${result.toFixed(2)}% per annum</span>`;
+                        break;
+                        
+                    case 'Tenure':
+                        result = calculateTenure(loanAmount, emi, monthlyRate);
+                        document.getElementById('tenure').value = result.toFixed(0);
+                        resultDiv.innerHTML = `Tenure = <span class="text-primary">${result.toFixed(0)} months</span> (${(result / 12).toFixed(1)} years)`;
+                        break;
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="text-red-500">${error.message}</span>`;
+            }
+        }
+        
+        // Calculation functions
+        function calculateEMI(principal, rate, tenure) {
+            // EMI = P × r × (1+r)^n / [(1+r)^n - 1]
+            const numerator = principal * rate * Math.pow(1 + rate, tenure);
+            const denominator = Math.pow(1 + rate, tenure) - 1;
+            return numerator / denominator;
+        }
+        
+        function calculateLoanAmount(emi, rate, tenure) {
+            // P = EMI × [(1+r)^n - 1] / [r × (1+r)^n]
+            const numerator = emi * (Math.pow(1 + rate, tenure) - 1);
+            const denominator = rate * Math.pow(1 + rate, tenure);
+            return numerator / denominator;
+        }
+        
+        function calculateInterestRate(principal, emi, tenure) {
+            // This requires an iterative approach (Newton-Raphson method)
+            let guess = 0.01; // Start with 1% monthly rate
+            const precision = 0.0000001;
+            const maxIterations = 100;
+            
+            for (let i = 0; i < maxIterations; i++) {
+                // Function: f(r) = P*r*(1+r)^n / ((1+r)^n - 1) - EMI
+                const f = calculateEMI(principal, guess, tenure) - emi;
+                
+                // If we're close enough to zero, we've found our rate
+                if (Math.abs(f) < precision) {
+                    break;
+                }
+                
+                // Derivative: f'(r) ≈ (f(r+Δr) - f(r)) / Δr
+                const delta = 0.0000001;
+                const fPrime = (calculateEMI(principal, guess + delta, tenure) - calculateEMI(principal, guess, tenure)) / delta;
+                
+                // Newton-Raphson update: r = r - f(r)/f'(r)
+                guess = guess - f / fPrime;
+                
+                // Check for negative or zero rates
+                if (guess <= 0) {
+                    guess = 0.000001; // Reset to a small positive value
+                }
+            }
+            
+            // Convert monthly rate to annual percentage
+            return guess * 12 * 100;
+        }
+        
+        function calculateTenure(principal, emi, rate) {
+            // n = log(EMI / (EMI - P*r)) / log(1+r)
+            if (emi <= principal * rate) {
+                throw new Error("EMI is too small to repay the loan");
+            }
+            
+            const numerator = Math.log(emi / (emi - principal * rate));
+            const denominator = Math.log(1 + rate);
+            return numerator / denominator;
+        }
+        
+        function formatCurrency(amount) {
+            return amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        
+        function updateFormulaExplanation(type) {
+            const formulaDiv = document.getElementById('formulaExplanation');
+            
+            let formulaHTML = "";
+            switch (type) {
+                case 'EMI':
+                    formulaHTML = `
+                        <p class="mb-2"><strong>EMI Formula:</strong></p>
+                        <p class="font-mono bg-gray-100 dark:bg-gray-900 p-2 rounded mb-2 overflow-x-auto">EMI = P × r × (1+r)^n / [(1+r)^n - 1]</p>
+                        <p class="mb-2">Where:</p>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>P = Principal loan amount</li>
+                            <li>r = Monthly interest rate (Annual rate ÷ 12 ÷ 100)</li>
+                            <li>n = Loan tenure in months</li>
+                        </ul>
+                    `;
+                    break;
+                    
+                case 'LoanAmount':
+                    formulaHTML = `
+                        <p class="mb-2"><strong>Loan Amount Formula:</strong></p>
+                        <p class="font-mono bg-gray-100 dark:bg-gray-900 p-2 rounded mb-2 overflow-x-auto">P = EMI × [(1+r)^n - 1] / [r × (1+r)^n]</p>
+                        <p class="mb-2">Where:</p>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>EMI = Equated Monthly Installment</li>
+                            <li>r = Monthly interest rate (Annual rate ÷ 12 ÷ 100)</li>
+                            <li>n = Loan tenure in months</li>
+                        </ul>
+                    `;
+                    break;
+                    
+                case 'InterestRate':
+                    formulaHTML = `
+                        <p class="mb-2"><strong>Interest Rate Calculation:</strong></p>
+                        <p class="font-mono bg-gray-100 dark:bg-gray-900 p-2 rounded mb-2 overflow-x-auto">Uses iterative method (Newton-Raphson) to solve for r in the EMI equation</p>
+                        <p class="mb-2">Starting with the standard EMI formula:</p>
+                        <p class="font-mono bg-gray-100 dark:bg-gray-900 p-2 rounded mb-2 overflow-x-auto">EMI = P × r × (1+r)^n / [(1+r)^n - 1]</p>
+                        <p class="mb-2">The calculator iteratively finds the value of r that satisfies this equation.</p>
+                    `;
+                    break;
+                    
+                case 'Tenure':
+                    formulaHTML = `
+                        <p class="mb-2"><strong>Tenure Formula:</strong></p>
+                        <p class="font-mono bg-gray-100 dark:bg-gray-900 p-2 rounded mb-2 overflow-x-auto">n = log(EMI / (EMI - P×r)) / log(1+r)</p>
+                        <p class="mb-2">Where:</p>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>EMI = Equated Monthly Installment</li>
+                            <li>P = Principal loan amount</li>
+                            <li>r = Monthly interest rate (Annual rate ÷ 12 ÷ 100)</li>
+                        </ul>
+                        <p class="mt-2 text-xs">Note: The EMI must be greater than the monthly interest on the loan (P×r)</p>
+                    `;
+                    break;
+            }
+            
+            formulaDiv.innerHTML = formulaHTML;
+        }
+    </script>
+</body>
+</html>
