@@ -23,8 +23,7 @@
                         tahoma: ['Tahoma', 'Geneva', 'sans-serif']
                     }
                 }
-            },
-            darkMode: 'class'
+            }
         }
     </script>
     <style>
@@ -42,51 +41,6 @@
         .custom-btn:hover {
             opacity: 0.9;
             transform: translateY(-1px);
-        }
-        
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-        
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 24px;
-        }
-        
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .toggle-slider {
-            background-color: #2D336B !important;
-        }
-        
-        input:checked + .toggle-slider:before {
-            transform: translateX(26px);
         }
         
         .gradient-primary {
@@ -181,17 +135,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 transition-colors duration-200 font-tahoma">
-    <!-- Theme toggle -->
-    <div class="flex justify-end items-center p-2">
-        <span class="mr-2 text-gray-700 dark:text-gray-300"><i class="fas fa-sun"></i></span>
-        <label class="toggle-switch">
-            <input type="checkbox" id="themeToggle">
-            <span class="toggle-slider"></span>
-        </label>
-        <span class="ml-2 text-gray-700 dark:text-gray-300"><i class="fas fa-moon"></i></span>
-    </div>
-    
+<body class="bg-gray-50 font-tahoma">
     <div class="container mx-auto px-3 py-2 max-w-6xl">
         <h1 class="text-2xl md:text-3xl font-bold text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">Management Information System</h1>
         
@@ -210,8 +154,8 @@
         
         <!-- Section Content Containers -->
         <div id="entrySection" class="section active">
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
-                <h2 class="text-xl font-bold text-primary dark:text-white mb-4">Customer Data Entry</h2>
+            <div class="bg-white p-4 rounded-lg shadow-md">
+                <h2 class="text-xl font-bold text-primary mb-4">Customer Data Entry</h2>
                 
                 <form id="entryForm" class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -219,59 +163,59 @@
                         <div class="space-y-4">
                             <!-- CID -->
                             <div>
-                                <label for="cid" class="block text-gray-700 dark:text-gray-300 font-medium required">CID</label>
-                                <input type="number" id="cid" name="cid" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" required>
+                                <label for="cid" class="block text-gray-700 font-medium required">CID</label>
+                                <input type="number" id="cid" name="cid" class="w-full border rounded-md p-2 text-base" required>
                                 <p id="cidError" class="text-red-500 text-sm hidden">CID must be unique</p>
                             </div>
                             
                             <!-- App ID -->
                             <div>
-                                <label for="appId" class="block text-gray-700 dark:text-gray-300 font-medium">App ID</label>
-                                <input type="number" id="appId" name="appId" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                                <label for="appId" class="block text-gray-700 font-medium">App ID</label>
+                                <input type="number" id="appId" name="appId" class="w-full border rounded-md p-2 text-base">
                             </div>
                             
                             <!-- Proposition -->
                             <div>
-                                <label class="block text-gray-700 dark:text-gray-300 font-medium required">Proposition</label>
+                                <label class="block text-gray-700 font-medium required">Proposition</label>
                                 <div class="flex space-x-4 mt-2">
                                     <label class="inline-flex items-center">
                                         <input type="radio" name="proposition" value="Conventional" class="form-radio" checked>
-                                        <span class="ml-2 text-gray-700 dark:text-gray-300">Conventional</span>
+                                        <span class="ml-2 text-gray-700">Conventional</span>
                                     </label>
                                     <label class="inline-flex items-center">
                                         <input type="radio" name="proposition" value="Islamic" class="form-radio">
-                                        <span class="ml-2 text-gray-700 dark:text-gray-300">Islamic</span>
+                                        <span class="ml-2 text-gray-700">Islamic</span>
                                     </label>
                                     <label class="inline-flex items-center">
                                         <input type="radio" name="proposition" value="Both" class="form-radio">
-                                        <span class="ml-2 text-gray-700 dark:text-gray-300">Both</span>
+                                        <span class="ml-2 text-gray-700">Both</span>
                                     </label>
                                 </div>
                             </div>
                             
                             <!-- Date -->
                             <div>
-                                <label for="date" class="block text-gray-700 dark:text-gray-300 font-medium required">Date</label>
-                                <input type="date" id="date" name="date" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" required>
+                                <label for="date" class="block text-gray-700 font-medium required">Date</label>
+                                <input type="date" id="date" name="date" class="w-full border rounded-md p-2 text-base" required>
                             </div>
                             
                             <!-- Salary -->
                             <div>
-                                <label for="salary" class="block text-gray-700 dark:text-gray-300 font-medium required">Salary</label>
-                                <input type="number" id="salary" name="salary" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" required>
+                                <label for="salary" class="block text-gray-700 font-medium required">Salary</label>
+                                <input type="number" id="salary" name="salary" class="w-full border rounded-md p-2 text-base" required>
                             </div>
                             
                             <!-- Customer Name -->
                             <div>
-                                <label for="customerName" class="block text-gray-700 dark:text-gray-300 font-medium required">Customer Name</label>
-                                <input type="text" id="customerName" name="customerName" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" required>
+                                <label for="customerName" class="block text-gray-700 font-medium required">Customer Name</label>
+                                <input type="text" id="customerName" name="customerName" class="w-full border rounded-md p-2 text-base" required>
                                 <p id="nameError" class="text-red-500 text-sm hidden">Customer name must be unique</p>
                             </div>
                             
                             <!-- Mobile -->
                             <div>
-                                <label for="mobile" class="block text-gray-700 dark:text-gray-300 font-medium required">Mobile</label>
-                                <input type="number" id="mobile" name="mobile" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" required>
+                                <label for="mobile" class="block text-gray-700 font-medium required">Mobile</label>
+                                <input type="number" id="mobile" name="mobile" class="w-full border rounded-md p-2 text-base" required>
                                 <p id="mobileError" class="text-red-500 text-sm hidden">Mobile number must be unique</p>
                             </div>
                         </div>
@@ -280,27 +224,31 @@
                         <div class="space-y-4">
                             <!-- Products -->
                             <div>
-                                <label class="block text-gray-700 dark:text-gray-300 font-medium required">Products</label>
+                                <label class="block text-gray-700 font-medium required">Products</label>
                                 <div class="grid grid-cols-2 gap-2 mt-2">
                                     <label class="inline-flex items-center">
                                         <input type="checkbox" name="products" value="ACC" class="form-checkbox" id="productACC">
-                                        <span class="ml-2 text-gray-700 dark:text-gray-300">ACC</span>
+                                        <span class="ml-2 text-gray-700">ACC</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="products" value="STL" class="form-checkbox" id="productSTL" disabled>
+                                        <span class="ml-2 text-gray-700">STL</span>
                                     </label>
                                     <label class="inline-flex items-center">
                                         <input type="checkbox" name="products" value="CC" class="form-checkbox" id="productCC">
-                                        <span class="ml-2 text-gray-700 dark:text-gray-300">CC</span>
+                                        <span class="ml-2 text-gray-700">CC</span>
                                     </label>
                                     <label class="inline-flex items-center">
                                         <input type="checkbox" name="products" value="2ndCC" class="form-checkbox" id="product2ndCC">
-                                        <span class="ml-2 text-gray-700 dark:text-gray-300">2nd CC</span>
+                                        <span class="ml-2 text-gray-700">2nd CC</span>
                                     </label>
                                     <label class="inline-flex items-center">
-                                        <input type="checkbox" name="products" value="BT/CCL" class="form-checkbox">
-                                        <span class="ml-2 text-gray-700 dark:text-gray-300">BT/CCL</span>
+                                        <input type="checkbox" name="products" value="BT/CCL" class="form-checkbox" id="productBTCCL">
+                                        <span class="ml-2 text-gray-700">BT/CCL</span>
                                     </label>
                                     <label class="inline-flex items-center">
                                         <input type="checkbox" name="products" value="PL" class="form-checkbox" id="productPL">
-                                        <span class="ml-2 text-gray-700 dark:text-gray-300">PL</span>
+                                        <span class="ml-2 text-gray-700">PL</span>
                                     </label>
                                 </div>
                                 <p id="productsError" class="text-red-500 text-sm hidden">Please select at least one product</p>
@@ -313,14 +261,14 @@
                             
                             <!-- Loan Amount (Only shown for PL) -->
                             <div id="loanAmountSection" class="hidden">
-                                <label for="loanAmount" class="block text-gray-700 dark:text-gray-300 font-medium">Loan Amount</label>
-                                <input type="number" id="loanAmount" name="loanAmount" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                                <label for="loanAmount" class="block text-gray-700 font-medium">Loan Amount</label>
+                                <input type="number" id="loanAmount" name="loanAmount" class="w-full border rounded-md p-2 text-base">
                             </div>
                             
                             <!-- Banking -->
                             <div>
-                                <label for="banking" class="block text-gray-700 dark:text-gray-300 font-medium">Banking</label>
-                                <select id="banking" name="banking" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                                <label for="banking" class="block text-gray-700 font-medium">Banking</label>
+                                <select id="banking" name="banking" class="w-full border rounded-md p-2 text-base">
                                     <option value="SELECT">SELECT</option>
                                     <option value="ADCB">ADCB</option>
                                     <option value="ENBD">ENBD</option>
@@ -336,43 +284,43 @@
                                     <option value="Other">Other</option>
                                 </select>
                                 <div id="otherBankingSection" class="mt-2 hidden">
-                                    <input type="text" id="otherBanking" name="otherBanking" placeholder="Specify bank" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                                    <input type="text" id="otherBanking" name="otherBanking" placeholder="Specify bank" class="w-full border rounded-md p-2 text-base">
                                 </div>
                             </div>
                             
                             <!-- Company Name -->
                             <div>
-                                <label for="companyName" class="block text-gray-700 dark:text-gray-300 font-medium">Company Name</label>
-                                <input type="text" id="companyName" name="companyName" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                                <label for="companyName" class="block text-gray-700 font-medium">Company Name</label>
+                                <input type="text" id="companyName" name="companyName" class="w-full border rounded-md p-2 text-base">
                             </div>
                             
                             <!-- Scheme -->
                             <div>
-                                <label class="block text-gray-700 dark:text-gray-300 font-medium required">Scheme</label>
+                                <label class="block text-gray-700 font-medium required">Scheme</label>
                                 <div class="flex flex-wrap gap-4 mt-2">
                                     <label class="inline-flex items-center">
                                         <input type="radio" name="scheme" value="TML ALL" class="form-radio" checked>
-                                        <span class="ml-2 text-gray-700 dark:text-gray-300">TML ALL</span>
+                                        <span class="ml-2 text-gray-700">TML ALL</span>
                                     </label>
                                     <label class="inline-flex items-center">
                                         <input type="radio" name="scheme" value="TML CC" class="form-radio">
-                                        <span class="ml-2 text-gray-700 dark:text-gray-300">TML CC</span>
+                                        <span class="ml-2 text-gray-700">TML CC</span>
                                     </label>
                                     <label class="inline-flex items-center">
                                         <input type="radio" name="scheme" value="TM SELECT" class="form-radio">
-                                        <span class="ml-2 text-gray-700 dark:text-gray-300">TM SELECT</span>
+                                        <span class="ml-2 text-gray-700">TM SELECT</span>
                                     </label>
                                     <label class="inline-flex items-center">
                                         <input type="radio" name="scheme" value="NTML" class="form-radio">
-                                        <span class="ml-2 text-gray-700 dark:text-gray-300">NTML</span>
+                                        <span class="ml-2 text-gray-700">NTML</span>
                                     </label>
                                 </div>
                             </div>
                             
                             <!-- Status -->
                             <div>
-                                <label for="status" class="block text-gray-700 dark:text-gray-300 font-medium required">Status</label>
-                                <select id="status" name="status" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" required>
+                                <label for="status" class="block text-gray-700 font-medium required">Status</label>
+                                <select id="status" name="status" class="w-full border rounded-md p-2 text-base" required>
                                     <option value="">Select Status</option>
                                     <option value="Draft">Draft</option>
                                     <option value="Under Review">Under Review</option>
@@ -382,29 +330,29 @@
                                     <option value="Other">Other</option>
                                 </select>
                                 <div id="otherStatusSection" class="mt-2 hidden">
-                                    <input type="text" id="otherStatus" name="otherStatus" placeholder="Specify status" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                                    <input type="text" id="otherStatus" name="otherStatus" placeholder="Specify status" class="w-full border rounded-md p-2 text-base">
                                 </div>
                             </div>
                             
                             <!-- Activation -->
                             <div>
-                                <label class="block text-gray-700 dark:text-gray-300 font-medium required">Activation</label>
+                                <label class="block text-gray-700 font-medium required">Activation</label>
                                 <div class="flex space-x-4 mt-2">
                                     <label class="inline-flex items-center">
                                         <input type="radio" name="activation" value="Non Activated" class="form-radio" checked>
-                                        <span class="ml-2 text-gray-700 dark:text-gray-300">Non Activated</span>
+                                        <span class="ml-2 text-gray-700">Non Activated</span>
                                     </label>
                                     <label class="inline-flex items-center">
                                         <input type="radio" name="activation" value="Activated" class="form-radio">
-                                        <span class="ml-2 text-gray-700 dark:text-gray-300">Activated</span>
+                                        <span class="ml-2 text-gray-700">Activated</span>
                                     </label>
                                 </div>
                             </div>
                             
                             <!-- Points (System Generated) -->
                             <div>
-                                <label for="points" class="block text-gray-700 dark:text-gray-300 font-medium">Points (System Generated)</label>
-                                <input type="text" id="points" name="points" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white bg-gray-100" readonly>
+                                <label for="points" class="block text-gray-700 font-medium">Points (System Generated)</label>
+                                <input type="text" id="points" name="points" class="w-full border rounded-md p-2 text-base bg-gray-100" readonly>
                             </div>
                         </div>
                     </div>
@@ -430,9 +378,9 @@
         
         <!-- View Data Section -->
         <div id="viewSection" class="section">
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+            <div class="bg-white p-4 rounded-lg shadow-md">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold text-primary dark:text-white">View All Records</h2>
+                    <h2 class="text-xl font-bold text-primary">View All Records</h2>
                     <button id="refreshDataBtn" class="custom-btn text-white py-2 px-4 rounded-md flex items-center">
                         <i class="fas fa-sync-alt mr-2"></i> Refresh Data
                     </button>
@@ -462,21 +410,21 @@
         
         <!-- Search Section -->
         <div id="searchSection" class="section">
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
-                <h2 class="text-xl font-bold text-primary dark:text-white mb-4">Search Records</h2>
+            <div class="bg-white p-4 rounded-lg shadow-md">
+                <h2 class="text-xl font-bold text-primary mb-4">Search Records</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <div>
-                        <label for="searchCID" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">Search by CID</label>
-                        <input type="number" id="searchCID" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                        <label for="searchCID" class="block text-gray-700 font-medium mb-2">Search by CID</label>
+                        <input type="number" id="searchCID" class="w-full border rounded-md p-2 text-base">
                     </div>
                     <div>
-                        <label for="searchName" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">Search by Customer Name</label>
-                        <input type="text" id="searchName" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                        <label for="searchName" class="block text-gray-700 font-medium mb-2">Search by Customer Name</label>
+                        <input type="text" id="searchName" class="w-full border rounded-md p-2 text-base">
                     </div>
                     <div>
-                        <label for="searchMobile" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">Search by Mobile</label>
-                        <input type="number" id="searchMobile" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                        <label for="searchMobile" class="block text-gray-700 font-medium mb-2">Search by Mobile</label>
+                        <input type="number" id="searchMobile" class="w-full border rounded-md p-2 text-base">
                     </div>
                 </div>
                 
@@ -523,35 +471,6 @@
         // ==========================================
         // THEME AND UI FUNCTIONALITY
         // ==========================================
-
-        // Theme toggle functionality
-        const themeToggle = document.getElementById('themeToggle');
-        
-        // Check for dark mode preference
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.classList.add('dark');
-            themeToggle.checked = true;
-        }
-
-        // Listen for theme changes
-        themeToggle.addEventListener('change', function() {
-            if (this.checked) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        });
-
-        // Listen for system preference changes
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-            if (event.matches) {
-                document.documentElement.classList.add('dark');
-                themeToggle.checked = true;
-            } else {
-                document.documentElement.classList.remove('dark');
-                themeToggle.checked = false;
-            }
-        });
 
         // Section navigation
         const showEntryBtn = document.getElementById('showEntryBtn');
@@ -642,8 +561,10 @@
         const otherStatusInput = document.getElementById('otherStatus');
         const pointsInput = document.getElementById('points');
         const productACC = document.getElementById('productACC');
+        const productSTL = document.getElementById('productSTL');
         const productCC = document.getElementById('productCC');
         const product2ndCC = document.getElementById('product2ndCC');
+        const productBTCCL = document.getElementById('productBTCCL');
         const productPL = document.getElementById('productPL');
         const loanAmountSection = document.getElementById('loanAmountSection');
         const loanAmountInput = document.getElementById('loanAmount');
@@ -676,6 +597,10 @@
             // Clear points
             pointsInput.value = '';
             
+            // Disable dependent checkboxes
+            productSTL.disabled = true;
+            product2ndCC.disabled = true;
+            
             // Clear any error styling
             document.querySelectorAll('.error-field').forEach(field => {
                 field.classList.remove('error-field');
@@ -701,6 +626,19 @@
         });
 
         // Product checkbox change events
+        productACC.addEventListener('change', function() {
+            // Enable/disable STL checkbox based on ACC checkbox
+            productSTL.disabled = !this.checked;
+            if (!this.checked) {
+                productSTL.checked = false;
+            }
+            updateProductOptions();
+        });
+
+        productSTL.addEventListener('change', function() {
+            calculateTotalPoints();
+        });
+
         productPL.addEventListener('change', function() {
             if (this.checked) {
                 loanAmountSection.classList.remove('hidden');
@@ -708,10 +646,6 @@
                 loanAmountSection.classList.add('hidden');
                 loanAmountInput.value = '';
             }
-            updateProductOptions();
-        });
-
-        productACC.addEventListener('change', function() {
             updateProductOptions();
         });
 
@@ -726,6 +660,10 @@
 
         product2ndCC.addEventListener('change', function() {
             updateProductOptions();
+        });
+
+        productBTCCL.addEventListener('change', function() {
+            calculateTotalPoints();
         });
 
         // Proposition radio button change event
@@ -745,8 +683,9 @@
             const today = new Date().toISOString().split('T')[0];
             dateInput.value = today;
             
-            // Disable 2nd CC initially
+            // Disable 2nd CC and STL initially
             product2ndCC.disabled = true;
+            productSTL.disabled = true;
         });
 
         // ==========================================
@@ -757,6 +696,7 @@
         let currentSelections = {
             ACC: '',
             CC: '',
+            CCOption2: '',
             PL: ''
         };
 
@@ -765,10 +705,12 @@
             // Save current dropdown selections before updating
             const accSelect = document.getElementById('ACCSelect');
             const ccSelect = document.getElementById('CCSelect');
+            const ccSelect2 = document.getElementById('CCSelect2');
             const plSelect = document.getElementById('PLSelect');
             
             if (accSelect) currentSelections.ACC = accSelect.value;
             if (ccSelect) currentSelections.CC = ccSelect.value;
+            if (ccSelect2) currentSelections.CCOption2 = ccSelect2.value;
             if (plSelect) currentSelections.PL = plSelect.value;
             
             productOptionsContainer.innerHTML = '';
@@ -809,6 +751,24 @@
                         newCcSelect.value = currentSelections.CC;
                     }
                 }
+                
+                // Process 2nd CC product (only when CC is checked and 2ndCC is checked)
+                if (product2ndCC.checked) {
+                    const ccOptions = getCCOptions(proposition);
+                    if (ccOptions.length > 0) {
+                        const cc2Div = createProductOptionDiv('CC2', ccOptions, '2nd CC');
+                        productOptionsContainer.appendChild(cc2Div);
+                        
+                        // Add change event to 2nd CC select
+                        const newCc2Select = cc2Div.querySelector('select');
+                        newCc2Select.addEventListener('change', calculateTotalPoints);
+                        
+                        // Restore previous selection if it exists
+                        if (currentSelections.CCOption2 && newCc2Select.querySelector(`option[value="${currentSelections.CCOption2}"]`)) {
+                            newCc2Select.value = currentSelections.CCOption2;
+                        }
+                    }
+                }
             }
             
             // Process PL product
@@ -837,12 +797,15 @@
         }
 
         // Create a product option div with dropdown
-        function createProductOptionDiv(productType, options) {
+        function createProductOptionDiv(productType, options, customLabel) {
             const div = document.createElement('div');
+            const label = customLabel || productType + ' Option';
+            const id = productType === 'CC2' ? 'CCSelect2' : `${productType}Select`;
+            
             div.innerHTML = `
-                <label for="${productType}Select" class="block text-gray-700 dark:text-gray-300 font-medium">${productType} Option</label>
-                <select id="${productType}Select" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" data-product="${productType}">
-                    <option value="">Select ${productType} Option</option>
+                <label for="${id}" class="block text-gray-700 font-medium">${label}</label>
+                <select id="${id}" class="w-full border rounded-md p-2 text-base" data-product="${productType}">
+                    <option value="">Select ${label}</option>
                     ${options.map(option => `<option value="${option.value}" data-points="${option.points}" data-paid="${option.paid || false}">${option.text}</option>`).join('')}
                 </select>
             `;
@@ -853,26 +816,29 @@
         function getACCOptions(proposition, salary) {
             const options = [];
             
-            // Common options for all propositions based on salary
+            // Only add options that match the salary range
             if (salary >= 5000 && salary < 10000) {
-                options.push({ value: "Aspire5K-10K", text: "Aspire 5K-10K", points: 150 });
+                options.push({ value: "Aspire5K-10K", text: "Aspire 5K-10K (Salary: 5000-9999)", points: 75 });
             }
             if (salary >= 10000 && salary < 20000) {
-                options.push({ value: "Aspire10K-20K", text: "Aspire 10K-20K", points: 350 });
+                options.push({ value: "Aspire10K-20K", text: "Aspire 10K-20K (Salary: 10000-19999)", points: 175 });
             }
             if (salary >= 20000 && salary < 30000) {
-                options.push({ value: "Privilege20K-30K", text: "Privilege 20K-30K", points: 450 });
+                options.push({ value: "Privilege20K-30K", text: "Privilege 20K-30K (Salary: 20000-29999)", points: 225 });
             }
             if (salary >= 30000 && salary < 75000) {
-                options.push({ value: "Privilege30K-75K", text: "Privilege 30K-75K", points: 750 });
+                options.push({ value: "Privilege30K-75K", text: "Privilege 30K-75K (Salary: 30000-74999)", points: 375 });
             }
             if (salary >= 75000) {
-                options.push({ value: "Privilege75K+", text: "Privilege 75K & Above", points: 1300 });
+                options.push({ value: "Privilege75K+", text: "Privilege 75K & Above (Salary: 75000+)", points: 650 });
             }
             
             // Add Islamic-specific option
-            if (proposition === "Islamic" || proposition === "Both") {
-                options.push({ value: "MDSA", text: "MDSA", points: 150 });
+            if ((proposition === "Islamic" || proposition === "Both") && salary >= 5000) {
+                options.push({ value: "MDSA", text: "MDSA", points: salary >= 75000 ? 650 : 
+                                                           salary >= 30000 ? 375 : 
+                                                           salary >= 20000 ? 225 : 
+                                                           salary >= 10000 ? 175 : 75 });
             }
             
             return options;
@@ -952,7 +918,13 @@
                 const accSelect = document.getElementById('ACCSelect');
                 if (accSelect && accSelect.value) {
                     const selectedOption = accSelect.options[accSelect.selectedIndex];
-                    totalPoints += parseInt(selectedOption.dataset.points) || 0;
+                    const accPoints = parseInt(selectedOption.dataset.points) || 0;
+                    totalPoints += accPoints;
+                    
+                    // Add points for STL if checked (same as ACC)
+                    if (productSTL.checked) {
+                        totalPoints += accPoints;
+                    }
                 }
             }
             
@@ -965,10 +937,22 @@
                     
                     // Check for 2nd CC
                     if (product2ndCC.checked) {
-                        const isPaid = selectedOption.dataset.paid === "true";
-                        totalPoints += isPaid ? 250 : 125;
+                        const cc2Select = document.getElementById('CCSelect2');
+                        if (cc2Select && cc2Select.value) {
+                            const selectedOption2 = cc2Select.options[cc2Select.selectedIndex];
+                            totalPoints += parseInt(selectedOption2.dataset.points) || 0;
+                        } else {
+                            // Fallback to original behavior if 2nd CC option not selected
+                            const isPaid = selectedOption.dataset.paid === "true";
+                            totalPoints += isPaid ? 250 : 125;
+                        }
                     }
                 }
+            }
+            
+            // Add points for BT/CCL
+            if (productBTCCL.checked) {
+                totalPoints += 100;
             }
             
             // Calculate points for PL
@@ -1062,18 +1046,18 @@
             data.forEach(row => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${row.cid}</td>
-                    <td>${row.customerName}</td>
-                    <td>${row.mobile}</td>
-                    <td>${row.productList || ''}</td>
-                    <td>${row.banking}</td>
-                    <td>${row.status}</td>
-                    <td>${row.points}</td>
+                    <td>${row.CID || ''}</td>
+                    <td>${row['Customer Name'] || ''}</td>
+                    <td>${row.Mobile || ''}</td>
+                    <td>${row.Product || ''}</td>
+                    <td>${row.Banking || ''}</td>
+                    <td>${row.Status || ''}</td>
+                    <td>${row.Points || ''}</td>
                     <td>
-                        <button class="edit-btn bg-blue-600 text-white p-1 rounded mr-1" data-cid="${row.cid}">
+                        <button class="edit-btn bg-blue-600 text-white p-1 rounded mr-1" data-cid="${row.CID}">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="delete-btn bg-red-600 text-white p-1 rounded" data-cid="${row.cid}">
+                        <button class="delete-btn bg-red-600 text-white p-1 rounded" data-cid="${row.CID}">
                             <i class="fas fa-trash-alt"></i>
                         </button>
                     </td>
@@ -1100,50 +1084,50 @@
         }
 
         // Submit form data
-async function submitFormData(formData) {
-    showLoading();
-    
-    // Log the form data before sending
-    console.log("Submitting form data:");
-    for (let pair of formData.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
-    }
-    
-    try {
-        const response = await fetch(scriptURL, {
-            method: 'POST',
-            body: formData
-        });
-        
-        console.log("Response status:", response.status);
-        const responseText = await response.text();
-        console.log("Raw response:", responseText);
-        
-        let data;
-        try {
-            data = JSON.parse(responseText);
-            console.log("Parsed response:", data);
-        } catch (parseError) {
-            console.error("Error parsing response:", parseError);
-            showSuccess('Error: Could not parse server response');
-            hideLoading();
-            return;
+        async function submitFormData(formData) {
+            showLoading();
+            
+            // Log the form data before sending
+            console.log("Submitting form data:");
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ': ' + pair[1]);
+            }
+            
+            try {
+                const response = await fetch(scriptURL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                console.log("Response status:", response.status);
+                const responseText = await response.text();
+                console.log("Raw response:", responseText);
+                
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                    console.log("Parsed response:", data);
+                } catch (parseError) {
+                    console.error("Error parsing response:", parseError);
+                    showSuccess('Error: Could not parse server response');
+                    hideLoading();
+                    return;
+                }
+                
+                if (data.success) {
+                    showSuccess('Data submitted successfully!');
+                    resetForm();
+                    fetchAllData(); // Refresh data table
+                } else {
+                    showSuccess(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                showSuccess('Error submitting data: ' + error.message);
+            } finally {
+                hideLoading();
+            }
         }
-        
-        if (data.success) {
-            showSuccess('Data submitted successfully!');
-            resetForm();
-            fetchAllData(); // Refresh data table
-        } else {
-            showSuccess(`Error: ${data.error}`);
-        }
-    } catch (error) {
-        console.error('Error submitting form:', error);
-        showSuccess('Error submitting data: ' + error.message);
-    } finally {
-        hideLoading();
-    }
-}
 
         // Update existing record
         async function updateRecord(formData) {
@@ -1230,20 +1214,20 @@ async function submitFormData(formData) {
             resetForm();
             
             // Populate basic fields
-            cidInput.value = data.cid;
+            cidInput.value = data.CID || '';
             cidInput.readOnly = true; // CID should not be editable during update
-            appIdInput.value = data.appId || '';
-            dateInput.value = data.date || '';
-            salaryInput.value = data.salary || '';
-            customerNameInput.value = data.customerName || '';
-            mobileInput.value = data.mobile || '';
-            companyNameInput.value = data.companyName || '';
-            pointsInput.value = data.points || '';
+            appIdInput.value = data['App ID'] || '';
+            dateInput.value = data.Date || '';
+            salaryInput.value = data.Salary || '';
+            customerNameInput.value = data['Customer Name'] || '';
+            mobileInput.value = data.Mobile || '';
+            companyNameInput.value = data['Company Name'] || '';
+            pointsInput.value = data.Points || '';
             
             // Set proposition
             const propositionRadios = document.getElementsByName('proposition');
             for (let radio of propositionRadios) {
-                if (radio.value === data.proposition) {
+                if (radio.value === data.Proposition) {
                     radio.checked = true;
                     break;
                 }
@@ -1252,7 +1236,7 @@ async function submitFormData(formData) {
             // Set scheme
             const schemeRadios = document.getElementsByName('scheme');
             for (let radio of schemeRadios) {
-                if (radio.value === data.scheme) {
+                if (radio.value === data.Scheme) {
                     radio.checked = true;
                     break;
                 }
@@ -1261,67 +1245,69 @@ async function submitFormData(formData) {
             // Set activation
             const activationRadios = document.getElementsByName('activation');
             for (let radio of activationRadios) {
-                if (radio.value === data.activation) {
+                if (radio.value === data.Activation) {
                     radio.checked = true;
                     break;
                 }
             }
             
             // Set banking
-            if (data.banking) {
-                if (['SELECT', 'ADCB', 'ENBD', 'EIB', 'FAB', 'DIB', 'MASHREQ', 'ADIB', 'RAK', 'CBD', 'HSBC', 'CITI'].includes(data.banking)) {
-                    bankingSelect.value = data.banking;
+            if (data.Banking) {
+                if (['SELECT', 'ADCB', 'ENBD', 'EIB', 'FAB', 'DIB', 'MASHREQ', 'ADIB', 'RAK', 'CBD', 'HSBC', 'CITI'].includes(data.Banking)) {
+                    bankingSelect.value = data.Banking;
                 } else {
                     bankingSelect.value = 'Other';
                     otherBankingSection.classList.remove('hidden');
-                    otherBankingInput.value = data.banking;
+                    otherBankingInput.value = data.Banking;
                 }
             }
             
             // Set status
-            if (data.status) {
-                if (['Draft', 'Under Review', 'Completed', 'HR CPV', 'Compliance'].includes(data.status)) {
-                    statusSelect.value = data.status;
+            if (data.Status) {
+                if (['Draft', 'Under Review', 'Completed', 'HR CPV', 'Compliance'].includes(data.Status)) {
+                    statusSelect.value = data.Status;
                 } else {
                     statusSelect.value = 'Other';
                     otherStatusSection.classList.remove('hidden');
-                    otherStatusInput.value = data.status;
+                    otherStatusInput.value = data.Status;
                 }
             }
             
             // Set products and their options
-            const products = (data.productList || '').split(',').map(p => p.trim());
+            const products = (data.Product || '').split(',').map(p => p.trim());
             
             // Reset product checkboxes
             productACC.checked = false;
+            productSTL.checked = false;
             productCC.checked = false;
             product2ndCC.checked = false;
+            productBTCCL.checked = false;
             productPL.checked = false;
             
             // Check appropriate product checkboxes
             products.forEach(product => {
                 if (product === 'ACC') productACC.checked = true;
+                if (product === 'STL') productSTL.checked = true;
                 if (product === 'CC') productCC.checked = true;
                 if (product === '2ndCC') product2ndCC.checked = true;
+                if (product === 'BT/CCL') productBTCCL.checked = true;
                 if (product === 'PL') productPL.checked = true;
-                if (product === 'BT/CCL') {
-                    const btCclCheckbox = document.querySelector('input[value="BT/CCL"]');
-                    if (btCclCheckbox) btCclCheckbox.checked = true;
-                }
             });
+            
+            // Enable/disable dependent checkboxes
+            productSTL.disabled = !productACC.checked;
+            product2ndCC.disabled = !productCC.checked;
             
             // Show/hide loan amount section
             if (productPL.checked) {
                 loanAmountSection.classList.remove('hidden');
-                loanAmountInput.value = data.loanAmount || '';
+                loanAmountInput.value = data['Loan Amount'] || '';
             }
-            
-            // Enable/disable 2nd CC checkbox based on CC checkbox
-            product2ndCC.disabled = !productCC.checked;
             
             // Store product options for later use
             if (data.accOption) currentSelections.ACC = data.accOption;
             if (data.ccOption) currentSelections.CC = data.ccOption;
+            if (data.ccOption2) currentSelections.CCOption2 = data.ccOption2;
             if (data.plOption) currentSelections.PL = data.plOption;
             
             // Update product options
@@ -1401,8 +1387,8 @@ async function submitFormData(formData) {
             }
             
             // Product validation - at least one product must be selected
-            const productSelected = productACC.checked || productCC.checked || product2ndCC.checked || 
-                                    document.querySelector('input[value="BT/CCL"]').checked || productPL.checked;
+            const productSelected = productACC.checked || productSTL.checked || productCC.checked || 
+                                   product2ndCC.checked || productBTCCL.checked || productPL.checked;
             
             if (!productSelected) {
                 document.getElementById('productsError').classList.remove('hidden');
@@ -1450,109 +1436,118 @@ async function submitFormData(formData) {
         }
 
         // Collect form data for submission
-function collectFormData() {
-    const formData = new FormData();
-    
-    // Add basic fields with proper debugging
-    console.log("Collecting form data:");
-    
-    console.log("CID:", cidInput.value);
-    formData.append('cid', cidInput.value);
-    
-    console.log("App ID:", appIdInput.value);
-    formData.append('appId', appIdInput.value);
-    
-    const proposition = document.querySelector('input[name="proposition"]:checked').value;
-    console.log("Proposition:", proposition);
-    formData.append('proposition', proposition);
-    
-    console.log("Date:", dateInput.value);
-    formData.append('date', dateInput.value);
-    
-    console.log("Salary:", salaryInput.value);
-    formData.append('salary', salaryInput.value);
-    
-    console.log("Customer Name:", customerNameInput.value);
-    formData.append('customerName', customerNameInput.value);
-    
-    console.log("Mobile:", mobileInput.value);
-    formData.append('mobile', mobileInput.value);
-    
-    // Banking
-    let bankingValue = bankingSelect.value;
-    if (bankingValue === 'Other') {
-        bankingValue = otherBankingInput.value || 'Other';
-    }
-    console.log("Banking:", bankingValue);
-    formData.append('banking', bankingValue);
-    
-    // Company Name
-    console.log("Company Name:", companyNameInput.value);
-    formData.append('companyName', companyNameInput.value);
-    
-    // Scheme
-    const scheme = document.querySelector('input[name="scheme"]:checked').value;
-    console.log("Scheme:", scheme);
-    formData.append('scheme', scheme);
-    
-    // Status
-    let statusValue = statusSelect.value;
-    if (statusValue === 'Other') {
-        statusValue = otherStatusInput.value || 'Other';
-    }
-    console.log("Status:", statusValue);
-    formData.append('status', statusValue);
-    
-    // Activation
-    const activation = document.querySelector('input[name="activation"]:checked').value;
-    console.log("Activation:", activation);
-    formData.append('activation', activation);
-    
-    // Points
-    console.log("Points:", pointsInput.value);
-    formData.append('points', pointsInput.value);
-    
-    // Products
-    const selectedProducts = [];
-    if (productACC.checked) selectedProducts.push('ACC');
-    if (productCC.checked) selectedProducts.push('CC');
-    if (product2ndCC.checked) selectedProducts.push('2ndCC');
-    if (document.querySelector('input[value="BT/CCL"]').checked) selectedProducts.push('BT/CCL');
-    if (productPL.checked) selectedProducts.push('PL');
-    
-    const productList = selectedProducts.join(', ');
-    console.log("Product List:", productList);
-    formData.append('productList', productList);
-    
-    // Product options
-    if (productACC.checked) {
-        const accSelect = document.getElementById('ACCSelect');
-        if (accSelect && accSelect.value) {
-            console.log("ACC Option:", accSelect.value);
-            formData.append('accOption', accSelect.value);
+        function collectFormData() {
+            const formData = new FormData();
+            
+            // Add basic fields with proper debugging
+            console.log("Collecting form data:");
+            
+            console.log("CID:", cidInput.value);
+            formData.append('cid', cidInput.value);
+            
+            console.log("App ID:", appIdInput.value);
+            formData.append('appId', appIdInput.value);
+            
+            const proposition = document.querySelector('input[name="proposition"]:checked').value;
+            console.log("Proposition:", proposition);
+            formData.append('proposition', proposition);
+            
+            console.log("Date:", dateInput.value);
+            formData.append('date', dateInput.value);
+            
+            console.log("Salary:", salaryInput.value);
+            formData.append('salary', salaryInput.value);
+            
+            console.log("Customer Name:", customerNameInput.value);
+            formData.append('customerName', customerNameInput.value);
+            
+            console.log("Mobile:", mobileInput.value);
+            formData.append('mobile', mobileInput.value);
+            
+            // Banking
+            let bankingValue = bankingSelect.value;
+            if (bankingValue === 'Other') {
+                bankingValue = otherBankingInput.value || 'Other';
+            }
+            console.log("Banking:", bankingValue);
+            formData.append('banking', bankingValue);
+            
+            // Company Name
+            console.log("Company Name:", companyNameInput.value);
+            formData.append('companyName', companyNameInput.value);
+            
+            // Scheme
+            const scheme = document.querySelector('input[name="scheme"]:checked').value;
+            console.log("Scheme:", scheme);
+            formData.append('scheme', scheme);
+            
+            // Status
+            let statusValue = statusSelect.value;
+            if (statusValue === 'Other') {
+                statusValue = otherStatusInput.value || 'Other';
+            }
+            console.log("Status:", statusValue);
+            formData.append('status', statusValue);
+            
+            // Activation
+            const activation = document.querySelector('input[name="activation"]:checked').value;
+            console.log("Activation:", activation);
+            formData.append('activation', activation);
+            
+            // Points
+            console.log("Points:", pointsInput.value);
+            formData.append('points', pointsInput.value);
+            
+            // Products
+            const selectedProducts = [];
+            if (productACC.checked) selectedProducts.push('ACC');
+            if (productSTL.checked) selectedProducts.push('STL');
+            if (productCC.checked) selectedProducts.push('CC');
+            if (product2ndCC.checked) selectedProducts.push('2ndCC');
+            if (productBTCCL.checked) selectedProducts.push('BT/CCL');
+            if (productPL.checked) selectedProducts.push('PL');
+            
+            const productList = selectedProducts.join(', ');
+            console.log("Product List:", productList);
+            formData.append('productList', productList);
+            
+            // Product options
+            if (productACC.checked) {
+                const accSelect = document.getElementById('ACCSelect');
+                if (accSelect && accSelect.value) {
+                    console.log("ACC Option:", accSelect.value);
+                    formData.append('accOption', accSelect.value);
+                }
+            }
+            
+            if (productCC.checked) {
+                const ccSelect = document.getElementById('CCSelect');
+                if (ccSelect && ccSelect.value) {
+                    console.log("CC Option:", ccSelect.value);
+                    formData.append('ccOption', ccSelect.value);
+                }
+                
+                if (product2ndCC.checked) {
+                    const cc2Select = document.getElementById('CCSelect2');
+                    if (cc2Select && cc2Select.value) {
+                        console.log("2nd CC Option:", cc2Select.value);
+                        formData.append('ccOption2', cc2Select.value);
+                    }
+                }
+            }
+            
+            if (productPL.checked) {
+                const plSelect = document.getElementById('PLSelect');
+                if (plSelect && plSelect.value) {
+                    console.log("PL Option:", plSelect.value);
+                    formData.append('plOption', plSelect.value);
+                }
+                console.log("Loan Amount:", loanAmountInput.value);
+                formData.append('loanAmount', loanAmountInput.value);
+            }
+            
+            return formData;
         }
-    }
-    
-    if (productCC.checked) {
-        const ccSelect = document.getElementById('CCSelect');
-        if (ccSelect && ccSelect.value) {
-            console.log("CC Option:", ccSelect.value);
-            formData.append('ccOption', ccSelect.value);
-        }
-    }
-    
-    if (productPL.checked) {
-        const plSelect = document.getElementById('PLSelect');
-        if (plSelect && plSelect.value) {
-            console.log("PL Option:", plSelect.value);
-            formData.append('plOption', plSelect.value);
-        }
-        console.log("Loan Amount:", loanAmountInput.value);
-        formData.append('loanAmount', loanAmountInput.value);
-    }
-    
-    return formData;
-}
 
         // ==========================================
         // EVENT LISTENERS
