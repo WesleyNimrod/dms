@@ -133,11 +133,30 @@
         .section.active {
             display: block;
         }
+        
+        .points-btn {
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            display: inline-flex;
+            align-items: center;
+            margin-right: 0.5rem;
+        }
+        
+        .points-btn.earned {
+            background-color: #10b981;
+            color: white;
+        }
+        
+        .points-btn.pending {
+            background-color: #f59e0b;
+            color: white;
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-tahoma">
     <div class="container mx-auto px-3 py-2 max-w-6xl">
-        <h1 class="text-2xl md:text-3xl font-bold text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">Management Information System</h1>
+
         
         <!-- Section Navigation Buttons -->
         <div class="mb-4 flex justify-center gap-4">
@@ -218,6 +237,12 @@
                                 <input type="number" id="mobile" name="mobile" class="w-full border rounded-md p-2 text-base" required>
                                 <p id="mobileError" class="text-red-500 text-sm hidden">Mobile number must be unique</p>
                             </div>
+                            
+                            <!-- Company Name (Moved here as requested in Fix 5) -->
+                            <div>
+                                <label for="companyName" class="block text-gray-700 font-medium">Company Name</label>
+                                <input type="text" id="companyName" name="companyName" class="w-full border rounded-md p-2 text-base">
+                            </div>
                         </div>
                         
                         <!-- Right Column -->
@@ -286,12 +311,6 @@
                                 <div id="otherBankingSection" class="mt-2 hidden">
                                     <input type="text" id="otherBanking" name="otherBanking" placeholder="Specify bank" class="w-full border rounded-md p-2 text-base">
                                 </div>
-                            </div>
-                            
-                            <!-- Company Name -->
-                            <div>
-                                <label for="companyName" class="block text-gray-700 font-medium">Company Name</label>
-                                <input type="text" id="companyName" name="companyName" class="w-full border rounded-md p-2 text-base">
                             </div>
                             
                             <!-- Scheme -->
@@ -379,11 +398,19 @@
         <!-- View Data Section -->
         <div id="viewSection" class="section">
             <div class="bg-white p-4 rounded-lg shadow-md">
-                <div class="flex justify-between items-center mb-4">
+                <div class="flex flex-wrap justify-between items-center mb-4">
                     <h2 class="text-xl font-bold text-primary">View All Records</h2>
-                    <button id="refreshDataBtn" class="custom-btn text-white py-2 px-4 rounded-md flex items-center">
-                        <i class="fas fa-sync-alt mr-2"></i> Refresh Data
-                    </button>
+                    <div class="flex flex-wrap gap-2 mt-2 sm:mt-0">
+                        <button id="earnPointsBtn" class="points-btn earned">
+                            <i class="fas fa-check-circle mr-2"></i> Earn Points: <span id="earnedPointsTotal">0</span>
+                        </button>
+                        <button id="pendingPointsBtn" class="points-btn pending">
+                            <i class="fas fa-hourglass-half mr-2"></i> Pending Points: <span id="pendingPointsTotal">0</span>
+                        </button>
+                        <button id="refreshDataBtn" class="custom-btn text-white py-2 px-4 rounded-md flex items-center">
+                            <i class="fas fa-sync-alt mr-2"></i> Refresh Data
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="overflow-x-auto">
@@ -391,10 +418,10 @@
                         <thead>
                             <tr>
                                 <th>CID</th>
+                                <th>App ID</th>
                                 <th>Customer Name</th>
                                 <th>Mobile</th>
                                 <th>Products</th>
-                                <th>Banking</th>
                                 <th>Status</th>
                                 <th>Points</th>
                                 <th>Actions</th>
@@ -439,10 +466,10 @@
                         <thead>
                             <tr>
                                 <th>CID</th>
+                                <th>App ID</th>
                                 <th>Customer Name</th>
                                 <th>Mobile</th>
                                 <th>Products</th>
-                                <th>Banking</th>
                                 <th>Status</th>
                                 <th>Points</th>
                                 <th>Actions</th>
@@ -601,10 +628,27 @@
             productSTL.disabled = true;
             product2ndCC.disabled = true;
             
+            // Enable CID input for new records
+            cidInput.readOnly = false;
+            
             // Clear any error styling
             document.querySelectorAll('.error-field').forEach(field => {
                 field.classList.remove('error-field');
             });
+            
+            // Clear stored product selections
+            currentSelections = {
+                ACC: '',
+                CC: '',
+                CCOption2: '',
+                PL: ''
+            };
+            
+            // Clear raw data for editing
+            editingData = null;
+            
+            // Clear raw product string
+            editingProductString = "";
         }
 
         // Banking select change event
@@ -699,6 +743,328 @@
             CCOption2: '',
             PL: ''
         };
+        
+        // Store raw editing data
+        let editingData = null;
+        let editingProductString = "";
+        
+        // Function to initialize product option dropdowns based on edit data
+        function initializeProductOptions() {
+            if (!editingData) return;
+            
+            console.log("Initializing product options for editing data:", editingData);
+            
+            // If we're editing a record with product data
+            const proposition = document.querySelector('input[name="proposition"]:checked').value;
+            const salary = parseFloat(salaryInput.value) || 0;
+            
+            // Check what products should be shown based on the product string
+            if (productACC.checked) {
+                console.log("ACC is checked, adding ACC options");
+                const accOptions = getACCOptions(proposition, salary);
+                
+                if (accOptions.length > 0) {
+                    const accDiv = createProductOptionDiv('ACC', accOptions);
+                    productOptionsContainer.appendChild(accDiv);
+                    
+                    const accSelect = document.getElementById('ACCSelect');
+                    if (accSelect) {
+                        console.log("Setting ACC select change event");
+                        accSelect.addEventListener('change', function() {
+                            // Check if selected option disables STL
+                            const selectedOption = this.options[this.selectedIndex];
+                            const disableSTL = selectedOption.dataset.disablestl === "true";
+                            
+                            // Enable/disable STL based on selected option
+                            if (disableSTL) {
+                                productSTL.disabled = true;
+                                productSTL.checked = false;
+                            } else {
+                                productSTL.disabled = false;
+                            }
+                            
+                            calculateTotalPoints();
+                        });
+                        
+                        // Try to set the correct value
+                        setAccDropdownValue(accSelect, editingData, salary);
+                    }
+                }
+            }
+            
+            // Create CC dropdown if needed
+            if (productCC.checked) {
+                console.log("CC is checked, adding CC options");
+                const ccOptions = getCCOptions(proposition);
+                
+                if (ccOptions.length > 0) {
+                    const ccDiv = createProductOptionDiv('CC', ccOptions);
+                    productOptionsContainer.appendChild(ccDiv);
+                    
+                    const ccSelect = document.getElementById('CCSelect');
+                    if (ccSelect) {
+                        console.log("Setting CC select change event");
+                        ccSelect.addEventListener('change', calculateTotalPoints);
+                        
+                        // Try to set the correct value
+                        setCcDropdownValue(ccSelect, editingData);
+                    }
+                }
+                
+                // Add 2nd CC options if checked
+                if (product2ndCC.checked) {
+                    console.log("2nd CC is checked, adding 2nd CC options");
+                    const ccOptions = getCCOptions(proposition);
+                    
+                    if (ccOptions.length > 0) {
+                        const cc2Div = createProductOptionDiv('CC2', ccOptions, '2nd CC');
+                        productOptionsContainer.appendChild(cc2Div);
+                        
+                        const cc2Select = document.getElementById('CCSelect2');
+                        if (cc2Select) {
+                            console.log("Setting 2nd CC select change event");
+                            cc2Select.addEventListener('change', calculateTotalPoints);
+                            
+                            // Try to set the correct value for 2nd CC
+                            setCc2DropdownValue(cc2Select, editingData, editingProductString);
+                        }
+                    }
+                }
+            }
+            
+            // Create PL dropdown if needed
+            if (productPL.checked) {
+                console.log("PL is checked, adding PL options");
+                const plOptions = getPLOptions(proposition);
+                
+                if (plOptions.length > 0) {
+                    const plDiv = createProductOptionDiv('PL', plOptions);
+                    productOptionsContainer.appendChild(plDiv);
+                    
+                    const plSelect = document.getElementById('PLSelect');
+                    if (plSelect) {
+                        console.log("Setting PL select change event");
+                        plSelect.addEventListener('change', calculateTotalPoints);
+                        
+                        // Try to set the correct value
+                        setPlDropdownValue(plSelect, editingData);
+                    }
+                    
+                    // Add change event to loan amount input
+                    loanAmountInput.addEventListener('input', calculateTotalPoints);
+                }
+            }
+            
+            // Calculate points
+            calculateTotalPoints();
+        }
+        
+        // Helper functions to set dropdown values correctly
+        function setAccDropdownValue(accSelect, data, salary) {
+            if (!accSelect) return;
+            
+            console.log("Trying to set ACC dropdown value");
+            
+            // First check if we have explicit accOption from the server
+            if (data.accOption) {
+                console.log("Using explicit accOption from server:", data.accOption);
+                // Find the option that matches
+                for (let i = 0; i < accSelect.options.length; i++) {
+                    if (accSelect.options[i].value === data.accOption) {
+                        accSelect.selectedIndex = i;
+                        console.log("Found matching ACC option at index", i);
+                        return;
+                    }
+                }
+            }
+            
+            // If no explicit option or not found, try to match from product string
+            if (editingProductString) {
+                console.log("Checking product string for ACC option:", editingProductString);
+                // Check for specific ACC product names
+                if (editingProductString.includes("MDSA")) {
+                    selectOptionByText(accSelect, "MDSA");
+                } else if (editingProductString.includes("Privilege 20K-30K")) {
+                    selectOptionByText(accSelect, "Privilege 20K-30K");
+                } else if (editingProductString.includes("Privilege 30K-75K")) {
+                    selectOptionByText(accSelect, "Privilege 30K-75K");
+                } else if (editingProductString.includes("Privilege 75K")) {
+                    selectOptionByText(accSelect, "Privilege 75K");
+                } else if (editingProductString.includes("Aspire 5K-10K")) {
+                    selectOptionByText(accSelect, "Aspire 5K-10K");
+                } else if (editingProductString.includes("Aspire 10K-20K")) {
+                    selectOptionByText(accSelect, "Aspire 10K-20K");
+                }
+            }
+            
+            // If still no match, try to match based on salary
+            if (accSelect.selectedIndex === 0) {
+                console.log("No match found, trying to set based on salary:", salary);
+                // Find the best option based on salary range
+                for (let i = 1; i < accSelect.options.length; i++) {
+                    const option = accSelect.options[i];
+                    const minSalary = parseInt(option.dataset.minsalary) || 0;
+                    const maxSalary = parseInt(option.dataset.maxsalary) || Infinity;
+                    
+                    if (salary >= minSalary && salary <= maxSalary) {
+                        accSelect.selectedIndex = i;
+                        console.log("Found salary-matching ACC option at index", i);
+                        break;
+                    }
+                }
+            }
+        }
+        
+        function setCcDropdownValue(ccSelect, data) {
+            if (!ccSelect) return;
+            
+            console.log("Trying to set CC dropdown value");
+            
+            // First check if we have explicit ccOption from the server
+            if (data.ccOption) {
+                console.log("Using explicit ccOption from server:", data.ccOption);
+                // Find the option that matches
+                for (let i = 0; i < ccSelect.options.length; i++) {
+                    if (ccSelect.options[i].value === data.ccOption) {
+                        ccSelect.selectedIndex = i;
+                        console.log("Found matching CC option at index", i);
+                        return;
+                    }
+                }
+            }
+            
+            // If no explicit option or not found, try to match from product string
+            if (editingProductString) {
+                console.log("Checking product string for CC option:", editingProductString);
+                
+                // Extract CC product names from the string
+                const products = editingProductString.split(',').map(p => p.trim());
+                const ccProductsInSheet = products.filter(p => 
+                    p.includes("Touchpoints") || 
+                    p.includes("Cashback") ||
+                    p.includes("Talabat") ||
+                    p.includes("Visa") ||
+                    p.includes("MC")
+                );
+                
+                // If we found CC products, use the first one
+                if (ccProductsInSheet.length > 0) {
+                    console.log("Found CC product in sheet:", ccProductsInSheet[0]);
+                    selectOptionByText(ccSelect, ccProductsInSheet[0]);
+                }
+            }
+        }
+        
+        function setCc2DropdownValue(cc2Select, data, productString) {
+            if (!cc2Select) return;
+            
+            console.log("Trying to set 2nd CC dropdown value");
+            
+            // First check if we have explicit ccOption2 from the server
+            if (data.ccOption2) {
+                console.log("Using explicit ccOption2 from server:", data.ccOption2);
+                // Find the option that matches
+                for (let i = 0; i < cc2Select.options.length; i++) {
+                    if (cc2Select.options[i].value === data.ccOption2) {
+                        cc2Select.selectedIndex = i;
+                        console.log("Found matching 2nd CC option at index", i);
+                        return;
+                    }
+                }
+            }
+            
+            // If no explicit option or not found, try to match from product string
+            if (productString) {
+                console.log("Checking product string for 2nd CC option:", productString);
+                
+                // Extract CC product names from the string
+                const products = productString.split(',').map(p => p.trim());
+                const ccProductsInSheet = products.filter(p => 
+                    p.includes("Touchpoints") || 
+                    p.includes("Cashback") ||
+                    p.includes("Talabat") ||
+                    p.includes("Visa") ||
+                    p.includes("MC")
+                );
+                
+                // If we found more than one CC product, use the second one
+                if (ccProductsInSheet.length > 1) {
+                    console.log("Found 2nd CC product in sheet:", ccProductsInSheet[1]);
+                    selectOptionByText(cc2Select, ccProductsInSheet[1]);
+                }
+            }
+        }
+        
+        function setPlDropdownValue(plSelect, data) {
+            if (!plSelect) return;
+            
+            console.log("Trying to set PL dropdown value");
+            
+            // First check if we have explicit plOption from the server
+            if (data.plOption) {
+                console.log("Using explicit plOption from server:", data.plOption);
+                // Find the option that matches
+                for (let i = 0; i < plSelect.options.length; i++) {
+                    if (plSelect.options[i].value === data.plOption) {
+                        plSelect.selectedIndex = i;
+                        console.log("Found matching PL option at index", i);
+                        return;
+                    }
+                }
+            }
+            
+            // If no explicit option or not found, try to match from product string
+            if (editingProductString) {
+                console.log("Checking product string for PL option:", editingProductString);
+                
+                // Check for specific PL product names
+                if (editingProductString.includes("Asipire Cat A & B")) {
+                    selectOptionByText(plSelect, "Asipire Cat A & B");
+                } else if (editingProductString.includes("Privilege Cat A & B")) {
+                    selectOptionByText(plSelect, "Privilege Cat A & B");
+                } else if (editingProductString.includes("Aspire Cat C & Below")) {
+                    selectOptionByText(plSelect, "Aspire Cat C & Below");
+                } else if (editingProductString.includes("Privilege Cat C & Below")) {
+                    selectOptionByText(plSelect, "Privilege Cat C & Below");
+                }
+            }
+        }
+        
+        // Helper function to select an option by its display text
+        function selectOptionByText(selectElement, searchText) {
+            if (!selectElement) return false;
+            
+            console.log(`Searching for option with text "${searchText}" in`, selectElement);
+            
+            for (let i = 0; i < selectElement.options.length; i++) {
+                const optionText = selectElement.options[i].text;
+                
+                // Try exact match first
+                if (optionText === searchText) {
+                    selectElement.selectedIndex = i;
+                    console.log(`Found exact match at index ${i}: ${optionText}`);
+                    return true;
+                }
+                
+                // Then try contains match
+                if (optionText.includes(searchText) || searchText.includes(optionText)) {
+                    selectElement.selectedIndex = i;
+                    console.log(`Found partial match at index ${i}: ${optionText}`);
+                    return true;
+                }
+                
+                // Try without parentheses (e.g., "Aspire 5K-10K (Salary: 5000-9999)" -> "Aspire 5K-10K")
+                const baseOptionText = optionText.split(' (')[0];
+                if (baseOptionText === searchText || searchText.includes(baseOptionText) || baseOptionText.includes(searchText)) {
+                    selectElement.selectedIndex = i;
+                    console.log(`Found base text match at index ${i}: ${baseOptionText}`);
+                    return true;
+                }
+            }
+            
+            console.log(`No matching option found for "${searchText}"`);
+            return false;
+        }
 
         // Initialize product options when proposition or products change
         function updateProductOptions() {
@@ -713,7 +1079,16 @@
             if (ccSelect2) currentSelections.CCOption2 = ccSelect2.value;
             if (plSelect) currentSelections.PL = plSelect.value;
             
+            // Clear existing dropdowns
             productOptionsContainer.innerHTML = '';
+            
+            // Check if we're in edit mode with data
+            if (editingData) {
+                console.log("Updating product options with editing data");
+                initializeProductOptions();
+                return;
+            }
+            
             const proposition = document.querySelector('input[name="proposition"]:checked').value;
             const salary = parseFloat(salaryInput.value) || 0;
             
@@ -726,11 +1101,32 @@
                     
                     // Add change event to ACC select
                     const newAccSelect = accDiv.querySelector('select');
-                    newAccSelect.addEventListener('change', calculateTotalPoints);
+                    newAccSelect.addEventListener('change', function() {
+                        // Check if selected option disables STL
+                        const selectedOption = newAccSelect.options[newAccSelect.selectedIndex];
+                        const disableSTL = selectedOption.dataset.disablestl === "true";
+                        
+                        // Enable/disable STL based on selected option
+                        if (disableSTL) {
+                            productSTL.disabled = true;
+                            productSTL.checked = false;
+                        } else {
+                            productSTL.disabled = false;
+                        }
+                        
+                        calculateTotalPoints();
+                    });
                     
                     // Restore previous selection if it exists
                     if (currentSelections.ACC && newAccSelect.querySelector(`option[value="${currentSelections.ACC}"]`)) {
                         newAccSelect.value = currentSelections.ACC;
+                        
+                        // Check if selected option disables STL
+                        const selectedOption = newAccSelect.options[newAccSelect.selectedIndex];
+                        if (selectedOption.dataset.disablestl === "true") {
+                            productSTL.disabled = true;
+                            productSTL.checked = false;
+                        }
                     }
                 }
             }
@@ -802,11 +1198,38 @@
             const label = customLabel || productType + ' Option';
             const id = productType === 'CC2' ? 'CCSelect2' : `${productType}Select`;
             
+            let optionsHtml = '<option value="">Select ' + label + '</option>';
+            
+            options.forEach(option => {
+                const extraAttributes = [];
+                
+                if (option.points) {
+                    extraAttributes.push(`data-points="${option.points}"`);
+                }
+                
+                if (option.paid !== undefined) {
+                    extraAttributes.push(`data-paid="${option.paid}"`);
+                }
+                
+                if (option.disableSTL !== undefined) {
+                    extraAttributes.push(`data-disablestl="${option.disableSTL}"`);
+                }
+                
+                if (option.minSalary !== undefined) {
+                    extraAttributes.push(`data-minsalary="${option.minSalary}"`);
+                }
+                
+                if (option.maxSalary !== undefined) {
+                    extraAttributes.push(`data-maxsalary="${option.maxSalary}"`);
+                }
+                
+                optionsHtml += `<option value="${option.value}" ${extraAttributes.join(' ')}>${option.text}</option>`;
+            });
+            
             div.innerHTML = `
                 <label for="${id}" class="block text-gray-700 font-medium">${label}</label>
                 <select id="${id}" class="w-full border rounded-md p-2 text-base" data-product="${productType}">
-                    <option value="">Select ${label}</option>
-                    ${options.map(option => `<option value="${option.value}" data-points="${option.points}" data-paid="${option.paid || false}">${option.text}</option>`).join('')}
+                    ${optionsHtml}
                 </select>
             `;
             return div;
@@ -816,29 +1239,26 @@
         function getACCOptions(proposition, salary) {
             const options = [];
             
-            // Only add options that match the salary range
-            if (salary >= 5000 && salary < 10000) {
-                options.push({ value: "Aspire5K-10K", text: "Aspire 5K-10K (Salary: 5000-9999)", points: 75 });
-            }
-            if (salary >= 10000 && salary < 20000) {
-                options.push({ value: "Aspire10K-20K", text: "Aspire 10K-20K (Salary: 10000-19999)", points: 175 });
-            }
-            if (salary >= 20000 && salary < 30000) {
-                options.push({ value: "Privilege20K-30K", text: "Privilege 20K-30K (Salary: 20000-29999)", points: 225 });
-            }
-            if (salary >= 30000 && salary < 75000) {
-                options.push({ value: "Privilege30K-75K", text: "Privilege 30K-75K (Salary: 30000-74999)", points: 375 });
-            }
-            if (salary >= 75000) {
-                options.push({ value: "Privilege75K+", text: "Privilege 75K & Above (Salary: 75000+)", points: 650 });
-            }
+            // Add all options regardless of salary, but annotate with requirements
+            options.push({ value: "Aspire5K-10K", text: "Aspire 5K-10K (Salary: 5000-9999)", points: 75, minSalary: 5000, maxSalary: 9999, disableSTL: false });
+            options.push({ value: "Aspire10K-20K", text: "Aspire 10K-20K (Salary: 10000-19999)", points: 175, minSalary: 10000, maxSalary: 19999, disableSTL: false });
+            options.push({ value: "Privilege20K-30K", text: "Privilege 20K-30K (Salary: 20000-29999)", points: 450, minSalary: 20000, maxSalary: 29999, disableSTL: true });
+            options.push({ value: "Privilege30K-75K", text: "Privilege 30K-75K (Salary: 30000-74999)", points: 750, minSalary: 30000, maxSalary: 74999, disableSTL: true });
+            options.push({ value: "Privilege75K+", text: "Privilege 75K & Above (Salary: 75000+)", points: 1300, minSalary: 75000, maxSalary: Infinity, disableSTL: true });
             
             // Add Islamic-specific option
-            if ((proposition === "Islamic" || proposition === "Both") && salary >= 5000) {
-                options.push({ value: "MDSA", text: "MDSA", points: salary >= 75000 ? 650 : 
-                                                           salary >= 30000 ? 375 : 
-                                                           salary >= 20000 ? 225 : 
-                                                           salary >= 10000 ? 175 : 75 });
+            if (proposition === "Islamic" || proposition === "Both") {
+                options.push({ 
+                    value: "MDSA", 
+                    text: "MDSA", 
+                    points: salary >= 75000 ? 1300 : 
+                           salary >= 30000 ? 750 : 
+                           salary >= 20000 ? 450 : 
+                           salary >= 10000 ? 175 : 75,
+                    minSalary: 5000,
+                    maxSalary: Infinity,
+                    disableSTL: salary >= 20000 // Disable STL for salary >= 20000
+                });
             }
             
             return options;
@@ -921,8 +1341,8 @@
                     const accPoints = parseInt(selectedOption.dataset.points) || 0;
                     totalPoints += accPoints;
                     
-                    // Add points for STL if checked (same as ACC)
-                    if (productSTL.checked) {
+                    // Add points for STL if checked (same as ACC), but only if not disabled
+                    if (productSTL.checked && !productSTL.disabled) {
                         totalPoints += accPoints;
                     }
                 }
@@ -940,10 +1360,8 @@
                         const cc2Select = document.getElementById('CCSelect2');
                         if (cc2Select && cc2Select.value) {
                             const selectedOption2 = cc2Select.options[cc2Select.selectedIndex];
-                            totalPoints += parseInt(selectedOption2.dataset.points) || 0;
-                        } else {
-                            // Fallback to original behavior if 2nd CC option not selected
-                            const isPaid = selectedOption.dataset.paid === "true";
+                            const isPaid = selectedOption2.dataset.paid === "true";
+                            // Apply different points based on whether it's a paid or free card
                             totalPoints += isPaid ? 250 : 125;
                         }
                     }
@@ -992,6 +1410,7 @@
                 
                 if (data.success) {
                     displayData(data.data, 'dataTableBody');
+                    calculatePointsTotals(data.data);
                 } else {
                     showSuccess(`Error: ${data.error}`);
                 }
@@ -1001,6 +1420,24 @@
             } finally {
                 hideLoading();
             }
+        }
+
+        // Calculate and display point totals
+        function calculatePointsTotals(data) {
+            let earnedPoints = 0;
+            let pendingPoints = 0;
+            
+            data.forEach(record => {
+                const points = parseFloat(record.Points) || 0;
+                if (record.Status === 'Completed') {
+                    earnedPoints += points;
+                } else {
+                    pendingPoints += points;
+                }
+            });
+            
+            document.getElementById('earnedPointsTotal').textContent = earnedPoints.toFixed(2);
+            document.getElementById('pendingPointsTotal').textContent = pendingPoints.toFixed(2);
         }
 
         // Search for data
@@ -1047,10 +1484,10 @@
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${row.CID || ''}</td>
+                    <td>${row['App ID'] || ''}</td>
                     <td>${row['Customer Name'] || ''}</td>
                     <td>${row.Mobile || ''}</td>
                     <td>${row.Product || ''}</td>
-                    <td>${row.Banking || ''}</td>
                     <td>${row.Status || ''}</td>
                     <td>${row.Points || ''}</td>
                     <td>
@@ -1188,6 +1625,28 @@
                 const data = await response.json();
                 
                 if (data.success && data.data) {
+                    // Save the raw data for later use
+                    editingData = data.data;
+                    editingProductString = data.data.Product || "";
+                    
+                    console.log("Got data for editing:", editingData);
+                    console.log("Product string:", editingProductString);
+                    
+                    // Clear any existing selections
+                    currentSelections = {
+                        ACC: '',
+                        CC: '',
+                        CCOption2: '',
+                        PL: ''
+                    };
+                    
+                    // Save the product options from the server if they exist
+                    if (data.data.accOption) currentSelections.ACC = data.data.accOption;
+                    if (data.data.ccOption) currentSelections.CC = data.data.ccOption;
+                    if (data.data.ccOption2) currentSelections.CCOption2 = data.data.ccOption2;
+                    if (data.data.plOption) currentSelections.PL = data.data.plOption;
+                    
+                    // Now populate the form - this will trigger updateProductOptions
                     populateForm(data.data);
                     
                     // Switch to entry section
@@ -1208,21 +1667,115 @@
             }
         }
 
+        // Function to parse a product string into individual items
+        function parseProductString(productString) {
+            if (!productString) return [];
+            
+            // Split by comma and trim each item
+            return productString.split(',').map(p => p.trim());
+        }
+
+        // Function to check if a product string contains a specific product
+        function productStringContains(productString, product) {
+            const products = parseProductString(productString);
+            return products.some(p => p === product || p.includes(product));
+        }
+
+        // Helper function to format date for input field
+        function formatDateForInput(dateString) {
+            if (!dateString) return '';
+            
+            // Try to parse the date string
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) {
+                // If parsing fails, return the original string
+                return dateString;
+            }
+            
+            // Format as YYYY-MM-DD
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            
+            return `${year}-${month}-${day}`;
+        }
+
         // Populate form with record data
         function populateForm(data) {
+            console.log("Populating form with data:", data);
+            
             // Clear form first
             resetForm();
+            
+            // Save the editing data again (resetForm clears it)
+            editingData = data;
+            editingProductString = data.Product || "";
             
             // Populate basic fields
             cidInput.value = data.CID || '';
             cidInput.readOnly = true; // CID should not be editable during update
             appIdInput.value = data['App ID'] || '';
-            dateInput.value = data.Date || '';
+            
+            // Set date with proper formatting
+            if (data.Date) {
+                dateInput.value = formatDateForInput(data.Date);
+            }
+            
             salaryInput.value = data.Salary || '';
             customerNameInput.value = data['Customer Name'] || '';
             mobileInput.value = data.Mobile || '';
             companyNameInput.value = data['Company Name'] || '';
-            pointsInput.value = data.Points || '';
+            
+            // Parse the product column to determine which checkboxes should be checked
+            const productString = data.Product || '';
+            const products = parseProductString(productString);
+            console.log("Parsed products:", products);
+            
+            // Save the raw product options for later use
+            if (data.accOption) currentSelections.ACC = data.accOption;
+            if (data.ccOption) currentSelections.CC = data.ccOption;
+            if (data.ccOption2) currentSelections.CCOption2 = data.ccOption2;
+            if (data.plOption) currentSelections.PL = data.plOption;
+            
+            // Determine which product checkboxes to check based on the product string
+            productACC.checked = productStringContains(productString, 'MDSA') || 
+                                productStringContains(productString, 'Aspire') ||
+                                productStringContains(productString, 'Privilege') ||
+                                productStringContains(productString, 'ACC');
+                                
+            productSTL.checked = productStringContains(productString, 'STL');
+            
+            productCC.checked = productStringContains(productString, 'Touchpoints') ||
+                               productStringContains(productString, 'Cashback') ||
+                               productStringContains(productString, 'Talabat') ||
+                               productStringContains(productString, 'Lulu') ||
+                               productStringContains(productString, 'Etihad') ||
+                               productStringContains(productString, 'Shukran') ||
+                               productStringContains(productString, 'All ') ||
+                               productStringContains(productString, 'Traveller') ||
+                               productStringContains(productString, 'Betaqti') ||
+                               productStringContains(productString, 'Emirati') ||
+                               productStringContains(productString, 'CC');
+            
+            product2ndCC.checked = productStringContains(productString, '2ndCC') ||
+                                   (products.length > 1 && 
+                                    (productStringContains(productString, 'Touchpoints') ||
+                                     productStringContains(productString, 'Talabat')));
+            
+            productBTCCL.checked = productStringContains(productString, 'BT/CCL');
+            
+            productPL.checked = productStringContains(productString, 'Asipire Cat') ||
+                               productStringContains(productString, 'Privilege Cat') ||
+                               productStringContains(productString, 'PL');
+            
+            if (productPL.checked) {
+                loanAmountSection.classList.remove('hidden');
+                loanAmountInput.value = data['Loan Amount'] || '';
+            }
+            
+            // Enable/disable dependent checkboxes
+            productSTL.disabled = !productACC.checked;
+            product2ndCC.disabled = !productCC.checked;
             
             // Set proposition
             const propositionRadios = document.getElementsByName('proposition');
@@ -1273,48 +1826,11 @@
                 }
             }
             
-            // Set products and their options
-            const products = (data.Product || '').split(',').map(p => p.trim());
+            // Set points
+            pointsInput.value = data.Points || '';
             
-            // Reset product checkboxes
-            productACC.checked = false;
-            productSTL.checked = false;
-            productCC.checked = false;
-            product2ndCC.checked = false;
-            productBTCCL.checked = false;
-            productPL.checked = false;
-            
-            // Check appropriate product checkboxes
-            products.forEach(product => {
-                if (product === 'ACC') productACC.checked = true;
-                if (product === 'STL') productSTL.checked = true;
-                if (product === 'CC') productCC.checked = true;
-                if (product === '2ndCC') product2ndCC.checked = true;
-                if (product === 'BT/CCL') productBTCCL.checked = true;
-                if (product === 'PL') productPL.checked = true;
-            });
-            
-            // Enable/disable dependent checkboxes
-            productSTL.disabled = !productACC.checked;
-            product2ndCC.disabled = !productCC.checked;
-            
-            // Show/hide loan amount section
-            if (productPL.checked) {
-                loanAmountSection.classList.remove('hidden');
-                loanAmountInput.value = data['Loan Amount'] || '';
-            }
-            
-            // Store product options for later use
-            if (data.accOption) currentSelections.ACC = data.accOption;
-            if (data.ccOption) currentSelections.CC = data.ccOption;
-            if (data.ccOption2) currentSelections.CCOption2 = data.ccOption2;
-            if (data.plOption) currentSelections.PL = data.plOption;
-            
-            // Update product options
-            updateProductOptions();
-            
-            // Recalculate points
-            setTimeout(calculateTotalPoints, 100);
+            // Generate product options containers
+            initializeProductOptions();
         }
 
         // Check if CID, Customer Name, or Mobile already exists
@@ -1498,53 +2014,77 @@
             console.log("Points:", pointsInput.value);
             formData.append('points', pointsInput.value);
             
-            // Products
-            const selectedProducts = [];
-            if (productACC.checked) selectedProducts.push('ACC');
-            if (productSTL.checked) selectedProducts.push('STL');
-            if (productCC.checked) selectedProducts.push('CC');
-            if (product2ndCC.checked) selectedProducts.push('2ndCC');
-            if (productBTCCL.checked) selectedProducts.push('BT/CCL');
-            if (productPL.checked) selectedProducts.push('PL');
+            // Fix 2: Collect selected product options to store in Product column
+            const selectedProductOptions = [];
             
-            const productList = selectedProducts.join(', ');
-            console.log("Product List:", productList);
-            formData.append('productList', productList);
-            
-            // Product options
+            // Get ACC selection
             if (productACC.checked) {
                 const accSelect = document.getElementById('ACCSelect');
                 if (accSelect && accSelect.value) {
+                    const selectedOption = accSelect.options[accSelect.selectedIndex];
+                    selectedProductOptions.push(selectedOption.text.split(' (')[0]);  // Get text before any parentheses
                     console.log("ACC Option:", accSelect.value);
                     formData.append('accOption', accSelect.value);
+                } else {
+                    selectedProductOptions.push('ACC');
+                }
+                
+                // Include STL if checked
+                if (productSTL.checked) {
+                    selectedProductOptions.push('STL');
                 }
             }
             
+            // Get CC selection
             if (productCC.checked) {
                 const ccSelect = document.getElementById('CCSelect');
                 if (ccSelect && ccSelect.value) {
+                    const selectedOption = ccSelect.options[ccSelect.selectedIndex];
+                    selectedProductOptions.push(selectedOption.text);
                     console.log("CC Option:", ccSelect.value);
                     formData.append('ccOption', ccSelect.value);
+                } else {
+                    selectedProductOptions.push('CC');
                 }
                 
+                // Get 2nd CC selection
                 if (product2ndCC.checked) {
                     const cc2Select = document.getElementById('CCSelect2');
                     if (cc2Select && cc2Select.value) {
+                        const selectedOption = cc2Select.options[cc2Select.selectedIndex];
+                        selectedProductOptions.push(selectedOption.text);
                         console.log("2nd CC Option:", cc2Select.value);
                         formData.append('ccOption2', cc2Select.value);
+                    } else {
+                        selectedProductOptions.push('2ndCC');
                     }
                 }
             }
             
+            // Include BT/CCL if checked
+            if (productBTCCL.checked) {
+                selectedProductOptions.push('BT/CCL');
+            }
+            
+            // Get PL selection
             if (productPL.checked) {
                 const plSelect = document.getElementById('PLSelect');
                 if (plSelect && plSelect.value) {
+                    const selectedOption = plSelect.options[plSelect.selectedIndex];
+                    selectedProductOptions.push(selectedOption.text);
                     console.log("PL Option:", plSelect.value);
                     formData.append('plOption', plSelect.value);
+                } else {
+                    selectedProductOptions.push('PL');
                 }
                 console.log("Loan Amount:", loanAmountInput.value);
                 formData.append('loanAmount', loanAmountInput.value);
             }
+            
+            // Join all product selections into a single string
+            const productList = selectedProductOptions.join(', ');
+            console.log("Product List:", productList);
+            formData.append('productList', productList);
             
             return formData;
         }
