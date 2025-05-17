@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Management Information System</title>
+    <link rel="icon" href="web.ico" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -681,27 +682,7 @@
         
         <!-- Data Sheet Tab -->
         <div id="tab-datasheet" class="tab-content">
-            <div class="info-alert mb-4">
-                <p class="mb-2 font-bold">Data Sheet Access Information</p>
-                <p>The Data Sheet is a Google Sheets document that provides additional data and information.</p>
-                <p>Due to security restrictions, the embedded sheet cannot be displayed directly. Please use one of these options:</p>
-                <ul class="list-disc pl-5 mt-2">
-                    <li>Access the sheet directly at <a href="https://script.google.com/macros/s/AKfycbyt6zvvO5POe2jMnyaR2bJOPu09L2f2Rr3Aeh72_APIR1C-6JVzSDOZvGfi4ZOZbQL0/exec" target="_blank" class="text-blue-600 dark:text-blue-400 underline">Google Sheets Link</a></li>
-                    <li>Contact your administrator for access to the latest data sheet information</li>
-                </ul>
-            </div>
-            
-            <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
-                <h2 class="text-xl font-bold text-primary dark:text-white mb-4">Data Sheet Information</h2>
-                <p class="text-gray-700 dark:text-gray-300 mb-3">The Data Sheet contains the following information:</p>
-                <ul class="list-disc pl-5 text-gray-700 dark:text-gray-300">
-                    <li>Current interest rates from different banks</li>
-                    <li>Processing fee structures</li>
-                    <li>Eligibility criteria</li>
-                    <li>Special promotions and offers</li>
-                    <li>Documentation requirements</li>
-                </ul>
-            </div>
+            <iframe src="https://script.google.com/macros/s/AKfycbxa58gAJq9fcS7cF61wzFQXZg2JJRoUtFnfTw18LKpEIs-PLQihjqRzUFh7Y-ubMUPy/exec" frameborder="0" width="100%" height="600px"></iframe>
         </div>
         
         <!-- EMI Chart Tab (Shows the same chart as in the main tab, but standalone) -->
@@ -814,20 +795,21 @@
                 </div>
             </div>
         </div>
-	<!-- MIS Tab -->
-<div id="tab-mis" class="tab-content">
-<iframe src="mis.html" title="MIS Information"></iframe>
-</div>       
+        
+        <!-- MIS Tab -->
+        <div id="tab-mis" class="tab-content">
+            <iframe src="mis.html" title="MIS Information" id="misIframe"></iframe>
+        </div>       
 
         <!-- Advanced Calculator Tab -->
-<div id="tab-advcalc" class="tab-content">
-<iframe src="advcalc.html" title="Advanced Calculator"></iframe>
-</div>
+        <div id="tab-advcalc" class="tab-content">
+            <iframe src="advcalc.html" title="Advanced Calculator" id="advcalcIframe"></iframe>
+        </div>
         
         <!-- Rate Grid Tab -->
-<div id="tab-rategrid" class="tab-content">
-<iframe src="rategrid.html" title="Rate Grid"></iframe>
-</div>
+        <div id="tab-rategrid" class="tab-content">
+            <iframe src="rategrid.html" title="Rate Grid" id="rategridIframe"></iframe>
+        </div>
         
         <!-- Share Tab -->
         <div id="tab-share" class="tab-content">
@@ -1060,11 +1042,68 @@
         document.documentElement.classList.remove('dark');
         themeToggle.checked = false;
         
+        // Function to update iframe dark mode
+        function updateIframesDarkMode(isDark) {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
+                try {
+                    if (iframe.contentWindow && iframe.contentWindow.document) {
+                        if (isDark) {
+                            iframe.contentWindow.document.documentElement.classList.add('dark');
+                        } else {
+                            iframe.contentWindow.document.documentElement.classList.remove('dark');
+                        }
+                    }
+                } catch (e) {
+                    console.log("Cannot access iframe content due to same-origin policy");
+                }
+            });
+        }
+        
         themeToggle.addEventListener('change', function() {
             if (this.checked) {
                 document.documentElement.classList.add('dark');
+                updateIframesDarkMode(true);
             } else {
                 document.documentElement.classList.remove('dark');
+                updateIframesDarkMode(false);
+            }
+        });
+        
+        // Add event listeners for iframe load to apply current theme
+        document.querySelectorAll('iframe').forEach(iframe => {
+            iframe.addEventListener('load', function() {
+                const isDark = document.documentElement.classList.contains('dark');
+                try {
+                    if (iframe.contentWindow && iframe.contentWindow.document) {
+                        if (isDark) {
+                            iframe.contentWindow.document.documentElement.classList.add('dark');
+                        } else {
+                            iframe.contentWindow.document.documentElement.classList.remove('dark');
+                        }
+                    }
+                } catch (e) {
+                    console.log("Cannot access iframe content due to same-origin policy");
+                }
+            });
+        });
+        
+        // Also check system preference for dark mode
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+            themeToggle.checked = true;
+            updateIframesDarkMode(true);
+        }
+        
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+                themeToggle.checked = true;
+                updateIframesDarkMode(true);
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeToggle.checked = false;
+                updateIframesDarkMode(false);
             }
         });
         
