@@ -367,15 +367,13 @@
                 </button>
             </div>
             
-            <!-- WhatsApp Input and Button Group -->
-            <div class="flex items-center justify-center px-2 mb-2">
-                <div class="flex items-center w-full md:w-2/3">
-                    <input type="tel" id="whatsappNumber" placeholder="Enter WhatsApp number" class="border rounded-l-md p-2 text-base dark:bg-gray-800 dark:text-white flex-grow">
-                    <button id="sendWhatsAppBtn" class="bg-gradient-to-r from-green-600 to-green-700 text-white px-3 py-2 rounded-r-none hover:opacity-90">
-                        <i class="fab fa-whatsapp"></i>
-                    </button>
-                    <button id="contactsBtn" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-2 rounded-l-none rounded-r-md hover:opacity-90">
-                        <i class="fas fa-address-book"></i>
+            <!-- Customer Name and WhatsApp Input Group -->
+            <div class="flex flex-wrap items-center justify-center px-2 mb-2 gap-2">
+                <div class="flex-grow flex items-center gap-2">
+                    <input type="text" id="customerName" placeholder="Customer Name" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white flex-grow">
+                    <input type="tel" id="whatsappNumber" placeholder="Enter WhatsApp number" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white flex-grow">
+                    <button id="sendWhatsAppBtn" class="bg-gradient-to-r from-green-600 to-green-700 text-white px-4 py-2 rounded-md hover:opacity-90">
+                        <i class="fab fa-whatsapp mr-1"></i> Send
                     </button>
                 </div>
             </div>
@@ -529,11 +527,6 @@
                     
                     <div class="space-y-2">
                         <!-- Customer Profile Management -->
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Customer Name:</label>
-                            <input type="text" id="customerName" placeholder="Enter customer name" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
-                        </div>
-                        
                         <div class="grid grid-cols-3 gap-2 items-center">
                             <label class="text-gray-700 dark:text-gray-300 font-medium">Saved Profiles:</label>
                             <select id="savedProfiles" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
@@ -1047,6 +1040,7 @@
             const iframes = document.querySelectorAll('iframe');
             iframes.forEach(iframe => {
                 try {
+                    // First try to directly access the iframe content
                     if (iframe.contentWindow && iframe.contentWindow.document) {
                         if (isDark) {
                             iframe.contentWindow.document.documentElement.classList.add('dark');
@@ -1055,7 +1049,26 @@
                         }
                     }
                 } catch (e) {
-                    console.log("Cannot access iframe content due to same-origin policy");
+                    console.log("Cannot directly access iframe content due to same-origin policy");
+                    
+                    // For cross-origin iframes, try to use postMessage to send theme message
+                    try {
+                        iframe.contentWindow.postMessage({
+                            type: 'theme-change',
+                            isDark: isDark
+                        }, '*');
+                    } catch (e2) {
+                        console.log("Could not send postMessage to iframe", e2);
+                    }
+                    
+                    // Force iframe reload as a last resort
+                    if (iframe.id === 'misIframe' || iframe.id === 'advcalcIframe' || iframe.id === 'rategridIframe') {
+                        const currentSrc = iframe.src;
+                        iframe.src = '';
+                        setTimeout(() => {
+                            iframe.src = currentSrc;
+                        }, 50);
+                    }
                 }
             });
         }
@@ -1084,27 +1097,26 @@
                     }
                 } catch (e) {
                     console.log("Cannot access iframe content due to same-origin policy");
+                    
+                    // For cross-origin iframes, try to use postMessage
+                    try {
+                        iframe.contentWindow.postMessage({
+                            type: 'theme-change',
+                            isDark: isDark
+                        }, '*');
+                    } catch (e2) {
+                        console.log("Could not send postMessage to iframe", e2);
+                    }
                 }
             });
         });
         
-        // Also check system preference for dark mode
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.classList.add('dark');
-            themeToggle.checked = true;
-            updateIframesDarkMode(true);
-        }
+        // Removed system preference check to ensure light mode is always default
+        // Light mode is set as default and system preference will not override it
         
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-            if (event.matches) {
-                document.documentElement.classList.add('dark');
-                themeToggle.checked = true;
-                updateIframesDarkMode(true);
-            } else {
-                document.documentElement.classList.remove('dark');
-                themeToggle.checked = false;
-                updateIframesDarkMode(false);
-            }
+            // Don't automatically change theme based on system preference
+            // We'll only respond to manual toggle changes
         });
         
         // Helper function to format numbers with thousands separators
@@ -1254,7 +1266,6 @@
             const showEmiChartBtnTab = document.getElementById('showEmiChartBtnTab');
             const sendWhatsAppBtn = document.getElementById('sendWhatsAppBtn');
             const whatsappNumberInput = document.getElementById('whatsappNumber');
-            const contactsBtn = document.getElementById('contactsBtn');
             const addbacksContainer = document.getElementById('addbacks-container');
             const dynamicAddbackFields = document.querySelector('.dynamic-addback-fields');
             const addMoreAddbackBtn = document.getElementById('addMoreAddbackBtn');
@@ -1352,6 +1363,7 @@
                 // Get all input values to save
                 const profileData = {
                     customerName: customerName,
+                    whatsappNumber: whatsappNumberInput.value, // Save WhatsApp number with profile
                     salary: salaryInput.value,
                     loanType: loanTypeSelect.value,
                     disbursalDate: disbursalDateInput.value,
@@ -1461,6 +1473,7 @@
                     
                     // Fill in the data
                     customerNameInput.value = profileData.customerName;
+                    whatsappNumberInput.value = profileData.whatsappNumber || ''; // Load WhatsApp number if saved
                     salaryInput.value = profileData.salary;
                     loanTypeSelect.value = profileData.loanType;
                     disbursalDateInput.value = profileData.disbursalDate;
@@ -1556,6 +1569,63 @@
                             // Create fields for this addback
                             createAddbackTypeFields(firstAddbackSelect);
                             
+                            // Set values for the first add-back's fields
+                            if (addbackData[0].type === 'hra' || addbackData[0].type === 'airfare') {
+                                setTimeout(() => {
+                                    const fieldsContainer = document.getElementById(`addback-fields-0`);
+                                    if (fieldsContainer) {
+                                        // Set radio button
+                                        if (addbackData[0].values && addbackData[0].values.period) {
+                                            const periodValue = addbackData[0].values.period;
+                                            const radioId = `${addbackData[0].type}${periodValue.charAt(0).toUpperCase() + periodValue.slice(1)}-0`;
+                                            const radioBtn = document.getElementById(radioId);
+                                            
+                                            if (radioBtn) {
+                                                radioBtn.checked = true;
+                                                // Manually trigger change event
+                                                const changeEvent = new Event('change', { bubbles: true });
+                                                radioBtn.dispatchEvent(changeEvent);
+                                            } else {
+                                                console.log(`Radio button with ID ${radioId} not found`);
+                                            }
+                                        }
+                                        
+                                        // Set amount input
+                                        if (addbackData[0].values && addbackData[0].values.amount) {
+                                            const amountInput = fieldsContainer.querySelector(`.${addbackData[0].type}-amount`);
+                                            if (amountInput) {
+                                                amountInput.value = addbackData[0].values.amount;
+                                                // Manually trigger input event
+                                                const inputEvent = new Event('input', { bubbles: true });
+                                                amountInput.dispatchEvent(inputEvent);
+                                            } else {
+                                                console.log(`Amount input for ${addbackData[0].type} not found`);
+                                            }
+                                        }
+                                    } else {
+                                        console.log(`Fields container addback-fields-0 not found`);
+                                    }
+                                }, 300); // Increased timeout to ensure DOM is ready
+                            } else if (['overtime', 'servicecharge', 'incentives', 'telephone'].includes(addbackData[0].type)) {
+                                setTimeout(() => {
+                                    const fieldsContainer = document.getElementById(`addback-fields-0`);
+                                    if (fieldsContainer && addbackData[0].values) {
+                                        // Set each month's amount
+                                        for (let i = 1; i <= 6; i++) {
+                                            if (addbackData[0].values[`month${i}`]) {
+                                                const monthInput = fieldsContainer.querySelector(`.${addbackData[0].type}-amount-${i}`);
+                                                if (monthInput) {
+                                                    monthInput.value = addbackData[0].values[`month${i}`];
+                                                    // Manually trigger input event
+                                                    const inputEvent = new Event('input', { bubbles: true });
+                                                    monthInput.dispatchEvent(inputEvent);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }, 300);
+                            }
+                            
                             // Add additional addbacks if needed
                             let maxIndex = Math.max(...Object.keys(addbackData).map(Number));
                             addbackCount = 1;
@@ -1570,6 +1640,65 @@
                                     
                                     lastAddbackSelect.value = addbackData[i].type;
                                     createAddbackTypeFields(lastAddbackSelect);
+                                    
+                                    // Set values for this add-back type
+                                    const currentAddbackType = addbackData[i].type;
+                                    
+                                    if (currentAddbackType === 'hra' || currentAddbackType === 'airfare') {
+                                        setTimeout(() => {
+                                            const fieldsContainer = document.getElementById(`addback-fields-${i}`);
+                                            if (fieldsContainer) {
+                                                // Set radio button
+                                                if (addbackData[i].values && addbackData[i].values.period) {
+                                                    const periodValue = addbackData[i].values.period;
+                                                    const radioId = `${currentAddbackType}${periodValue.charAt(0).toUpperCase() + periodValue.slice(1)}-${i}`;
+                                                    const radioBtn = document.getElementById(radioId);
+                                                    
+                                                    if (radioBtn) {
+                                                        radioBtn.checked = true;
+                                                        // Manually trigger change event
+                                                        const changeEvent = new Event('change', { bubbles: true });
+                                                        radioBtn.dispatchEvent(changeEvent);
+                                                    } else {
+                                                        console.log(`Radio button with ID ${radioId} not found for index ${i}`);
+                                                    }
+                                                }
+                                                
+                                                // Set amount input
+                                                if (addbackData[i].values && addbackData[i].values.amount) {
+                                                    const amountInput = fieldsContainer.querySelector(`.${currentAddbackType}-amount`);
+                                                    if (amountInput) {
+                                                        amountInput.value = addbackData[i].values.amount;
+                                                        // Manually trigger input event
+                                                        const inputEvent = new Event('input', { bubbles: true });
+                                                        amountInput.dispatchEvent(inputEvent);
+                                                    } else {
+                                                        console.log(`Amount input for ${currentAddbackType} not found at index ${i}`);
+                                                    }
+                                                }
+                                            } else {
+                                                console.log(`Fields container addback-fields-${i} not found`);
+                                            }
+                                        }, 300);
+                                    } else if (['overtime', 'servicecharge', 'incentives', 'telephone'].includes(currentAddbackType)) {
+                                        setTimeout(() => {
+                                            const fieldsContainer = document.getElementById(`addback-fields-${i}`);
+                                            if (fieldsContainer && addbackData[i].values) {
+                                                // Set each month's amount
+                                                for (let j = 1; j <= 6; j++) {
+                                                    if (addbackData[i].values[`month${j}`]) {
+                                                        const monthInput = fieldsContainer.querySelector(`.${currentAddbackType}-amount-${j}`);
+                                                        if (monthInput) {
+                                                            monthInput.value = addbackData[i].values[`month${j}`];
+                                                            // Manually trigger input event
+                                                            const inputEvent = new Event('input', { bubbles: true });
+                                                            monthInput.dispatchEvent(inputEvent);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }, 300);
+                                    }
                                 }
                             }
                         }
@@ -1637,6 +1766,7 @@
             function saveTemporaryState() {
                 const tempState = {
                     customerName: customerNameInput.value,
+                    whatsappNumber: whatsappNumberInput.value, // Save WhatsApp number in temp state
                     salary: salaryInput.value,
                     loanType: loanTypeSelect.value,
                     disbursalDate: disbursalDateInput.value,
@@ -1683,6 +1813,7 @@
                     
                     // Fill form with temporary state
                     customerNameInput.value = tempState.customerName || '';
+                    whatsappNumberInput.value = tempState.whatsappNumber || ''; // Load WhatsApp number
                     salaryInput.value = tempState.salary || '';
                     loanTypeSelect.value = tempState.loanType || 'fresh-0-30';
                     disbursalDateInput.value = tempState.disbursalDate || today.toISOString().split('T')[0];
@@ -1772,6 +1903,63 @@
                             // Create fields for this addback
                             createAddbackTypeFields(firstAddbackSelect);
                             
+                            // Set values for the first add-back's fields
+                            if (addbackData[0].type === 'hra' || addbackData[0].type === 'airfare') {
+                                setTimeout(() => {
+                                    const fieldsContainer = document.getElementById(`addback-fields-0`);
+                                    if (fieldsContainer) {
+                                        // Set radio button
+                                        if (addbackData[0].values && addbackData[0].values.period) {
+                                            const periodValue = addbackData[0].values.period;
+                                            const radioId = `${addbackData[0].type}${periodValue.charAt(0).toUpperCase() + periodValue.slice(1)}-0`;
+                                            const radioBtn = document.getElementById(radioId);
+                                            
+                                            if (radioBtn) {
+                                                radioBtn.checked = true;
+                                                // Manually trigger change event
+                                                const changeEvent = new Event('change', { bubbles: true });
+                                                radioBtn.dispatchEvent(changeEvent);
+                                            } else {
+                                                console.log(`Radio button with ID ${radioId} not found`);
+                                            }
+                                        }
+                                        
+                                        // Set amount input
+                                        if (addbackData[0].values && addbackData[0].values.amount) {
+                                            const amountInput = fieldsContainer.querySelector(`.${addbackData[0].type}-amount`);
+                                            if (amountInput) {
+                                                amountInput.value = addbackData[0].values.amount;
+                                                // Manually trigger input event
+                                                const inputEvent = new Event('input', { bubbles: true });
+                                                amountInput.dispatchEvent(inputEvent);
+                                            } else {
+                                                console.log(`Amount input for ${addbackData[0].type} not found`);
+                                            }
+                                        }
+                                    } else {
+                                        console.log(`Fields container addback-fields-0 not found`);
+                                    }
+                                }, 300); // Increased timeout to ensure DOM is ready
+                            } else if (['overtime', 'servicecharge', 'incentives', 'telephone'].includes(addbackData[0].type)) {
+                                setTimeout(() => {
+                                    const fieldsContainer = document.getElementById(`addback-fields-0`);
+                                    if (fieldsContainer && addbackData[0].values) {
+                                        // Set each month's amount
+                                        for (let i = 1; i <= 6; i++) {
+                                            if (addbackData[0].values[`month${i}`]) {
+                                                const monthInput = fieldsContainer.querySelector(`.${addbackData[0].type}-amount-${i}`);
+                                                if (monthInput) {
+                                                    monthInput.value = addbackData[0].values[`month${i}`];
+                                                    // Manually trigger input event
+                                                    const inputEvent = new Event('input', { bubbles: true });
+                                                    monthInput.dispatchEvent(inputEvent);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }, 300);
+                            }
+                            
                             // Add additional addbacks if needed
                             let maxIndex = Math.max(...Object.keys(addbackData).map(Number));
                             addbackCount = 1;
@@ -1786,6 +1974,65 @@
                                     
                                     lastAddbackSelect.value = addbackData[i].type;
                                     createAddbackTypeFields(lastAddbackSelect);
+                                    
+                                    // Set values for this add-back type
+                                    const currentAddbackType = addbackData[i].type;
+                                    
+                                    if (currentAddbackType === 'hra' || currentAddbackType === 'airfare') {
+                                        setTimeout(() => {
+                                            const fieldsContainer = document.getElementById(`addback-fields-${i}`);
+                                            if (fieldsContainer) {
+                                                // Set radio button
+                                                if (addbackData[i].values && addbackData[i].values.period) {
+                                                    const periodValue = addbackData[i].values.period;
+                                                    const radioId = `${currentAddbackType}${periodValue.charAt(0).toUpperCase() + periodValue.slice(1)}-${i}`;
+                                                    const radioBtn = document.getElementById(radioId);
+                                                    
+                                                    if (radioBtn) {
+                                                        radioBtn.checked = true;
+                                                        // Manually trigger change event
+                                                        const changeEvent = new Event('change', { bubbles: true });
+                                                        radioBtn.dispatchEvent(changeEvent);
+                                                    } else {
+                                                        console.log(`Radio button with ID ${radioId} not found for index ${i}`);
+                                                    }
+                                                }
+                                                
+                                                // Set amount input
+                                                if (addbackData[i].values && addbackData[i].values.amount) {
+                                                    const amountInput = fieldsContainer.querySelector(`.${currentAddbackType}-amount`);
+                                                    if (amountInput) {
+                                                        amountInput.value = addbackData[i].values.amount;
+                                                        // Manually trigger input event
+                                                        const inputEvent = new Event('input', { bubbles: true });
+                                                        amountInput.dispatchEvent(inputEvent);
+                                                    } else {
+                                                        console.log(`Amount input for ${currentAddbackType} not found at index ${i}`);
+                                                    }
+                                                }
+                                            } else {
+                                                console.log(`Fields container addback-fields-${i} not found`);
+                                            }
+                                        }, 300);
+                                    } else if (['overtime', 'servicecharge', 'incentives', 'telephone'].includes(currentAddbackType)) {
+                                        setTimeout(() => {
+                                            const fieldsContainer = document.getElementById(`addback-fields-${i}`);
+                                            if (fieldsContainer && addbackData[i].values) {
+                                                // Set each month's amount
+                                                for (let j = 1; j <= 6; j++) {
+                                                    if (addbackData[i].values[`month${j}`]) {
+                                                        const monthInput = fieldsContainer.querySelector(`.${currentAddbackType}-amount-${j}`);
+                                                        if (monthInput) {
+                                                            monthInput.value = addbackData[i].values[`month${j}`];
+                                                            // Manually trigger input event
+                                                            const inputEvent = new Event('input', { bubbles: true });
+                                                            monthInput.dispatchEvent(inputEvent);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }, 300);
+                                    }
                                 }
                             }
                         }
@@ -3331,6 +3578,7 @@
             // Reset button
             resetBtn.addEventListener('click', function() {
                 customerNameInput.value = '';
+                whatsappNumberInput.value = ''; // Reset WhatsApp number field
                 salaryInput.value = '';
                 grossSalaryInput.value = '';
                 document.querySelector('.credit-card-amount').value = '';
@@ -3514,24 +3762,6 @@
                 
                 const message = prepareWhatsAppMessage();
                 window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
-            });
-            
-            // Contacts button
-            contactsBtn.addEventListener('click', function() {
-                if ('contacts' in navigator && 'select' in navigator.contacts) {
-                    navigator.contacts.select(['tel'], {multiple: false})
-                    .then(contacts => {
-                        if (contacts.length > 0 && contacts[0].tel && contacts[0].tel.length > 0) {
-                            whatsappNumberInput.value = contacts[0].tel[0];
-                        }
-                    })
-                    .catch(err => {
-                        showSuccess('Contact selection failed or is not supported in this browser');
-                        console.error(err);
-                    });
-                } else {
-                    showSuccess('Contacts API is not supported in this browser');
-                }
             });
             
             // Initialize calculations
