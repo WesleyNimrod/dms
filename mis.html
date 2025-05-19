@@ -222,6 +222,55 @@
             padding-bottom: 8px;
             border-bottom: 2px solid #f3f3f3;
         }
+
+        /* Fix 2: Make CID and Mobile fields copyable */
+        .copyable {
+            cursor: pointer;
+            position: relative;
+            user-select: all;
+        }
+
+        .copyable::after {
+            content: "Copied!";
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+
+        .copyable.copied::after {
+            opacity: 1;
+            animation: fadeAfterCopy 1.5s forwards;
+        }
+
+        @keyframes fadeAfterCopy {
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Fix 1: Increase action buttons spacing */
+        .action-column {
+            min-width: 120px;
+            white-space: nowrap;
+        }
+
+        .action-btn {
+            margin-right: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-tahoma">
@@ -497,13 +546,19 @@
                                 <th>Products</th>
                                 <th>Status</th>
                                 <th>Points</th>
-                                <th>Actions</th>
+                                <th class="w-36">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="dataTableBody">
                             <!-- Data will be populated here -->
                         </tbody>
                     </table>
+                    <!-- Fix 3: Show All button -->
+                    <div id="showMoreContainer" class="mt-4 text-center hidden">
+                        <button id="showAllRecordsBtn" class="custom-btn text-white py-2 px-6 rounded-md">
+                            <i class="fas fa-list mr-2"></i> Show All Records
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -545,7 +600,7 @@
                                 <th>Products</th>
                                 <th>Status</th>
                                 <th>Points</th>
-                                <th>Actions</th>
+                                <th class="w-36">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="searchResultsBody">
@@ -595,7 +650,7 @@
                         </div>
                         <div>
                             <p class="font-medium text-gray-600">Personal Loans:</p>
-                            <p class="text-xl font-bold text-purple-600" id="summaryInProgressPL">0</p>
+                            <p class="text-xl font-bold text-purple-600" id="summaryInProgressPL">AED 0</p>
                         </div>
                     </div>
                 </div>
@@ -610,7 +665,7 @@
                         </div>
                         <div>
                             <p class="font-medium text-gray-600">Personal Loans:</p>
-                            <p class="text-xl font-bold text-green-600" id="summaryCompletedPL">0</p>
+                            <p class="text-xl font-bold text-green-600" id="summaryCompletedPL">AED 0</p>
                         </div>
                     </div>
                 </div>
@@ -625,23 +680,23 @@
                         </div>
                         <div>
                             <p class="font-medium text-gray-600">Personal Loans:</p>
-                            <p class="text-xl font-bold text-blue-600" id="summaryTotalPL">0</p>
+                            <p class="text-xl font-bold text-blue-600" id="summaryTotalPL">AED 0</p>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Target Card -->
+                <!-- Fix 4: Rename "Your Target" to "Target" -->
                 <div class="summary-card">
-                    <h3>Your Target</h3>
+                    <h3>Target</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div>
                             <div class="flex items-center justify-between mb-2">
                                 <p class="font-medium text-gray-600">Credit Cards:</p>
-                                <input type="number" id="targetCC" class="target-input" value="10" min="0">
+                                <input type="number" id="targetCC" class="target-input" value="20" min="0" placeholder="20">
                             </div>
                             <div class="flex items-center justify-between">
                                 <p class="text-sm text-gray-500">Remaining:</p>
-                                <p class="font-bold text-blue-600" id="remainingCC">10</p>
+                                <p class="font-bold text-blue-600" id="remainingCC">20</p>
                             </div>
                             <div class="progress-bar mt-2">
                                 <div class="progress-fill bg-blue-500" id="progressCC" style="width: 0%">0%</div>
@@ -650,11 +705,11 @@
                         <div>
                             <div class="flex items-center justify-between mb-2">
                                 <p class="font-medium text-gray-600">Personal Loans:</p>
-                                <input type="number" id="targetPL" class="target-input" value="5" min="0">
+                                <input type="number" id="targetPL" class="target-input" value="500000" min="0" placeholder="500000">
                             </div>
                             <div class="flex items-center justify-between">
                                 <p class="text-sm text-gray-500">Remaining:</p>
-                                <p class="font-bold text-blue-600" id="remainingPL">5</p>
+                                <p class="font-bold text-blue-600" id="remainingPL">500000</p>
                             </div>
                             <div class="progress-bar mt-2">
                                 <div class="progress-fill bg-green-500" id="progressPL" style="width: 0%">0%</div>
@@ -663,11 +718,11 @@
                         <div>
                             <div class="flex items-center justify-between mb-2">
                                 <p class="font-medium text-gray-600">Accounts:</p>
-                                <input type="number" id="targetACC" class="target-input" value="8" min="0">
+                                <input type="number" id="targetACC" class="target-input" value="10" min="0" placeholder="10">
                             </div>
                             <div class="flex items-center justify-between">
                                 <p class="text-sm text-gray-500">Remaining:</p>
-                                <p class="font-bold text-blue-600" id="remainingACC">8</p>
+                                <p class="font-bold text-blue-600" id="remainingACC">10</p>
                             </div>
                             <div class="progress-bar mt-2">
                                 <div class="progress-fill bg-purple-500" id="progressACC" style="width: 0%">0%</div>
@@ -729,6 +784,11 @@
         const viewSection = document.getElementById('viewSection');
         const searchSection = document.getElementById('searchSection');
         const summarySection = document.getElementById('summarySection');
+        
+        // Fix 3: Track displayed records
+        let allRecordsData = [];
+        let isShowingAllRecords = false;
+        const maxInitialRecords = 10;
         
         function showSection(section) {
             // Hide all sections
@@ -1640,8 +1700,22 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    displayData(data.data, 'dataTableBody');
-                    calculatePointsTotals(data.data);
+                    // Store all data for "Show All" functionality
+                    allRecordsData = data.data;
+                    
+                    // Fix 3: Display only last 10 records initially
+                    isShowingAllRecords = false;
+                    const displayData = allRecordsData.slice(-maxInitialRecords); // Get last 10 records
+                    displayDataInTable(displayData, 'dataTableBody');
+                    calculatePointsTotals(allRecordsData);
+                    
+                    // Show or hide the "Show All" button based on data length
+                    const showMoreContainer = document.getElementById('showMoreContainer');
+                    if (allRecordsData.length > maxInitialRecords) {
+                        showMoreContainer.classList.remove('hidden');
+                    } else {
+                        showMoreContainer.classList.add('hidden');
+                    }
                 } else {
                     showSuccess(`Error: ${data.error}`);
                 }
@@ -1652,6 +1726,20 @@
                 hideLoading();
             }
         }
+
+        // Fix 3: Show All Records button event handler
+        document.getElementById('showAllRecordsBtn').addEventListener('click', function() {
+            if (!isShowingAllRecords && allRecordsData.length > 0) {
+                displayDataInTable(allRecordsData, 'dataTableBody');
+                isShowingAllRecords = true;
+                this.innerHTML = '<i class="fas fa-list-alt mr-2"></i> Show Last 10 Records';
+            } else {
+                const displayData = allRecordsData.slice(-maxInitialRecords);
+                displayDataInTable(displayData, 'dataTableBody');
+                isShowingAllRecords = false;
+                this.innerHTML = '<i class="fas fa-list mr-2"></i> Show All Records';
+            }
+        });
 
         // Calculate and display point totals
         function calculatePointsTotals(data) {
@@ -1699,11 +1787,14 @@
             let totalPoints = 0;
             
             let inProgressCC = 0;
-            let inProgressPL = 0;
             let completedCC = 0;
-            let completedPL = 0;
             let totalCC = 0;
-            let totalPL = 0;
+            
+            // Fix 5, 6, 7: Calculate loan amounts for Personal Loans
+            let inProgressLoanAmount = 0;
+            let completedLoanAmount = 0;
+            let totalLoanAmount = 0;
+            
             let totalAccounts = 0;
             let completedAccounts = 0;
             
@@ -1731,6 +1822,7 @@
                 const productString = record.Product || '';
                 const proposition = record.Proposition || '';
                 const scheme = record.Scheme || '';
+                const loanAmount = parseFloat(record['Loan Amount']) || 0;
                 
                 // Accumulate points
                 totalPoints += points;
@@ -1788,17 +1880,18 @@
                     }
                 }
                 
-                // Count personal loans
+                // Count personal loans and calculate loan amounts
                 const hasPL = productString.includes('PL') || 
                               productString.includes('Cat A & B') || 
                               productString.includes('Cat C & Below');
                 
-                if (hasPL) {
-                    totalPL++;
+                if (hasPL && loanAmount > 0) {
+                    totalLoanAmount += loanAmount;
+                    
                     if (isCompleted) {
-                        completedPL++;
+                        completedLoanAmount += loanAmount;
                     } else {
-                        inProgressPL++;
+                        inProgressLoanAmount += loanAmount;
                     }
                 }
                 
@@ -1850,23 +1943,31 @@
                 }
             });
             
+            // Format loan amounts with AED and comma separators
+            function formatCurrency(amount) {
+                return 'AED ' + amount.toLocaleString('en-US', {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                });
+            }
+            
             // Update summary page with counts
             document.getElementById('summaryEarnedPoints').textContent = earnedPoints.toFixed(2);
             document.getElementById('summaryPendingPoints').textContent = pendingPoints.toFixed(2);
             document.getElementById('summaryTotalPoints').textContent = totalPoints.toFixed(2);
             
             document.getElementById('summaryInProgressCC').textContent = inProgressCC;
-            document.getElementById('summaryInProgressPL').textContent = inProgressPL;
+            document.getElementById('summaryInProgressPL').textContent = formatCurrency(inProgressLoanAmount);
             
             document.getElementById('summaryCompletedCC').textContent = completedCC;
-            document.getElementById('summaryCompletedPL').textContent = completedPL;
+            document.getElementById('summaryCompletedPL').textContent = formatCurrency(completedLoanAmount);
             
             document.getElementById('summaryTotalCC').textContent = totalCC;
-            document.getElementById('summaryTotalPL').textContent = totalPL;
+            document.getElementById('summaryTotalPL').textContent = formatCurrency(totalLoanAmount);
             
             // Update target progress
             updateTargetProgress('CC', completedCC);
-            updateTargetProgress('PL', completedPL);
+            updateTargetProgressForAmount('PL', completedLoanAmount);
             updateTargetProgress('ACC', completedAccounts);
             
             // Create charts
@@ -1875,7 +1976,7 @@
             createSchemeChart(tmlAllCount, tmlCCCount, tmSelectCount, ntmlCount, totalCompletedSchemes);
         }
         
-        // Update target progress bars and values
+        // Update target progress bars and values for counts
         function updateTargetProgress(type, completed) {
             const targetInput = document.getElementById(`target${type}`);
             const remainingEl = document.getElementById(`remaining${type}`);
@@ -1899,6 +2000,30 @@
             });
         }
         
+        // Fix 4: Update target progress bars for loan amounts
+        function updateTargetProgressForAmount(type, completedAmount) {
+            const targetInput = document.getElementById(`target${type}`);
+            const remainingEl = document.getElementById(`remaining${type}`);
+            const progressEl = document.getElementById(`progress${type}`);
+            
+            // Get target value
+            const target = parseInt(targetInput.value) || 0;
+            // Calculate remaining
+            const remaining = Math.max(0, target - completedAmount);
+            // Calculate percentage
+            const percentage = target > 0 ? Math.min(100, Math.round((completedAmount / target) * 100)) : 0;
+            
+            // Update elements
+            remainingEl.textContent = remaining.toLocaleString('en-US');
+            progressEl.style.width = `${percentage}%`;
+            progressEl.textContent = `${percentage}%`;
+            
+            // Add event listener to update when target changes
+            targetInput.addEventListener('change', function() {
+                updateTargetProgressForAmount(type, completedAmount);
+            });
+        }
+        
         // Create proposition bar chart (percentage based)
         function createPropositionChart(conventional, islamic, both, total) {
             const ctx = document.getElementById('propositionChart').getContext('2d');
@@ -1914,12 +2039,11 @@
             const bothPercent = total > 0 ? Math.round((both / total) * 100) : 0;
             
             window.propositionChart = new Chart(ctx, {
-                type: 'bar',
+                type: 'pie',
                 data: {
                     labels: ['Conventional', 'Islamic', 'Both'],
                     datasets: [{
-                        label: 'Percentage',
-                        data: [conventionalPercent, islamicPercent, bothPercent],
+                        data: [conventional, islamic, both],
                         backgroundColor: [
                             '#6F2C4F',
                             '#262a5a',
@@ -1931,23 +2055,16 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    indexAxis: 'y',
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: {
-                                callback: function(value) {
-                                    return value + '%';
-                                }
-                            }
-                        }
-                    },
                     plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return context.parsed.x + '% (' + [conventional, islamic, both][context.dataIndex] + ')';
+                                    const value = context.raw;
+                                    const percent = total > 0 ? Math.round((value / total) * 100) : 0;
+                                    return `${context.label}: ${value} (${percent}%)`;
                                 }
                             }
                         }
@@ -2015,7 +2132,7 @@
             }
             
             window.schemeChart = new Chart(ctx, {
-                type: 'pie',
+                type: 'doughnut',
                 data: {
                     labels: ['TML ALL', 'TML CC', 'TM SELECT', 'NTML'],
                     datasets: [{
@@ -2072,7 +2189,7 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    displayData(data.data, 'searchResultsBody');
+                    displayDataInTable(data.data, 'searchResultsBody');
                 } else {
                     showSuccess(`Error: ${data.error}`);
                     document.getElementById('searchResultsBody').innerHTML = '<tr><td colspan="8" class="text-center py-4">No matching records found</td></tr>';
@@ -2085,8 +2202,35 @@
             }
         }
 
+        // Fix 2: Copy to clipboard function
+        function copyToClipboard(text) {
+            // Create a temporary input element
+            const input = document.createElement('input');
+            input.style.position = 'fixed';
+            input.style.opacity = 0;
+            input.value = text;
+            document.body.appendChild(input);
+            input.select();
+            
+            try {
+                // Execute the copy command
+                document.execCommand('copy');
+                return true;
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                return false;
+            } finally {
+                document.body.removeChild(input);
+            }
+        }
+
         // Display data in table
         function displayData(data, targetTableId) {
+            displayDataInTable(data, targetTableId);
+        }
+
+        // Fix 1 & 2: Updated function with improved action button layout and copy functionality
+        function displayDataInTable(data, targetTableId) {
             const tableBody = document.getElementById(targetTableId);
             tableBody.innerHTML = '';
             
@@ -2098,22 +2242,24 @@
             data.forEach(row => {
                 const tr = document.createElement('tr');
                 const mobileNumber = row.Mobile || '';
+                const cidValue = row.CID || '';
+                
                 tr.innerHTML = `
-                    <td>${row.CID || ''}</td>
+                    <td class="copyable" data-value="${cidValue}">${cidValue}</td>
                     <td>${row['App ID'] || ''}</td>
                     <td>${row['Customer Name'] || ''}</td>
-                    <td>${mobileNumber}</td>
+                    <td class="copyable" data-value="${mobileNumber}">${mobileNumber}</td>
                     <td>${row.Product || ''}</td>
                     <td>${row.Status || ''}</td>
                     <td>${row.Points || ''}</td>
-                    <td>
-                        <a href="tel:+${mobileNumber}" class="call-btn bg-green-600 text-white p-1 rounded mr-1 inline-block" title="Call ${row['Customer Name']}" role="button">
+                    <td class="action-column">
+                        <a href="tel:+${mobileNumber}" class="action-btn bg-green-600 text-white p-1 rounded inline-block" title="Call ${row['Customer Name']}" role="button">
                             <i class="fas fa-phone"></i>
                         </a>
-                        <button class="edit-btn bg-blue-600 text-white p-1 rounded mr-1" data-cid="${row.CID}">
+                        <button class="edit-btn action-btn bg-blue-600 text-white p-1 rounded" data-cid="${row.CID}" title="Edit">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="delete-btn bg-red-600 text-white p-1 rounded" data-cid="${row.CID}">
+                        <button class="delete-btn action-btn bg-red-600 text-white p-1 rounded" data-cid="${row.CID}" title="Delete">
                             <i class="fas fa-trash-alt"></i>
                         </button>
                     </td>
@@ -2134,6 +2280,19 @@
                     const cid = this.getAttribute('data-cid');
                     if (confirm('Are you sure you want to delete this record?')) {
                         deleteRecord(cid);
+                    }
+                });
+            });
+            
+            // Fix 2: Add event listeners for copyable fields
+            document.querySelectorAll('.copyable').forEach(element => {
+                element.addEventListener('click', function() {
+                    const value = this.getAttribute('data-value');
+                    if (copyToClipboard(value)) {
+                        this.classList.add('copied');
+                        setTimeout(() => {
+                            this.classList.remove('copied');
+                        }, 1500);
                     }
                 });
             });
@@ -2757,7 +2916,7 @@
             
             // Initialize target progress bars
             updateTargetProgress('CC', 0);
-            updateTargetProgress('PL', 0);
+            updateTargetProgressForAmount('PL', 0);
             updateTargetProgress('ACC', 0);
         });
     </script>
