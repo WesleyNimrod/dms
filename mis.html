@@ -1711,15 +1711,18 @@
             let conventionalCount = 0;
             let islamicCount = 0;
             let bothCount = 0;
+            let totalPropositions = 0;
             
             let aspireCount = 0;
             let privilegeCount = 0;
             let mdsaCount = 0;
+            let totalAccountTypes = 0;
             
             let tmlAllCount = 0;
             let tmlCCCount = 0;
             let tmSelectCount = 0;
             let ntmlCount = 0;
+            let totalCompletedSchemes = 0;
             
             // Process each record
             data.forEach(record => {
@@ -1737,20 +1740,51 @@
                     pendingPoints += points;
                 }
                 
-                // Count credit cards
-                const hasCC = productString.includes('CC') || 
-                              productString.includes('Touchpoints') || 
-                              productString.includes('Cashback') ||
-                              productString.includes('Talabat') ||
-                              productString.includes('Visa') ||
-                              productString.includes('MC');
+                // Count primary credit cards and 2nd credit cards separately
+                let ccCount = 0;
+                const products = productString.split(',').map(p => p.trim());
                 
-                if (hasCC) {
-                    totalCC++;
+                // Check for primary CC
+                const hasPrimaryCC = productString.includes('CC') || 
+                                     productString.includes('Touchpoints') || 
+                                     productString.includes('Cashback') ||
+                                     productString.includes('Talabat') ||
+                                     productString.includes('Visa') ||
+                                     productString.includes('MC');
+                
+                if (hasPrimaryCC) {
+                    ccCount++;
+                }
+                
+                // Check for 2nd CC (separate product)
+                const has2ndCC = productString.includes('2ndCC');
+                if (has2ndCC) {
+                    ccCount++;
+                }
+                
+                // Check if there are multiple CC products in the list
+                const ccProducts = products.filter(p => 
+                    p.includes('Touchpoints') || 
+                    p.includes('Cashback') ||
+                    p.includes('Talabat') ||
+                    p.includes('Visa') ||
+                    p.includes('MC')
+                );
+                
+                // If we have multiple CC products but no explicit 2ndCC, count them as separate
+                if (ccProducts.length > 1 && !has2ndCC) {
+                    ccCount = ccProducts.length;
+                }
+                
+                // Add to total CC counter
+                totalCC += ccCount;
+                
+                // Add to completed or in-progress CC counters
+                if (ccCount > 0) {
                     if (isCompleted) {
-                        completedCC++;
+                        completedCC += ccCount;
                     } else {
-                        inProgressCC++;
+                        inProgressCC += ccCount;
                     }
                 }
                 
@@ -1781,6 +1815,7 @@
                     }
                     
                     // Count account types for donut chart
+                    totalAccountTypes++;
                     if (productString.includes('Aspire')) {
                         aspireCount++;
                     } else if (productString.includes('Privilege')) {
@@ -1791,6 +1826,7 @@
                 }
                 
                 // Count proposition types for bar chart
+                totalPropositions++;
                 if (proposition === 'Conventional') {
                     conventionalCount++;
                 } else if (proposition === 'Islamic') {
@@ -1801,6 +1837,7 @@
                 
                 // Count scheme types for pie chart (only completed records)
                 if (isCompleted) {
+                    totalCompletedSchemes++;
                     if (scheme === 'TML ALL') {
                         tmlAllCount++;
                     } else if (scheme === 'TML CC') {
@@ -1833,9 +1870,9 @@
             updateTargetProgress('ACC', completedAccounts);
             
             // Create charts
-            createPropositionChart(conventionalCount, islamicCount, bothCount);
-            createAccTypeChart(aspireCount, privilegeCount, mdsaCount);
-            createSchemeChart(tmlAllCount, tmlCCCount, tmSelectCount, ntmlCount);
+            createPropositionChart(conventionalCount, islamicCount, bothCount, totalPropositions);
+            createAccTypeChart(aspireCount, privilegeCount, mdsaCount, totalAccountTypes);
+            createSchemeChart(tmlAllCount, tmlCCCount, tmSelectCount, ntmlCount, totalCompletedSchemes);
         }
         
         // Update target progress bars and values
@@ -1862,8 +1899,8 @@
             });
         }
         
-        // Create proposition bar chart
-        function createPropositionChart(conventional, islamic, both) {
+        // Create proposition bar chart (percentage based)
+        function createPropositionChart(conventional, islamic, both, total) {
             const ctx = document.getElementById('propositionChart').getContext('2d');
             
             // Destroy existing chart if it exists
@@ -1871,13 +1908,18 @@
                 window.propositionChart.destroy();
             }
             
+            // Calculate percentages
+            const conventionalPercent = total > 0 ? Math.round((conventional / total) * 100) : 0;
+            const islamicPercent = total > 0 ? Math.round((islamic / total) * 100) : 0;
+            const bothPercent = total > 0 ? Math.round((both / total) * 100) : 0;
+            
             window.propositionChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: ['Conventional', 'Islamic', 'Both'],
                     datasets: [{
-                        label: 'Count',
-                        data: [conventional, islamic, both],
+                        label: 'Percentage',
+                        data: [conventionalPercent, islamicPercent, bothPercent],
                         backgroundColor: [
                             '#6F2C4F',
                             '#262a5a',
@@ -1889,11 +1931,24 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    indexAxis: 'y',
                     scales: {
-                        y: {
+                        x: {
                             beginAtZero: true,
+                            max: 100,
                             ticks: {
-                                stepSize: 1
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.x + '% (' + [conventional, islamic, both][context.dataIndex] + ')';
+                                }
                             }
                         }
                     }
@@ -1901,14 +1956,19 @@
             });
         }
         
-        // Create account type donut chart
-        function createAccTypeChart(aspire, privilege, mdsa) {
+        // Create account type donut chart (percentage based)
+        function createAccTypeChart(aspire, privilege, mdsa, total) {
             const ctx = document.getElementById('accTypeChart').getContext('2d');
             
             // Destroy existing chart if it exists
             if (window.accTypeChart) {
                 window.accTypeChart.destroy();
             }
+            
+            // Calculate percentages for tooltips
+            const aspirePercent = total > 0 ? Math.round((aspire / total) * 100) : 0;
+            const privilegePercent = total > 0 ? Math.round((privilege / total) * 100) : 0;
+            const mdsaPercent = total > 0 ? Math.round((mdsa / total) * 100) : 0;
             
             window.accTypeChart = new Chart(ctx, {
                 type: 'doughnut',
@@ -1930,14 +1990,23 @@
                     plugins: {
                         legend: {
                             position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw;
+                                    const percent = total > 0 ? Math.round((value / total) * 100) : 0;
+                                    return `${context.label}: ${value} (${percent}%)`;
+                                }
+                            }
                         }
                     }
                 }
             });
         }
         
-        // Create scheme pie chart
-        function createSchemeChart(tmlAll, tmlCC, tmSelect, ntml) {
+        // Create scheme pie chart (percentage based)
+        function createSchemeChart(tmlAll, tmlCC, tmSelect, ntml, total) {
             const ctx = document.getElementById('schemeChart').getContext('2d');
             
             // Destroy existing chart if it exists
@@ -1966,6 +2035,15 @@
                     plugins: {
                         legend: {
                             position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw;
+                                    const percent = total > 0 ? Math.round((value / total) * 100) : 0;
+                                    return `${context.label}: ${value} (${percent}%)`;
+                                }
+                            }
                         }
                     }
                 }
