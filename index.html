@@ -1575,132 +1575,147 @@
             }
             
             // Specialized function to set up add-backs from data
-            function setupAddbacksFromData(data) {
-                if (!data || Object.keys(data).length === 0) return;
+function setupAddbacksFromData(data) {
+    if (!data || Object.keys(data).length === 0) return;
+    
+    // Clear existing add-backs
+    while (addbacksContainer.children.length > 1) {
+        addbacksContainer.removeChild(addbacksContainer.lastChild);
+    }
+    dynamicAddbackFields.innerHTML = '';
+    addbackCount = 1;
+    
+    // Initialize addbackData with a deep copy of the loaded data
+    addbackData = JSON.parse(JSON.stringify(data));
+    
+    // Get the maximum index to know how many add-backs to create
+    const indices = Object.keys(data).map(k => parseInt(k));
+    const maxIndex = Math.max(...indices);
+    
+    // Set up first add-back (already exists in the DOM)
+    const firstAddbackSelect = addbacksContainer.querySelector('.addback-entry .addback-type');
+    if (data[0] && data[0].type) {
+        firstAddbackSelect.value = data[0].type;
+        
+        // Create the appropriate fields for this add-back type
+        createAddbackTypeFields(firstAddbackSelect);
+        
+        // Set up remaining add-backs if needed
+        for (let i = 1; i <= maxIndex; i++) {
+            if (data[i] && data[i].type) {
+                // Add another add-back entry
+                addMoreAddbackBtn.click();
                 
-                // Clear existing add-backs
-                while (addbacksContainer.children.length > 1) {
-                    addbacksContainer.removeChild(addbacksContainer.lastChild);
-                }
-                dynamicAddbackFields.innerHTML = '';
-                addbackCount = 1;
+                // Get the newly created add-back and set its type
+                const addbackEntries = addbacksContainer.querySelectorAll('.addback-entry');
+                const lastEntry = addbackEntries[addbackEntries.length - 1];
+                const typeSelect = lastEntry.querySelector('.addback-type');
+                typeSelect.value = data[i].type;
                 
-                // Get the maximum index to know how many add-backs to create
-                const indices = Object.keys(data).map(k => parseInt(k));
-                const maxIndex = Math.max(...indices);
-                
-                // Set up first add-back (already exists in the DOM)
-                const firstAddbackSelect = addbacksContainer.querySelector('.addback-entry .addback-type');
-                if (data[0] && data[0].type) {
-                    firstAddbackSelect.value = data[0].type;
-                    
-                    // Create the appropriate fields for this add-back type
-                    createAddbackTypeFields(firstAddbackSelect);
-                    
-                    // Set up remaining add-backs if needed
-                    for (let i = 1; i <= maxIndex; i++) {
-                        if (data[i] && data[i].type) {
-                            // Add another add-back entry
-                            addMoreAddbackBtn.click();
-                            
-                            // Get the newly created add-back and set its type
-                            const addbackEntries = addbacksContainer.querySelectorAll('.addback-entry');
-                            const lastEntry = addbackEntries[addbackEntries.length - 1];
-                            const typeSelect = lastEntry.querySelector('.addback-type');
-                            typeSelect.value = data[i].type;
-                            
-                            // Create fields for this add-back type
-                            createAddbackTypeFields(typeSelect);
-                        }
-                    }
-                    
-                    // Now that all add-backs are created, set their values with a delay
-                    // to ensure DOM is ready
-                    setTimeout(() => {
-                        setAddbackValues(data);
-                    }, 300);
-                }
+                // Create fields for this add-back type
+                createAddbackTypeFields(typeSelect);
             }
+        }
+        
+        // Now that all add-backs are created, set their values with a delay
+        // to ensure DOM is ready
+        setTimeout(() => {
+            setAddbackValues(data);
+        }, 500);
+    }
+}
             
-            // Function to set values for add-backs after they've been created
-            function setAddbackValues(data) {
-                // Iterate through all add-back data
-                Object.keys(data).forEach(index => {
-                    index = parseInt(index);
-                    const addbackType = data[index].type;
-                    const values = data[index].values || {};
+// Function to set values for add-backs after they've been created
+function setAddbackValues(data) {
+    // Iterate through all add-back data
+    Object.keys(data).forEach(index => {
+        index = parseInt(index);
+        const addbackType = data[index].type;
+        const values = data[index].values || {};
+        
+        // Get the fields container for this add-back
+        const fieldsContainer = document.getElementById(`addback-fields-${index}`);
+        if (!fieldsContainer) return;
+        
+        if (addbackType === 'hra' || addbackType === 'airfare') {
+            // Set period (yearly/monthly)
+            if (values.period) {
+                const periodValue = values.period;
+                const radioId = `${addbackType}${periodValue.charAt(0).toUpperCase() + periodValue.slice(1)}-${index}`;
+                const radioBtn = document.getElementById(radioId);
+                
+                if (radioBtn) {
+                    console.log(`Setting radio button ${radioId} for ${addbackType}`);
                     
-                    // Get the fields container for this add-back
-                    const fieldsContainer = document.getElementById(`addback-fields-${index}`);
-                    if (!fieldsContainer) return;
+                    // Force the radio button to be checked directly
+                    radioBtn.checked = true;
                     
-                    if (addbackType === 'hra' || addbackType === 'airfare') {
-                        // Set period (yearly/monthly)
-                        if (values.period) {
-                            const periodValue = values.period;
-                            const radioId = `${addbackType}${periodValue.charAt(0).toUpperCase() + periodValue.slice(1)}-${index}`;
-                            const radioBtn = document.getElementById(radioId);
-                            
-                            if (radioBtn) {
-                                console.log(`Setting radio button ${radioId} for ${addbackType}`);
-                                
-                                // Force the radio button to be checked
-                                radioBtn.checked = true;
-                                
-                                // Explicitly trigger a change event
-                                const changeEvent = new Event('change', { bubbles: true });
-                                radioBtn.dispatchEvent(changeEvent);
-                                
-                                // This is the key fix: manually update the internal model
-                                addbackData[index] = addbackData[index] || {};
-                                addbackData[index].type = addbackType;
-                                addbackData[index].values = addbackData[index].values || {};
-                                addbackData[index].values.period = periodValue;
-                                
-                                // We'll set the amount after the period is set
-                                if (values.amount) {
-                                    const amountInput = fieldsContainer.querySelector(`.${addbackType}-amount`);
-                                    if (amountInput) {
-                                        amountInput.value = values.amount;
-                                        
-                                        // Update the data model
-                                        addbackData[index].values.amount = values.amount;
-                                        
-                                        // Trigger input event to ensure calculations update
-                                        const inputEvent = new Event('input', { bubbles: true });
-                                        amountInput.dispatchEvent(inputEvent);
-                                    }
-                                }
-                            } else {
-                                console.log(`Radio button ${radioId} not found for ${addbackType}`);
-                            }
-                        }
-                    } else if (['overtime', 'servicecharge', 'incentives', 'telephone'].includes(addbackType)) {
-                        // Set monthly values
-                        for (let i = 1; i <= 6; i++) {
-                            if (values[`month${i}`]) {
-                                const monthInput = fieldsContainer.querySelector(`.${addbackType}-amount-${i}`);
-                                if (monthInput) {
-                                    monthInput.value = values[`month${i}`];
-                                    
-                                    // Update the data model
-                                    addbackData[index] = addbackData[index] || {};
-                                    addbackData[index].type = addbackType;
-                                    addbackData[index].values = addbackData[index].values || {};
-                                    addbackData[index].values[`month${i}`] = values[`month${i}`];
-                                    
-                                    // Trigger input event to ensure calculations update
-                                    const inputEvent = new Event('input', { bubbles: true });
-                                    monthInput.dispatchEvent(inputEvent);
-                                }
-                            }
+                    // Set the amount value if it exists
+                    if (values.amount) {
+                        const amountInput = fieldsContainer.querySelector(`.${addbackType}-amount`);
+                        if (amountInput) {
+                            amountInput.value = values.amount;
                         }
                     }
-                });
-                
-                // Manually trigger calculation after all values are set
-                updateGrossSalary();
+                    
+                    // Ensure the data model is correct
+                    addbackData[index] = addbackData[index] || {};
+                    addbackData[index].type = addbackType;
+                    addbackData[index].values = addbackData[index].values || {};
+                    addbackData[index].values.period = periodValue;
+                    if (values.amount) {
+                        addbackData[index].values.amount = values.amount;
+                    }
+                    
+                    // Try both approaches to trigger change event
+                    // 1. Dispatch standard change event
+                    const changeEvent = new Event('change', { bubbles: true });
+                    radioBtn.dispatchEvent(changeEvent);
+                    
+                    // 2. Also try click event which sometimes works better for radio buttons
+                    const clickEvent = new MouseEvent('click', {
+                        bubbles: true,
+                        cancelable: true,
+                        view: window
+                    });
+                    radioBtn.dispatchEvent(clickEvent);
+                    
+                    // 3. Direct handler call as a fallback
+                    if (radioBtn.onclick) {
+                        radioBtn.onclick();
+                    }
+                } else {
+                    console.log(`Radio button ${radioId} not found for ${addbackType}`);
+                }
             }
+        } else if (['overtime', 'servicecharge', 'incentives', 'telephone'].includes(addbackType)) {
+            // Set monthly values
+            for (let i = 1; i <= 6; i++) {
+                if (values[`month${i}`]) {
+                    const monthInput = fieldsContainer.querySelector(`.${addbackType}-amount-${i}`);
+                    if (monthInput) {
+                        monthInput.value = values[`month${i}`];
+                        
+                        // Ensure data model is correct
+                        addbackData[index] = addbackData[index] || {};
+                        addbackData[index].type = addbackType;
+                        addbackData[index].values = addbackData[index].values || {};
+                        addbackData[index].values[`month${i}`] = values[`month${i}`];
+                        
+                        // Trigger input event to ensure calculations update
+                        const inputEvent = new Event('input', { bubbles: true });
+                        monthInput.dispatchEvent(inputEvent);
+                    }
+                }
+            }
+        }
+    });
+    
+    // Manually trigger calculation after all values are set
+    setTimeout(() => {
+        updateGrossSalary();
+    }, 100);
+}
             
             function deleteCustomerProfile() {
                 const selectedProfile = savedProfilesSelect.value;
