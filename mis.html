@@ -2097,15 +2097,19 @@
             
             data.forEach(row => {
                 const tr = document.createElement('tr');
+                const mobileNumber = row.Mobile || '';
                 tr.innerHTML = `
                     <td>${row.CID || ''}</td>
                     <td>${row['App ID'] || ''}</td>
                     <td>${row['Customer Name'] || ''}</td>
-                    <td>${row.Mobile || ''}</td>
+                    <td>${mobileNumber}</td>
                     <td>${row.Product || ''}</td>
                     <td>${row.Status || ''}</td>
                     <td>${row.Points || ''}</td>
                     <td>
+                        <a href="tel:+${mobileNumber}" class="call-btn bg-green-600 text-white p-1 rounded mr-1 inline-block" title="Call ${row['Customer Name']}" role="button">
+                            <i class="fas fa-phone"></i>
+                        </a>
                         <button class="edit-btn bg-blue-600 text-white p-1 rounded mr-1" data-cid="${row.CID}">
                             <i class="fas fa-edit"></i>
                         </button>
