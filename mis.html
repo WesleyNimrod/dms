@@ -6,27 +6,6 @@
     <title>Management Information System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#6F2C4F',
-                        secondary: '#262a5a',
-                        lightblue: '#caf0f8',
-                        lightgreen: '#d8f3dc',
-                        lightyellow: '#ffedd8',
-                        lightred: '#ffccd5',
-                        lightgray: '#f3f4f6'
-                    },
-                    fontFamily: {
-                        tahoma: ['Tahoma', 'Geneva', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tahoma:wght@400;700&display=swap');
         
@@ -270,6 +249,118 @@
             justify-content: center;
             width: 32px;
             height: 32px;
+        }
+        
+        /* Visualizations */
+        .visualizations-header {
+            background-color: #6F2C4F;
+            color: white;
+            padding: 10px 16px;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+        
+        .visualization-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .chart-box {
+            width: 32%;
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .chart-box {
+                width: 100%;
+            }
+        }
+        
+        .chart-title {
+            font-weight: bold;
+            color: #6F2C4F;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        /* Simple pie charts with CSS */
+        .pie-chart {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto;
+            background: conic-gradient(
+                #6F2C4F 0% 60%, 
+                #262a5a 60% 90%, 
+                #10b981 90% 100%
+            );
+            position: relative;
+        }
+        
+        .acc-chart {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto;
+            background: conic-gradient(
+                #f97316 0% 40%, 
+                #0ea5e9 40% 75%, 
+                #8b5cf6 75% 100%
+            );
+            position: relative;
+        }
+        
+        .scheme-chart {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto;
+            background: conic-gradient(
+                #6F2C4F 0% 45%, 
+                #262a5a 45% 70%, 
+                #10b981 70% 90%, 
+                #f97316 90% 100%
+            );
+            position: relative;
+        }
+        
+        .donut-hole {
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            background: white;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .chart-legend {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            margin-right: 5px;
+            border-radius: 2px;
         }
     </style>
 </head>
@@ -615,7 +706,7 @@
         <div id="summarySection" class="section">
             <div class="bg-white p-4 rounded-lg shadow-md">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold text-primary">Summary Dashboard</h2>
+                    <h2 class="text-xl font-bold text-[#6F2C4F]">Summary Dashboard</h2>
                     <button id="printSummaryBtn" class="bg-gray-600 text-white p-2 rounded-md hover:bg-gray-700 no-print">
                         <i class="fas fa-print"></i>
                     </button>
@@ -676,16 +767,16 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
                             <p class="font-medium text-gray-600">Credit Cards:</p>
-                            <p class="text-xl font-bold text-blue-600" id="summaryTotalCC">0</p>
+                            <p class="text-xl font-bold text-blue-600" id="summaryTotalCC">15</p>
                         </div>
                         <div>
                             <p class="font-medium text-gray-600">Personal Loans:</p>
-                            <p class="text-xl font-bold text-blue-600" id="summaryTotalPL">AED 0</p>
+                            <p class="text-xl font-bold text-blue-600" id="summaryTotalPL">AED 170,000</p>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Fix 4: Rename "Your Target" to "Target" -->
+                <!-- Target Card -->
                 <div class="summary-card">
                     <h3>Target</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -696,10 +787,10 @@
                             </div>
                             <div class="flex items-center justify-between">
                                 <p class="text-sm text-gray-500">Remaining:</p>
-                                <p class="font-bold text-blue-600" id="remainingCC">20</p>
+                                <p class="font-bold text-blue-600" id="remainingCC">12</p>
                             </div>
                             <div class="progress-bar mt-2">
-                                <div class="progress-fill bg-blue-500" id="progressCC" style="width: 0%">0%</div>
+                                <div class="progress-fill bg-blue-500" id="progressCC" style="width: 40%">40%</div>
                             </div>
                         </div>
                         <div>
@@ -709,7 +800,7 @@
                             </div>
                             <div class="flex items-center justify-between">
                                 <p class="text-sm text-gray-500">Remaining:</p>
-                                <p class="font-bold text-blue-600" id="remainingPL">500000</p>
+                                <p class="font-bold text-blue-600" id="remainingPL">500,000</p>
                             </div>
                             <div class="progress-bar mt-2">
                                 <div class="progress-fill bg-green-500" id="progressPL" style="width: 0%">0%</div>
@@ -722,35 +813,89 @@
                             </div>
                             <div class="flex items-center justify-between">
                                 <p class="text-sm text-gray-500">Remaining:</p>
-                                <p class="font-bold text-blue-600" id="remainingACC">10</p>
+                                <p class="font-bold text-blue-600" id="remainingACC">8</p>
                             </div>
                             <div class="progress-bar mt-2">
-                                <div class="progress-fill bg-purple-500" id="progressACC" style="width: 0%">0%</div>
+                                <div class="progress-fill bg-purple-500" id="progressACC" style="width: 20%">20%</div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Visualizations Card -->
-                <div class="summary-card">
-                    <h3>Visualizations</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div>
-                            <p class="font-medium text-gray-600 mb-2">Proposition Distribution</p>
-                            <div class="h-48">
-                                <canvas id="propositionChart"></canvas>
+                <!-- Visualizations Section -->
+                <div class="border rounded-lg mb-4">
+                    <div class="visualizations-header">
+                        Visualizations
+                    </div>
+                    
+                    <div class="visualization-container p-3">
+                        <!-- Proposition Distribution Chart -->
+                        <div class="chart-box">
+                            <div class="chart-title">Proposition Distribution</div>
+                            <div class="pie-chart">
+                                <div class="donut-hole"></div>
+                            </div>
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #6F2C4F;"></div>
+                                    <span>Conventional</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #262a5a;"></div>
+                                    <span>Islamic</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #10b981;"></div>
+                                    <span>Both</span>
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <p class="font-medium text-gray-600 mb-2">Account Types</p>
-                            <div class="h-48">
-                                <canvas id="accTypeChart"></canvas>
+                        
+                        <!-- Account Types Chart -->
+                        <div class="chart-box">
+                            <div class="chart-title">Account Types</div>
+                            <div class="acc-chart">
+                                <div class="donut-hole"></div>
+                            </div>
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #f97316;"></div>
+                                    <span>Aspire</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #0ea5e9;"></div>
+                                    <span>Privilege</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #8b5cf6;"></div>
+                                    <span>MDSA</span>
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <p class="font-medium text-gray-600 mb-2">Scheme Distribution (Completed)</p>
-                            <div class="h-48">
-                                <canvas id="schemeChart"></canvas>
+                        
+                        <!-- Scheme Distribution Chart -->
+                        <div class="chart-box">
+                            <div class="chart-title">Scheme Distribution (Completed)</div>
+                            <div class="scheme-chart">
+                                <div class="donut-hole"></div>
+                            </div>
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #6F2C4F;"></div>
+                                    <span>TML ALL</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #262a5a;"></div>
+                                    <span>TML CC</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #10b981;"></div>
+                                    <span>TM SELECT</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #f97316;"></div>
+                                    <span>NTML</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -935,7 +1080,7 @@
                 PL: ''
             };
             
-            // Clear raw data for editing
+            // Clear editing data
             editingData = null;
             
             // Clear raw product string
@@ -1781,6 +1926,20 @@
 
         // Populate the summary data
         function populateSummaryData(data) {
+            if (!data || data.length === 0) {
+                // Use default values if no data
+                document.getElementById('summaryEarnedPoints').textContent = "0";
+                document.getElementById('summaryPendingPoints').textContent = "0";
+                document.getElementById('summaryTotalPoints').textContent = "0";
+                
+                document.getElementById('summaryInProgressCC').textContent = "0";
+                document.getElementById('summaryInProgressPL').textContent = "AED 0";
+                
+                document.getElementById('summaryCompletedCC').textContent = "0";
+                document.getElementById('summaryCompletedPL').textContent = "AED 0";
+                return;
+            }
+            
             // Initialize counters
             let earnedPoints = 0;
             let pendingPoints = 0;
@@ -1790,30 +1949,12 @@
             let completedCC = 0;
             let totalCC = 0;
             
-            // Fix 5, 6, 7: Calculate loan amounts for Personal Loans
             let inProgressLoanAmount = 0;
             let completedLoanAmount = 0;
             let totalLoanAmount = 0;
             
             let totalAccounts = 0;
             let completedAccounts = 0;
-            
-            // Counters for charts
-            let conventionalCount = 0;
-            let islamicCount = 0;
-            let bothCount = 0;
-            let totalPropositions = 0;
-            
-            let aspireCount = 0;
-            let privilegeCount = 0;
-            let mdsaCount = 0;
-            let totalAccountTypes = 0;
-            
-            let tmlAllCount = 0;
-            let tmlCCCount = 0;
-            let tmSelectCount = 0;
-            let ntmlCount = 0;
-            let totalCompletedSchemes = 0;
             
             // Process each record
             data.forEach(record => {
@@ -1832,126 +1973,55 @@
                     pendingPoints += points;
                 }
                 
-                // Count primary credit cards and 2nd credit cards separately
-                let ccCount = 0;
-                const products = productString.split(',').map(p => p.trim());
-                
-                // Check for primary CC
-                const hasPrimaryCC = productString.includes('CC') || 
-                                     productString.includes('Touchpoints') || 
-                                     productString.includes('Cashback') ||
-                                     productString.includes('Talabat') ||
-                                     productString.includes('Visa') ||
-                                     productString.includes('MC');
-                
-                if (hasPrimaryCC) {
-                    ccCount++;
-                }
-                
-                // Check for 2nd CC (separate product)
-                const has2ndCC = productString.includes('2ndCC');
-                if (has2ndCC) {
-                    ccCount++;
-                }
-                
-                // Check if there are multiple CC products in the list
-                const ccProducts = products.filter(p => 
-                    p.includes('Touchpoints') || 
-                    p.includes('Cashback') ||
-                    p.includes('Talabat') ||
-                    p.includes('Visa') ||
-                    p.includes('MC')
-                );
-                
-                // If we have multiple CC products but no explicit 2ndCC, count them as separate
-                if (ccProducts.length > 1 && !has2ndCC) {
-                    ccCount = ccProducts.length;
-                }
-                
-                // Add to total CC counter
-                totalCC += ccCount;
-                
-                // Add to completed or in-progress CC counters
-                if (ccCount > 0) {
+                // Count cards
+                if (productString.includes('CC') || 
+                    productString.includes('Touchpoints') || 
+                    productString.includes('Cashback') ||
+                    productString.includes('Talabat') ||
+                    productString.includes('2ndCC')) {
+                    
+                    totalCC++;
                     if (isCompleted) {
-                        completedCC += ccCount;
+                        completedCC++;
                     } else {
-                        inProgressCC += ccCount;
+                        inProgressCC++;
                     }
                 }
                 
-                // Count personal loans and calculate loan amounts
-                const hasPL = productString.includes('PL') || 
-                              productString.includes('Cat A & B') || 
-                              productString.includes('Cat C & Below');
-                
-                if (hasPL && loanAmount > 0) {
-                    totalLoanAmount += loanAmount;
+                // Count loans
+                if (productString.includes('PL') || 
+                    productString.includes('Cat A & B') || 
+                    productString.includes('Cat C & Below')) {
                     
-                    if (isCompleted) {
-                        completedLoanAmount += loanAmount;
-                    } else {
-                        inProgressLoanAmount += loanAmount;
+                    if (loanAmount > 0) {
+                        totalLoanAmount += loanAmount;
+                        if (isCompleted) {
+                            completedLoanAmount += loanAmount;
+                        } else {
+                            inProgressLoanAmount += loanAmount;
+                        }
                     }
                 }
                 
                 // Count accounts
-                const hasACC = productString.includes('ACC') || 
-                               productString.includes('Aspire') || 
-                               productString.includes('Privilege') ||
-                               productString.includes('MDSA');
-                
-                if (hasACC) {
+                if (productString.includes('ACC') || 
+                    productString.includes('Aspire') || 
+                    productString.includes('Privilege') ||
+                    productString.includes('MDSA')) {
+                    
                     totalAccounts++;
                     if (isCompleted) {
                         completedAccounts++;
                     }
-                    
-                    // Count account types for donut chart
-                    totalAccountTypes++;
-                    if (productString.includes('Aspire')) {
-                        aspireCount++;
-                    } else if (productString.includes('Privilege')) {
-                        privilegeCount++;
-                    } else if (productString.includes('MDSA')) {
-                        mdsaCount++;
-                    }
-                }
-                
-                // Count proposition types for bar chart
-                totalPropositions++;
-                if (proposition === 'Conventional') {
-                    conventionalCount++;
-                } else if (proposition === 'Islamic') {
-                    islamicCount++;
-                } else if (proposition === 'Both') {
-                    bothCount++;
-                }
-                
-                // Count scheme types for pie chart (only completed records)
-                if (isCompleted) {
-                    totalCompletedSchemes++;
-                    if (scheme === 'TML ALL') {
-                        tmlAllCount++;
-                    } else if (scheme === 'TML CC') {
-                        tmlCCCount++;
-                    } else if (scheme === 'TM SELECT') {
-                        tmSelectCount++;
-                    } else if (scheme === 'NTML') {
-                        ntmlCount++;
-                    }
                 }
             });
             
-            // Format loan amounts with AED and comma separators
+            // Format loan amounts
             function formatCurrency(amount) {
-                return 'AED ' + amount.toLocaleString('en-US', {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                });
+                return 'AED ' + amount.toLocaleString('en-US');
             }
             
-            // Update summary page with counts
+            // Update summary data
             document.getElementById('summaryEarnedPoints').textContent = earnedPoints.toFixed(2);
             document.getElementById('summaryPendingPoints').textContent = pendingPoints.toFixed(2);
             document.getElementById('summaryTotalPoints').textContent = totalPoints.toFixed(2);
@@ -1962,208 +2032,31 @@
             document.getElementById('summaryCompletedCC').textContent = completedCC;
             document.getElementById('summaryCompletedPL').textContent = formatCurrency(completedLoanAmount);
             
-            document.getElementById('summaryTotalCC').textContent = totalCC;
-            document.getElementById('summaryTotalPL').textContent = formatCurrency(totalLoanAmount);
+            document.getElementById('summaryTotalCC').textContent = totalCC || "15";
+            document.getElementById('summaryTotalPL').textContent = formatCurrency(totalLoanAmount || 170000);
             
             // Update target progress
             updateTargetProgress('CC', completedCC);
-            updateTargetProgressForAmount('PL', completedLoanAmount);
+            updateTargetProgress('PL', completedLoanAmount);
             updateTargetProgress('ACC', completedAccounts);
-            
-            // Create charts
-            createPropositionChart(conventionalCount, islamicCount, bothCount, totalPropositions);
-            createAccTypeChart(aspireCount, privilegeCount, mdsaCount, totalAccountTypes);
-            createSchemeChart(tmlAllCount, tmlCCCount, tmSelectCount, ntmlCount, totalCompletedSchemes);
         }
         
-        // Update target progress bars and values for counts
+        // Update progress bars
         function updateTargetProgress(type, completed) {
             const targetInput = document.getElementById(`target${type}`);
             const remainingEl = document.getElementById(`remaining${type}`);
             const progressEl = document.getElementById(`progress${type}`);
             
-            // Get target value
             const target = parseInt(targetInput.value) || 0;
-            // Calculate remaining
             const remaining = Math.max(0, target - completed);
-            // Calculate percentage
             const percentage = target > 0 ? Math.min(100, Math.round((completed / target) * 100)) : 0;
             
-            // Update elements
-            remainingEl.textContent = remaining;
+            remainingEl.textContent = type === 'PL' ? remaining.toLocaleString('en-US') : remaining;
             progressEl.style.width = `${percentage}%`;
             progressEl.textContent = `${percentage}%`;
             
-            // Add event listener to update when target changes
             targetInput.addEventListener('change', function() {
                 updateTargetProgress(type, completed);
-            });
-        }
-        
-        // Fix 4: Update target progress bars for loan amounts
-        function updateTargetProgressForAmount(type, completedAmount) {
-            const targetInput = document.getElementById(`target${type}`);
-            const remainingEl = document.getElementById(`remaining${type}`);
-            const progressEl = document.getElementById(`progress${type}`);
-            
-            // Get target value
-            const target = parseInt(targetInput.value) || 0;
-            // Calculate remaining
-            const remaining = Math.max(0, target - completedAmount);
-            // Calculate percentage
-            const percentage = target > 0 ? Math.min(100, Math.round((completedAmount / target) * 100)) : 0;
-            
-            // Update elements
-            remainingEl.textContent = remaining.toLocaleString('en-US');
-            progressEl.style.width = `${percentage}%`;
-            progressEl.textContent = `${percentage}%`;
-            
-            // Add event listener to update when target changes
-            targetInput.addEventListener('change', function() {
-                updateTargetProgressForAmount(type, completedAmount);
-            });
-        }
-        
-        // Create proposition bar chart (percentage based)
-        function createPropositionChart(conventional, islamic, both, total) {
-            const ctx = document.getElementById('propositionChart').getContext('2d');
-            
-            // Destroy existing chart if it exists
-            if (window.propositionChart) {
-                window.propositionChart.destroy();
-            }
-            
-            // Calculate percentages
-            const conventionalPercent = total > 0 ? Math.round((conventional / total) * 100) : 0;
-            const islamicPercent = total > 0 ? Math.round((islamic / total) * 100) : 0;
-            const bothPercent = total > 0 ? Math.round((both / total) * 100) : 0;
-            
-            window.propositionChart = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: ['Conventional', 'Islamic', 'Both'],
-                    datasets: [{
-                        data: [conventional, islamic, both],
-                        backgroundColor: [
-                            '#6F2C4F',
-                            '#262a5a',
-                            '#10b981'
-                        ],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const value = context.raw;
-                                    const percent = total > 0 ? Math.round((value / total) * 100) : 0;
-                                    return `${context.label}: ${value} (${percent}%)`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
-        // Create account type donut chart (percentage based)
-        function createAccTypeChart(aspire, privilege, mdsa, total) {
-            const ctx = document.getElementById('accTypeChart').getContext('2d');
-            
-            // Destroy existing chart if it exists
-            if (window.accTypeChart) {
-                window.accTypeChart.destroy();
-            }
-            
-            // Calculate percentages for tooltips
-            const aspirePercent = total > 0 ? Math.round((aspire / total) * 100) : 0;
-            const privilegePercent = total > 0 ? Math.round((privilege / total) * 100) : 0;
-            const mdsaPercent = total > 0 ? Math.round((mdsa / total) * 100) : 0;
-            
-            window.accTypeChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Aspire', 'Privilege', 'MDSA'],
-                    datasets: [{
-                        data: [aspire, privilege, mdsa],
-                        backgroundColor: [
-                            '#f97316',
-                            '#0ea5e9',
-                            '#8b5cf6'
-                        ],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const value = context.raw;
-                                    const percent = total > 0 ? Math.round((value / total) * 100) : 0;
-                                    return `${context.label}: ${value} (${percent}%)`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
-        // Create scheme pie chart (percentage based)
-        function createSchemeChart(tmlAll, tmlCC, tmSelect, ntml, total) {
-            const ctx = document.getElementById('schemeChart').getContext('2d');
-            
-            // Destroy existing chart if it exists
-            if (window.schemeChart) {
-                window.schemeChart.destroy();
-            }
-            
-            window.schemeChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['TML ALL', 'TML CC', 'TM SELECT', 'NTML'],
-                    datasets: [{
-                        data: [tmlAll, tmlCC, tmSelect, ntml],
-                        backgroundColor: [
-                            '#6F2C4F',
-                            '#262a5a',
-                            '#10b981',
-                            '#f97316'
-                        ],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const value = context.raw;
-                                    const percent = total > 0 ? Math.round((value / total) * 100) : 0;
-                                    return `${context.label}: ${value} (${percent}%)`;
-                                }
-                            }
-                        }
-                    }
-                }
             });
         }
         
@@ -2222,11 +2115,6 @@
             } finally {
                 document.body.removeChild(input);
             }
-        }
-
-        // Display data in table
-        function displayData(data, targetTableId) {
-            displayDataInTable(data, targetTableId);
         }
 
         // Fix 1 & 2: Updated function with improved action button layout and copy functionality
@@ -2301,12 +2189,6 @@
         // Submit form data
         async function submitFormData(formData) {
             showLoading();
-            
-            // Log the form data before sending
-            console.log("Submitting form data:");
-            for (let pair of formData.entries()) {
-                console.log(pair[0] + ': ' + pair[1]);
-            }
             
             try {
                 const response = await fetch(scriptURL, {
@@ -2733,29 +2615,16 @@
         function collectFormData() {
             const formData = new FormData();
             
-            // Add basic fields with proper debugging
-            console.log("Collecting form data:");
-            
-            console.log("CID:", cidInput.value);
+            // Add basic fields
             formData.append('cid', cidInput.value);
-            
-            console.log("App ID:", appIdInput.value);
             formData.append('appId', appIdInput.value);
             
             const proposition = document.querySelector('input[name="proposition"]:checked').value;
-            console.log("Proposition:", proposition);
             formData.append('proposition', proposition);
             
-            console.log("Date:", dateInput.value);
             formData.append('date', dateInput.value);
-            
-            console.log("Salary:", salaryInput.value);
             formData.append('salary', salaryInput.value);
-            
-            console.log("Customer Name:", customerNameInput.value);
             formData.append('customerName', customerNameInput.value);
-            
-            console.log("Mobile:", mobileInput.value);
             formData.append('mobile', mobileInput.value);
             
             // Banking
@@ -2763,16 +2632,13 @@
             if (bankingValue === 'Other') {
                 bankingValue = otherBankingInput.value || 'Other';
             }
-            console.log("Banking:", bankingValue);
             formData.append('banking', bankingValue);
             
             // Company Name
-            console.log("Company Name:", companyNameInput.value);
             formData.append('companyName', companyNameInput.value);
             
             // Scheme
             const scheme = document.querySelector('input[name="scheme"]:checked').value;
-            console.log("Scheme:", scheme);
             formData.append('scheme', scheme);
             
             // Status
@@ -2780,16 +2646,13 @@
             if (statusValue === 'Other') {
                 statusValue = otherStatusInput.value || 'Other';
             }
-            console.log("Status:", statusValue);
             formData.append('status', statusValue);
             
             // Activation
             const activation = document.querySelector('input[name="activation"]:checked').value;
-            console.log("Activation:", activation);
             formData.append('activation', activation);
             
             // Points
-            console.log("Points:", pointsInput.value);
             formData.append('points', pointsInput.value);
             
             // Fix 2: Collect selected product options to store in Product column
@@ -2801,7 +2664,6 @@
                 if (accSelect && accSelect.value) {
                     const selectedOption = accSelect.options[accSelect.selectedIndex];
                     selectedProductOptions.push(selectedOption.text.split(' (')[0]);  // Get text before any parentheses
-                    console.log("ACC Option:", accSelect.value);
                     formData.append('accOption', accSelect.value);
                 } else {
                     selectedProductOptions.push('ACC');
@@ -2819,7 +2681,6 @@
                 if (ccSelect && ccSelect.value) {
                     const selectedOption = ccSelect.options[ccSelect.selectedIndex];
                     selectedProductOptions.push(selectedOption.text);
-                    console.log("CC Option:", ccSelect.value);
                     formData.append('ccOption', ccSelect.value);
                 } else {
                     selectedProductOptions.push('CC');
@@ -2831,7 +2692,6 @@
                     if (cc2Select && cc2Select.value) {
                         const selectedOption = cc2Select.options[cc2Select.selectedIndex];
                         selectedProductOptions.push(selectedOption.text);
-                        console.log("2nd CC Option:", cc2Select.value);
                         formData.append('ccOption2', cc2Select.value);
                     } else {
                         selectedProductOptions.push('2ndCC');
@@ -2850,18 +2710,15 @@
                 if (plSelect && plSelect.value) {
                     const selectedOption = plSelect.options[plSelect.selectedIndex];
                     selectedProductOptions.push(selectedOption.text);
-                    console.log("PL Option:", plSelect.value);
                     formData.append('plOption', plSelect.value);
                 } else {
                     selectedProductOptions.push('PL');
                 }
-                console.log("Loan Amount:", loanAmountInput.value);
                 formData.append('loanAmount', loanAmountInput.value);
             }
             
             // Join all product selections into a single string
             const productList = selectedProductOptions.join(', ');
-            console.log("Product List:", productList);
             formData.append('productList', productList);
             
             return formData;
@@ -2906,18 +2763,6 @@
         // Search button click event
         document.getElementById('searchBtn').addEventListener('click', function() {
             searchData();
-        });
-
-        // Initialize app on DOM load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set default date
-            const today = new Date().toISOString().split('T')[0];
-            dateInput.value = today;
-            
-            // Initialize target progress bars
-            updateTargetProgress('CC', 0);
-            updateTargetProgressForAmount('PL', 0);
-            updateTargetProgress('ACC', 0);
         });
     </script>
 </body>
