@@ -6,6 +6,7 @@
     <title>Management Information System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -152,6 +153,75 @@
             background-color: #f59e0b;
             color: white;
         }
+        
+        /* Print styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            
+            #summarySection, #summarySection * {
+                visibility: visible;
+            }
+            
+            #summarySection {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+        }
+        
+        /* Progress bar styles */
+        .progress-bar {
+            width: 100%;
+            height: 24px;
+            background-color: #f3f3f3;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: width 0.5s ease;
+        }
+        
+        .target-input {
+            width: 100px;
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .summary-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 16px;
+        }
+        
+        .summary-card h3 {
+            color: #6F2C4F;
+            margin-bottom: 12px;
+            font-weight: bold;
+            font-size: 1.25rem;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f3f3f3;
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-tahoma">
@@ -159,15 +229,18 @@
 
         
         <!-- Section Navigation Buttons -->
-        <div class="mb-4 flex justify-center gap-4">
+        <div class="mb-4 flex justify-center gap-4 flex-wrap">
             <button id="showEntryBtn" class="custom-btn text-white py-2 px-6 rounded-md flex items-center">
-                <i class="fas fa-file-alt mr-2"></i> Data Entry
+                <i class="fas fa-file-alt mr-2"></i> Form
             </button>
             <button id="showViewBtn" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-6 rounded-md flex items-center">
-                <i class="fas fa-table mr-2"></i> View Data
+                <i class="fas fa-table mr-2"></i> View
             </button>
             <button id="showSearchBtn" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-6 rounded-md flex items-center">
-                <i class="fas fa-search mr-2"></i> Search
+                <i class="fas fa-search mr-2"></i> Find
+            </button>
+            <button id="showSummaryBtn" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-6 rounded-md flex items-center">
+                <i class="fas fa-chart-pie mr-2"></i> Summary
             </button>
         </div>
         
@@ -482,6 +555,153 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Summary Section -->
+        <div id="summarySection" class="section">
+            <div class="bg-white p-4 rounded-lg shadow-md">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-primary">Summary Dashboard</h2>
+                    <button id="printSummaryBtn" class="bg-gray-600 text-white p-2 rounded-md hover:bg-gray-700 no-print">
+                        <i class="fas fa-print"></i>
+                    </button>
+                </div>
+                
+                <!-- Points Summary Card -->
+                <div class="summary-card">
+                    <h3>Points</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <p class="font-medium text-gray-600">Earned Points:</p>
+                            <p class="text-2xl font-bold text-green-600" id="summaryEarnedPoints">0</p>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-600">Pending Points:</p>
+                            <p class="text-2xl font-bold text-amber-600" id="summaryPendingPoints">0</p>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-600">Total Points:</p>
+                            <p class="text-2xl font-bold text-blue-600" id="summaryTotalPoints">0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- In Progress Card -->
+                <div class="summary-card">
+                    <h3>In Progress</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <p class="font-medium text-gray-600">Credit Cards:</p>
+                            <p class="text-xl font-bold text-purple-600" id="summaryInProgressCC">0</p>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-600">Personal Loans:</p>
+                            <p class="text-xl font-bold text-purple-600" id="summaryInProgressPL">0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Completed Card -->
+                <div class="summary-card">
+                    <h3>Completed</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <p class="font-medium text-gray-600">Credit Cards:</p>
+                            <p class="text-xl font-bold text-green-600" id="summaryCompletedCC">0</p>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-600">Personal Loans:</p>
+                            <p class="text-xl font-bold text-green-600" id="summaryCompletedPL">0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Effort Card -->
+                <div class="summary-card">
+                    <h3>Effort</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <p class="font-medium text-gray-600">Credit Cards:</p>
+                            <p class="text-xl font-bold text-blue-600" id="summaryTotalCC">0</p>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-600">Personal Loans:</p>
+                            <p class="text-xl font-bold text-blue-600" id="summaryTotalPL">0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Target Card -->
+                <div class="summary-card">
+                    <h3>Your Target</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="font-medium text-gray-600">Credit Cards:</p>
+                                <input type="number" id="targetCC" class="target-input" value="10" min="0">
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm text-gray-500">Remaining:</p>
+                                <p class="font-bold text-blue-600" id="remainingCC">10</p>
+                            </div>
+                            <div class="progress-bar mt-2">
+                                <div class="progress-fill bg-blue-500" id="progressCC" style="width: 0%">0%</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="font-medium text-gray-600">Personal Loans:</p>
+                                <input type="number" id="targetPL" class="target-input" value="5" min="0">
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm text-gray-500">Remaining:</p>
+                                <p class="font-bold text-blue-600" id="remainingPL">5</p>
+                            </div>
+                            <div class="progress-bar mt-2">
+                                <div class="progress-fill bg-green-500" id="progressPL" style="width: 0%">0%</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="font-medium text-gray-600">Accounts:</p>
+                                <input type="number" id="targetACC" class="target-input" value="8" min="0">
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm text-gray-500">Remaining:</p>
+                                <p class="font-bold text-blue-600" id="remainingACC">8</p>
+                            </div>
+                            <div class="progress-bar mt-2">
+                                <div class="progress-fill bg-purple-500" id="progressACC" style="width: 0%">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Visualizations Card -->
+                <div class="summary-card">
+                    <h3>Visualizations</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div>
+                            <p class="font-medium text-gray-600 mb-2">Proposition Distribution</p>
+                            <div class="h-48">
+                                <canvas id="propositionChart"></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-600 mb-2">Account Types</p>
+                            <div class="h-48">
+                                <canvas id="accTypeChart"></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-600 mb-2">Scheme Distribution (Completed)</p>
+                            <div class="h-48">
+                                <canvas id="schemeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- Success Indicator -->
@@ -503,25 +723,30 @@
         const showEntryBtn = document.getElementById('showEntryBtn');
         const showViewBtn = document.getElementById('showViewBtn');
         const showSearchBtn = document.getElementById('showSearchBtn');
+        const showSummaryBtn = document.getElementById('showSummaryBtn');
         
         const entrySection = document.getElementById('entrySection');
         const viewSection = document.getElementById('viewSection');
         const searchSection = document.getElementById('searchSection');
+        const summarySection = document.getElementById('summarySection');
         
         function showSection(section) {
             // Hide all sections
             entrySection.classList.remove('active');
             viewSection.classList.remove('active');
             searchSection.classList.remove('active');
+            summarySection.classList.remove('active');
             
             // Reset button styles
             showEntryBtn.classList.remove('custom-btn');
             showViewBtn.classList.remove('custom-btn');
             showSearchBtn.classList.remove('custom-btn');
+            showSummaryBtn.classList.remove('custom-btn');
             
             showEntryBtn.classList.add('bg-gray-500', 'hover:bg-gray-600');
             showViewBtn.classList.add('bg-gray-500', 'hover:bg-gray-600');
             showSearchBtn.classList.add('bg-gray-500', 'hover:bg-gray-600');
+            showSummaryBtn.classList.add('bg-gray-500', 'hover:bg-gray-600');
             
             // Show selected section and highlight button
             if (section === 'entry') {
@@ -537,12 +762,18 @@
                 searchSection.classList.add('active');
                 showSearchBtn.classList.remove('bg-gray-500', 'hover:bg-gray-600');
                 showSearchBtn.classList.add('custom-btn');
+            } else if (section === 'summary') {
+                summarySection.classList.add('active');
+                showSummaryBtn.classList.remove('bg-gray-500', 'hover:bg-gray-600');
+                showSummaryBtn.classList.add('custom-btn');
+                fetchAllDataForSummary();
             }
         }
         
         showEntryBtn.addEventListener('click', () => showSection('entry'));
         showViewBtn.addEventListener('click', () => showSection('view'));
         showSearchBtn.addEventListener('click', () => showSection('search'));
+        showSummaryBtn.addEventListener('click', () => showSection('summary'));
 
         // Show success indicator
         function showSuccess(message) {
@@ -1440,6 +1671,312 @@
             document.getElementById('pendingPointsTotal').textContent = pendingPoints.toFixed(2);
         }
 
+        // Fetch all data for the summary page
+        async function fetchAllDataForSummary() {
+            showLoading();
+            try {
+                const response = await fetch(`${scriptURL}?action=getAll`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    populateSummaryData(data.data);
+                } else {
+                    showSuccess(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                console.error('Error fetching data for summary:', error);
+                showSuccess('Error fetching data from server');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Populate the summary data
+        function populateSummaryData(data) {
+            // Initialize counters
+            let earnedPoints = 0;
+            let pendingPoints = 0;
+            let totalPoints = 0;
+            
+            let inProgressCC = 0;
+            let inProgressPL = 0;
+            let completedCC = 0;
+            let completedPL = 0;
+            let totalCC = 0;
+            let totalPL = 0;
+            let totalAccounts = 0;
+            let completedAccounts = 0;
+            
+            // Counters for charts
+            let conventionalCount = 0;
+            let islamicCount = 0;
+            let bothCount = 0;
+            
+            let aspireCount = 0;
+            let privilegeCount = 0;
+            let mdsaCount = 0;
+            
+            let tmlAllCount = 0;
+            let tmlCCCount = 0;
+            let tmSelectCount = 0;
+            let ntmlCount = 0;
+            
+            // Process each record
+            data.forEach(record => {
+                const points = parseFloat(record.Points) || 0;
+                const isCompleted = record.Status === 'Completed';
+                const productString = record.Product || '';
+                const proposition = record.Proposition || '';
+                const scheme = record.Scheme || '';
+                
+                // Accumulate points
+                totalPoints += points;
+                if (isCompleted) {
+                    earnedPoints += points;
+                } else {
+                    pendingPoints += points;
+                }
+                
+                // Count credit cards
+                const hasCC = productString.includes('CC') || 
+                              productString.includes('Touchpoints') || 
+                              productString.includes('Cashback') ||
+                              productString.includes('Talabat') ||
+                              productString.includes('Visa') ||
+                              productString.includes('MC');
+                
+                if (hasCC) {
+                    totalCC++;
+                    if (isCompleted) {
+                        completedCC++;
+                    } else {
+                        inProgressCC++;
+                    }
+                }
+                
+                // Count personal loans
+                const hasPL = productString.includes('PL') || 
+                              productString.includes('Cat A & B') || 
+                              productString.includes('Cat C & Below');
+                
+                if (hasPL) {
+                    totalPL++;
+                    if (isCompleted) {
+                        completedPL++;
+                    } else {
+                        inProgressPL++;
+                    }
+                }
+                
+                // Count accounts
+                const hasACC = productString.includes('ACC') || 
+                               productString.includes('Aspire') || 
+                               productString.includes('Privilege') ||
+                               productString.includes('MDSA');
+                
+                if (hasACC) {
+                    totalAccounts++;
+                    if (isCompleted) {
+                        completedAccounts++;
+                    }
+                    
+                    // Count account types for donut chart
+                    if (productString.includes('Aspire')) {
+                        aspireCount++;
+                    } else if (productString.includes('Privilege')) {
+                        privilegeCount++;
+                    } else if (productString.includes('MDSA')) {
+                        mdsaCount++;
+                    }
+                }
+                
+                // Count proposition types for bar chart
+                if (proposition === 'Conventional') {
+                    conventionalCount++;
+                } else if (proposition === 'Islamic') {
+                    islamicCount++;
+                } else if (proposition === 'Both') {
+                    bothCount++;
+                }
+                
+                // Count scheme types for pie chart (only completed records)
+                if (isCompleted) {
+                    if (scheme === 'TML ALL') {
+                        tmlAllCount++;
+                    } else if (scheme === 'TML CC') {
+                        tmlCCCount++;
+                    } else if (scheme === 'TM SELECT') {
+                        tmSelectCount++;
+                    } else if (scheme === 'NTML') {
+                        ntmlCount++;
+                    }
+                }
+            });
+            
+            // Update summary page with counts
+            document.getElementById('summaryEarnedPoints').textContent = earnedPoints.toFixed(2);
+            document.getElementById('summaryPendingPoints').textContent = pendingPoints.toFixed(2);
+            document.getElementById('summaryTotalPoints').textContent = totalPoints.toFixed(2);
+            
+            document.getElementById('summaryInProgressCC').textContent = inProgressCC;
+            document.getElementById('summaryInProgressPL').textContent = inProgressPL;
+            
+            document.getElementById('summaryCompletedCC').textContent = completedCC;
+            document.getElementById('summaryCompletedPL').textContent = completedPL;
+            
+            document.getElementById('summaryTotalCC').textContent = totalCC;
+            document.getElementById('summaryTotalPL').textContent = totalPL;
+            
+            // Update target progress
+            updateTargetProgress('CC', completedCC);
+            updateTargetProgress('PL', completedPL);
+            updateTargetProgress('ACC', completedAccounts);
+            
+            // Create charts
+            createPropositionChart(conventionalCount, islamicCount, bothCount);
+            createAccTypeChart(aspireCount, privilegeCount, mdsaCount);
+            createSchemeChart(tmlAllCount, tmlCCCount, tmSelectCount, ntmlCount);
+        }
+        
+        // Update target progress bars and values
+        function updateTargetProgress(type, completed) {
+            const targetInput = document.getElementById(`target${type}`);
+            const remainingEl = document.getElementById(`remaining${type}`);
+            const progressEl = document.getElementById(`progress${type}`);
+            
+            // Get target value
+            const target = parseInt(targetInput.value) || 0;
+            // Calculate remaining
+            const remaining = Math.max(0, target - completed);
+            // Calculate percentage
+            const percentage = target > 0 ? Math.min(100, Math.round((completed / target) * 100)) : 0;
+            
+            // Update elements
+            remainingEl.textContent = remaining;
+            progressEl.style.width = `${percentage}%`;
+            progressEl.textContent = `${percentage}%`;
+            
+            // Add event listener to update when target changes
+            targetInput.addEventListener('change', function() {
+                updateTargetProgress(type, completed);
+            });
+        }
+        
+        // Create proposition bar chart
+        function createPropositionChart(conventional, islamic, both) {
+            const ctx = document.getElementById('propositionChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (window.propositionChart) {
+                window.propositionChart.destroy();
+            }
+            
+            window.propositionChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Conventional', 'Islamic', 'Both'],
+                    datasets: [{
+                        label: 'Count',
+                        data: [conventional, islamic, both],
+                        backgroundColor: [
+                            '#6F2C4F',
+                            '#262a5a',
+                            '#10b981'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Create account type donut chart
+        function createAccTypeChart(aspire, privilege, mdsa) {
+            const ctx = document.getElementById('accTypeChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (window.accTypeChart) {
+                window.accTypeChart.destroy();
+            }
+            
+            window.accTypeChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Aspire', 'Privilege', 'MDSA'],
+                    datasets: [{
+                        data: [aspire, privilege, mdsa],
+                        backgroundColor: [
+                            '#f97316',
+                            '#0ea5e9',
+                            '#8b5cf6'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Create scheme pie chart
+        function createSchemeChart(tmlAll, tmlCC, tmSelect, ntml) {
+            const ctx = document.getElementById('schemeChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (window.schemeChart) {
+                window.schemeChart.destroy();
+            }
+            
+            window.schemeChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['TML ALL', 'TML CC', 'TM SELECT', 'NTML'],
+                    datasets: [{
+                        data: [tmlAll, tmlCC, tmSelect, ntml],
+                        backgroundColor: [
+                            '#6F2C4F',
+                            '#262a5a',
+                            '#10b981',
+                            '#f97316'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Print summary page
+        document.getElementById('printSummaryBtn').addEventListener('click', function() {
+            window.print();
+        });
+
         // Search for data
         async function searchData() {
             const cid = document.getElementById('searchCID').value;
@@ -2135,6 +2672,11 @@
             // Set default date
             const today = new Date().toISOString().split('T')[0];
             dateInput.value = today;
+            
+            // Initialize target progress bars
+            updateTargetProgress('CC', 0);
+            updateTargetProgress('PL', 0);
+            updateTargetProgress('ACC', 0);
         });
     </script>
 </body>
