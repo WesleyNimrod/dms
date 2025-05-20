@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calling System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tahoma:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Tahoma', Geneva, sans-serif;
+        }
+        
+        .custom-btn {
+            background: linear-gradient(135deg, #6F2C4F 0%, #262a5a 100%);
+            transition: all 0.3s;
+        }
+        
+        .custom-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        
+        .gradient-primary {
+            background: linear-gradient(135deg, #6F2C4F 0%, #262a5a 100%);
+        }
+        
+        .success-indicator {
+            background: rgb(22, 163, 74);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            animation: fadeOut 2s forwards;
+            animation-delay: 1s;
+            z-index: 100;
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        .loading-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #6F2C4F;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Table styling */
+        .calling-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .calling-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .calling-table tr:hover {
+            background-color: #ddd;
+        }
+
+        .calling-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            position: relative;
+        }
+
+        /* Editable cell styling */
+        .editable {
+            position: relative;
+            cursor: text;
+            transition: background-color 0.2s;
+        }
+
+        .editable:hover {
+            background-color: rgba(111, 44, 79, 0.1);
+        }
+
+        .editable.active {
+            background-color: rgba(111, 44, 79, 0.15);
+            outline: 2px solid #6F2C4F;
+        }
+
+        /* Copyable cell styling */
+        .copyable {
+            cursor: pointer;
+            position: relative;
+            user-select: all;
+        }
+
+        .copyable::after {
+            content: "Copied!";
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+
+        .copyable.copied::after {
+            opacity: 1;
+            animation: fadeAfterCopy 1.5s forwards;
+        }
+
+        @keyframes fadeAfterCopy {
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Filter inputs */
+        .filter-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-item {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        /* Scrollable table container */
+        .table-container {
+            overflow-x: auto;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        /* Call buttons */
+        .call-btn {
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            color: white;
+            margin-right: 4px;
+        }
+
+        .direct-call {
+            background-color: #16a34a;
+        }
+
+        .teams-call {
+            background-color: #4f46e5;
+        }
+
+        /* Result dropdown styling */
+        .result-dropdown {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+        }
+
+        /* Table header */
+        .calling-table th {
+            background-color: #6F2C4F;
+            color: white;
+            text-align: left;
+            padding: 10px 8px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .calling-table tr:nth-child(even) {
+                background-color: #333;
+            }
+            
+            .calling-table tr:hover {
+                background-color: #444;
+            }
+            
+            .calling-table td {
+                border-color: #555;
+            }
+            
+            .calling-table th {
+                background-color: #452838; 
+            }
+            
+            .editable:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+            
+            .editable.active {
+                background-color: rgba(255, 255, 255, 0.15);
+            }
+            
+            .result-dropdown {
+                background-color: #222;
+                color: white;
+                border-color: #555;
+            }
+        }
+        
+        /* Error message */
+        .error-message {
+            color: #ef4444;
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ef4444;
+            border-radius: 4px;
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+        
+        /* Placeholder content for empty table */
+        .table-placeholder {
+            padding: 30px;
+            text-align: center;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 dark:text-white font-tahoma">
+    <div class="container mx-auto px-3 py-4 max-w-6xl">
+        <h1 class="text-2xl font-bold text-[#6F2C4F] dark:text-gray-100 mb-4">Calling System</h1>
+        
+        <!-- Controls and Info Section -->
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md mb-4">
+            <div class="flex flex-wrap justify-between items-center mb-4">
+                <div>
+                    <h2 class="text-xl font-bold text-[#6F2C4F] dark:text-gray-100">Calling List</h2>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm" id="recordsInfo">Showing 0 records</p>
+                </div>
+                <div class="flex gap-2">
+                    <button id="refreshBtn" class="custom-btn text-white py-2 px-4 rounded-md flex items-center">
+                        <i class="fas fa-sync-alt mr-2"></i> Refresh Data
+                    </button>
+                    <button id="showMoreBtn" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 flex items-center hidden">
+                        <i class="fas fa-expand-alt mr-2"></i> Show More
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Filter Section -->
+            <div class="mb-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-semibold text-lg mb-2 text-[#6F2C4F] dark:text-gray-100">Filters</h3>
+                    <button id="clearFiltersBtn" class="text-sm text-blue-600 dark:text-blue-400">Clear All</button>
+                </div>
+                <div class="filter-container">
+                    <div class="filter-item">
+                        <label for="resultFilter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Result</label>
+                        <select id="resultFilter" class="w-full border rounded-md p-2 text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <option value="">All Results</option>
+                            <option value="To Call">To Call</option>
+                            <option value="No Answer">No Answer</option>
+                            <option value="Busy">Busy</option>
+                            <option value="DNCR">DNCR</option>
+                            <option value="Not Interested">Not Interested</option>
+                            <option value="Interested">Interested</option>
+                            <option value="Switched Off">Switched Off</option>
+                            <option value="In Future">In Future</option>
+                            <option value="Rejected">Rejected</option>
+                            <option value="On Hold">On Hold</option>
+                            <option value="Referal">Referal</option>
+                            <option value="Applied">Applied</option>
+                            <option value="Already Having">Already Having</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label for="nameFilter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
+                        <input type="text" id="nameFilter" placeholder="Filter by name" class="w-full border rounded-md p-2 text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    </div>
+                    <div class="filter-item">
+                        <label for="companyFilter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Company</label>
+                        <input type="text" id="companyFilter" placeholder="Filter by company" class="w-full border rounded-md p-2 text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    </div>
+                    <div class="filter-item">
+                        <label for="bankFilter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bank</label>
+                        <input type="text" id="bankFilter" placeholder="Filter by bank" class="w-full border rounded-md p-2 text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    </div>
+                    <div class="filter-item">
+                        <label for="salaryFilter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Min. Salary</label>
+                        <input type="number" id="salaryFilter" placeholder="Min salary" class="w-full border rounded-md p-2 text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Table Section -->
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+            <div class="table-container">
+                <table id="callingTable" class="calling-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">Actions</th>
+                            <th style="width: 150px;">Result</th>
+                            <th style="width: 120px;">Mobile</th>
+                            <th>Name</th>
+                            <th>Company</th>
+                            <th>Bank</th>
+                            <th style="width: 100px;">Salary</th>
+                        </tr>
+                    </thead>
+                    <tbody id="callingTableBody">
+                        <!-- Data will be populated here -->
+                        <tr>
+                            <td colspan="7" class="table-placeholder">
+                                <div class="py-8">
+                                    <i class="fas fa-spinner fa-spin text-3xl mb-4 text-[#6F2C4F]"></i>
+                                    <p>Loading data, please wait...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="errorContainer" class="hidden error-message">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                <span id="errorMessage">Error loading data</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Indicator -->
+    <div id="successIndicator" class="success-indicator hidden">
+        <span id="successMessage">Operation successful!</span>
+    </div>
+    
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="loading-indicator hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        // ==========================================
+        // DARK MODE DETECTION
+        // ==========================================
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+        
+        // ==========================================
+        // UTILITIES
+        // ==========================================
+        
+        // Show success message
+        function showSuccess(message) {
+            const indicator = document.getElementById('successIndicator');
+            const messageEl = document.getElementById('successMessage');
+            
+            messageEl.textContent = message;
+            indicator.classList.remove('hidden');
+            
+            setTimeout(() => {
+                indicator.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Show loading indicator
+        function showLoading() {
+            document.getElementById('loadingIndicator').classList.remove('hidden');
+        }
+
+        // Hide loading indicator
+        function hideLoading() {
+            document.getElementById('loadingIndicator').classList.add('hidden');
+        }
+        
+        // Show error message
+        function showError(message) {
+            const errorContainer = document.getElementById('errorContainer');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            errorMessage.textContent = message;
+            errorContainer.classList.remove('hidden');
+        }
+        
+        // Hide error message
+        function hideError() {
+            document.getElementById('errorContainer').classList.add('hidden');
+        }
+        
+        // Copy to clipboard function
+        function copyToClipboard(text) {
+            console.log("Copying to clipboard:", text);
+            // Create a temporary input element
+            const input = document.createElement('input');
+            input.style.position = 'fixed';
+            input.style.opacity = 0;
+            input.value = text;
+            document.body.appendChild(input);
+            input.select();
+            
+            try {
+                // Execute the copy command
+                document.execCommand('copy');
+                return true;
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                return false;
+            } finally {
+                document.body.removeChild(input);
+            }
+        }
+        
+        // ==========================================
+        // DATA HANDLING
+        // ==========================================
+        
+        // Google Apps Script Web App URL
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwngb8Ka97Re88mDNaT60W-b_Ts4VQTf0DKSrJVUXra1Za8OtdNbG4gmrWIwfSSXaz9Rg/exec';
+        
+        // Store all calling data
+        let allCallingData = [];
+        let displayedCallingData = [];
+        let isShowingAll = false;
+        const initialRowLimit = 30;
+        const maxRowLimit = 100;
+        
+        // Create mock data for testing if needed
+        function createMockData() {
+            const mockData = [];
+            
+            for (let i = 0; i < 50; i++) {
+                mockData.push({
+                    rowIndex: i + 2,
+                    Result: i % 5 === 0 ? 'To Call' : i % 5 === 1 ? 'No Answer' : i % 5 === 2 ? 'Busy' : i % 5 === 3 ? 'Interested' : 'Completed',
+                    Mobile: `971${Math.floor(50000000 + Math.random() * 9000000)}`,
+                    Name: `Test Person ${i + 1}`,
+                    Company: `Company ${i % 10 + 1}`,
+                    Bank: i % 6 === 0 ? 'ADCB' : i % 6 === 1 ? 'ENBD' : i % 6 === 2 ? 'FAB' : i % 6 === 3 ? 'DIB' : i % 6 === 4 ? 'MASHREQ' : 'Other',
+                    Salary: Math.floor(5000 + Math.random() * 20000)
+                });
+            }
+            
+            return mockData;
+        }
+        
+        // Fetch calling data from Google Sheets
+        async function fetchCallingData() {
+            showLoading();
+            hideError(); // Hide any previous errors
+            
+            try {
+                // Add diagnostic console log
+                console.log("Fetching data from:", `${scriptURL}?action=getCallingData`);
+                
+                const response = await fetch(`${scriptURL}?action=getCallingData`);
+                const data = await response.json();
+                
+                console.log("Response received:", data);
+                
+                if (data.success) {
+                    allCallingData = data.data;
+                    
+                    if (!allCallingData || allCallingData.length === 0) {
+                        showError("No data found in the Calling sheet. Please check if the sheet exists and contains data.");
+                        
+                        // Clear the table and show a message
+                        document.getElementById('callingTableBody').innerHTML = `
+                            <tr>
+                                <td colspan="7" class="table-placeholder">
+                                    <div class="py-8">
+                                        <i class="fas fa-exclamation-circle text-3xl mb-4 text-gray-400"></i>
+                                        <p>No data found in the Calling sheet</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                        
+                        // Update records info
+                        document.getElementById('recordsInfo').textContent = `Showing 0 records`;
+                        
+                        // Hide "Show More" button
+                        document.getElementById('showMoreBtn').classList.add('hidden');
+                    } else {
+                        // Apply any active filters
+                        applyFilters();
+                        
+                        // Show records info
+                        document.getElementById('recordsInfo').textContent = 
+                            `Showing ${Math.min(initialRowLimit, displayedCallingData.length)} of ${displayedCallingData.length} records`;
+                        
+                        // Show/hide "Show More" button
+                        const showMoreBtn = document.getElementById('showMoreBtn');
+                        if (displayedCallingData.length > initialRowLimit) {
+                            showMoreBtn.classList.remove('hidden');
+                        } else {
+                            showMoreBtn.classList.add('hidden');
+                        }
+                        
+                        isShowingAll = false;
+                    }
+                } else {
+                    console.error("API Error:", data.error);
+                    showError(`API Error: ${data.error}`);
+                    
+                    // Try to use mock data for testing
+                    // allCallingData = createMockData();
+                    // applyFilters();
+                }
+            } catch (error) {
+                console.error('Error fetching calling data:', error);
+                showError(`Network error: ${error.message}. Please check your internet connection and try again.`);
+                
+                // Try to use mock data for testing
+                // allCallingData = createMockData();
+                // applyFilters();
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        // Apply filters to the data
+        function applyFilters() {
+            const resultFilter = document.getElementById('resultFilter').value;
+            const nameFilter = document.getElementById('nameFilter').value.toLowerCase();
+            const companyFilter = document.getElementById('companyFilter').value.toLowerCase();
+            const bankFilter = document.getElementById('bankFilter').value.toLowerCase();
+            const salaryFilter = document.getElementById('salaryFilter').value;
+            
+            console.log("Applying filters:", { resultFilter, nameFilter, companyFilter, bankFilter, salaryFilter });
+            console.log("Data before filtering:", allCallingData);
+            
+            // Filter the data
+            displayedCallingData = allCallingData.filter(row => {
+                const result = String(row.Result || '');
+                const name = String(row.Name || '').toLowerCase();
+                const company = String(row.Company || '').toLowerCase();
+                const bank = String(row.Bank || '').toLowerCase();
+                const salary = parseFloat(row.Salary) || 0;
+                
+                return (
+                    (resultFilter === '' || result === resultFilter) &&
+                    (nameFilter === '' || name.includes(nameFilter)) &&
+                    (companyFilter === '' || company.includes(companyFilter)) &&
+                    (bankFilter === '' || bank.includes(bankFilter)) &&
+                    (salaryFilter === '' || salary >= parseFloat(salaryFilter))
+                );
+            });
+            
+            console.log("Filtered data:", displayedCallingData);
+            
+            // Update the table with filtered data
+            const limit = isShowingAll ? maxRowLimit : initialRowLimit;
+            const dataToShow = displayedCallingData.slice(0, limit);
+            populateTable(dataToShow);
+            
+            // Update records info
+            document.getElementById('recordsInfo').textContent = 
+                `Showing ${Math.min(limit, displayedCallingData.length)} of ${displayedCallingData.length} records`;
+            
+            // Show/hide "Show More" button
+            const showMoreBtn = document.getElementById('showMoreBtn');
+            if (displayedCallingData.length > limit && limit < maxRowLimit) {
+                showMoreBtn.classList.remove('hidden');
+                showMoreBtn.innerHTML = '<i class="fas fa-expand-alt mr-2"></i> Show More';
+            } else {
+                showMoreBtn.classList.add('hidden');
+            }
+        }
+        
+        // Clear all filters
+        function clearFilters() {
+            document.getElementById('resultFilter').value = '';
+            document.getElementById('nameFilter').value = '';
+            document.getElementById('companyFilter').value = '';
+            document.getElementById('bankFilter').value = '';
+            document.getElementById('salaryFilter').value = '';
+            
+            // Re-apply filters (which will now show all data)
+            applyFilters();
+        }
+        
+        // Update a cell in Google Sheets
+        async function updateCell(row, column, value) {
+            showLoading();
+            try {
+                console.log(`Updating cell - Row: ${row}, Column: ${column}, Value: ${value}`);
+                
+                const response = await fetch(`${scriptURL}?action=updateCallingCell&row=${row}&column=${column}&value=${encodeURIComponent(value)}`);
+                const data = await response.json();
+                
+                console.log("Update response:", data);
+                
+                if (data.success) {
+                    // Find the index in our data array for this row
+                    const dataIndex = allCallingData.findIndex(item => item.rowIndex === row);
+                    
+                    if (dataIndex !== -1) {
+                        // Update the local data
+                        allCallingData[dataIndex][column] = value;
+                        console.log(`Updated local data at index ${dataIndex}`);
+                    } else {
+                        console.error(`Couldn't find row ${row} in local data`);
+                    }
+                    
+                    showSuccess('Data updated successfully');
+                } else {
+                    showError(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                console.error('Error updating cell:', error);
+                showError(`Error updating data: ${error.message}`);
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        // ==========================================
+        // TABLE HANDLING
+        // ==========================================
+        
+        // Populate the table with data
+        function populateTable(data) {
+            const tableBody = document.getElementById('callingTableBody');
+            tableBody.innerHTML = '';
+            
+            if (!data || data.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="table-placeholder">
+                            <div class="py-8">
+                                <i class="fas fa-search text-3xl mb-4 text-gray-400"></i>
+                                <p>No matching records found</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            data.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                
+                // Call buttons
+                const callCell = document.createElement('td');
+                callCell.style.width = '80px';
+                
+                // Direct call button
+                const directCallBtn = document.createElement('a');
+                directCallBtn.href = `tel:+${row.Mobile || ''}`;
+                directCallBtn.classList.add('call-btn', 'direct-call');
+                directCallBtn.title = `Direct call to ${row.Name || 'Unknown'}`;
+                directCallBtn.innerHTML = '<i class="fas fa-phone"></i>';
+                
+                // Teams call button
+                const teamsCallBtn = document.createElement('a');
+                teamsCallBtn.href = `https://teams.microsoft.com/l/call/0/0?users=${row.Mobile || ''}`;
+                teamsCallBtn.target = "_blank";
+                teamsCallBtn.classList.add('call-btn', 'teams-call');
+                teamsCallBtn.title = `Teams call to ${row.Name || 'Unknown'}`;
+                teamsCallBtn.innerHTML = '<i class="fab fa-microsoft"></i>';
+                
+                callCell.appendChild(directCallBtn);
+                callCell.appendChild(teamsCallBtn);
+                tr.appendChild(callCell);
+                
+                // Result dropdown
+                const resultCell = document.createElement('td');
+                resultCell.style.width = '150px';
+                
+                const resultSelect = document.createElement('select');
+                resultSelect.classList.add('result-dropdown');
+                resultSelect.dataset.row = row.rowIndex;
+                resultSelect.dataset.column = 'Result';
+                
+                const resultOptions = [
+                    'To Call', 'No Answer', 'Busy', 'DNCR', 'Not Interested', 
+                    'Interested', 'Switched Off', 'In Future', 'Rejected', 
+                    'On Hold', 'Referal', 'Applied', 'Already Having', 'Completed'
+                ];
+                
+                // Add empty option
+                const emptyOption = document.createElement('option');
+                emptyOption.value = '';
+                emptyOption.textContent = 'Select Result';
+                resultSelect.appendChild(emptyOption);
+                
+                // Add all result options
+                resultOptions.forEach(option => {
+                    const optionEl = document.createElement('option');
+                    optionEl.value = option;
+                    optionEl.textContent = option;
+                    if (row.Result === option) {
+                        optionEl.selected = true;
+                    }
+                    resultSelect.appendChild(optionEl);
+                });
+                
+                // Add change event listener
+                resultSelect.addEventListener('change', async function() {
+                    const rowIndex = parseInt(this.dataset.row);
+                    const column = this.dataset.column;
+                    const newValue = this.value;
+                    
+                    await updateCell(rowIndex, column, newValue);
+                });
+                
+                resultCell.appendChild(resultSelect);
+                tr.appendChild(resultCell);
+                
+                // Mobile (copyable)
+                const mobileCell = document.createElement('td');
+                mobileCell.classList.add('copyable');
+                mobileCell.dataset.value = row.Mobile || '';
+                mobileCell.textContent = row.Mobile || '';
+                mobileCell.style.width = '120px';
+                
+                // Add click event for copying
+                mobileCell.addEventListener('click', function() {
+                    const value = this.dataset.value;
+                    if (copyToClipboard(value)) {
+                        this.classList.add('copied');
+                        setTimeout(() => {
+                            this.classList.remove('copied');
+                        }, 1500);
+                    }
+                });
+                
+                tr.appendChild(mobileCell);
+                
+                // Name (editable)
+                const nameCell = document.createElement('td');
+                nameCell.classList.add('editable');
+                nameCell.textContent = row.Name || '';
+                nameCell.dataset.row = row.rowIndex;
+                nameCell.dataset.column = 'Name';
+                nameCell.dataset.originalValue = row.Name || '';
+                tr.appendChild(nameCell);
+                
+                // Company (editable)
+                const companyCell = document.createElement('td');
+                companyCell.classList.add('editable');
+                companyCell.textContent = row.Company || '';
+                companyCell.dataset.row = row.rowIndex;
+                companyCell.dataset.column = 'Company';
+                companyCell.dataset.originalValue = row.Company || '';
+                tr.appendChild(companyCell);
+                
+                // Bank (editable)
+                const bankCell = document.createElement('td');
+                bankCell.classList.add('editable');
+                bankCell.textContent = row.Bank || '';
+                bankCell.dataset.row = row.rowIndex;
+                bankCell.dataset.column = 'Bank';
+                bankCell.dataset.originalValue = row.Bank || '';
+                tr.appendChild(bankCell);
+                
+                // Salary (editable)
+                const salaryCell = document.createElement('td');
+                salaryCell.classList.add('editable');
+                salaryCell.textContent = row.Salary || '';
+                salaryCell.dataset.row = row.rowIndex;
+                salaryCell.dataset.column = 'Salary';
+                salaryCell.dataset.originalValue = row.Salary || '';
+                salaryCell.style.width = '100px';
+                tr.appendChild(salaryCell);
+                
+                tableBody.appendChild(tr);
+            });
+            
+            // Add event listeners to editable cells
+            setupEditableCells();
+        }
+        
+        // Setup editable cells
+        function setupEditableCells() {
+            const editableCells = document.querySelectorAll('.editable');
+            
+            editableCells.forEach(cell => {
+                cell.addEventListener('click', function() {
+                    // If already being edited, do nothing
+                    if (this.classList.contains('active')) return;
+                    
+                    // Mark as active
+                    this.classList.add('active');
+                    
+                    // Save original content
+                    const originalValue = this.dataset.originalValue;
+                    
+                    // Create input field
+                    const input = document.createElement('input');
+                    input.type = this.dataset.column === 'Salary' ? 'number' : 'text';
+                    input.value = originalValue;
+                    input.style.width = '100%';
+                    input.style.border = 'none';
+                    input.style.background = 'transparent';
+                    input.style.outline = 'none';
+                    input.style.padding = '4px';
+                    
+                    // Clear cell and add input
+                    this.textContent = '';
+                    this.appendChild(input);
+                    input.focus();
+                    
+                    // Handle input blur (finish editing)
+                    input.addEventListener('blur', async function() {
+                        const newValue = this.value;
+                        const row = parseInt(cell.dataset.row);
+                        const column = cell.dataset.column;
+                        
+                        // Remove active state
+                        cell.classList.remove('active');
+                        
+                        // Only update if value has changed
+                        if (newValue !== originalValue) {
+                            // Update cell content first for responsiveness
+                            cell.textContent = newValue;
+                            cell.dataset.originalValue = newValue;
+                            
+                            // Then send update to server
+                            await updateCell(row, column, newValue);
+                        } else {
+                            // Just restore the original text
+                            cell.textContent = originalValue;
+                        }
+                    });
+                    
+                    // Handle Enter key
+                    input.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter') {
+                            this.blur();
+                        } else if (e.key === 'Escape') {
+                            this.value = originalValue;
+                            this.blur();
+                        }
+                    });
+                });
+            });
+        }
+        
+        // ==========================================
+        // EVENT LISTENERS
+        // ==========================================
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("Page loaded, initializing...");
+            
+            // Fetch initial data
+            fetchCallingData();
+            
+            // Setup event listeners for filters
+            document.getElementById('resultFilter').addEventListener('change', applyFilters);
+            document.getElementById('nameFilter').addEventListener('input', applyFilters);
+            document.getElementById('companyFilter').addEventListener('input', applyFilters);
+            document.getElementById('bankFilter').addEventListener('input', applyFilters);
+            document.getElementById('salaryFilter').addEventListener('input', applyFilters);
+            
+            // Clear filters button
+            document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
+            
+            // Refresh button
+            document.getElementById('refreshBtn').addEventListener('click', fetchCallingData);
+            
+            // Show more button
+            document.getElementById('showMoreBtn').addEventListener('click', function() {
+                if (!isShowingAll) {
+                    // Show up to maxRowLimit
+                    const dataToShow = displayedCallingData.slice(0, maxRowLimit);
+                    populateTable(dataToShow);
+                    isShowingAll = true;
+                    this.innerHTML = '<i class="fas fa-compress-alt mr-2"></i> Show Less';
+                    
+                    // Update records info
+                    document.getElementById('recordsInfo').textContent = 
+                        `Showing ${Math.min(maxRowLimit, displayedCallingData.length)} of ${displayedCallingData.length} records`;
+                } else {
+                    // Show only initialRowLimit
+                    const dataToShow = displayedCallingData.slice(0, initialRowLimit);
+                    populateTable(dataToShow);
+                    isShowingAll = false;
+                    this.innerHTML = '<i class="fas fa-expand-alt mr-2"></i> Show More';
+                    
+                    // Update records info
+                    document.getElementById('recordsInfo').textContent = 
+                        `Showing ${Math.min(initialRowLimit, displayedCallingData.length)} of ${displayedCallingData.length} records`;
+                }
+                
+                // Hide button if we're showing all the data
+                if (displayedCallingData.length <= (isShowingAll ? maxRowLimit : initialRowLimit)) {
+                    this.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
