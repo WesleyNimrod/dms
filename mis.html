@@ -370,7 +370,10 @@
         
         <!-- Section Navigation Buttons -->
         <div class="mb-4 flex justify-center gap-4 flex-wrap">
-            <button id="showEntryBtn" class="custom-btn text-white py-2 px-6 rounded-md flex items-center">
+            <button id="showSummaryBtn" class="custom-btn text-white py-2 px-6 rounded-md flex items-center">
+                <i class="fas fa-chart-pie mr-2"></i> Summary
+            </button>
+            <button id="showEntryBtn" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-6 rounded-md flex items-center">
                 <i class="fas fa-file-alt mr-2"></i> Form
             </button>
             <button id="showViewBtn" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-6 rounded-md flex items-center">
@@ -379,13 +382,211 @@
             <button id="showSearchBtn" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-6 rounded-md flex items-center">
                 <i class="fas fa-search mr-2"></i> Find
             </button>
-            <button id="showSummaryBtn" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-6 rounded-md flex items-center">
-                <i class="fas fa-chart-pie mr-2"></i> Summary
-            </button>
         </div>
         
         <!-- Section Content Containers -->
-        <div id="entrySection" class="section active">
+        <!-- Summary Section -->
+        <div id="summarySection" class="section active">
+            <div class="bg-white p-4 rounded-lg shadow-md">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-[#6F2C4F]">Summary Dashboard</h2>
+                    <button id="printSummaryBtn" class="bg-gray-600 text-white p-2 rounded-md hover:bg-gray-700 no-print">
+                        <i class="fas fa-print"></i>
+                    </button>
+                </div>
+                
+                <!-- Points Summary Card -->
+                <div class="summary-card">
+                    <h3>Points</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <p class="font-medium text-gray-600">Earned Points:</p>
+                            <p class="text-2xl font-bold text-green-600" id="summaryEarnedPoints">0</p>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-600">Pending Points:</p>
+                            <p class="text-2xl font-bold text-amber-600" id="summaryPendingPoints">0</p>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-600">Total Points:</p>
+                            <p class="text-2xl font-bold text-blue-600" id="summaryTotalPoints">0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- In Progress Card -->
+                <div class="summary-card">
+                    <h3>In Progress</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <p class="font-medium text-gray-600">Credit Cards:</p>
+                            <p class="text-xl font-bold text-purple-600" id="summaryInProgressCC">0</p>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-600">Personal Loans:</p>
+                            <p class="text-xl font-bold text-purple-600" id="summaryInProgressPL">AED 0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Completed Card -->
+                <div class="summary-card">
+                    <h3>Completed</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <p class="font-medium text-gray-600">Credit Cards:</p>
+                            <p class="text-xl font-bold text-green-600" id="summaryCompletedCC">0</p>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-600">Personal Loans:</p>
+                            <p class="text-xl font-bold text-green-600" id="summaryCompletedPL">AED 0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Effort Card -->
+                <div class="summary-card">
+                    <h3>Effort</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <p class="font-medium text-gray-600">Credit Cards:</p>
+                            <p class="text-xl font-bold text-blue-600" id="summaryTotalCC">15</p>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-600">Personal Loans:</p>
+                            <p class="text-xl font-bold text-blue-600" id="summaryTotalPL">AED 170,000</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Target Card -->
+                <div class="summary-card">
+                    <h3>Target</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="font-medium text-gray-600">Credit Cards:</p>
+                                <input type="number" id="targetCC" class="target-input" value="20" min="0" placeholder="20">
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm text-gray-500">Remaining:</p>
+                                <p class="font-bold text-blue-600" id="remainingCC">12</p>
+                            </div>
+                            <div class="progress-bar mt-2">
+                                <div class="progress-fill bg-blue-500" id="progressCC" style="width: 40%">40%</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="font-medium text-gray-600">Personal Loans:</p>
+                                <input type="number" id="targetPL" class="target-input" value="500000" min="0" placeholder="500000">
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm text-gray-500">Remaining:</p>
+                                <p class="font-bold text-blue-600" id="remainingPL">500,000</p>
+                            </div>
+                            <div class="progress-bar mt-2">
+                                <div class="progress-fill bg-green-500" id="progressPL" style="width: 0%">0%</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="font-medium text-gray-600">Accounts:</p>
+                                <input type="number" id="targetACC" class="target-input" value="10" min="0" placeholder="10">
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm text-gray-500">Remaining:</p>
+                                <p class="font-bold text-blue-600" id="remainingACC">8</p>
+                            </div>
+                            <div class="progress-bar mt-2">
+                                <div class="progress-fill bg-purple-500" id="progressACC" style="width: 20%">20%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Visualizations Section -->
+                <div class="border rounded-lg mb-4">
+                    <div class="visualizations-header">
+                        Visualizations
+                    </div>
+                    
+                    <div class="visualization-container p-3">
+                        <!-- Proposition Distribution Chart -->
+                        <div class="chart-box">
+                            <div class="chart-title">Proposition Distribution</div>
+                            <div class="pie-chart">
+                                <div class="donut-hole"></div>
+                            </div>
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #6F2C4F;"></div>
+                                    <span>Conventional</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #262a5a;"></div>
+                                    <span>Islamic</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #10b981;"></div>
+                                    <span>Both</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Account Types Chart -->
+                        <div class="chart-box">
+                            <div class="chart-title">Account Types</div>
+                            <div class="acc-chart">
+                                <div class="donut-hole"></div>
+                            </div>
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #f97316;"></div>
+                                    <span>Aspire</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #0ea5e9;"></div>
+                                    <span>Privilege</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #8b5cf6;"></div>
+                                    <span>MDSA</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Scheme Distribution Chart -->
+                        <div class="chart-box">
+                            <div class="chart-title">Scheme Distribution (Completed)</div>
+                            <div class="scheme-chart">
+                                <div class="donut-hole"></div>
+                            </div>
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #6F2C4F;"></div>
+                                    <span>TML ALL</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #262a5a;"></div>
+                                    <span>TML CC</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #10b981;"></div>
+                                    <span>TM SELECT</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #f97316;"></div>
+                                    <span>NTML</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="entrySection" class="section">
             <div class="bg-white p-4 rounded-lg shadow-md">
                 <h2 class="text-xl font-bold text-primary mb-4">Customer Data Entry</h2>
                 
@@ -701,207 +902,6 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Summary Section -->
-        <div id="summarySection" class="section">
-            <div class="bg-white p-4 rounded-lg shadow-md">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold text-[#6F2C4F]">Summary Dashboard</h2>
-                    <button id="printSummaryBtn" class="bg-gray-600 text-white p-2 rounded-md hover:bg-gray-700 no-print">
-                        <i class="fas fa-print"></i>
-                    </button>
-                </div>
-                
-                <!-- Points Summary Card -->
-                <div class="summary-card">
-                    <h3>Points</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div>
-                            <p class="font-medium text-gray-600">Earned Points:</p>
-                            <p class="text-2xl font-bold text-green-600" id="summaryEarnedPoints">0</p>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-600">Pending Points:</p>
-                            <p class="text-2xl font-bold text-amber-600" id="summaryPendingPoints">0</p>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-600">Total Points:</p>
-                            <p class="text-2xl font-bold text-blue-600" id="summaryTotalPoints">0</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- In Progress Card -->
-                <div class="summary-card">
-                    <h3>In Progress</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <p class="font-medium text-gray-600">Credit Cards:</p>
-                            <p class="text-xl font-bold text-purple-600" id="summaryInProgressCC">0</p>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-600">Personal Loans:</p>
-                            <p class="text-xl font-bold text-purple-600" id="summaryInProgressPL">AED 0</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Completed Card -->
-                <div class="summary-card">
-                    <h3>Completed</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <p class="font-medium text-gray-600">Credit Cards:</p>
-                            <p class="text-xl font-bold text-green-600" id="summaryCompletedCC">0</p>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-600">Personal Loans:</p>
-                            <p class="text-xl font-bold text-green-600" id="summaryCompletedPL">AED 0</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Effort Card -->
-                <div class="summary-card">
-                    <h3>Effort</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <p class="font-medium text-gray-600">Credit Cards:</p>
-                            <p class="text-xl font-bold text-blue-600" id="summaryTotalCC">15</p>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-600">Personal Loans:</p>
-                            <p class="text-xl font-bold text-blue-600" id="summaryTotalPL">AED 170,000</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Target Card -->
-                <div class="summary-card">
-                    <h3>Target</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <p class="font-medium text-gray-600">Credit Cards:</p>
-                                <input type="number" id="targetCC" class="target-input" value="20" min="0" placeholder="20">
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <p class="text-sm text-gray-500">Remaining:</p>
-                                <p class="font-bold text-blue-600" id="remainingCC">12</p>
-                            </div>
-                            <div class="progress-bar mt-2">
-                                <div class="progress-fill bg-blue-500" id="progressCC" style="width: 40%">40%</div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <p class="font-medium text-gray-600">Personal Loans:</p>
-                                <input type="number" id="targetPL" class="target-input" value="500000" min="0" placeholder="500000">
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <p class="text-sm text-gray-500">Remaining:</p>
-                                <p class="font-bold text-blue-600" id="remainingPL">500,000</p>
-                            </div>
-                            <div class="progress-bar mt-2">
-                                <div class="progress-fill bg-green-500" id="progressPL" style="width: 0%">0%</div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <p class="font-medium text-gray-600">Accounts:</p>
-                                <input type="number" id="targetACC" class="target-input" value="10" min="0" placeholder="10">
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <p class="text-sm text-gray-500">Remaining:</p>
-                                <p class="font-bold text-blue-600" id="remainingACC">8</p>
-                            </div>
-                            <div class="progress-bar mt-2">
-                                <div class="progress-fill bg-purple-500" id="progressACC" style="width: 20%">20%</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Visualizations Section -->
-                <div class="border rounded-lg mb-4">
-                    <div class="visualizations-header">
-                        Visualizations
-                    </div>
-                    
-                    <div class="visualization-container p-3">
-                        <!-- Proposition Distribution Chart -->
-                        <div class="chart-box">
-                            <div class="chart-title">Proposition Distribution</div>
-                            <div class="pie-chart">
-                                <div class="donut-hole"></div>
-                            </div>
-                            <div class="chart-legend">
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #6F2C4F;"></div>
-                                    <span>Conventional</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #262a5a;"></div>
-                                    <span>Islamic</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #10b981;"></div>
-                                    <span>Both</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Account Types Chart -->
-                        <div class="chart-box">
-                            <div class="chart-title">Account Types</div>
-                            <div class="acc-chart">
-                                <div class="donut-hole"></div>
-                            </div>
-                            <div class="chart-legend">
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #f97316;"></div>
-                                    <span>Aspire</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #0ea5e9;"></div>
-                                    <span>Privilege</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #8b5cf6;"></div>
-                                    <span>MDSA</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Scheme Distribution Chart -->
-                        <div class="chart-box">
-                            <div class="chart-title">Scheme Distribution (Completed)</div>
-                            <div class="scheme-chart">
-                                <div class="donut-hole"></div>
-                            </div>
-                            <div class="chart-legend">
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #6F2C4F;"></div>
-                                    <span>TML ALL</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #262a5a;"></div>
-                                    <span>TML CC</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #10b981;"></div>
-                                    <span>TM SELECT</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #f97316;"></div>
-                                    <span>NTML</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
     
     <!-- Success Indicator -->
@@ -1166,6 +1166,9 @@
             // Disable 2nd CC and STL initially
             product2ndCC.disabled = true;
             productSTL.disabled = true;
+            
+            // Initialize with Summary tab visible by default
+            showSection('summary');
         });
 
         // ==========================================
@@ -1835,7 +1838,7 @@
         // ==========================================
 
         // Google Apps Script Web App URL
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbznPCS1h9sLrnGOFy5Ps0JeinCHQ6JEV0jzZViiDKnT3MO4hJzn2BdIGQyrS2Pu32pCLQ/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwngb8Ka97Re88mDNaT60W-b_Ts4VQTf0DKSrJVUXra1Za8OtdNbG4gmrWIwfSSXaz9Rg/exec';
 
         // Fetch all data from Google Sheets
         async function fetchAllData() {
@@ -1937,26 +1940,36 @@
                 
                 document.getElementById('summaryCompletedCC').textContent = "0";
                 document.getElementById('summaryCompletedPL').textContent = "AED 0";
+                
+                document.getElementById('summaryTotalCC').textContent = "0";
+                document.getElementById('summaryTotalPL').textContent = "AED 0";
                 return;
             }
             
             // Initialize counters
             let earnedPoints = 0;
             let pendingPoints = 0;
-            let totalPoints = 0;
             
             let inProgressCC = 0;
             let completedCC = 0;
-            let totalCC = 0;
             
             let inProgressLoanAmount = 0;
             let completedLoanAmount = 0;
-            let totalLoanAmount = 0;
             
-            let totalAccounts = 0;
-            let completedAccounts = 0;
+            let conventionalCount = 0;
+            let islamicCount = 0;
+            let bothCount = 0;
             
-            // Process each record
+            let aspireCount = 0;
+            let privilegeCount = 0;
+            let mdsaCount = 0;
+            
+            let tmlAllCount = 0;
+            let tmlCCCount = 0;
+            let tmSelectCount = 0;
+            let ntmlCount = 0;
+            
+            // Process each record directly from the Google Sheet data
             data.forEach(record => {
                 const points = parseFloat(record.Points) || 0;
                 const isCompleted = record.Status === 'Completed';
@@ -1965,63 +1978,100 @@
                 const scheme = record.Scheme || '';
                 const loanAmount = parseFloat(record['Loan Amount']) || 0;
                 
-                // Accumulate points
-                totalPoints += points;
+                // Fix 1: Calculate Earned/Pending Points based on Status
                 if (isCompleted) {
                     earnedPoints += points;
                 } else {
                     pendingPoints += points;
                 }
                 
-                // Count cards
-                if (productString.includes('CC') || 
+                // Fixed logic for counting credit cards - count up to 2 CCs per record
+                let ccCount = 0;
+
+                // First, check for main CC
+                if (productString.includes('CC') && !productString.includes('BT/CCL') || 
                     productString.includes('Touchpoints') || 
-                    productString.includes('Cashback') ||
-                    productString.includes('Talabat') ||
-                    productString.includes('2ndCC')) {
-                    
-                    totalCC++;
-                    if (isCompleted) {
-                        completedCC++;
-                    } else {
-                        inProgressCC++;
-                    }
+                    productString.includes('Cashback') || 
+                    productString.includes('Talabat') || 
+                    productString.includes('Lulu') || 
+                    productString.includes('Etihad') || 
+                    productString.includes('Shukran') || 
+                    productString.includes('All ') || 
+                    productString.includes('Traveller') || 
+                    productString.includes('Betaqti') || 
+                    productString.includes('Emirati')) {
+                    ccCount = 1; // Count first credit card
                 }
-                
-                // Count loans
-                if (productString.includes('PL') || 
-                    productString.includes('Cat A & B') || 
-                    productString.includes('Cat C & Below')) {
-                    
+
+                // Then check for second CC
+                if (productString.includes('2ndCC') || 
+                    (ccCount === 1 && 
+                     ((productString.match(/Touchpoints|Cashback|Talabat|Lulu|Etihad|Shukran|All|Traveller|Betaqti|Emirati|Visa|MC/g) || []).length > 1))) {
+                    ccCount = 2; // Count the second credit card
+                }
+
+                // Categorize based on status
+                if (isCompleted) {
+                    // Fix 3: Completed stats
+                    completedCC += ccCount;
                     if (loanAmount > 0) {
-                        totalLoanAmount += loanAmount;
-                        if (isCompleted) {
-                            completedLoanAmount += loanAmount;
-                        } else {
-                            inProgressLoanAmount += loanAmount;
-                        }
+                        completedLoanAmount += loanAmount;
+                    }
+                } else {
+                    // Fix 2: In Progress stats
+                    inProgressCC += ccCount;
+                    if (loanAmount > 0) {
+                        inProgressLoanAmount += loanAmount;
                     }
                 }
                 
-                // Count accounts
-                if (productString.includes('ACC') || 
-                    productString.includes('Aspire') || 
-                    productString.includes('Privilege') ||
-                    productString.includes('MDSA')) {
-                    
-                    totalAccounts++;
-                    if (isCompleted) {
-                        completedAccounts++;
+                // Fix 5: Track data for visualizations
+                
+                // Proposition Distribution
+                if (proposition === 'Conventional') {
+                    conventionalCount++;
+                } else if (proposition === 'Islamic') {
+                    islamicCount++;
+                } else if (proposition === 'Both') {
+                    bothCount++;
+                }
+                
+                // Account Types
+                if (productString.includes('Aspire')) {
+                    aspireCount++;
+                } else if (productString.includes('Privilege')) {
+                    privilegeCount++;
+                } else if (productString.includes('MDSA')) {
+                    mdsaCount++;
+                }
+                
+                // Scheme Distribution (only count completed records)
+                if (isCompleted) {
+                    if (scheme === 'TML ALL') {
+                        tmlAllCount++;
+                    } else if (scheme === 'TML CC') {
+                        tmlCCCount++;
+                    } else if (scheme === 'TM SELECT') {
+                        tmSelectCount++;
+                    } else if (scheme === 'NTML') {
+                        ntmlCount++;
                     }
                 }
             });
+            
+            // Calculate total points (earnedPoints + pendingPoints)
+            const totalPoints = earnedPoints + pendingPoints;
+            
+            // Calculate total credit cards and loan amounts (Fix 4: Effort)
+            const totalCC = inProgressCC + completedCC;
+            const totalLoanAmount = inProgressLoanAmount + completedLoanAmount;
             
             // Format loan amounts
             function formatCurrency(amount) {
                 return 'AED ' + amount.toLocaleString('en-US');
             }
             
-            // Update summary data
+            // Update summary data in the DOM
             document.getElementById('summaryEarnedPoints').textContent = earnedPoints.toFixed(2);
             document.getElementById('summaryPendingPoints').textContent = pendingPoints.toFixed(2);
             document.getElementById('summaryTotalPoints').textContent = totalPoints.toFixed(2);
@@ -2032,13 +2082,58 @@
             document.getElementById('summaryCompletedCC').textContent = completedCC;
             document.getElementById('summaryCompletedPL').textContent = formatCurrency(completedLoanAmount);
             
-            document.getElementById('summaryTotalCC').textContent = totalCC || "15";
-            document.getElementById('summaryTotalPL').textContent = formatCurrency(totalLoanAmount || 170000);
+            document.getElementById('summaryTotalCC').textContent = totalCC > 0 ? totalCC : "0";
+            document.getElementById('summaryTotalPL').textContent = formatCurrency(totalLoanAmount > 0 ? totalLoanAmount : 0);
             
-            // Update target progress
+            // Update target progress bars
             updateTargetProgress('CC', completedCC);
             updateTargetProgress('PL', completedLoanAmount);
-            updateTargetProgress('ACC', completedAccounts);
+            updateTargetProgress('ACC', aspireCount + privilegeCount + mdsaCount);
+            
+            // Update visualizations
+            updateVisualizations(conventionalCount, islamicCount, bothCount, aspireCount, privilegeCount, mdsaCount, tmlAllCount, tmlCCCount, tmSelectCount, ntmlCount);
+        }
+
+        // Function to update the visualizations with actual data
+        function updateVisualizations(conventional, islamic, both, aspire, privilege, mdsa, tmlAll, tmlCC, tmSelect, ntml) {
+            // Calculate total counts and percentages
+            const totalProposition = conventional + islamic + both || 1; // Avoid division by zero
+            const totalAccounts = aspire + privilege + mdsa || 1;
+            const totalSchemes = tmlAll + tmlCC + tmSelect + ntml || 1;
+            
+            // Calculate percentages
+            const conventionalPercent = Math.round((conventional / totalProposition) * 100);
+            const islamicPercent = Math.round((islamic / totalProposition) * 100);
+            const bothPercent = 100 - conventionalPercent - islamicPercent;
+            
+            const aspirePercent = Math.round((aspire / totalAccounts) * 100);
+            const privilegePercent = Math.round((privilege / totalAccounts) * 100);
+            const mdsaPercent = 100 - aspirePercent - privilegePercent;
+            
+            const tmlAllPercent = Math.round((tmlAll / totalSchemes) * 100);
+            const tmlCCPercent = Math.round((tmlCC / totalSchemes) * 100);
+            const tmSelectPercent = Math.round((tmSelect / totalSchemes) * 100);
+            const ntmlPercent = 100 - tmlAllPercent - tmlCCPercent - tmSelectPercent;
+            
+            // Update pie chart CSS with actual percentages
+            document.querySelector('.pie-chart').style.background = `conic-gradient(
+                #6F2C4F 0% ${conventionalPercent}%, 
+                #262a5a ${conventionalPercent}% ${conventionalPercent + islamicPercent}%, 
+                #10b981 ${conventionalPercent + islamicPercent}% 100%
+            )`;
+            
+            document.querySelector('.acc-chart').style.background = `conic-gradient(
+                #f97316 0% ${aspirePercent}%, 
+                #0ea5e9 ${aspirePercent}% ${aspirePercent + privilegePercent}%, 
+                #8b5cf6 ${aspirePercent + privilegePercent}% 100%
+            )`;
+            
+            document.querySelector('.scheme-chart').style.background = `conic-gradient(
+                #6F2C4F 0% ${tmlAllPercent}%, 
+                #262a5a ${tmlAllPercent}% ${tmlAllPercent + tmlCCPercent}%, 
+                #10b981 ${tmlAllPercent + tmlCCPercent}% ${tmlAllPercent + tmlCCPercent + tmSelectPercent}%, 
+                #f97316 ${tmlAllPercent + tmlCCPercent + tmSelectPercent}% 100%
+            )`;
         }
         
         // Update progress bars
@@ -2215,6 +2310,7 @@
                     showSuccess('Data submitted successfully!');
                     resetForm();
                     fetchAllData(); // Refresh data table
+                    fetchAllDataForSummary(); // Also refresh summary data
                 } else {
                     showSuccess(`Error: ${data.error}`);
                 }
@@ -2242,6 +2338,7 @@
                     showSuccess('Record updated successfully!');
                     resetForm();
                     fetchAllData(); // Refresh data table
+                    fetchAllDataForSummary(); // Also refresh summary data
                 } else {
                     showSuccess(`Error: ${data.error}`);
                 }
@@ -2266,6 +2363,7 @@
                     showSuccess('Record deleted successfully!');
                     resetForm();
                     fetchAllData(); // Refresh data table
+                    fetchAllDataForSummary(); // Also refresh summary data
                 } else {
                     showSuccess(`Error: ${data.error}`);
                 }
@@ -2758,6 +2856,7 @@
         // Refresh data button click event
         document.getElementById('refreshDataBtn').addEventListener('click', function() {
             fetchAllData();
+            fetchAllDataForSummary(); // Also refresh summary data
         });
 
         // Search button click event
