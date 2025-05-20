@@ -348,7 +348,13 @@
                     <i class="fas fa-book mr-2"></i>MIS
                 </button>
                 <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="datasheet">
-                    <i class="fas fa-chart-line mr-2"></i>Data Sheet
+                    <i class="fas fa-chart-line mr-2"></i>Follow-Up
+                </button>
+                <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="calling">
+                    <i class="fas fa-phone mr-2"></i>Calling
+                </button>
+                <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="share">
+                    <i class="fas fa-share-alt mr-2"></i>Share
                 </button>
                 <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="emichart">
                     <i class="fas fa-chart-bar mr-2"></i>EMI Chart
@@ -357,23 +363,29 @@
                     <i class="fas fa-balance-scale mr-2"></i>Comparison
                 </button>
                 <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="advcalc">
-                    <i class="fas fa-calculator mr-2"></i>Adv Calc
+                    <i class="fas fa-calculator mr-2"></i>Advance
                 </button>
                 <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="rategrid">
                     <i class="fas fa-table mr-2"></i>Rate Grid
                 </button>
-                <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="share">
-                    <i class="fas fa-share-alt mr-2"></i>Share
-                </button>
             </div>
             
-            <!-- Customer Name and WhatsApp Input Group -->
-            <div class="flex flex-wrap items-center justify-center px-2 mb-2 gap-2">
-                <div class="flex-grow flex items-center gap-2">
-                    <input type="text" id="customerName" placeholder="Customer Name" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white flex-grow">
-                    <input type="tel" id="whatsappNumber" placeholder="Enter WhatsApp number" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white flex-grow">
-                    <button id="sendWhatsAppBtn" class="bg-gradient-to-r from-green-600 to-green-700 text-white px-4 py-2 rounded-md hover:opacity-90">
-                        <i class="fab fa-whatsapp mr-1"></i> Send
+            <!-- Customer Name, Saved Profiles and WhatsApp Input Group -->
+            <div id="headerControls" class="flex flex-wrap items-center justify-between px-2 mb-2 gap-1">
+                <div class="flex flex-wrap items-center gap-1 w-full">
+                    <input type="text" id="customerName" placeholder="Customer Name" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white max-w-[160px]">
+                    <select id="savedProfiles" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white max-w-[160px]">
+                        <option value="">Select a profile</option>
+                    </select>
+                    <button id="retrieveProfileBtn" class="custom-btn text-white p-2 rounded-md flex items-center justify-center">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button id="deleteProfileBtn" class="bg-gradient-to-r from-red-500 to-red-600 text-white p-2 rounded-md hover:opacity-90 flex items-center justify-center">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <input type="tel" id="whatsappNumber" placeholder="WhatsApp number" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white max-w-[160px]">
+                    <button id="sendWhatsAppBtn" class="bg-gradient-to-r from-green-600 to-green-700 text-white p-2 rounded-md hover:opacity-90">
+                        <i class="fab fa-whatsapp"></i>
                     </button>
                 </div>
             </div>
@@ -526,22 +538,6 @@
                     <h2 class="text-xl font-bold text-primary dark:text-white mb-4">EMI CALCULATOR</h2>
                     
                     <div class="space-y-2">
-                        <!-- Customer Profile Management -->
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Saved Profiles:</label>
-                            <select id="savedProfiles" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
-                                <option value="">Select a profile</option>
-                            </select>
-                            <div class="flex gap-1">
-                                <button id="retrieveProfileBtn" class="custom-btn text-white p-2 rounded-md flex items-center justify-center">
-                                    <i class="fas fa-download"></i>
-                                </button>
-                                <button id="deleteProfileBtn" class="bg-gradient-to-r from-red-500 to-red-600 text-white p-2 rounded-md hover:opacity-90 flex items-center justify-center">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </div>
-                        </div>
-                        
                         <div class="grid grid-cols-3 gap-2 items-center">
                             <label class="text-gray-700 dark:text-gray-300 font-medium">Loan Type:</label>
                             <select id="loanType" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
@@ -673,12 +669,49 @@
             </div>
         </div>
         
-        <!-- Data Sheet Tab -->
+        <!-- MIS Tab -->
+        <div id="tab-mis" class="tab-content">
+            <iframe src="mis.html" title="MIS Information" id="misIframe"></iframe>
+        </div>
+        
+        <!-- Follow-Up Tab (previously Data Sheet) -->
         <div id="tab-datasheet" class="tab-content">
             <iframe src="https://script.google.com/macros/s/AKfycbxa58gAJq9fcS7cF61wzFQXZg2JJRoUtFnfTw18LKpEIs-PLQihjqRzUFh7Y-ubMUPy/exec" frameborder="0" width="100%" height="600px"></iframe>
         </div>
         
-        <!-- EMI Chart Tab (Shows the same chart as in the main tab, but standalone) -->
+        <!-- Calling Tab (New) -->
+        <div id="tab-calling" class="tab-content">
+            <iframe src="calling.html" title="Calling" id="callingIframe"></iframe>
+        </div>
+        
+        <!-- Share Tab -->
+        <div id="tab-share" class="tab-content">
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                <h2 class="text-xl font-bold text-primary dark:text-white mb-4">SHARE LOAN INFORMATION</h2>
+                
+                <button id="shareTabBtn" class="custom-btn text-white p-2 rounded-md text-sm mb-4">
+                    <i class="fas fa-share-alt mr-1"></i> Share Loan Information
+                </button>
+                
+                <div class="text-gray-700 dark:text-gray-300 mt-4">
+                    <p class="mb-2">Click the Share button above to view and share the full loan information, including:</p>
+                    <ul class="list-disc ml-5 space-y-1">
+                        <li>Loan details (amount, type, tenure)</li>
+                        <li>Interest rates (reducing and flat)</li>
+                        <li>EMI and payment details</li>
+                        <li>Processing fees and charges</li>
+                        <li>Complete EMI schedule</li>
+                    </ul>
+                    
+                    <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <p class="text-blue-800 dark:text-blue-300 font-medium">Share Options:</p>
+                        <p class="text-sm mt-1">You can export as PDF, print directly, or send information via WhatsApp using the number field at the top of the page.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- EMI Chart Tab -->
         <div id="tab-emichart" class="tab-content">
             <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                 <h2 class="text-xl font-bold text-primary dark:text-white mb-4">EMI PAYMENT SCHEDULE</h2>
@@ -789,12 +822,7 @@
             </div>
         </div>
         
-        <!-- MIS Tab -->
-        <div id="tab-mis" class="tab-content">
-            <iframe src="mis.html" title="MIS Information" id="misIframe"></iframe>
-        </div>       
-
-        <!-- Advanced Calculator Tab -->
+        <!-- Advance Tab (previously Adv Calc) -->
         <div id="tab-advcalc" class="tab-content">
             <iframe src="advcalc.html" title="Advanced Calculator" id="advcalcIframe"></iframe>
         </div>
@@ -802,33 +830,6 @@
         <!-- Rate Grid Tab -->
         <div id="tab-rategrid" class="tab-content">
             <iframe src="rategrid.html" title="Rate Grid" id="rategridIframe"></iframe>
-        </div>
-        
-        <!-- Share Tab -->
-        <div id="tab-share" class="tab-content">
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
-                <h2 class="text-xl font-bold text-primary dark:text-white mb-4">SHARE LOAN INFORMATION</h2>
-                
-                <button id="shareTabBtn" class="custom-btn text-white p-2 rounded-md text-sm mb-4">
-                    <i class="fas fa-share-alt mr-1"></i> Share Loan Information
-                </button>
-                
-                <div class="text-gray-700 dark:text-gray-300 mt-4">
-                    <p class="mb-2">Click the Share button above to view and share the full loan information, including:</p>
-                    <ul class="list-disc ml-5 space-y-1">
-                        <li>Loan details (amount, type, tenure)</li>
-                        <li>Interest rates (reducing and flat)</li>
-                        <li>EMI and payment details</li>
-                        <li>Processing fees and charges</li>
-                        <li>Complete EMI schedule</li>
-                    </ul>
-                    
-                    <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800">
-                        <p class="text-blue-800 dark:text-blue-300 font-medium">Share Options:</p>
-                        <p class="text-sm mt-1">You can export as PDF, print directly, or send information via WhatsApp using the number field at the top of the page.</p>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
     
@@ -1062,7 +1063,7 @@
                     }
                     
                     // Force iframe reload as a last resort
-                    if (iframe.id === 'misIframe' || iframe.id === 'advcalcIframe' || iframe.id === 'rategridIframe') {
+                    if (iframe.id === 'misIframe' || iframe.id === 'advcalcIframe' || iframe.id === 'rategridIframe' || iframe.id === 'callingIframe') {
                         const currentSrc = iframe.src;
                         iframe.src = '';
                         setTimeout(() => {
@@ -1164,6 +1165,14 @@
                 this.classList.add('active');
                 this.classList.remove('text-white/80');
                 this.classList.add('text-white');
+                
+                // Show/hide header controls based on tab
+                const headerControls = document.getElementById('headerControls');
+                if (tabId === 'main') {
+                    headerControls.classList.remove('hidden');
+                } else {
+                    headerControls.classList.add('hidden');
+                }
                 
                 // Handle specific tab actions
                 if (tabId === 'emichart') {
