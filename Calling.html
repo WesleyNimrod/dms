@@ -11,6 +11,8 @@
         
         body {
             font-family: 'Tahoma', Geneva, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
         }
         
         .custom-btn {
@@ -165,14 +167,19 @@
 
         /* Call buttons */
         .call-btn {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             border-radius: 4px;
             color: white;
-            margin-right: 4px;
+            margin-right: 6px;
+            transition: transform 0.2s;
+        }
+        
+        .call-btn:hover {
+            transform: scale(1.1);
         }
 
         .direct-call {
@@ -182,6 +189,10 @@
         .teams-call {
             background-color: #4f46e5;
         }
+        
+        .whatsapp-call {
+            background-color: #25D366;
+        }
 
         /* Result dropdown styling */
         .result-dropdown {
@@ -189,7 +200,6 @@
             padding: 6px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            background-color: white;
         }
 
         /* Table header */
@@ -201,39 +211,6 @@
             position: sticky;
             top: 0;
             z-index: 10;
-        }
-
-        /* Dark mode support */
-        @media (prefers-color-scheme: dark) {
-            .calling-table tr:nth-child(even) {
-                background-color: #333;
-            }
-            
-            .calling-table tr:hover {
-                background-color: #444;
-            }
-            
-            .calling-table td {
-                border-color: #555;
-            }
-            
-            .calling-table th {
-                background-color: #452838; 
-            }
-            
-            .editable:hover {
-                background-color: rgba(255, 255, 255, 0.1);
-            }
-            
-            .editable.active {
-                background-color: rgba(255, 255, 255, 0.15);
-            }
-            
-            .result-dropdown {
-                background-color: #222;
-                color: white;
-                border-color: #555;
-            }
         }
         
         /* Error message */
@@ -252,22 +229,90 @@
             text-align: center;
             color: #6b7280;
         }
+        
+        /* Semi-transparent section background */
+        .section-header {
+            background-color: rgba(111, 44, 79, 0.08);
+            border-left: 4px solid #6F2C4F;
+            padding: 10px 15px;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        /* Undo indicator */
+        .undo-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .undo-btn {
+            background: white;
+            color: black;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .undo-btn:hover {
+            background: #eee;
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+        }
+        
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 120px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 dark:text-white font-tahoma">
+<body class="bg-gray-50 font-tahoma">
     <div class="container mx-auto px-3 py-4 max-w-6xl">
-        <h1 class="text-2xl font-bold text-[#6F2C4F] dark:text-gray-100 mb-4">Calling System</h1>
+        <h1 class="text-2xl font-bold text-[#6F2C4F] mb-4">Calling System</h1>
         
         <!-- Controls and Info Section -->
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md mb-4">
+        <div class="bg-white p-4 rounded-lg shadow-md mb-4">
             <div class="flex flex-wrap justify-between items-center mb-4">
-                <div>
-                    <h2 class="text-xl font-bold text-[#6F2C4F] dark:text-gray-100">Calling List</h2>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm" id="recordsInfo">Showing 0 records</p>
+                <div class="section-header">
+                    <h2 class="text-xl font-bold text-[#6F2C4F]">Calling List</h2>
+                    <p class="text-gray-600 text-sm" id="recordsInfo">Showing 0 records</p>
                 </div>
                 <div class="flex gap-2">
                     <button id="refreshBtn" class="custom-btn text-white py-2 px-4 rounded-md flex items-center">
                         <i class="fas fa-sync-alt mr-2"></i> Refresh Data
+                    </button>
+                    <button id="undoBtn" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 flex items-center tooltip">
+                        <i class="fas fa-undo mr-2"></i> Undo
+                        <span class="tooltip-text">Undo last change</span>
                     </button>
                     <button id="showMoreBtn" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 flex items-center hidden">
                         <i class="fas fa-expand-alt mr-2"></i> Show More
@@ -278,22 +323,20 @@
             <!-- Filter Section -->
             <div class="mb-4">
                 <div class="flex justify-between items-center">
-                    <h3 class="font-semibold text-lg mb-2 text-[#6F2C4F] dark:text-gray-100">Filters</h3>
-                    <button id="clearFiltersBtn" class="text-sm text-blue-600 dark:text-blue-400">Clear All</button>
+                    <h3 class="font-semibold text-lg mb-2 text-[#6F2C4F]">Filters</h3>
+                    <button id="clearFiltersBtn" class="text-sm text-blue-600">Clear All</button>
                 </div>
                 <div class="filter-container">
                     <div class="filter-item">
-                        <label for="resultFilter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Result</label>
-                        <select id="resultFilter" class="w-full border rounded-md p-2 text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <select id="resultFilter" class="w-full border rounded-md p-2 text-base">
                             <option value="">All Results</option>
                             <option value="To Call">To Call</option>
                             <option value="No Answer">No Answer</option>
                             <option value="Busy">Busy</option>
-                            <option value="DNCR">DNCR</option>
                             <option value="Not Interested">Not Interested</option>
                             <option value="Interested">Interested</option>
                             <option value="Switched Off">Switched Off</option>
-                            <option value="In Future">In Future</option>
+                            <option value="In Future, Shared details">In Future, Shared details</option>
                             <option value="Rejected">Rejected</option>
                             <option value="On Hold">On Hold</option>
                             <option value="Referal">Referal</option>
@@ -303,44 +346,44 @@
                         </select>
                     </div>
                     <div class="filter-item">
-                        <label for="nameFilter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
-                        <input type="text" id="nameFilter" placeholder="Filter by name" class="w-full border rounded-md p-2 text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <input type="text" id="nameFilter" placeholder="Filter by name" class="w-full border rounded-md p-2 text-base">
                     </div>
                     <div class="filter-item">
-                        <label for="companyFilter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Company</label>
-                        <input type="text" id="companyFilter" placeholder="Filter by company" class="w-full border rounded-md p-2 text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <input type="text" id="companyFilter" placeholder="Filter by company" class="w-full border rounded-md p-2 text-base">
                     </div>
                     <div class="filter-item">
-                        <label for="bankFilter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bank</label>
-                        <input type="text" id="bankFilter" placeholder="Filter by bank" class="w-full border rounded-md p-2 text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <input type="text" id="schemeFilter" placeholder="Filter by scheme" class="w-full border rounded-md p-2 text-base">
                     </div>
                     <div class="filter-item">
-                        <label for="salaryFilter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Min. Salary</label>
-                        <input type="number" id="salaryFilter" placeholder="Min salary" class="w-full border rounded-md p-2 text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <input type="text" id="bankFilter" placeholder="Filter by bank" class="w-full border rounded-md p-2 text-base">
+                    </div>
+                    <div class="filter-item">
+                        <input type="number" id="salaryFilter" placeholder="Min salary" class="w-full border rounded-md p-2 text-base">
                     </div>
                 </div>
             </div>
         </div>
         
         <!-- Table Section -->
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+        <div class="bg-white p-4 rounded-lg shadow-md">
             <div class="table-container">
                 <table id="callingTable" class="calling-table">
                     <thead>
                         <tr>
-                            <th style="width: 120px;">Actions</th>
+                            <th style="width: 110px;">Actions</th>
                             <th style="width: 150px;">Result</th>
                             <th style="width: 120px;">Mobile</th>
                             <th>Name</th>
                             <th>Company</th>
+                            <th>Scheme</th>
                             <th>Bank</th>
-                            <th style="width: 60px;">Salary</th>
+                            <th style="width: 100px;">Salary</th>
                         </tr>
                     </thead>
                     <tbody id="callingTableBody">
                         <!-- Data will be populated here -->
                         <tr>
-                            <td colspan="7" class="table-placeholder">
+                            <td colspan="8" class="table-placeholder">
                                 <div class="py-8">
                                     <i class="fas fa-spinner fa-spin text-3xl mb-4 text-[#6F2C4F]"></i>
                                     <p>Loading data, please wait...</p>
@@ -366,23 +409,14 @@
     <div id="loadingIndicator" class="loading-indicator hidden">
         <div class="spinner"></div>
     </div>
+    
+    <!-- Undo Notification -->
+    <div id="undoNotification" class="undo-indicator hidden">
+        <span id="undoMessage">Change saved!</span>
+        <button id="undoChangeBtn" class="undo-btn">Undo</button>
+    </div>
 
     <script>
-        // ==========================================
-        // DARK MODE DETECTION
-        // ==========================================
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.classList.add('dark');
-        }
-        
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-            if (event.matches) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        });
-        
         // ==========================================
         // UTILITIES
         // ==========================================
@@ -417,6 +451,11 @@
             
             errorMessage.textContent = message;
             errorContainer.classList.remove('hidden');
+            
+            // Auto-hide after 10 seconds
+            setTimeout(() => {
+                errorContainer.classList.add('hidden');
+            }, 10000);
         }
         
         // Hide error message
@@ -447,6 +486,119 @@
             }
         }
         
+        // Format phone number with country code
+        function formatPhoneWithCountryCode(phone) {
+            if (!phone) return '';
+            
+            // Remove any non-digit characters
+            const digits = phone.toString().replace(/\D/g, '');
+            
+            // If it already starts with 971, don't add it again
+            if (digits.startsWith('971')) {
+                return digits;
+            }
+            
+            // If it starts with 0, remove the 0 before adding 971
+            if (digits.startsWith('0')) {
+                return '971' + digits.substring(1);
+            }
+            
+            // Otherwise, just add 971 as prefix
+            return '971' + digits;
+        }
+        
+        // ==========================================
+        // UNDO FUNCTIONALITY
+        // ==========================================
+        
+        // Store the change history for undo
+        const changeHistory = [];
+        const MAX_HISTORY = 20; // Maximum number of changes to keep in history
+        
+        // Add a change to history
+        function addToHistory(row, column, oldValue, newValue) {
+            changeHistory.push({ row, column, oldValue, newValue });
+            
+            // Keep history within size limits
+            if (changeHistory.length > MAX_HISTORY) {
+                changeHistory.shift(); // Remove oldest entry
+            }
+            
+            // Enable undo button
+            document.getElementById('undoBtn').classList.remove('bg-gray-300');
+            document.getElementById('undoBtn').classList.add('bg-gray-600');
+            
+            // Show undo notification
+            showUndoNotification();
+        }
+        
+        // Show undo notification
+        function showUndoNotification() {
+            const notification = document.getElementById('undoNotification');
+            notification.classList.remove('hidden');
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 5000);
+        }
+        
+        // Undo the last change
+        async function undoLastChange() {
+            if (changeHistory.length === 0) {
+                showSuccess('No changes to undo');
+                return;
+            }
+            
+            const lastChange = changeHistory.pop();
+            
+            // If history is now empty, disable undo button
+            if (changeHistory.length === 0) {
+                document.getElementById('undoBtn').classList.remove('bg-gray-600');
+                document.getElementById('undoBtn').classList.add('bg-gray-300');
+            }
+            
+            // Update the cell with the old value
+            await updateCell(lastChange.row, lastChange.column, lastChange.oldValue, false);
+            
+            // Update the UI to show the old value
+            updateCellInUI(lastChange.row, lastChange.column, lastChange.oldValue);
+            
+            // Hide undo notification
+            document.getElementById('undoNotification').classList.add('hidden');
+            
+            showSuccess('Change undone');
+        }
+        
+        // Update cell in UI
+        function updateCellInUI(row, column, value) {
+            // Find the cell in the UI that needs updating
+            const tableRows = document.querySelectorAll('#callingTableBody tr');
+            
+            for (const tr of tableRows) {
+                const cells = tr.querySelectorAll('td');
+                
+                // Look for editable or result dropdown cells
+                for (const cell of cells) {
+                    if ((cell.classList.contains('editable') || cell.querySelector('.result-dropdown')) && 
+                        cell.dataset.row == row && cell.dataset.column == column) {
+                        
+                        // Update dropdown
+                        if (cell.querySelector('.result-dropdown')) {
+                            const dropdown = cell.querySelector('.result-dropdown');
+                            dropdown.value = value;
+                        } else {
+                            // Update editable cell
+                            cell.textContent = value;
+                            cell.dataset.originalValue = value;
+                        }
+                        
+                        return;
+                    }
+                }
+            }
+        }
+        
         // ==========================================
         // DATA HANDLING
         // ==========================================
@@ -458,20 +610,24 @@
         let allCallingData = [];
         let displayedCallingData = [];
         let isShowingAll = false;
-        const initialRowLimit = 30;
-        const maxRowLimit = 100;
+        const initialRowLimit = 100; // Increased from 30 to 100
+        const maxRowLimit = 300;     // Increased from 100 to 300
+        let retryCount = 0;
+        const MAX_RETRIES = 3;
         
         // Create mock data for testing if needed
         function createMockData() {
             const mockData = [];
             
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 150; i++) {
                 mockData.push({
                     rowIndex: i + 2,
-                    Result: i % 5 === 0 ? 'To Call' : i % 5 === 1 ? 'No Answer' : i % 5 === 2 ? 'Busy' : i % 5 === 3 ? 'Interested' : 'Completed',
-                    Mobile: `971${Math.floor(50000000 + Math.random() * 9000000)}`,
+                    Result: i % 7 === 0 ? 'To Call' : i % 7 === 1 ? 'No Answer' : i % 7 === 2 ? 'Busy' : 
+                            i % 7 === 3 ? 'Interested' : i % 7 === 4 ? 'Completed' : i % 7 === 5 ? 'DNCR' : '',
+                    Mobile: `${Math.floor(50000000 + Math.random() * 9000000)}`,
                     Name: `Test Person ${i + 1}`,
                     Company: `Company ${i % 10 + 1}`,
+                    Scheme: i % 4 === 0 ? 'Salary Transfer' : i % 4 === 1 ? 'Self Employed' : i % 4 === 2 ? 'Professional' : 'Commission',
                     Bank: i % 6 === 0 ? 'ADCB' : i % 6 === 1 ? 'ENBD' : i % 6 === 2 ? 'FAB' : i % 6 === 3 ? 'DIB' : i % 6 === 4 ? 'MASHREQ' : 'Other',
                     Salary: Math.floor(5000 + Math.random() * 20000)
                 });
@@ -503,7 +659,7 @@
                         // Clear the table and show a message
                         document.getElementById('callingTableBody').innerHTML = `
                             <tr>
-                                <td colspan="7" class="table-placeholder">
+                                <td colspan="8" class="table-placeholder">
                                     <div class="py-8">
                                         <i class="fas fa-exclamation-circle text-3xl mb-4 text-gray-400"></i>
                                         <p>No data found in the Calling sheet</p>
@@ -539,17 +695,36 @@
                     console.error("API Error:", data.error);
                     showError(`API Error: ${data.error}`);
                     
-                    // Try to use mock data for testing
-                    // allCallingData = createMockData();
-                    // applyFilters();
+                    // Try to use mock data for testing in development
+                    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                        console.log("Using mock data for development");
+                        allCallingData = createMockData();
+                        applyFilters();
+                    }
                 }
+                
+                // Reset retry count on successful fetch
+                retryCount = 0;
             } catch (error) {
                 console.error('Error fetching calling data:', error);
-                showError(`Network error: ${error.message}. Please check your internet connection and try again.`);
                 
-                // Try to use mock data for testing
-                // allCallingData = createMockData();
-                // applyFilters();
+                if (retryCount < MAX_RETRIES) {
+                    retryCount++;
+                    showError(`Network error. Retrying... (${retryCount}/${MAX_RETRIES})`);
+                    
+                    // Retry after a delay
+                    setTimeout(fetchCallingData, 2000);
+                    return;
+                } else {
+                    showError(`Network error: ${error.message}. Please check your internet connection and try again.`);
+                    
+                    // Try to use mock data for testing in development
+                    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                        console.log("Using mock data for development");
+                        allCallingData = createMockData();
+                        applyFilters();
+                    }
+                }
             } finally {
                 hideLoading();
             }
@@ -560,27 +735,59 @@
             const resultFilter = document.getElementById('resultFilter').value;
             const nameFilter = document.getElementById('nameFilter').value.toLowerCase();
             const companyFilter = document.getElementById('companyFilter').value.toLowerCase();
+            const schemeFilter = document.getElementById('schemeFilter').value.toLowerCase();
             const bankFilter = document.getElementById('bankFilter').value.toLowerCase();
             const salaryFilter = document.getElementById('salaryFilter').value;
             
-            console.log("Applying filters:", { resultFilter, nameFilter, companyFilter, bankFilter, salaryFilter });
-            console.log("Data before filtering:", allCallingData);
+            console.log("Applying filters:", { resultFilter, nameFilter, companyFilter, schemeFilter, bankFilter, salaryFilter });
             
-            // Filter the data
+            // Filter the data - always exclude DNCR results
             displayedCallingData = allCallingData.filter(row => {
                 const result = String(row.Result || '');
                 const name = String(row.Name || '').toLowerCase();
                 const company = String(row.Company || '').toLowerCase();
+                const scheme = String(row.Scheme || '').toLowerCase();
                 const bank = String(row.Bank || '').toLowerCase();
                 const salary = parseFloat(row.Salary) || 0;
+                
+                // Exclude DNCR results
+                if (result === 'DNCR') {
+                    return false;
+                }
                 
                 return (
                     (resultFilter === '' || result === resultFilter) &&
                     (nameFilter === '' || name.includes(nameFilter)) &&
                     (companyFilter === '' || company.includes(companyFilter)) &&
+                    (schemeFilter === '' || scheme.includes(schemeFilter)) &&
                     (bankFilter === '' || bank.includes(bankFilter)) &&
                     (salaryFilter === '' || salary >= parseFloat(salaryFilter))
                 );
+            });
+            
+            // Sort the data - To Call first, then empty results, then the rest
+            displayedCallingData.sort((a, b) => {
+                const resultA = String(a.Result || '');
+                const resultB = String(b.Result || '');
+                
+                // To Call comes first
+                if (resultA === 'To Call' && resultB !== 'To Call') {
+                    return -1;
+                }
+                if (resultA !== 'To Call' && resultB === 'To Call') {
+                    return 1;
+                }
+                
+                // Empty results come second
+                if (resultA === '' && resultB !== '') {
+                    return -1;
+                }
+                if (resultA !== '' && resultB === '') {
+                    return 1;
+                }
+                
+                // The rest in alphabetical order
+                return resultA.localeCompare(resultB);
             });
             
             console.log("Filtered data:", displayedCallingData);
@@ -609,6 +816,7 @@
             document.getElementById('resultFilter').value = '';
             document.getElementById('nameFilter').value = '';
             document.getElementById('companyFilter').value = '';
+            document.getElementById('schemeFilter').value = '';
             document.getElementById('bankFilter').value = '';
             document.getElementById('salaryFilter').value = '';
             
@@ -617,8 +825,19 @@
         }
         
         // Update a cell in Google Sheets
-        async function updateCell(row, column, value) {
+        async function updateCell(row, column, value, addToHistoryFlag = true) {
             showLoading();
+            
+            // If adding to history, get the current value first
+            let oldValue = '';
+            if (addToHistoryFlag) {
+                // Find the current value in our data
+                const dataIndex = allCallingData.findIndex(item => item.rowIndex === parseInt(row));
+                if (dataIndex !== -1) {
+                    oldValue = allCallingData[dataIndex][column] || '';
+                }
+            }
+            
             try {
                 console.log(`Updating cell - Row: ${row}, Column: ${column}, Value: ${value}`);
                 
@@ -629,12 +848,17 @@
                 
                 if (data.success) {
                     // Find the index in our data array for this row
-                    const dataIndex = allCallingData.findIndex(item => item.rowIndex === row);
+                    const dataIndex = allCallingData.findIndex(item => item.rowIndex === parseInt(row));
                     
                     if (dataIndex !== -1) {
                         // Update the local data
                         allCallingData[dataIndex][column] = value;
                         console.log(`Updated local data at index ${dataIndex}`);
+                        
+                        // Add to history if flag is true
+                        if (addToHistoryFlag) {
+                            addToHistory(row, column, oldValue, value);
+                        }
                     } else {
                         console.error(`Couldn't find row ${row} in local data`);
                     }
@@ -663,7 +887,7 @@
             if (!data || data.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="table-placeholder">
+                        <td colspan="8" class="table-placeholder">
                             <div class="py-8">
                                 <i class="fas fa-search text-3xl mb-4 text-gray-400"></i>
                                 <p>No matching records found</p>
@@ -679,25 +903,37 @@
                 
                 // Call buttons
                 const callCell = document.createElement('td');
-                callCell.style.width = '80px';
+                callCell.style.width = '110px';
+                
+                // Format the mobile number with country code
+                const formattedMobile = formatPhoneWithCountryCode(row.Mobile || '');
                 
                 // Direct call button
                 const directCallBtn = document.createElement('a');
-                directCallBtn.href = `tel:+${row.Mobile || ''}`;
-                directCallBtn.classList.add('call-btn', 'direct-call');
-                directCallBtn.title = `Direct call to ${row.Name || 'Unknown'}`;
-                directCallBtn.innerHTML = '<i class="fas fa-phone"></i>';
+                directCallBtn.href = `tel:+${formattedMobile}`;
+                directCallBtn.classList.add('call-btn', 'direct-call', 'tooltip');
+                directCallBtn.title = `Call ${row.Name || 'Unknown'}`;
+                directCallBtn.innerHTML = '<i class="fas fa-phone"></i><span class="tooltip-text">Call</span>';
                 
                 // Teams call button
                 const teamsCallBtn = document.createElement('a');
-                teamsCallBtn.href = `https://teams.microsoft.com/l/call/0/0?users=${row.Mobile || ''}`;
+                teamsCallBtn.href = `https://teams.microsoft.com/l/call/0/0?users=${formattedMobile}`;
                 teamsCallBtn.target = "_blank";
-                teamsCallBtn.classList.add('call-btn', 'teams-call');
+                teamsCallBtn.classList.add('call-btn', 'teams-call', 'tooltip');
                 teamsCallBtn.title = `Teams call to ${row.Name || 'Unknown'}`;
-                teamsCallBtn.innerHTML = '<i class="fab fa-microsoft"></i>';
+                teamsCallBtn.innerHTML = '<i class="fab fa-microsoft"></i><span class="tooltip-text">Teams Call</span>';
+                
+                // WhatsApp button
+                const whatsappBtn = document.createElement('a');
+                whatsappBtn.href = `https://wa.me/${formattedMobile}?text=Hello ${encodeURIComponent(row.Name || '')},`;
+                whatsappBtn.target = "_blank";
+                whatsappBtn.classList.add('call-btn', 'whatsapp-call', 'tooltip');
+                whatsappBtn.title = `WhatsApp ${row.Name || 'Unknown'}`;
+                whatsappBtn.innerHTML = '<i class="fab fa-whatsapp"></i><span class="tooltip-text">WhatsApp</span>';
                 
                 callCell.appendChild(directCallBtn);
                 callCell.appendChild(teamsCallBtn);
+                callCell.appendChild(whatsappBtn);
                 tr.appendChild(callCell);
                 
                 // Result dropdown
@@ -711,7 +947,7 @@
                 
                 const resultOptions = [
                     'To Call', 'No Answer', 'Busy', 'DNCR', 'Not Interested', 
-                    'Interested', 'Switched Off', 'In Future', 'Rejected', 
+                    'Interested', 'Switched Off', 'In Future, Shared details', 'Rejected', 
                     'On Hold', 'Referal', 'Applied', 'Already Having', 'Completed'
                 ];
                 
@@ -781,6 +1017,15 @@
                 companyCell.dataset.column = 'Company';
                 companyCell.dataset.originalValue = row.Company || '';
                 tr.appendChild(companyCell);
+                
+                // Scheme (editable)
+                const schemeCell = document.createElement('td');
+                schemeCell.classList.add('editable');
+                schemeCell.textContent = row.Scheme || '';
+                schemeCell.dataset.row = row.rowIndex;
+                schemeCell.dataset.column = 'Scheme';
+                schemeCell.dataset.originalValue = row.Scheme || '';
+                tr.appendChild(schemeCell);
                 
                 // Bank (editable)
                 const bankCell = document.createElement('td');
@@ -889,6 +1134,7 @@
             document.getElementById('resultFilter').addEventListener('change', applyFilters);
             document.getElementById('nameFilter').addEventListener('input', applyFilters);
             document.getElementById('companyFilter').addEventListener('input', applyFilters);
+            document.getElementById('schemeFilter').addEventListener('input', applyFilters);
             document.getElementById('bankFilter').addEventListener('input', applyFilters);
             document.getElementById('salaryFilter').addEventListener('input', applyFilters);
             
@@ -897,6 +1143,15 @@
             
             // Refresh button
             document.getElementById('refreshBtn').addEventListener('click', fetchCallingData);
+            
+            // Undo button
+            document.getElementById('undoBtn').addEventListener('click', undoLastChange);
+            
+            // Undo change button in notification
+            document.getElementById('undoChangeBtn').addEventListener('click', function() {
+                undoLastChange();
+                document.getElementById('undoNotification').classList.add('hidden');
+            });
             
             // Show more button
             document.getElementById('showMoreBtn').addEventListener('click', function() {
