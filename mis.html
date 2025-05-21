@@ -6,6 +6,9 @@
     <title>Management Information System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Add jsPDF library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tahoma:wght@400;700&display=swap');
         
@@ -271,9 +274,15 @@
             width: 32%;
             background: white;
             border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             margin-bottom: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .chart-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
         }
         
         @media (max-width: 768px) {
@@ -287,20 +296,22 @@
             color: #6F2C4F;
             text-align: center;
             margin-bottom: 15px;
+            font-size: 1.1rem;
         }
         
-        /* Simple pie charts with CSS */
+        /* Simple pie charts with CSS - Updated colors */
         .pie-chart {
             width: 150px;
             height: 150px;
             border-radius: 50%;
             margin: 0 auto;
             background: conic-gradient(
-                #6F2C4F 0% 60%, 
-                #262a5a 60% 90%, 
-                #10b981 90% 100%
+                #FF5349 0% 60%, 
+                #2197b2 60% 90%, 
+                #d8dee9 90% 100%
             );
             position: relative;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
         
         .acc-chart {
@@ -309,11 +320,12 @@
             border-radius: 50%;
             margin: 0 auto;
             background: conic-gradient(
-                #f97316 0% 40%, 
-                #0ea5e9 40% 75%, 
-                #8b5cf6 75% 100%
+                #FEFE22 0% 40%, 
+                #F96714 40% 75%, 
+                #2197b2 75% 100%
             );
             position: relative;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
         
         .scheme-chart {
@@ -322,12 +334,13 @@
             border-radius: 50%;
             margin: 0 auto;
             background: conic-gradient(
-                #6F2C4F 0% 45%, 
-                #262a5a 45% 70%, 
-                #10b981 70% 90%, 
-                #f97316 90% 100%
+                #77DDE7 0% 45%, 
+                #FF1DCE 45% 70%, 
+                #B2EC5D 70% 90%, 
+                #A2ADD0 90% 100%
             );
             position: relative;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
         
         .donut-hole {
@@ -339,6 +352,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
         }
         
         .chart-legend {
@@ -352,8 +366,16 @@
             display: flex;
             align-items: center;
             margin-right: 15px;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-size: 12px;
+            background-color: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: transform 0.15s;
+        }
+        
+        .legend-item:hover {
+            transform: scale(1.05);
         }
         
         .legend-color {
@@ -361,6 +383,152 @@
             height: 12px;
             margin-right: 5px;
             border-radius: 2px;
+        }
+        
+        /* Export Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1050;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 50px auto;
+            max-width: 900px;
+            width: 90%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .modal-header {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-body {
+            padding: 15px;
+            overflow-y: auto;
+            max-height: calc(80vh - 130px);
+        }
+        
+        .modal-footer {
+            padding: 15px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .close-modal {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close-modal:hover {
+            color: black;
+        }
+        
+        /* Export Table Styles */
+        .export-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        
+        .export-table th {
+            background-color: #6F2C4F;
+            color: white;
+            text-align: left;
+            padding: 8px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .export-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .export-table tr:hover {
+            background-color: #ddd;
+        }
+        
+        .export-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        
+        /* Export Profile Styles */
+        .profile-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .profile-input {
+            flex: 1;
+            min-width: 150px;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .profile-select {
+            flex: 1;
+            min-width: 150px;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+        }
+        
+        .profile-btn {
+            padding: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .profile-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        
+        .btn-save {
+            background-color: #6F2C4F;
+            color: white;
+        }
+        
+        .btn-load {
+            background-color: #2197b2;
+            color: white;
+        }
+        
+        .btn-delete {
+            background-color: #FF5349;
+            color: white;
         }
     </style>
 </head>
@@ -520,15 +688,15 @@
                             </div>
                             <div class="chart-legend">
                                 <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #6F2C4F;"></div>
+                                    <div class="legend-color" style="background-color: #FF5349;"></div>
                                     <span>Conventional</span>
                                 </div>
                                 <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #262a5a;"></div>
+                                    <div class="legend-color" style="background-color: #2197b2;"></div>
                                     <span>Islamic</span>
                                 </div>
                                 <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #10b981;"></div>
+                                    <div class="legend-color" style="background-color: #d8dee9;"></div>
                                     <span>Both</span>
                                 </div>
                             </div>
@@ -542,15 +710,15 @@
                             </div>
                             <div class="chart-legend">
                                 <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #f97316;"></div>
+                                    <div class="legend-color" style="background-color: #FEFE22;"></div>
                                     <span>Aspire</span>
                                 </div>
                                 <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #0ea5e9;"></div>
+                                    <div class="legend-color" style="background-color: #F96714;"></div>
                                     <span>Privilege</span>
                                 </div>
                                 <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #8b5cf6;"></div>
+                                    <div class="legend-color" style="background-color: #2197b2;"></div>
                                     <span>MDSA</span>
                                 </div>
                             </div>
@@ -564,19 +732,19 @@
                             </div>
                             <div class="chart-legend">
                                 <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #6F2C4F;"></div>
+                                    <div class="legend-color" style="background-color: #77DDE7;"></div>
                                     <span>TML ALL</span>
                                 </div>
                                 <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #262a5a;"></div>
+                                    <div class="legend-color" style="background-color: #FF1DCE;"></div>
                                     <span>TML CC</span>
                                 </div>
                                 <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #10b981;"></div>
+                                    <div class="legend-color" style="background-color: #B2EC5D;"></div>
                                     <span>TM SELECT</span>
                                 </div>
                                 <div class="legend-item">
-                                    <div class="legend-color" style="background-color: #f97316;"></div>
+                                    <div class="legend-color" style="background-color: #A2ADD0;"></div>
                                     <span>NTML</span>
                                 </div>
                             </div>
@@ -821,6 +989,9 @@
                         <button id="pendingPointsBtn" class="points-btn pending">
                             <i class="fas fa-hourglass-half mr-2"></i> Pending ✭ <span id="pendingPointsTotal">0</span>
                         </button>
+                        <button id="exportDataBtn" class="custom-btn text-white py-2 px-4 rounded-md flex items-center">
+                            <i class="fas fa-file-export mr-2"></i> Export
+                        </button>
                         <button id="refreshDataBtn" class="custom-btn text-white py-2 px-4 rounded-md flex items-center">
                             <i class="fas fa-sync-alt mr-2"></i> Refresh Data
                         </button>
@@ -913,8 +1084,76 @@
     <div id="loadingIndicator" class="loading-indicator hidden">
         <div class="spinner"></div>
     </div>
+    
+    <!-- Export Modal -->
+    <div id="exportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="text-lg font-bold text-[#6F2C4F]">Export Data</h2>
+                <span class="close-modal" id="closeExportModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <!-- Referral Profile Section -->
+                <div class="profile-container">
+                    <input type="text" id="profileName" class="profile-input" placeholder="Profile Name">
+                    <button id="saveProfileBtn" class="profile-btn btn-save">
+                        <i class="fas fa-save mr-1"></i> Save
+                    </button>
+                    <select id="profileSelect" class="profile-select">
+                        <option value="">Select a profile</option>
+                    </select>
+                    <button id="loadProfileBtn" class="profile-btn btn-load">
+                        <i class="fas fa-folder-open mr-1"></i> Load
+                    </button>
+                    <button id="deleteProfileBtn" class="profile-btn btn-delete">
+                        <i class="fas fa-trash-alt mr-1"></i> Delete
+                    </button>
+                </div>
+                
+                <!-- Export Table -->
+                <div class="mb-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="selectAllRows" class="mr-2">
+                            <label for="selectAllRows" class="text-gray-700 font-medium">Select All</label>
+                        </div>
+                        <div>
+                            <span class="text-sm text-gray-600" id="selectedRowsCount">0 rows selected</span>
+                        </div>
+                    </div>
+                    <div class="max-h-[400px] overflow-y-auto border border-gray-200 rounded">
+                        <table class="export-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;"><input type="checkbox" id="selectAllHeader"></th>
+                                    <th>CID</th>
+                                    <th>Date</th>
+                                    <th>Customer Name</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="exportTableBody">
+                                <!-- Export data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelExportBtn" class="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600">
+                    Cancel
+                </button>
+                <button id="confirmExportBtn" class="custom-btn text-white py-2 px-4 rounded">
+                    <i class="fas fa-file-pdf mr-2"></i> Export PDF
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script>
+        // Initialize jsPDF
+        const { jsPDF } = window.jspdf;
+
         // ==========================================
         // THEME AND UI FUNCTIONALITY
         // ==========================================
@@ -1169,6 +1408,9 @@
             
             // Initialize with Summary tab visible by default
             showSection('summary');
+            
+            // Initialize profile dropdown
+            loadProfiles();
         });
 
         // ==========================================
@@ -1985,29 +2227,34 @@
                     pendingPoints += points;
                 }
                 
-                // Fixed logic for counting credit cards - count up to 2 CCs per record
+                // Improved logic for counting credit cards
                 let ccCount = 0;
-
-                // First, check for main CC
-                if (productString.includes('CC') && !productString.includes('BT/CCL') || 
-                    productString.includes('Touchpoints') || 
-                    productString.includes('Cashback') || 
-                    productString.includes('Talabat') || 
-                    productString.includes('Lulu') || 
-                    productString.includes('Etihad') || 
-                    productString.includes('Shukran') || 
-                    productString.includes('All ') || 
-                    productString.includes('Traveller') || 
-                    productString.includes('Betaqti') || 
-                    productString.includes('Emirati')) {
-                    ccCount = 1; // Count first credit card
-                }
-
-                // Then check for second CC
-                if (productString.includes('2ndCC') || 
-                    (ccCount === 1 && 
-                     ((productString.match(/Touchpoints|Cashback|Talabat|Lulu|Etihad|Shukran|All|Traveller|Betaqti|Emirati|Visa|MC/g) || []).length > 1))) {
-                    ccCount = 2; // Count the second credit card
+                
+                // Get all possible credit card names from our dropdown options
+                const ccOptions = getCCOptions('Both'); // Get all CC options (both conventional and Islamic)
+                const allCCNames = ccOptions.map(option => option.text);
+                
+                // Function to check if a product is a credit card
+                const isCreditCard = (product) => {
+                    return allCCNames.some(ccName => 
+                        product.includes(ccName) || 
+                        (product.includes('Visa') && !product.includes('BT/CCL')) ||
+                        (product.includes('MC') && !product.includes('BT/CCL')) ||
+                        (product === 'CC') || 
+                        (product === '2ndCC')
+                    );
+                };
+                
+                // Split the product string by commas and count credit cards
+                if (productString) {
+                    const products = productString.split(',').map(p => p.trim());
+                    
+                    // Count each product that matches a credit card
+                    products.forEach(product => {
+                        if (isCreditCard(product)) {
+                            ccCount++;
+                        }
+                    });
                 }
 
                 // Categorize based on status
@@ -2117,22 +2364,22 @@
             
             // Update pie chart CSS with actual percentages
             document.querySelector('.pie-chart').style.background = `conic-gradient(
-                #6F2C4F 0% ${conventionalPercent}%, 
-                #262a5a ${conventionalPercent}% ${conventionalPercent + islamicPercent}%, 
-                #10b981 ${conventionalPercent + islamicPercent}% 100%
+                #FF5349 0% ${conventionalPercent}%, 
+                #2197b2 ${conventionalPercent}% ${conventionalPercent + islamicPercent}%, 
+                #d8dee9 ${conventionalPercent + islamicPercent}% 100%
             )`;
             
             document.querySelector('.acc-chart').style.background = `conic-gradient(
-                #f97316 0% ${aspirePercent}%, 
-                #0ea5e9 ${aspirePercent}% ${aspirePercent + privilegePercent}%, 
-                #8b5cf6 ${aspirePercent + privilegePercent}% 100%
+                #FEFE22 0% ${aspirePercent}%, 
+                #F96714 ${aspirePercent}% ${aspirePercent + privilegePercent}%, 
+                #2197b2 ${aspirePercent + privilegePercent}% 100%
             )`;
             
             document.querySelector('.scheme-chart').style.background = `conic-gradient(
-                #6F2C4F 0% ${tmlAllPercent}%, 
-                #262a5a ${tmlAllPercent}% ${tmlAllPercent + tmlCCPercent}%, 
-                #10b981 ${tmlAllPercent + tmlCCPercent}% ${tmlAllPercent + tmlCCPercent + tmSelectPercent}%, 
-                #f97316 ${tmlAllPercent + tmlCCPercent + tmSelectPercent}% 100%
+                #77DDE7 0% ${tmlAllPercent}%, 
+                #FF1DCE ${tmlAllPercent}% ${tmlAllPercent + tmlCCPercent}%, 
+                #B2EC5D ${tmlAllPercent + tmlCCPercent}% ${tmlAllPercent + tmlCCPercent + tmSelectPercent}%, 
+                #A2ADD0 ${tmlAllPercent + tmlCCPercent + tmSelectPercent}% 100%
             )`;
         }
         
@@ -2820,6 +3067,365 @@
             formData.append('productList', productList);
             
             return formData;
+        }
+
+        // ==========================================
+        // EXPORT FUNCTIONALITY
+        // ==========================================
+        
+        // Get required modal elements
+        const exportModal = document.getElementById('exportModal');
+        const closeExportModalBtn = document.getElementById('closeExportModal');
+        const cancelExportBtn = document.getElementById('cancelExportBtn');
+        const exportDataBtn = document.getElementById('exportDataBtn');
+        const confirmExportBtn = document.getElementById('confirmExportBtn');
+        const selectAllRows = document.getElementById('selectAllRows');
+        const selectAllHeader = document.getElementById('selectAllHeader');
+        const exportTableBody = document.getElementById('exportTableBody');
+        const selectedRowsCount = document.getElementById('selectedRowsCount');
+        
+        // Profile management elements
+        const profileNameInput = document.getElementById('profileName');
+        const profileSelect = document.getElementById('profileSelect');
+        const saveProfileBtn = document.getElementById('saveProfileBtn');
+        const loadProfileBtn = document.getElementById('loadProfileBtn');
+        const deleteProfileBtn = document.getElementById('deleteProfileBtn');
+        
+        // Open export modal when Export button is clicked
+        exportDataBtn.addEventListener('click', function() {
+            // Populate export table with data
+            populateExportTable();
+            
+            // Show modal
+            exportModal.style.display = 'block';
+        });
+        
+        // Close modal functions
+        function closeExportModal() {
+            exportModal.style.display = 'none';
+        }
+        
+        closeExportModalBtn.addEventListener('click', closeExportModal);
+        cancelExportBtn.addEventListener('click', closeExportModal);
+        
+        // Close modal when clicking outside the modal content
+        window.addEventListener('click', function(event) {
+            if (event.target === exportModal) {
+                closeExportModal();
+            }
+        });
+        
+        // Populate export table with records
+        function populateExportTable() {
+            exportTableBody.innerHTML = '';
+            
+            if (allRecordsData.length === 0) {
+                exportTableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4">No records found</td></tr>';
+                selectAllRows.disabled = true;
+                selectAllHeader.disabled = true;
+                return;
+            }
+            
+            selectAllRows.disabled = false;
+            selectAllHeader.disabled = false;
+            
+            allRecordsData.forEach((record, index) => {
+                const tr = document.createElement('tr');
+                tr.setAttribute('data-cid', record.CID || '');
+                
+                const date = record.Date ? new Date(record.Date).toLocaleDateString() : '';
+                
+                tr.innerHTML = `
+                    <td><input type="checkbox" class="row-checkbox" data-cid="${record.CID || ''}"></td>
+                    <td>${record.CID || ''}</td>
+                    <td>${date}</td>
+                    <td>${record['Customer Name'] || ''}</td>
+                    <td>${record.Status || ''}</td>
+                `;
+                
+                exportTableBody.appendChild(tr);
+            });
+            
+            // Initialize selected count
+            updateSelectedRowsCount();
+        }
+        
+        // Update selected rows count
+        function updateSelectedRowsCount() {
+            const checkedRows = document.querySelectorAll('#exportTableBody .row-checkbox:checked').length;
+            selectedRowsCount.textContent = `${checkedRows} rows selected`;
+        }
+        
+        // Handle "Select All" checkbox in the header
+        selectAllHeader.addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('#exportTableBody .row-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            
+            selectAllRows.checked = this.checked;
+            updateSelectedRowsCount();
+        });
+        
+        // Handle "Select All" checkbox above the table
+        selectAllRows.addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('#exportTableBody .row-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            
+            selectAllHeader.checked = this.checked;
+            updateSelectedRowsCount();
+        });
+        
+        // Update count when individual checkboxes change
+        exportTableBody.addEventListener('change', function(e) {
+            if (e.target.classList.contains('row-checkbox')) {
+                const allCheckboxes = document.querySelectorAll('#exportTableBody .row-checkbox');
+                const checkedCheckboxes = document.querySelectorAll('#exportTableBody .row-checkbox:checked');
+                
+                selectAllRows.checked = allCheckboxes.length === checkedCheckboxes.length;
+                selectAllHeader.checked = allCheckboxes.length === checkedCheckboxes.length;
+                
+                updateSelectedRowsCount();
+            }
+        });
+        
+        // Export selected data as PDF
+        confirmExportBtn.addEventListener('click', function() {
+            const checkedRows = document.querySelectorAll('#exportTableBody .row-checkbox:checked');
+            
+            if (checkedRows.length === 0) {
+                showSuccess('Please select at least one record to export');
+                return;
+            }
+            
+            // Get selected CIDs
+            const selectedCIDs = Array.from(checkedRows).map(checkbox => checkbox.dataset.cid);
+            
+            // Filter data to get only selected records
+            const selectedData = allRecordsData.filter(record => selectedCIDs.includes(record.CID));
+            
+            // Extract only required columns (CID, Date, Customer Name, Status)
+            const exportData = selectedData.map(record => {
+                return {
+                    CID: record.CID || '',
+                    Date: record.Date ? new Date(record.Date).toLocaleDateString() : '',
+                    'Customer Name': record['Customer Name'] || '',
+                    Status: record.Status || ''
+                };
+            });
+            
+            // Generate and download PDF
+            generatePDF(exportData);
+            
+            // Close modal
+            closeExportModal();
+            
+            // Show success message
+            showSuccess(`Exported ${exportData.length} records as PDF successfully`);
+        });
+        
+        // Generate PDF with jsPDF
+        function generatePDF(data) {
+            // Create a new jsPDF instance
+            const doc = new jsPDF();
+            
+            // Add title
+            doc.setFontSize(18);
+            doc.text('Customer Data Report', 14, 22);
+            
+            // Add date
+            doc.setFontSize(11);
+            doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 30);
+            
+            // Define table columns
+            const columns = [
+                { header: 'CID', dataKey: 'CID' },
+                { header: 'Date', dataKey: 'Date' },
+                { header: 'Customer Name', dataKey: 'Customer Name' },
+                { header: 'Status', dataKey: 'Status' }
+            ];
+            
+            // Create the table
+            doc.autoTable({
+                startY: 40,
+                head: [columns.map(col => col.header)],
+                body: data.map(item => columns.map(col => item[col.dataKey])),
+                theme: 'striped',
+                headStyles: {
+                    fillColor: [111, 44, 79], // Same color as the system (#6F2C4F)
+                    textColor: [255, 255, 255]
+                },
+                styles: {
+                    overflow: 'linebreak',
+                    cellPadding: 3,
+                    fontSize: 10
+                },
+                columnStyles: {
+                    0: { cellWidth: 30 }, // CID
+                    1: { cellWidth: 30 }, // Date
+                    2: { cellWidth: 80 }, // Customer Name
+                    3: { cellWidth: 40 }  // Status
+                }
+            });
+            
+            // Add footer
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(10);
+                doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 10, { align: 'center' });
+            }
+            
+            // Save the PDF
+            doc.save('customer_data_report.pdf');
+        }
+        
+        // ==========================================
+        // PROFILE MANAGEMENT
+        // ==========================================
+        
+        // Save profile
+        saveProfileBtn.addEventListener('click', function() {
+            const profileName = profileNameInput.value.trim();
+            
+            if (!profileName) {
+                showSuccess('Please enter a profile name');
+                return;
+            }
+            
+            // Get selected CIDs
+            const checkedRows = document.querySelectorAll('#exportTableBody .row-checkbox:checked');
+            const selectedCIDs = Array.from(checkedRows).map(checkbox => checkbox.dataset.cid);
+            
+            if (selectedCIDs.length === 0) {
+                showSuccess('Please select at least one record to save in profile');
+                return;
+            }
+            
+            // Save profile to localStorage
+            saveProfile(profileName, selectedCIDs);
+            
+            // Refresh profile dropdown
+            loadProfiles();
+            
+            // Show success message
+            showSuccess(`Profile "${profileName}" saved with ${selectedCIDs.length} records`);
+            
+            // Clear the input
+            profileNameInput.value = '';
+        });
+        
+        // Load profile
+        loadProfileBtn.addEventListener('click', function() {
+            const profileName = profileSelect.value;
+            
+            if (!profileName) {
+                showSuccess('Please select a profile');
+                return;
+            }
+            
+            // Load profile from localStorage
+            const selectedCIDs = loadProfile(profileName);
+            
+            if (!selectedCIDs || selectedCIDs.length === 0) {
+                showSuccess('Profile is empty or could not be loaded');
+                return;
+            }
+            
+            // Select rows based on loaded CIDs
+            const rowCheckboxes = document.querySelectorAll('#exportTableBody .row-checkbox');
+            
+            // First, uncheck all checkboxes
+            rowCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // Then check only those that are in the profile
+            rowCheckboxes.forEach(checkbox => {
+                if (selectedCIDs.includes(checkbox.dataset.cid)) {
+                    checkbox.checked = true;
+                }
+            });
+            
+            // Update select all checkboxes
+            const allCheckboxes = document.querySelectorAll('#exportTableBody .row-checkbox');
+            const checkedCheckboxes = document.querySelectorAll('#exportTableBody .row-checkbox:checked');
+            
+            selectAllRows.checked = allCheckboxes.length === checkedCheckboxes.length && allCheckboxes.length > 0;
+            selectAllHeader.checked = allCheckboxes.length === checkedCheckboxes.length && allCheckboxes.length > 0;
+            
+            // Update selected count
+            updateSelectedRowsCount();
+            
+            // Show success message
+            showSuccess(`Profile "${profileName}" loaded with ${selectedCIDs.length} records`);
+        });
+        
+        // Delete profile
+        deleteProfileBtn.addEventListener('click', function() {
+            const profileName = profileSelect.value;
+            
+            if (!profileName) {
+                showSuccess('Please select a profile to delete');
+                return;
+            }
+            
+            // Delete profile from localStorage
+            deleteProfile(profileName);
+            
+            // Refresh profile dropdown
+            loadProfiles();
+            
+            // Show success message
+            showSuccess(`Profile "${profileName}" deleted`);
+        });
+        
+        // Save profile to localStorage
+        function saveProfile(name, selectedCIDs) {
+            // Get existing profiles
+            const profiles = JSON.parse(localStorage.getItem('exportProfiles')) || {};
+            
+            // Add or update profile
+            profiles[name] = selectedCIDs;
+            
+            // Save back to localStorage
+            localStorage.setItem('exportProfiles', JSON.stringify(profiles));
+        }
+        
+        // Load profile from localStorage
+        function loadProfile(name) {
+            const profiles = JSON.parse(localStorage.getItem('exportProfiles')) || {};
+            return profiles[name] || [];
+        }
+        
+        // Delete profile from localStorage
+        function deleteProfile(name) {
+            const profiles = JSON.parse(localStorage.getItem('exportProfiles')) || {};
+            
+            if (profiles[name]) {
+                delete profiles[name];
+                localStorage.setItem('exportProfiles', JSON.stringify(profiles));
+            }
+        }
+        
+        // Load profiles into dropdown
+        function loadProfiles() {
+            const profiles = JSON.parse(localStorage.getItem('exportProfiles')) || {};
+            
+            // Clear dropdown except first option
+            while (profileSelect.options.length > 1) {
+                profileSelect.remove(1);
+            }
+            
+            // Add profiles to dropdown
+            for (const profileName in profiles) {
+                const option = document.createElement('option');
+                option.value = profileName;
+                option.textContent = `${profileName} (${profiles[profileName].length} records)`;
+                profileSelect.appendChild(option);
+            }
         }
 
         // ==========================================
