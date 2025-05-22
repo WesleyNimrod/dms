@@ -1151,7 +1151,7 @@
     </div>
 
     <script>
-        // Initialize jsPDF
+        // Initialize jsPDF with proper UMD import
         const { jsPDF } = window.jspdf;
 
         // ==========================================
@@ -3226,60 +3226,84 @@
             showSuccess(`Exported ${exportData.length} records as PDF successfully`);
         });
         
-        // Generate PDF with jsPDF
+        // Generate PDF with jsPDF - FIXED VERSION
         function generatePDF(data) {
-            // Create a new jsPDF instance
-            const doc = new jsPDF();
-            
-            // Add title
-            doc.setFontSize(18);
-            doc.text('Customer Data Report', 14, 22);
-            
-            // Add date
-            doc.setFontSize(11);
-            doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 30);
-            
-            // Define table columns
-            const columns = [
-                { header: 'CID', dataKey: 'CID' },
-                { header: 'Date', dataKey: 'Date' },
-                { header: 'Customer Name', dataKey: 'Customer Name' },
-                { header: 'Status', dataKey: 'Status' }
-            ];
-            
-            // Create the table
-            doc.autoTable({
-                startY: 40,
-                head: [columns.map(col => col.header)],
-                body: data.map(item => columns.map(col => item[col.dataKey])),
-                theme: 'striped',
-                headStyles: {
-                    fillColor: [111, 44, 79], // Same color as the system (#6F2C4F)
-                    textColor: [255, 255, 255]
-                },
-                styles: {
-                    overflow: 'linebreak',
-                    cellPadding: 3,
-                    fontSize: 10
-                },
-                columnStyles: {
-                    0: { cellWidth: 30 }, // CID
-                    1: { cellWidth: 30 }, // Date
-                    2: { cellWidth: 80 }, // Customer Name
-                    3: { cellWidth: 40 }  // Status
+            try {
+                console.log("Generating PDF with data:", JSON.stringify(data));
+                
+                // Create a new jsPDF instance with proper initialization
+                const doc = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+                
+                // Add title
+                doc.setFontSize(18);
+                doc.text('Customer Data Report', 14, 22);
+                
+                // Add date
+                doc.setFontSize(11);
+                doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 30);
+                
+                // Check if data is valid
+                if (!Array.isArray(data) || data.length === 0) {
+                    doc.setFontSize(12);
+                    doc.setTextColor(255, 0, 0);
+                    doc.text('No data available for export', 14, 50);
+                    doc.save('customer_data_report.pdf');
+                    console.error("No data available for export", data);
+                    return;
                 }
-            });
-            
-            // Add footer
-            const pageCount = doc.internal.getNumberOfPages();
-            for (let i = 1; i <= pageCount; i++) {
-                doc.setPage(i);
-                doc.setFontSize(10);
-                doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 10, { align: 'center' });
+                
+                // Prepare data in the format expected by autoTable
+                const tableData = data.map(item => [
+                    item.CID || '',
+                    item.Date || '',
+                    item['Customer Name'] || '',
+                    item.Status || ''
+                ]);
+                
+                console.log("Formatted table data:", JSON.stringify(tableData));
+                
+                // Create the table
+                doc.autoTable({
+                    startY: 40,
+                    head: [['CID', 'Date', 'Customer Name', 'Status']],
+                    body: tableData,
+                    theme: 'striped',
+                    headStyles: {
+                        fillColor: [111, 44, 79], // Same color as the system (#6F2C4F)
+                        textColor: [255, 255, 255]
+                    },
+                    styles: {
+                        overflow: 'linebreak',
+                        cellPadding: 3,
+                        fontSize: 10
+                    },
+                    columnStyles: {
+                        0: { cellWidth: 30 }, // CID
+                        1: { cellWidth: 30 }, // Date
+                        2: { cellWidth: 80 }, // Customer Name
+                        3: { cellWidth: 40 }  // Status
+                    }
+                });
+                
+                // Add footer
+                const pageCount = doc.internal.getNumberOfPages();
+                for (let i = 1; i <= pageCount; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(10);
+                    doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 10, { align: 'center' });
+                }
+                
+                // Save the PDF
+                doc.save('customer_data_report.pdf');
+                console.log("PDF generated successfully");
+            } catch (error) {
+                console.error("Error generating PDF:", error);
+                showSuccess("Error generating PDF: " + error.message);
             }
-            
-            // Save the PDF
-            doc.save('customer_data_report.pdf');
         }
         
         // ==========================================
