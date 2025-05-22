@@ -3434,61 +3434,68 @@
             }
         });
         
-        // Export selected data as PDF - EXTREME FIX
+        // Export selected data as PDF - EXTREME FIX with row numbering
         confirmExportBtn.addEventListener('click', function() {
             const checkedRows = document.querySelectorAll('#exportTableBody .row-checkbox:checked');
             
-            // Even if no rows are selected, create a PDF with test data
-            let selectedData = [];
-            
             // Check if we have selected rows
-            if (checkedRows.length > 0) {
-                // Get selected CIDs
-                const selectedCIDs = Array.from(checkedRows).map(checkbox => checkbox.dataset.cid);
-                
-                // Filter data to get only selected records
-                selectedData = allRecordsData.filter(record => selectedCIDs.includes(record.CID));
-            } else {
-                // Use test data if nothing is selected
-                selectedData = testData;
-                showSuccess("No rows selected. Creating PDF with test data.");
+            if (checkedRows.length === 0) {
+                showSuccess("Please select at least one record to export");
+                return;
             }
             
-            // Add test data if the array is empty or too small
+            // Get selected CIDs
+            const selectedCIDs = Array.from(checkedRows).map(checkbox => checkbox.dataset.cid);
+            
+            // Filter data to get only selected records
+            let selectedData = allRecordsData.filter(record => selectedCIDs.includes(record.CID));
+            
+            // If we don't have real data, use what's in the export table itself
+            if (selectedData.length === 0) {
+                // Extract data directly from the export table rows
+                const tableRows = document.querySelectorAll('#exportTableBody tr');
+                selectedData = Array.from(tableRows).map(row => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length >= 6) {
+                        return {
+                            CID: cells[1].textContent,
+                            Date: cells[2].textContent,
+                            'Customer Name': cells[3].textContent,
+                            Product: cells[4].textContent,
+                            Status: cells[5].textContent
+                        };
+                    }
+                    return null;
+                }).filter(item => item !== null);
+            }
+            
+            // Fallback to test data if still no data
             if (selectedData.length === 0) {
                 selectedData = testData;
+                showSuccess("Using fallback data for PDF export.");
             }
             
-            // Extract required columns and prepare data for PDF
-            const exportData = selectedData.map(record => {
+            // Extract required columns and prepare data for PDF - now with serial numbers
+            const exportData = selectedData.map((record, index) => {
                 // Format data for PDF
                 const productType = categorizeProductType(record.Product);
-                let productDisplay = productType;
+                let productDisplay = record.Product || productType;
                 
-                // Add loan amount if it's a personal loan
-                if (productType === "PL" && record['Loan Amount']) {
-                    productDisplay = `${productType} (AED ${parseInt(record['Loan Amount']).toLocaleString()})`;
+                // Add loan amount if it's a personal loan and not already included
+                if (productType === "PL" && record['Loan Amount'] && !productDisplay.includes("AED")) {
+                    productDisplay = `${productDisplay} (AED ${parseInt(record['Loan Amount']).toLocaleString()})`;
                 }
                 
                 return {
+                    // Add serial number (1-based index)
+                    No: (index + 1).toString(),
                     CID: record.CID || '',
-                    Date: record.Date ? new Date(record.Date).toLocaleDateString() : '',
+                    Date: record.Date ? (typeof record.Date === 'string' ? record.Date : new Date(record.Date).toLocaleDateString()) : '',
                     'Customer Name': record['Customer Name'] || '',
                     Product: productDisplay,
                     Status: record.Status || ''
                 };
             });
-            
-            // Ensure exportData is non-empty
-            if (exportData.length === 0) {
-                exportData.push({
-                    CID: "12345",
-                    Date: "2023-05-22",
-                    "Customer Name": "John Doe",
-                    Product: "CC",
-                    Status: "Completed"
-                });
-            }
             
             // Extreme fix - directly create PDF without using jsPDF autotable
             extremePDFWorkaround(exportData);
@@ -3500,7 +3507,7 @@
             showSuccess(`Exported ${exportData.length} records as PDF successfully`);
         });
         
-        // EXTREME FIX - Direct PDF creation without autotable
+        // EXTREME FIX - Direct PDF creation without autotable - with Serial Numbers
         function extremePDFWorkaround(data) {
             try {
                 // Log the data we're trying to export
@@ -3509,38 +3516,43 @@
                 // Create a new jsPDF instance
                 const doc = new jsPDF();
                 
-                // Add title
+                // Add title with better styling
                 doc.setFontSize(18);
+                doc.setTextColor(111, 44, 79); // Purple color matching the UI
                 doc.text('Customer Data Report', 15, 15);
                 
-                // Add date
+                // Add date with better styling
                 doc.setFontSize(11);
+                doc.setTextColor(0, 0, 0);
                 doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 15, 25);
                 
                 // Define column positions
-                const col1X = 15;  // CID
-                const col2X = 35;  // Date
-                const col3X = 65;  // Customer Name
+                const col0X = 15;  // Serial No.
+                const col1X = 25;  // CID
+                const col2X = 45;  // Date
+                const col3X = 75;  // Customer Name
                 const col4X = 130; // Product
-                const col5X = 170; // Status
+                const col5X = 175; // Status
                 
-                // Add header
-                doc.setFontSize(12);
-                doc.setTextColor(0, 0, 0);
+                // Add header with colored background
+                doc.setFillColor(111, 44, 79); // Purple header
+                doc.rect(15, 30, 180, 8, 'F');
+                
+                // Add header text
+                doc.setFontSize(10);
+                doc.setTextColor(255, 255, 255); // White text
                 doc.setFont(undefined, 'bold');
                 
+                doc.text('No', col0X, 35);
                 doc.text('CID', col1X, 35);
                 doc.text('Date', col2X, 35);
                 doc.text('Customer Name', col3X, 35);
                 doc.text('Product', col4X, 35);
                 doc.text('Status', col5X, 35);
                 
-                // Draw header line
-                doc.setDrawColor(0);
-                doc.line(15, 37, 195, 37);
-                
-                // Reset font
+                // Reset font and color for data rows
                 doc.setFont(undefined, 'normal');
+                doc.setTextColor(0, 0, 0);
                 
                 // Add data rows
                 let y = 45;
@@ -3551,26 +3563,26 @@
                         y = 20;
                         
                         // Add header to new page
+                        doc.setFillColor(111, 44, 79); // Purple header
+                        doc.rect(15, y-5, 180, 8, 'F');
+                        
+                        // Add header text
+                        doc.setTextColor(255, 255, 255); // White text
                         doc.setFont(undefined, 'bold');
+                        
+                        doc.text('No', col0X, y);
                         doc.text('CID', col1X, y);
                         doc.text('Date', col2X, y);
                         doc.text('Customer Name', col3X, y);
                         doc.text('Product', col4X, y);
                         doc.text('Status', col5X, y);
                         
-                        // Draw header line on new page
-                        doc.line(15, y+2, 195, y+2);
+                        // Reset font for data
                         doc.setFont(undefined, 'normal');
+                        doc.setTextColor(0, 0, 0);
                         
                         y += 10;
                     }
-                    
-                    // Add row data
-                    doc.text(row.CID?.toString() || '', col1X, y);
-                    doc.text(row.Date?.toString() || '', col2X, y);
-                    doc.text(row['Customer Name']?.toString() || '', col3X, y);
-                    doc.text(row.Product?.toString() || '', col4X, y);
-                    doc.text(row.Status?.toString() || '', col5X, y);
                     
                     // Add alternating row background
                     if (i % 2 === 1) {
@@ -3578,14 +3590,36 @@
                         doc.rect(15, y-5, 180, 8, 'F');
                     }
                     
+                    // Add row data - truncate long text to fit columns
+                    doc.text((i + 1).toString(), col0X, y); // Serial number
+                    doc.text(truncateText(row.CID?.toString() || '', 15), col1X, y);
+                    doc.text(truncateText(row.Date?.toString() || '', 22), col2X, y);
+                    doc.text(truncateText(row['Customer Name']?.toString() || '', 40), col3X, y);
+                    doc.text(truncateText(row.Product?.toString() || '', 35), col4X, y);
+                    doc.text(truncateText(row.Status?.toString() || '', 15), col5X, y);
+                    
                     y += 10;
                 });
+                
+                // Draw border around the table
+                doc.setDrawColor(111, 44, 79);
+                doc.setLineWidth(0.5);
+                for (let i = 1; i <= doc.internal.getNumberOfPages(); i++) {
+                    doc.setPage(i);
+                    const pageHeight = doc.internal.pageSize.height;
+                    if (i === doc.internal.getNumberOfPages()) {
+                        doc.rect(15, 30, 180, Math.min(y - 35, pageHeight - 40)); // Border for last page
+                    } else {
+                        doc.rect(15, 30, 180, pageHeight - 40); // Border for other pages
+                    }
+                }
                 
                 // Add footer with page numbers
                 const pageCount = doc.internal.getNumberOfPages();
                 for (let i = 1; i <= pageCount; i++) {
                     doc.setPage(i);
                     doc.setFontSize(10);
+                    doc.setTextColor(111, 44, 79);
                     doc.text(`Page ${i} of ${pageCount}`, 100, 290, { align: 'center' });
                 }
                 
@@ -3599,6 +3633,12 @@
                 // Fallback for absolute emergencies - download JSON
                 downloadJSON(data);
             }
+        }
+        
+        // Helper function to truncate text that's too long for its column
+        function truncateText(text, maxLength) {
+            if (!text) return '';
+            return text.length > maxLength ? text.substring(0, maxLength - 3) + '...' : text;
         }
         
         // FALLBACK: Download JSON if everything else fails
