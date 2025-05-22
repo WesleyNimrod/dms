@@ -772,7 +772,7 @@
                             <!-- App ID -->
                             <div>
                                 <label for="appId" class="block text-gray-700 font-medium">App ID</label>
-                                <input type="number" id="appId" name="appId" class="w-full border rounded-md p-2 text-base">
+                                <input type="text" id="appId" name="appId" class="w-full border rounded-md p-2 text-base">
                             </div>
                             
                             <!-- Proposition -->
@@ -3434,7 +3434,7 @@
             }
         });
         
-        // Export selected data as PDF - EXTREME FIX with row numbering
+        // Export selected data as PDF - FIXED version with proper row selection and column widths
         confirmExportBtn.addEventListener('click', function() {
             const checkedRows = document.querySelectorAll('#exportTableBody .row-checkbox:checked');
             
@@ -3444,30 +3444,23 @@
                 return;
             }
             
-            // Get selected CIDs
-            const selectedCIDs = Array.from(checkedRows).map(checkbox => checkbox.dataset.cid);
-            
-            // Filter data to get only selected records
-            let selectedData = allRecordsData.filter(record => selectedCIDs.includes(record.CID));
-            
-            // If we don't have real data, use what's in the export table itself
-            if (selectedData.length === 0) {
-                // Extract data directly from the export table rows
-                const tableRows = document.querySelectorAll('#exportTableBody tr');
-                selectedData = Array.from(tableRows).map(row => {
+            // Extract data directly from the checked rows
+            let selectedData = [];
+            checkedRows.forEach(checkbox => {
+                const row = checkbox.closest('tr');
+                if (row) {
                     const cells = row.querySelectorAll('td');
                     if (cells.length >= 6) {
-                        return {
+                        selectedData.push({
                             CID: cells[1].textContent,
                             Date: cells[2].textContent,
                             'Customer Name': cells[3].textContent,
                             Product: cells[4].textContent,
                             Status: cells[5].textContent
-                        };
+                        });
                     }
-                    return null;
-                }).filter(item => item !== null);
-            }
+                }
+            });
             
             // Fallback to test data if still no data
             if (selectedData.length === 0) {
@@ -3477,28 +3470,19 @@
             
             // Extract required columns and prepare data for PDF - now with serial numbers
             const exportData = selectedData.map((record, index) => {
-                // Format data for PDF
-                const productType = categorizeProductType(record.Product);
-                let productDisplay = record.Product || productType;
-                
-                // Add loan amount if it's a personal loan and not already included
-                if (productType === "PL" && record['Loan Amount'] && !productDisplay.includes("AED")) {
-                    productDisplay = `${productDisplay} (AED ${parseInt(record['Loan Amount']).toLocaleString()})`;
-                }
-                
                 return {
                     // Add serial number (1-based index)
                     No: (index + 1).toString(),
                     CID: record.CID || '',
-                    Date: record.Date ? (typeof record.Date === 'string' ? record.Date : new Date(record.Date).toLocaleDateString()) : '',
+                    Date: record.Date || '',
                     'Customer Name': record['Customer Name'] || '',
-                    Product: productDisplay,
+                    Product: record.Product || '',
                     Status: record.Status || ''
                 };
             });
             
-            // Extreme fix - directly create PDF without using jsPDF autotable
-            extremePDFWorkaround(exportData);
+            // Create PDF with improved column spacing
+            createPDF(exportData);
             
             // Close modal
             closeExportModal();
@@ -3507,11 +3491,10 @@
             showSuccess(`Exported ${exportData.length} records as PDF successfully`);
         });
         
-        // EXTREME FIX - Direct PDF creation without autotable - with Serial Numbers
-        function extremePDFWorkaround(data) {
+        // FIXED PDF generation function
+        function createPDF(data) {
             try {
-                // Log the data we're trying to export
-                console.log("PDF Data:", JSON.stringify(data));
+                console.log("Creating PDF with data:", JSON.stringify(data));
                 
                 // Create a new jsPDF instance
                 const doc = new jsPDF();
@@ -3526,13 +3509,34 @@
                 doc.setTextColor(0, 0, 0);
                 doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 15, 25);
                 
-                // Define column positions
-                const col0X = 15;  // Serial No.
-                const col1X = 25;  // CID
-                const col2X = 45;  // Date
-                const col3X = 75;  // Customer Name
-                const col4X = 130; // Product
-                const col5X = 175; // Status
+                // Total available width is 180 units (from the border drawing)
+const totalWidth = 180;
+// Margin from left edge
+const leftMargin = 15;
+                
+// Define column widths according to required percentages
+const colWidthNo = totalWidth * 0.05;      // 5%
+const colWidthCID = totalWidth * 0.10;     // 10%
+const colWidthDate = totalWidth * 0.10;    // 10%
+const colWidthName = totalWidth * 0.35;    // 35%
+const colWidthProduct = totalWidth * 0.10; // 10%
+const colWidthStatus = totalWidth * 0.30;  // 30%
+                
+// Calculate column positions (starting X coordinate for each column)
+const col0X = leftMargin + 3;                                          // Serial No. (with slight indent)
+const col1X = leftMargin + colWidthNo;                                 // CID
+const col2X = col1X + colWidthCID;                                     // Date
+const col3X = col2X + colWidthDate;                                    // Customer Name
+const col4X = col3X + colWidthName;                                    // Product
+const col5X = col4X + colWidthProduct;                                 // Status
+                
+// Define text truncation/wrapping lengths (slightly smaller than column width)
+const widthNo = colWidthNo - 2;
+const widthCID = colWidthCID - 2;
+const widthDate = colWidthDate - 2;
+const widthName = colWidthName - 2;
+const widthProduct = colWidthProduct - 2;
+const widthStatus = colWidthStatus - 2;
                 
                 // Add header with colored background
                 doc.setFillColor(111, 44, 79); // Purple header
@@ -3590,13 +3594,62 @@
                         doc.rect(15, y-5, 180, 8, 'F');
                     }
                     
-                    // Add row data - truncate long text to fit columns
-                    doc.text((i + 1).toString(), col0X, y); // Serial number
-                    doc.text(truncateText(row.CID?.toString() || '', 15), col1X, y);
-                    doc.text(truncateText(row.Date?.toString() || '', 22), col2X, y);
-                    doc.text(truncateText(row['Customer Name']?.toString() || '', 40), col3X, y);
-                    doc.text(truncateText(row.Product?.toString() || '', 35), col4X, y);
-                    doc.text(truncateText(row.Status?.toString() || '', 15), col5X, y);
+                    // Helper function for wrapping text
+function wrapText(text, maxWidth) {
+    const words = text.split(' ');
+    let line = '';
+    let lines = [];
+    
+    for (let i = 0; i < words.length; i++) {
+        const testLine = line + (line ? ' ' : '') + words[i];
+        if (testLine.length <= maxWidth) {
+            line = testLine;
+        } else {
+            lines.push(line);
+            line = words[i];
+        }
+    }
+    if (line) {
+        lines.push(line);
+    }
+    return lines.length > 0 ? lines : [''];
+}
+
+// Add row data with wrapping for longer texts
+let rowHeight = 0;
+
+// Serial number (doesn't need wrapping)
+doc.text((i + 1).toString(), col0X, y);
+
+// CID (doesn't need wrapping)
+doc.text(truncateText(row.CID?.toString() || '', widthCID), col1X, y);
+
+// Date (doesn't need wrapping)
+doc.text(truncateText(row.Date?.toString() || '', widthDate), col2X, y);
+
+// Customer Name (needs wrapping)
+const nameLines = wrapText(row['Customer Name']?.toString() || '', widthName);
+nameLines.forEach((line, lineIndex) => {
+    doc.text(line, col3X, y + (lineIndex * 4));
+    rowHeight = Math.max(rowHeight, lineIndex * 4);
+});
+
+// Product (may need wrapping)
+const productLines = wrapText(row.Product?.toString() || '', widthProduct);
+productLines.forEach((line, lineIndex) => {
+    doc.text(line, col4X, y + (lineIndex * 4));
+    rowHeight = Math.max(rowHeight, lineIndex * 4);
+});
+
+// Status (may need wrapping)
+const statusLines = wrapText(row.Status?.toString() || '', widthStatus);
+statusLines.forEach((line, lineIndex) => {
+    doc.text(line, col5X, y + (lineIndex * 4));
+    rowHeight = Math.max(rowHeight, lineIndex * 4);
+});
+
+// Adjust y for next row based on the tallest wrapped text
+y += Math.max(10, rowHeight + 6); // Use at least 10 for single line rows
                     
                     y += 10;
                 });
@@ -3625,9 +3678,9 @@
                 
                 // Save the PDF
                 doc.save('customer_data_report.pdf');
-                console.log("PDF generated successfully using extreme workaround");
+                console.log("PDF generated successfully");
             } catch (error) {
-                console.error("Error generating PDF with extreme workaround:", error);
+                console.error("Error generating PDF:", error);
                 alert("Error generating PDF: " + error.message + "\n\nPlease check console for details.");
                 
                 // Fallback for absolute emergencies - download JSON
