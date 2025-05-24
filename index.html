@@ -321,21 +321,91 @@
             background-color: #2d3748;
             border-left: 4px solid #90cdf4;
         }
+        
+        /* Password modal */
+        .password-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        
+        .password-container {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 30px;
+            width: 350px;
+            max-width: 90%;
+        }
+        
+        .dark .password-container {
+            background: rgba(31, 41, 55, 0.85);
+            border: 1px solid rgba(75, 85, 99, 0.18);
+        }
+        
+        .screenshot-btn {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            padding: 6px;
+            transition: all 0.3s;
+        }
+        
+        .screenshot-btn:hover {
+            background: #e5e7eb;
+        }
+        
+        .dark .screenshot-btn {
+            background: #374151;
+            border-color: #4b5563;
+        }
+        
+        .dark .screenshot-btn:hover {
+            background: #4b5563;
+        }
     </style>
 </head>
 <body class="bg-gray-50 transition-colors duration-200 font-tahoma">
-    <!-- Theme toggle -->
-    <div class="flex justify-end items-center p-2">
-        <span class="mr-2 text-gray-700 dark:text-gray-300"><i class="fas fa-sun"></i></span>
-        <label class="toggle-switch">
-            <input type="checkbox" id="themeToggle">
-            <span class="toggle-slider"></span>
-        </label>
-        <span class="ml-2 text-gray-700 dark:text-gray-300"><i class="fas fa-moon"></i></span>
+    <!-- Password Modal -->
+    <div class="password-modal" id="passwordModal">
+        <div class="password-container">
+            <h2 class="text-xl font-bold text-primary dark:text-white mb-4 text-center">Authentication Required</h2>
+            <div class="mb-4">
+                <label class="block text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                <input type="password" id="passwordInput" class="w-full border rounded-md p-2 text-base" placeholder="Enter password">
+                <p id="passwordError" class="text-red-500 text-sm mt-1 hidden">Invalid password!</p>
+            </div>
+            <div class="flex items-center mb-4">
+                <input type="checkbox" id="rememberMe" class="mr-2">
+                <label for="rememberMe" class="text-gray-700 dark:text-gray-300">Keep me signed in for 3 days</label>
+            </div>
+            <button id="submitPassword" class="custom-btn text-white py-2 px-4 rounded-md w-full">Login</button>
+        </div>
     </div>
     
-    <div class="container mx-auto px-3 py-2 max-w-6xl" id="printableArea">
-        <h1 class="text-2xl md:text-3xl font-bold text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">Management Information System</h1>
+    <div class="w-full px-3 py-2" id="printableArea">
+        <div class="flex justify-between items-center mb-4">
+            <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Management Information System</h1>
+            <!-- Theme toggle moved next to heading -->
+            <div class="flex items-center">
+                <span class="mr-2 text-gray-700 dark:text-gray-300"><i class="fas fa-sun"></i></span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="themeToggle">
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="ml-2 text-gray-700 dark:text-gray-300"><i class="fas fa-moon"></i></span>
+            </div>
+        </div>
         
         <!-- Tabbed Interface -->
         <div class="mb-4 bg-gradient-to-r from-primary/90 to-secondary/90 p-2 rounded-lg shadow-md">
@@ -352,6 +422,9 @@
                 </button>
                 <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="calling">
                     <i class="fas fa-phone mr-2"></i>Calling
+                </button>
+                <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="pldata">
+                    <i class="fas fa-database mr-2"></i>PL Data
                 </button>
                 <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="share">
                     <i class="fas fa-share-alt mr-2"></i>Share
@@ -370,9 +443,9 @@
                 </button>
             </div>
             
-            <!-- Customer Name, Saved Profiles and WhatsApp Input Group -->
-            <div id="headerControls" class="flex flex-wrap items-center justify-between px-2 mb-2 gap-1">
-                <div class="flex flex-wrap items-center gap-1 w-full">
+            <!-- Customer Name, Saved Profiles and WhatsApp Input Group - Centered -->
+            <div id="headerControls" class="flex flex-col items-center justify-center px-2 mb-2">
+                <div class="flex flex-wrap items-center justify-center gap-2 w-full">
                     <input type="text" id="customerName" placeholder="Customer Name" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white max-w-[160px]">
                     <select id="savedProfiles" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white max-w-[160px]">
                         <option value="">Select a profile</option>
@@ -444,7 +517,7 @@
                         <div class="grid grid-cols-3 gap-2 items-center">
                             <label class="text-gray-700 dark:text-gray-300 font-medium">DBR %:</label>
                             <div class="col-span-2 flex items-center">
-                                <input type="text" id="dbrPercentage" class="border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
+                                <input type="text" id="dbrPercentage" class="w-full border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
                             </div>
                         </div>
                         
@@ -486,6 +559,12 @@
                             <button id="removeCreditCardBtn" class="custom-btn text-white p-1.5 rounded-md text-sm disabled:opacity-50" disabled>- Remove Card</button>
                         </div>
                         
+                        <!-- Moved Credit Card Suggestion above Total CC Limit -->
+                        <div id="ccSuggestionContainer" class="border border-primary p-2 rounded-lg mt-2 hidden">
+                            <h3 class="text-base font-bold text-primary mb-1">CREDIT CARD SUGGESTION</h3>
+                            <p id="ccSuggestionText" class="text-gray-700 dark:text-gray-300 text-sm"></p>
+                        </div>
+                        
                         <div class="grid grid-cols-3 gap-2 items-center">
                             <label class="text-gray-700 dark:text-gray-300 font-medium">Total CC Limit:</label>
                             <input type="text" id="totalCCLimit" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
@@ -524,11 +603,6 @@
                         <div class="grid grid-cols-3 gap-2 items-center">
                             <label class="text-gray-700 dark:text-gray-300 font-medium">Special Note:</label>
                             <textarea id="specialNote" class="col-span-2 w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" rows="2"></textarea>
-                        </div>
-                        
-                        <div id="ccSuggestionContainer" class="border border-primary p-2 rounded-lg mt-2 hidden">
-                            <h3 class="text-base font-bold text-primary mb-1">CREDIT CARD SUGGESTION</h3>
-                            <p id="ccSuggestionText" class="text-gray-700 dark:text-gray-300 text-sm"></p>
                         </div>
                     </div>
                 </div>
@@ -684,6 +758,11 @@
             <iframe src="Calling.html" title="Calling" id="callingIframe"></iframe>
         </div>
         
+        <!-- PL Data Tab (New) -->
+        <div id="tab-pldata" class="tab-content">
+            <iframe src="pl.html" title="PL Data" id="plDataIframe"></iframe>
+        </div>
+        
         <!-- Share Tab -->
         <div id="tab-share" class="tab-content">
             <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
@@ -745,7 +824,12 @@
         <!-- Comparison Tab -->
         <div id="tab-comparison" class="tab-content">
             <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
-                <h2 class="text-xl font-bold text-primary dark:text-white mb-4">LOAN COMPARISON</h2>
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-primary dark:text-white">LOAN COMPARISON</h2>
+                    <button id="screenshotComparison" class="screenshot-btn" title="Take Screenshot">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- First Bank -->
@@ -815,7 +899,7 @@
                     </div>
                 </div>
                 
-                <div class="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                <div class="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg" id="comparisonResultSection">
                     <h3 class="text-xl font-semibold text-primary dark:text-white mb-2">COMPARISON RESULT</h3>
                     <p id="comparisonResultTab" class="text-gray-700 dark:text-gray-300">Enter Details For Both Banks To Compare.</p>
                 </div>
@@ -1026,13 +1110,69 @@
     
     <script>
         // ==========================================
+        // AUTHENTICATION
+        // ==========================================
+        
+        // Password management
+        const passwordModal = document.getElementById('passwordModal');
+        const passwordInput = document.getElementById('passwordInput');
+        const rememberMeCheckbox = document.getElementById('rememberMe');
+        const submitPasswordBtn = document.getElementById('submitPassword');
+        const passwordError = document.getElementById('passwordError');
+        
+        // Check if already authenticated
+        function checkAuthentication() {
+            const authExpiry = localStorage.getItem('authExpiry');
+            if (authExpiry && new Date(authExpiry) > new Date()) {
+                // Still authenticated
+                passwordModal.classList.add('hidden');
+            } else {
+                // Authentication expired or not set
+                localStorage.removeItem('authExpiry');
+                passwordModal.classList.remove('hidden');
+            }
+        }
+        
+        // Handle password submission
+        submitPasswordBtn.addEventListener('click', function() {
+            const password = passwordInput.value;
+            
+            // Simple password check - in real app would use secure authentication
+            if (password === '0317') {
+                passwordError.classList.add('hidden');
+                
+                // Set authentication if "remember me" is checked
+                if (rememberMeCheckbox.checked) {
+                    const expiryDate = new Date();
+                    expiryDate.setDate(expiryDate.getDate() + 3); // 3 days from now
+                    localStorage.setItem('authExpiry', expiryDate.toISOString());
+                }
+                
+                passwordModal.classList.add('hidden');
+            } else {
+                passwordError.classList.remove('hidden');
+                passwordInput.focus();
+            }
+        });
+        
+        // Listen for Enter key in password field
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                submitPasswordBtn.click();
+            }
+        });
+        
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', checkAuthentication);
+        
+        // ==========================================
         // INITIALIZATION AND UTILITIES
         // ==========================================
         
         // Theme toggle functionality
         const themeToggle = document.getElementById('themeToggle');
         
-        // Set light mode as default
+        // Force light mode as default for all pages
         document.documentElement.classList.remove('dark');
         themeToggle.checked = false;
         
@@ -1063,7 +1203,7 @@
                     }
                     
                     // Force iframe reload as a last resort
-                    if (iframe.id === 'misIframe' || iframe.id === 'advcalcIframe' || iframe.id === 'rategridIframe' || iframe.id === 'callingIframe') {
+                    if (iframe.id === 'misIframe' || iframe.id === 'advcalcIframe' || iframe.id === 'rategridIframe' || iframe.id === 'callingIframe' || iframe.id === 'plDataIframe') {
                         const currentSrc = iframe.src;
                         iframe.src = '';
                         setTimeout(() => {
@@ -1112,14 +1252,6 @@
             });
         });
         
-        // Removed system preference check to ensure light mode is always default
-        // Light mode is set as default and system preference will not override it
-        
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-            // Don't automatically change theme based on system preference
-            // We'll only respond to manual toggle changes
-        });
-        
         // Helper function to format numbers with thousands separators
         function formatNumber(num) {
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -1137,6 +1269,20 @@
                 indicator.classList.add('hidden');
             }, 3000);
         }
+        
+        // Screenshot functionality for Loan Comparison
+        document.getElementById('screenshotComparison').addEventListener('click', function() {
+            const comparisonSection = document.getElementById('tab-comparison').querySelector('.bg-white.dark\\:bg-gray-800');
+            
+            html2canvas(comparisonSection).then(canvas => {
+                const imageData = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.href = imageData;
+                link.download = 'loan_comparison.png';
+                link.click();
+                showSuccess('Comparison screenshot saved!');
+            });
+        });
         
         // ==========================================
         // TABBED INTERFACE
