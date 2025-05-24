@@ -394,10 +394,11 @@
     </div>
     
     <div class="w-full px-3 py-2" id="printableArea">
-        <div class="flex justify-between items-center mb-4">
-            <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Management Information System</h1>
-            <!-- Theme toggle moved next to heading -->
-            <div class="flex items-center">
+        <!-- Updated header with centered title -->
+        <div class="grid grid-cols-3 items-center mb-4">
+            <div class="col-span-1"></div>
+            <h1 class="text-2xl md:text-3xl font-bold text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent col-span-1">Management Information System</h1>
+            <div class="col-span-1 flex justify-end">
                 <span class="mr-2 text-gray-700 dark:text-gray-300"><i class="fas fa-sun"></i></span>
                 <label class="toggle-switch">
                     <input type="checkbox" id="themeToggle">
@@ -750,7 +751,7 @@
         
         <!-- Follow-Up Tab (previously Data Sheet) -->
         <div id="tab-datasheet" class="tab-content">
-            <iframe src="https://script.google.com/macros/s/AKfycbxa58gAJq9fcS7cF61wzFQXZg2JJRoUtFnfTw18LKpEIs-PLQihjqRzUFh7Y-ubMUPy/exec" frameborder="0" width="100%" height="600px"></iframe>
+            <iframe src="https://script.google.com/macros/s/AKfycbyt6zvvO5POe2jMnyaR2bJOPu09L2f2Rr3Aeh72_APIR1C-6JVzSDOZvGfi4ZOZbQL0/exec" frameborder="0" width="100%" height="600px"></iframe>
         </div>
         
         <!-- Calling Tab (New) -->
@@ -1138,7 +1139,7 @@
             const password = passwordInput.value;
             
             // Simple password check - in real app would use secure authentication
-            if (password === '0317') {
+            if (password === 'admin123') {
                 passwordError.classList.add('hidden');
                 
                 // Set authentication if "remember me" is checked
