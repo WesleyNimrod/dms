@@ -304,75 +304,17 @@
         .format-date {
             text-align: center;
         }
-
-        /* Dark mode support */
-        @media (prefers-color-scheme: dark) {
-            body {
-                background-color: #181818;
-                color: #e0e0e0;
-            }
-            
-            .pl-table tr:nth-child(even) {
-                background-color: #2a2a2a;
-            }
-            
-            .pl-table tr:hover {
-                background-color: #333;
-            }
-            
-            .pl-table td {
-                border-color: #444;
-            }
-            
-            .pl-table th {
-                background-color: #5D5CDE;
-            }
-            
-            .editable:hover {
-                background-color: rgba(93, 92, 222, 0.2);
-            }
-            
-            .editable.active {
-                background-color: rgba(93, 92, 222, 0.3);
-                outline-color: #5D5CDE;
-            }
-            
-            .filter-item input, .filter-item select {
-                background-color: #2a2a2a;
-                color: #e0e0e0;
-                border-color: #444;
-            }
-            
-            .bg-white {
-                background-color: #222;
-            }
-            
-            .result-dropdown {
-                background-color: #2a2a2a;
-                color: #e0e0e0;
-                border-color: #444;
-            }
-            
-            .section-header {
-                background-color: rgba(93, 92, 222, 0.15);
-                border-left-color: #5D5CDE;
-            }
-            
-            .text-gray-600 {
-                color: #aaa;
-            }
-        }
     </style>
 </head>
 <body class="bg-gray-50 font-tahoma">
     <div class="container mx-auto px-3 py-4 max-w-6xl">
-        <h1 class="text-2xl font-bold text-[#5D5CDE] mb-4">PL Management System</h1>
+        <h1 class="text-2xl font-bold text-[#6f2c4f] mb-4">PL Management System</h1>
         
         <!-- Controls and Info Section -->
         <div class="bg-white p-4 rounded-lg shadow-md mb-4">
             <div class="flex flex-wrap justify-between items-center mb-4">
                 <div class="section-header">
-                    <h2 class="text-xl font-bold text-[#5D5CDE]">PL Data</h2>
+                    <h2 class="text-xl font-bold text-[#6f2c4f]">PL Data</h2>
                     <p class="text-gray-600 text-sm" id="recordsInfo">Showing 0 records</p>
                 </div>
                 <div class="flex gap-2 flex-wrap">
@@ -400,7 +342,7 @@
             <!-- Filter Section -->
             <div class="mb-4">
                 <div class="flex justify-between items-center">
-                    <h3 class="font-semibold text-lg mb-2 text-[#5D5CDE]">Filters</h3>
+                    <h3 class="font-semibold text-lg mb-2 text-[#6f2c4f]">Filters</h3>
                     <button id="clearFiltersBtn" class="text-sm text-blue-600">Clear All</button>
                 </div>
                 <div class="filter-container">
@@ -466,7 +408,7 @@
                         <tr>
                             <td colspan="10" class="table-placeholder">
                                 <div class="py-8">
-                                    <i class="fas fa-spinner fa-spin text-3xl mb-4 text-[#5D5CDE]"></i>
+                                    <i class="fas fa-spinner fa-spin text-3xl mb-4 text-[#6f2c4f]"></i>
                                     <p>Loading data, please wait...</p>
                                 </div>
                             </td>
@@ -1500,20 +1442,6 @@
                 // Hide button if we're showing all the data
                 if (displayedPLData.length <= (isShowingAll ? maxRowLimit : initialRowLimit)) {
                     this.classList.add('hidden');
-                }
-            });
-            
-            // Apply dark mode if preferred
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.documentElement.classList.add('dark');
-            }
-
-            // Listen for changes in color scheme preference
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-                if (event.matches) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
                 }
             });
         });
