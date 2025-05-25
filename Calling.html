@@ -652,10 +652,10 @@
             showLoading();
             
             try {
-                console.log(`Updating cell - Row: ${rowIndex}, Column: B, Value: ${commentText}`);
+                console.log(`Updating cell - Row: ${rowIndex}, Column: Result, Value: ${commentText}`);
                 
-                // Use direct B column reference instead of 'Result' - this is the fix
-                const response = await fetch(`${scriptURL}?action=updateCallingCell&row=${rowIndex}&column=B&value=${encodeURIComponent(commentText)}`);
+                // Use 'Result' instead of 'B' - this is the key fix
+                const response = await fetch(`${scriptURL}?action=updateCallingCell&row=${rowIndex}&column=Result&value=${encodeURIComponent(commentText)}`);
                 const data = await response.json();
                 
                 console.log("Update response:", data);
@@ -1052,20 +1052,8 @@
             try {
                 console.log(`Updating cell - Row: ${row}, Column: ${column}, Value: ${value}`);
                 
-                // Map column names to actual column letters for the API
-                let columnLetter;
-                switch(column) {
-                    case 'Result': columnLetter = 'B'; break;
-                    case 'Mobile': columnLetter = 'C'; break;
-                    case 'Name': columnLetter = 'D'; break;
-                    case 'Company': columnLetter = 'H'; break;
-                    case 'Scheme': columnLetter = 'K'; break;
-                    case 'Bank': columnLetter = 'L'; break;
-                    case 'Salary': columnLetter = 'M'; break;
-                    default: columnLetter = column; // If it's already a letter, use it
-                }
-                
-                const response = await fetch(`${scriptURL}?action=updateCallingCell&row=${row}&column=${columnLetter}&value=${encodeURIComponent(value)}`);
+                // Pass the column name directly to the API
+                const response = await fetch(`${scriptURL}?action=updateCallingCell&row=${row}&column=${column}&value=${encodeURIComponent(value)}`);
                 const data = await response.json();
                 
                 console.log("Update response:", data);
@@ -1075,26 +1063,16 @@
                     const dataIndex = allCallingData.findIndex(item => item.rowIndex === parseInt(row));
                     
                     if (dataIndex !== -1) {
-                        // Get the JS property name that corresponds to the column letter
-                        let propertyName = column;
-                        if (columnLetter === 'B') propertyName = 'Result';
-                        else if (columnLetter === 'C') propertyName = 'Mobile';
-                        else if (columnLetter === 'D') propertyName = 'Name';
-                        else if (columnLetter === 'H') propertyName = 'Company';
-                        else if (columnLetter === 'K') propertyName = 'Scheme';
-                        else if (columnLetter === 'L') propertyName = 'Bank';
-                        else if (columnLetter === 'M') propertyName = 'Salary';
-                        
                         // Update the local data
-                        allCallingData[dataIndex][propertyName] = value;
-                        console.log(`Updated local data at index ${dataIndex}, property: ${propertyName}`);
+                        allCallingData[dataIndex][column] = value;
+                        console.log(`Updated local data at index ${dataIndex}`);
                         
                         // Add to history if flag is true
                         if (addToHistoryFlag) {
-                            addToHistory(row, propertyName, oldValue, value);
+                            addToHistory(row, column, oldValue, value);
                         }
                     } else {
-                        console.error(`Couldn't find row ${row} in local data`);
+                        console.error(`Couldn't find row ${rowIndex} in local data`);
                     }
                     
                     showSuccess('Data updated successfully');
@@ -1149,17 +1127,16 @@
                 directCallBtn.title = `Call ${row.Name || 'Unknown'}`;
                 directCallBtn.innerHTML = '<i class="fas fa-phone"></i><span class="tooltip-text">Call</span>';
                 
-                // Teams call button - FIX: Use a button instead of an anchor
+                // Teams call button - Updated with correct format
                 const teamsCallBtn = document.createElement('button');
                 teamsCallBtn.type = 'button';
                 teamsCallBtn.classList.add('call-btn', 'teams-call', 'tooltip');
                 teamsCallBtn.title = `Teams call to ${row.Name || 'Unknown'}`;
                 teamsCallBtn.innerHTML = '<i class="fab fa-microsoft"></i><span class="tooltip-text">Teams Call</span>';
                 
-                // Set onclick to launch Microsoft Teams with the correct format
+                // Format for Teams calling - FIXED FORMAT
                 teamsCallBtn.addEventListener('click', function() {
-                    // Format for Teams calling
-                    window.open(`https://teams.microsoft.com/l/call/0/0?users=${formattedMobile}`, '_blank');
+                    window.open(`https://teams.microsoft.com/l/call/0/0?users=4:+${formattedMobile}`, '_blank');
                 });
                 
                 // WhatsApp button
@@ -1238,8 +1215,7 @@
                     const column = this.dataset.column;
                     const newValue = this.value;
                     
-                    // Use the column letter directly
-                    await updateCell(rowIndex, 'B', newValue);
+                    await updateCell(rowIndex, column, newValue);
                 });
                 
                 resultCell.appendChild(resultSelect);
