@@ -649,31 +649,73 @@
             }
             
             hideCommentModal();
+            showLoading();
             
-            // Update the Result column with the comment
-            await updateCell(rowIndex, 'Result', commentText);
-            
-            // Find the result dropdown for this row and update it
-            const tableRows = document.querySelectorAll('#callingTableBody tr');
-            for (const tr of tableRows) {
-                const resultDropdown = tr.querySelector('.result-dropdown');
-                if (resultDropdown && resultDropdown.dataset.row == rowIndex) {
-                    // Either select the matching option if it exists, or leave as is
-                    let optionExists = false;
-                    for (const option of resultDropdown.options) {
-                        if (option.value === commentText) {
-                            resultDropdown.value = commentText;
-                            optionExists = true;
+            try {
+                console.log(`Updating cell - Row: ${rowIndex}, Column: B, Value: ${commentText}`);
+                
+                // Use direct B column reference instead of 'Result' - this is the fix
+                const response = await fetch(`${scriptURL}?action=updateCallingCell&row=${rowIndex}&column=B&value=${encodeURIComponent(commentText)}`);
+                const data = await response.json();
+                
+                console.log("Update response:", data);
+                
+                if (data.success) {
+                    // Find the index in our data array for this row
+                    const dataIndex = allCallingData.findIndex(item => item.rowIndex === parseInt(rowIndex));
+                    
+                    if (dataIndex !== -1) {
+                        // Update the local data
+                        allCallingData[dataIndex]['Result'] = commentText;
+                        console.log(`Updated local data at index ${dataIndex}`);
+                        
+                        // Add to history
+                        addToHistory(rowIndex, 'Result', allCallingData[dataIndex]['Result'] || '', commentText);
+                    } else {
+                        console.error(`Couldn't find row ${rowIndex} in local data`);
+                    }
+                    
+                    // Find the result dropdown for this row and update it
+                    const tableRows = document.querySelectorAll('#callingTableBody tr');
+                    for (const tr of tableRows) {
+                        const resultDropdown = tr.querySelector('.result-dropdown');
+                        if (resultDropdown && resultDropdown.dataset.row == rowIndex) {
+                            // Either select the matching option if it exists, or add a new option
+                            let optionExists = false;
+                            for (const option of resultDropdown.options) {
+                                if (option.value === commentText) {
+                                    resultDropdown.value = commentText;
+                                    optionExists = true;
+                                    break;
+                                }
+                            }
+                            
+                            // If no matching option, add a new one
+                            if (!optionExists) {
+                                const newOption = document.createElement('option');
+                                newOption.value = commentText;
+                                newOption.textContent = commentText;
+                                resultDropdown.appendChild(newOption);
+                                resultDropdown.value = commentText;
+                            }
+                            
                             break;
                         }
                     }
                     
-                    // If no matching option, we leave it as is since the backend already has the comment
-                    break;
+                    showSuccess('Comment saved successfully');
+                    
+                    // Refresh the data after adding comment
+                    await fetchCallingData();
+                } else {
+                    showError(`Error: ${data.error}`);
                 }
+            } catch (error) {
+                console.error('Error saving comment:', error);
+                showError(`Error saving comment: ${error.message}`);
+            } finally {
+                hideLoading();
             }
-            
-            showSuccess('Comment saved successfully');
         }
         
         // ==========================================
@@ -1010,7 +1052,20 @@
             try {
                 console.log(`Updating cell - Row: ${row}, Column: ${column}, Value: ${value}`);
                 
-                const response = await fetch(`${scriptURL}?action=updateCallingCell&row=${row}&column=${column}&value=${encodeURIComponent(value)}`);
+                // Map column names to actual column letters for the API
+                let columnLetter;
+                switch(column) {
+                    case 'Result': columnLetter = 'B'; break;
+                    case 'Mobile': columnLetter = 'C'; break;
+                    case 'Name': columnLetter = 'D'; break;
+                    case 'Company': columnLetter = 'H'; break;
+                    case 'Scheme': columnLetter = 'K'; break;
+                    case 'Bank': columnLetter = 'L'; break;
+                    case 'Salary': columnLetter = 'M'; break;
+                    default: columnLetter = column; // If it's already a letter, use it
+                }
+                
+                const response = await fetch(`${scriptURL}?action=updateCallingCell&row=${row}&column=${columnLetter}&value=${encodeURIComponent(value)}`);
                 const data = await response.json();
                 
                 console.log("Update response:", data);
@@ -1020,13 +1075,23 @@
                     const dataIndex = allCallingData.findIndex(item => item.rowIndex === parseInt(row));
                     
                     if (dataIndex !== -1) {
+                        // Get the JS property name that corresponds to the column letter
+                        let propertyName = column;
+                        if (columnLetter === 'B') propertyName = 'Result';
+                        else if (columnLetter === 'C') propertyName = 'Mobile';
+                        else if (columnLetter === 'D') propertyName = 'Name';
+                        else if (columnLetter === 'H') propertyName = 'Company';
+                        else if (columnLetter === 'K') propertyName = 'Scheme';
+                        else if (columnLetter === 'L') propertyName = 'Bank';
+                        else if (columnLetter === 'M') propertyName = 'Salary';
+                        
                         // Update the local data
-                        allCallingData[dataIndex][column] = value;
-                        console.log(`Updated local data at index ${dataIndex}`);
+                        allCallingData[dataIndex][propertyName] = value;
+                        console.log(`Updated local data at index ${dataIndex}, property: ${propertyName}`);
                         
                         // Add to history if flag is true
                         if (addToHistoryFlag) {
-                            addToHistory(row, column, oldValue, value);
+                            addToHistory(row, propertyName, oldValue, value);
                         }
                     } else {
                         console.error(`Couldn't find row ${row} in local data`);
@@ -1084,20 +1149,18 @@
                 directCallBtn.title = `Call ${row.Name || 'Unknown'}`;
                 directCallBtn.innerHTML = '<i class="fas fa-phone"></i><span class="tooltip-text">Call</span>';
                 
-                // Teams call button
-                const teamsCallBtn = document.createElement('a');
-                teamsCallBtn.href = `tel:+${formattedMobile}`;
+                // Teams call button - FIX: Use a button instead of an anchor
+                const teamsCallBtn = document.createElement('button');
+                teamsCallBtn.type = 'button';
                 teamsCallBtn.classList.add('call-btn', 'teams-call', 'tooltip');
                 teamsCallBtn.title = `Teams call to ${row.Name || 'Unknown'}`;
                 teamsCallBtn.innerHTML = '<i class="fab fa-microsoft"></i><span class="tooltip-text">Teams Call</span>';
                 
-                // Set onclick to launch Teams call via JavaScript
-                teamsCallBtn.onclick = function(e) {
-                    e.preventDefault();
-                    const teamsUrl = `https://teams.microsoft.com/l/call/0/0?users=${formattedMobile}@8:orgid:`;
-                    window.open(teamsUrl, '_blank');
-                    return false;
-                };
+                // Set onclick to launch Microsoft Teams with the correct format
+                teamsCallBtn.addEventListener('click', function() {
+                    // Format for Teams calling
+                    window.open(`https://teams.microsoft.com/l/call/0/0?users=${formattedMobile}`, '_blank');
+                });
                 
                 // WhatsApp button
                 const whatsappBtn = document.createElement('a');
@@ -1160,13 +1223,23 @@
                     resultSelect.appendChild(optionEl);
                 });
                 
+                // Check if the Result is not in our predefined options - could be a custom comment
+                if (row.Result && !resultOptions.includes(row.Result) && row.Result !== '') {
+                    const customOption = document.createElement('option');
+                    customOption.value = row.Result;
+                    customOption.textContent = row.Result;
+                    customOption.selected = true;
+                    resultSelect.appendChild(customOption);
+                }
+                
                 // Add change event listener
                 resultSelect.addEventListener('change', async function() {
                     const rowIndex = parseInt(this.dataset.row);
                     const column = this.dataset.column;
                     const newValue = this.value;
                     
-                    await updateCell(rowIndex, column, newValue);
+                    // Use the column letter directly
+                    await updateCell(rowIndex, 'B', newValue);
                 });
                 
                 resultCell.appendChild(resultSelect);
