@@ -174,7 +174,7 @@
             justify-content: center;
             border-radius: 4px;
             color: white;
-            margin-right: 6px;
+            margin-right: 3px;
             transition: transform 0.2s;
         }
         
@@ -192,6 +192,10 @@
         
         .whatsapp-call {
             background-color: #25D366;
+        }
+        
+        .comment-btn {
+            background-color: #eab308;
         }
 
         /* Result dropdown styling */
@@ -293,6 +297,92 @@
             visibility: visible;
             opacity: 1;
         }
+        
+        /* Comment Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        
+        .dark .modal-content {
+            background-color: #333;
+            color: white;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .dark .modal-header {
+            border-bottom: 1px solid #555;
+        }
+        
+        .modal-close {
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .dark .modal-close {
+            color: #ccc;
+        }
+        
+        .modal-close:hover {
+            color: black;
+        }
+        
+        .dark .modal-close:hover {
+            color: white;
+        }
+        
+        .modal-body {
+            margin-bottom: 20px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .comment-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            font-size: 16px;
+        }
+        
+        .dark .comment-textarea {
+            background-color: #444;
+            color: white;
+            border-color: #555;
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-tahoma">
@@ -343,6 +433,7 @@
                             <option value="Applied">Applied</option>
                             <option value="Already Having">Already Having</option>
                             <option value="Completed">Completed</option>
+                            <option value="Option 1">Option 1</option>
                         </select>
                     </div>
                     <div class="filter-item">
@@ -414,6 +505,29 @@
     <div id="undoNotification" class="undo-indicator hidden">
         <span id="undoMessage">Change saved!</span>
         <button id="undoChangeBtn" class="undo-btn">Undo</button>
+    </div>
+    
+    <!-- Comment Modal -->
+    <div id="commentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-lg font-semibold">Add Comment</h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p class="mb-2">Enter your comment for <span id="commentName" class="font-semibold"></span></p>
+                <textarea id="commentText" class="comment-textarea" placeholder="Type your comment here..."></textarea>
+                <input type="hidden" id="commentRowIndex">
+            </div>
+            <div class="modal-footer">
+                <button id="cancelCommentBtn" class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white py-2 px-4 rounded-md hover:bg-gray-400 dark:hover:bg-gray-700">
+                    Cancel
+                </button>
+                <button id="saveCommentBtn" class="custom-btn text-white py-2 px-4 rounded-md">
+                    Save Comment
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -505,6 +619,61 @@
             
             // Otherwise, just add 971 as prefix
             return '971' + digits;
+        }
+        
+        // ==========================================
+        // COMMENT MODAL FUNCTIONALITY
+        // ==========================================
+        
+        // Show comment modal
+        function showCommentModal(rowIndex, name) {
+            document.getElementById('commentName').textContent = name || 'this record';
+            document.getElementById('commentRowIndex').value = rowIndex;
+            document.getElementById('commentText').value = '';
+            document.getElementById('commentModal').style.display = 'flex';
+        }
+        
+        // Hide comment modal
+        function hideCommentModal() {
+            document.getElementById('commentModal').style.display = 'none';
+        }
+        
+        // Save comment
+        async function saveComment() {
+            const rowIndex = document.getElementById('commentRowIndex').value;
+            const commentText = document.getElementById('commentText').value.trim();
+            
+            if (!commentText) {
+                alert('Please enter a comment');
+                return;
+            }
+            
+            hideCommentModal();
+            
+            // Update the Result column with the comment
+            await updateCell(rowIndex, 'Result', commentText);
+            
+            // Find the result dropdown for this row and update it
+            const tableRows = document.querySelectorAll('#callingTableBody tr');
+            for (const tr of tableRows) {
+                const resultDropdown = tr.querySelector('.result-dropdown');
+                if (resultDropdown && resultDropdown.dataset.row == rowIndex) {
+                    // Either select the matching option if it exists, or leave as is
+                    let optionExists = false;
+                    for (const option of resultDropdown.options) {
+                        if (option.value === commentText) {
+                            resultDropdown.value = commentText;
+                            optionExists = true;
+                            break;
+                        }
+                    }
+                    
+                    // If no matching option, we leave it as is since the backend already has the comment
+                    break;
+                }
+            }
+            
+            showSuccess('Comment saved successfully');
         }
         
         // ==========================================
@@ -917,11 +1086,18 @@
                 
                 // Teams call button
                 const teamsCallBtn = document.createElement('a');
-                teamsCallBtn.href = `https://teams.microsoft.com/l/call/0/0?users=${formattedMobile}`;
-                teamsCallBtn.target = "_blank";
+                teamsCallBtn.href = `tel:+${formattedMobile}`;
                 teamsCallBtn.classList.add('call-btn', 'teams-call', 'tooltip');
                 teamsCallBtn.title = `Teams call to ${row.Name || 'Unknown'}`;
                 teamsCallBtn.innerHTML = '<i class="fab fa-microsoft"></i><span class="tooltip-text">Teams Call</span>';
+                
+                // Set onclick to launch Teams call via JavaScript
+                teamsCallBtn.onclick = function(e) {
+                    e.preventDefault();
+                    const teamsUrl = `https://teams.microsoft.com/l/call/0/0?users=${formattedMobile}@8:orgid:`;
+                    window.open(teamsUrl, '_blank');
+                    return false;
+                };
                 
                 // WhatsApp button
                 const whatsappBtn = document.createElement('a');
@@ -931,9 +1107,25 @@
                 whatsappBtn.title = `WhatsApp ${row.Name || 'Unknown'}`;
                 whatsappBtn.innerHTML = '<i class="fab fa-whatsapp"></i><span class="tooltip-text">WhatsApp</span>';
                 
+                // Comment button
+                const commentBtn = document.createElement('button');
+                commentBtn.classList.add('call-btn', 'comment-btn', 'tooltip');
+                commentBtn.title = `Add comment for ${row.Name || 'Unknown'}`;
+                commentBtn.innerHTML = '<i class="fas fa-comment"></i><span class="tooltip-text">Comment</span>';
+                commentBtn.dataset.row = row.rowIndex;
+                commentBtn.dataset.name = row.Name || 'Unknown';
+                
+                // Add click event for comment button
+                commentBtn.addEventListener('click', function() {
+                    const rowIndex = this.dataset.row;
+                    const name = this.dataset.name;
+                    showCommentModal(rowIndex, name);
+                });
+                
                 callCell.appendChild(directCallBtn);
                 callCell.appendChild(teamsCallBtn);
                 callCell.appendChild(whatsappBtn);
+                callCell.appendChild(commentBtn);
                 tr.appendChild(callCell);
                 
                 // Result dropdown
@@ -948,7 +1140,7 @@
                 const resultOptions = [
                     'To Call', 'No Answer', 'Busy', 'DNCR', 'Not Interested', 
                     'Interested', 'Switched Off', 'In Future, Shared details', 'Rejected', 
-                    'On Hold', 'Referal', 'Applied', 'Already Having', 'Completed'
+                    'On Hold', 'Referal', 'Applied', 'Already Having', 'Completed', 'Option 1'
                 ];
                 
                 // Add empty option
@@ -1180,6 +1372,35 @@
                 // Hide button if we're showing all the data
                 if (displayedCallingData.length <= (isShowingAll ? maxRowLimit : initialRowLimit)) {
                     this.classList.add('hidden');
+                }
+            });
+            
+            // Comment modal close button
+            document.querySelector('.modal-close').addEventListener('click', hideCommentModal);
+            
+            // Cancel comment button
+            document.getElementById('cancelCommentBtn').addEventListener('click', hideCommentModal);
+            
+            // Save comment button
+            document.getElementById('saveCommentBtn').addEventListener('click', saveComment);
+            
+            // Close modal if clicked outside
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('commentModal');
+                if (event.target === modal) {
+                    hideCommentModal();
+                }
+            });
+            
+            // Support dark mode
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+                if (event.matches) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
                 }
             });
         });
