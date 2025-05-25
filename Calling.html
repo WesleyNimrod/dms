@@ -383,6 +383,14 @@
             color: white;
             border-color: #555;
         }
+
+        /* Comment toggle */
+        .comment-mode-toggle {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-tahoma">
@@ -518,6 +526,18 @@
                 <p class="mb-2">Enter your comment for <span id="commentName" class="font-semibold"></span></p>
                 <textarea id="commentText" class="comment-textarea" placeholder="Type your comment here..."></textarea>
                 <input type="hidden" id="commentRowIndex">
+                <input type="hidden" id="commentColumn">
+                
+                <div class="comment-mode-toggle">
+                    <label class="flex items-center">
+                        <input type="radio" name="commentType" value="sheet" checked> 
+                        <span class="ml-2">Add sheet comment (yellow triangle)</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="commentType" value="value"> 
+                        <span class="ml-2">Update result value</span>
+                    </label>
+                </div>
             </div>
             <div class="modal-footer">
                 <button id="cancelCommentBtn" class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white py-2 px-4 rounded-md hover:bg-gray-400 dark:hover:bg-gray-700">
@@ -626,10 +646,19 @@
         // ==========================================
         
         // Show comment modal
-        function showCommentModal(rowIndex, name) {
+        function showCommentModal(rowIndex, column, name) {
             document.getElementById('commentName').textContent = name || 'this record';
             document.getElementById('commentRowIndex').value = rowIndex;
+            document.getElementById('commentColumn').value = column;
             document.getElementById('commentText').value = '';
+            
+            // Pre-select the appropriate radio button based on the context
+            if (column === 'Result') {
+                document.querySelector('input[name="commentType"][value="value"]').checked = true;
+            } else {
+                document.querySelector('input[name="commentType"][value="sheet"]').checked = true;
+            }
+            
             document.getElementById('commentModal').style.display = 'flex';
         }
         
@@ -641,7 +670,9 @@
         // Save comment
         async function saveComment() {
             const rowIndex = document.getElementById('commentRowIndex').value;
+            const column = document.getElementById('commentColumn').value;
             const commentText = document.getElementById('commentText').value.trim();
+            const commentType = document.querySelector('input[name="commentType"]:checked').value;
             
             if (!commentText) {
                 alert('Please enter a comment');
@@ -652,63 +683,81 @@
             showLoading();
             
             try {
-                console.log(`Updating cell - Row: ${rowIndex}, Column: Result, Value: ${commentText}`);
+                let response, data;
                 
-                // Use 'Result' instead of 'B' - this is the key fix
-                const response = await fetch(`${scriptURL}?action=updateCallingCell&row=${rowIndex}&column=Result&value=${encodeURIComponent(commentText)}`);
-                const data = await response.json();
-                
-                console.log("Update response:", data);
-                
-                if (data.success) {
-                    // Find the index in our data array for this row
-                    const dataIndex = allCallingData.findIndex(item => item.rowIndex === parseInt(rowIndex));
+                if (commentType === 'sheet') {
+                    // Add a Google Sheets comment (note)
+                    console.log(`Adding sheet comment - Row: ${rowIndex}, Column: ${column}, Comment: ${commentText}`);
                     
-                    if (dataIndex !== -1) {
-                        // Update the local data
-                        allCallingData[dataIndex]['Result'] = commentText;
-                        console.log(`Updated local data at index ${dataIndex}`);
-                        
-                        // Add to history
-                        addToHistory(rowIndex, 'Result', allCallingData[dataIndex]['Result'] || '', commentText);
+                    response = await fetch(`${scriptURL}?action=addSheetComment&row=${rowIndex}&column=${column}&comment=${encodeURIComponent(commentText)}`);
+                    data = await response.json();
+                    
+                    console.log("Add sheet comment response:", data);
+                    
+                    if (data.success) {
+                        showSuccess('Sheet comment added successfully');
                     } else {
-                        console.error(`Couldn't find row ${rowIndex} in local data`);
+                        showError(`Error: ${data.error}`);
                     }
-                    
-                    // Find the result dropdown for this row and update it
-                    const tableRows = document.querySelectorAll('#callingTableBody tr');
-                    for (const tr of tableRows) {
-                        const resultDropdown = tr.querySelector('.result-dropdown');
-                        if (resultDropdown && resultDropdown.dataset.row == rowIndex) {
-                            // Either select the matching option if it exists, or add a new option
-                            let optionExists = false;
-                            for (const option of resultDropdown.options) {
-                                if (option.value === commentText) {
-                                    resultDropdown.value = commentText;
-                                    optionExists = true;
-                                    break;
-                                }
-                            }
-                            
-                            // If no matching option, add a new one
-                            if (!optionExists) {
-                                const newOption = document.createElement('option');
-                                newOption.value = commentText;
-                                newOption.textContent = commentText;
-                                resultDropdown.appendChild(newOption);
-                                resultDropdown.value = commentText;
-                            }
-                            
-                            break;
-                        }
-                    }
-                    
-                    showSuccess('Comment saved successfully');
-                    
-                    // Refresh the data after adding comment
-                    await fetchCallingData();
                 } else {
-                    showError(`Error: ${data.error}`);
+                    // Update the cell value (Result column)
+                    console.log(`Updating cell value - Row: ${rowIndex}, Column: Result, Value: ${commentText}`);
+                    
+                    response = await fetch(`${scriptURL}?action=updateCallingCell&row=${rowIndex}&column=Result&value=${encodeURIComponent(commentText)}`);
+                    data = await response.json();
+                    
+                    console.log("Update response:", data);
+                    
+                    if (data.success) {
+                        // Find the index in our data array for this row
+                        const dataIndex = allCallingData.findIndex(item => item.rowIndex === parseInt(rowIndex));
+                        
+                        if (dataIndex !== -1) {
+                            // Update the local data
+                            allCallingData[dataIndex]['Result'] = commentText;
+                            console.log(`Updated local data at index ${dataIndex}`);
+                            
+                            // Add to history
+                            addToHistory(rowIndex, 'Result', allCallingData[dataIndex]['Result'] || '', commentText);
+                        } else {
+                            console.error(`Couldn't find row ${rowIndex} in local data`);
+                        }
+                        
+                        // Find the result dropdown for this row and update it
+                        const tableRows = document.querySelectorAll('#callingTableBody tr');
+                        for (const tr of tableRows) {
+                            const resultDropdown = tr.querySelector('.result-dropdown');
+                            if (resultDropdown && resultDropdown.dataset.row == rowIndex) {
+                                // Either select the matching option if it exists, or add a new option
+                                let optionExists = false;
+                                for (const option of resultDropdown.options) {
+                                    if (option.value === commentText) {
+                                        resultDropdown.value = commentText;
+                                        optionExists = true;
+                                        break;
+                                    }
+                                }
+                                
+                                // If no matching option, add a new one
+                                if (!optionExists) {
+                                    const newOption = document.createElement('option');
+                                    newOption.value = commentText;
+                                    newOption.textContent = commentText;
+                                    resultDropdown.appendChild(newOption);
+                                    resultDropdown.value = commentText;
+                                }
+                                
+                                break;
+                            }
+                        }
+                        
+                        showSuccess('Comment saved as cell value successfully');
+                        
+                        // Refresh the data after adding comment
+                        await fetchCallingData();
+                    } else {
+                        showError(`Error: ${data.error}`);
+                    }
                 }
             } catch (error) {
                 console.error('Error saving comment:', error);
@@ -1159,7 +1208,7 @@
                 commentBtn.addEventListener('click', function() {
                     const rowIndex = this.dataset.row;
                     const name = this.dataset.name;
-                    showCommentModal(rowIndex, name);
+                    showCommentModal(rowIndex, 'Result', name);
                 });
                 
                 callCell.appendChild(directCallBtn);
@@ -1171,6 +1220,8 @@
                 // Result dropdown
                 const resultCell = document.createElement('td');
                 resultCell.style.width = '150px';
+                resultCell.dataset.row = row.rowIndex;
+                resultCell.dataset.column = 'Result';
                 
                 const resultSelect = document.createElement('select');
                 resultSelect.classList.add('result-dropdown');
@@ -1218,6 +1269,14 @@
                     await updateCell(rowIndex, column, newValue);
                 });
                 
+                // Add cell comment on right-click
+                resultCell.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    const rowIndex = this.dataset.row;
+                    const name = row.Name || 'Unknown';
+                    showCommentModal(rowIndex, 'Result', name);
+                });
+                
                 resultCell.appendChild(resultSelect);
                 tr.appendChild(resultCell);
                 
@@ -1225,6 +1284,8 @@
                 const mobileCell = document.createElement('td');
                 mobileCell.classList.add('copyable');
                 mobileCell.dataset.value = row.Mobile || '';
+                mobileCell.dataset.row = row.rowIndex;
+                mobileCell.dataset.column = 'Mobile';
                 mobileCell.textContent = row.Mobile || '';
                 mobileCell.style.width = '120px';
                 
@@ -1239,6 +1300,14 @@
                     }
                 });
                 
+                // Add cell comment on right-click
+                mobileCell.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    const rowIndex = this.dataset.row;
+                    const name = row.Name || 'Unknown';
+                    showCommentModal(rowIndex, 'Mobile', name);
+                });
+                
                 tr.appendChild(mobileCell);
                 
                 // Name (editable)
@@ -1248,6 +1317,15 @@
                 nameCell.dataset.row = row.rowIndex;
                 nameCell.dataset.column = 'Name';
                 nameCell.dataset.originalValue = row.Name || '';
+                
+                // Add cell comment on right-click
+                nameCell.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    const rowIndex = this.dataset.row;
+                    const name = row.Name || 'Unknown';
+                    showCommentModal(rowIndex, 'Name', name);
+                });
+                
                 tr.appendChild(nameCell);
                 
                 // Company (editable)
@@ -1257,6 +1335,15 @@
                 companyCell.dataset.row = row.rowIndex;
                 companyCell.dataset.column = 'Company';
                 companyCell.dataset.originalValue = row.Company || '';
+                
+                // Add cell comment on right-click
+                companyCell.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    const rowIndex = this.dataset.row;
+                    const name = row.Name || 'Unknown';
+                    showCommentModal(rowIndex, 'Company', name);
+                });
+                
                 tr.appendChild(companyCell);
                 
                 // Scheme (editable)
@@ -1266,6 +1353,15 @@
                 schemeCell.dataset.row = row.rowIndex;
                 schemeCell.dataset.column = 'Scheme';
                 schemeCell.dataset.originalValue = row.Scheme || '';
+                
+                // Add cell comment on right-click
+                schemeCell.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    const rowIndex = this.dataset.row;
+                    const name = row.Name || 'Unknown';
+                    showCommentModal(rowIndex, 'Scheme', name);
+                });
+                
                 tr.appendChild(schemeCell);
                 
                 // Bank (editable)
@@ -1275,6 +1371,15 @@
                 bankCell.dataset.row = row.rowIndex;
                 bankCell.dataset.column = 'Bank';
                 bankCell.dataset.originalValue = row.Bank || '';
+                
+                // Add cell comment on right-click
+                bankCell.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    const rowIndex = this.dataset.row;
+                    const name = row.Name || 'Unknown';
+                    showCommentModal(rowIndex, 'Bank', name);
+                });
+                
                 tr.appendChild(bankCell);
                 
                 // Salary (editable)
@@ -1285,6 +1390,15 @@
                 salaryCell.dataset.column = 'Salary';
                 salaryCell.dataset.originalValue = row.Salary || '';
                 salaryCell.style.width = '100px';
+                
+                // Add cell comment on right-click
+                salaryCell.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    const rowIndex = this.dataset.row;
+                    const name = row.Name || 'Unknown';
+                    showCommentModal(rowIndex, 'Salary', name);
+                });
+                
                 tr.appendChild(salaryCell);
                 
                 tableBody.appendChild(tr);
@@ -1440,6 +1554,13 @@
                     hideCommentModal();
                 }
             });
+            
+            // Add information about cell comments
+            const tableContainer = document.querySelector('.table-container');
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'text-sm text-gray-600 mt-2';
+            infoDiv.innerHTML = 'Tip: Right-click on any cell to add a Google Sheets comment (appears as a yellow triangle). Click the comment button <i class="fas fa-comment text-yellow-500"></i> to update the Result value.';
+            tableContainer.parentNode.insertBefore(infoDiv, tableContainer.nextSibling);
             
             // Support dark mode
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
