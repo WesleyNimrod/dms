@@ -13,6 +13,9 @@
             font-family: 'Tahoma', Geneva, sans-serif;
             background-color: #f5f5f5;
             color: #333;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
         }
         
         .custom-btn {
@@ -391,10 +394,46 @@
             gap: 10px;
             align-items: center;
         }
+        
+        /* Dark mode styles */
+        .dark body {
+            background-color: #121212;
+            color: #f5f5f5;
+        }
+        
+        .dark .bg-white {
+            background-color: #1e1e1e;
+        }
+        
+        .dark .text-gray-600 {
+            color: #d1d1d1;
+        }
+        
+        .dark .calling-table tr:nth-child(even) {
+            background-color: #2a2a2a;
+        }
+        
+        .dark .calling-table tr:hover {
+            background-color: #333;
+        }
+        
+        .dark .calling-table td {
+            border-color: #444;
+        }
+        
+        .dark .editable:hover {
+            background-color: rgba(111, 44, 79, 0.2);
+        }
+        
+        .dark .result-dropdown {
+            background-color: #333;
+            color: white;
+            border-color: #555;
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-tahoma">
-    <div class="container mx-auto px-3 py-4 max-w-6xl">
+    <div class="container mx-auto px-3 py-4 w-full">
         <h1 class="text-2xl font-bold text-[#6F2C4F] mb-4">Calling System</h1>
         
         <!-- Controls and Info Section -->
