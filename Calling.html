@@ -93,7 +93,6 @@
         }
 
         .calling-table td {
-            border: 1px solid #ddd;
             padding: 8px;
             position: relative;
         }
@@ -325,11 +324,6 @@
             position: relative;
         }
         
-        .dark .modal-content {
-            background-color: #333;
-            color: white;
-        }
-        
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -339,26 +333,14 @@
             border-bottom: 1px solid #ddd;
         }
         
-        .dark .modal-header {
-            border-bottom: 1px solid #555;
-        }
-        
         .modal-close {
             font-size: 24px;
             cursor: pointer;
             color: #666;
         }
         
-        .dark .modal-close {
-            color: #ccc;
-        }
-        
         .modal-close:hover {
             color: black;
-        }
-        
-        .dark .modal-close:hover {
-            color: white;
         }
         
         .modal-body {
@@ -380,12 +362,6 @@
             resize: vertical;
             font-size: 16px;
         }
-        
-        .dark .comment-textarea {
-            background-color: #444;
-            color: white;
-            border-color: #555;
-        }
 
         /* Comment toggle */
         .comment-mode-toggle {
@@ -395,53 +371,52 @@
             align-items: center;
         }
         
-        /* Dark mode styles */
-        .dark body {
-            background-color: #121212;
-            color: #f5f5f5;
-        }
-        
-        .dark .bg-white {
-            background-color: #1e1e1e;
-        }
-        
-        .dark .text-gray-600 {
-            color: #d1d1d1;
-        }
-        
-        .dark .calling-table tr:nth-child(even) {
-            background-color: #2a2a2a;
-        }
-        
-        .dark .calling-table tr:hover {
-            background-color: #333;
-        }
-        
-        .dark .calling-table td {
-            border-color: #444;
-        }
-        
-        .dark .editable:hover {
-            background-color: rgba(111, 44, 79, 0.2);
-        }
-        
-        .dark .result-dropdown {
-            background-color: #333;
+        /* Call Counter */
+        .call-counter {
+            display: inline-flex;
+            align-items: center;
+            background-color: #6F2C4F;
             color: white;
-            border-color: #555;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-left: 10px;
+            font-size: 14px;
+        }
+        
+        .call-counter i {
+            margin-right: 5px;
+        }
+        
+        /* Editable cells */
+        .editable-cell {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .editable-cell.editing {
+            padding: 0;
+        }
+        
+        .editable-cell input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #6F2C4F;
+            border-radius: 4px;
         }
     </style>
 </head>
 <body class="bg-gray-50 font-tahoma">
     <div class="container mx-auto px-3 py-4 w-full">
-        <h1 class="text-2xl font-bold text-[#6F2C4F] mb-4">Calling System</h1>
         
-        <!-- Controls and Info Section -->
         <div class="bg-white p-4 rounded-lg shadow-md mb-4">
             <div class="flex flex-wrap justify-between items-center mb-4">
-                <div class="section-header">
+                <div class="section-header flex items-center">
                     <h2 class="text-xl font-bold text-[#6F2C4F]">Calling List</h2>
-                    <p class="text-gray-600 text-sm" id="recordsInfo">Showing 0 records</p>
+                    <div class="call-counter ml-3">
+                        <i class="fas fa-phone-volume"></i>
+                        <span id="callCounter">0</span> calls today
+                    </div>
+                    <p class="text-gray-600 text-sm ml-4" id="recordsInfo">Showing 0 records</p>
                 </div>
                 <div class="flex gap-2">
                     <button id="refreshBtn" class="custom-btn text-white py-2 px-4 rounded-md flex items-center">
@@ -456,8 +431,6 @@
                     </button>
                 </div>
             </div>
-            
-            <!-- Filter Section -->
             <div class="mb-4">
                 <div class="flex justify-between items-center">
                     <h3 class="font-semibold text-lg mb-2 text-[#6F2C4F]">Filters</h3>
@@ -470,8 +443,8 @@
                             <option value="To Call">To Call</option>
                             <option value="No Answer">No Answer</option>
                             <option value="Busy">Busy</option>
-                            <option value="Not Interested">Not Interested</option>
                             <option value="Interested">Interested</option>
+                            <option value="Not Interested">Not Interested</option>
                             <option value="Switched Off">Switched Off</option>
                             <option value="In Future, Shared details">In Future, Shared details</option>
                             <option value="Rejected">Rejected</option>
@@ -501,11 +474,9 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Table Section -->
         <div class="bg-white p-4 rounded-lg shadow-md">
             <div class="table-container">
-                <table id="callingTable" class="calling-table">
+                <table id="callingTable" class="calling-table" style="border-spacing: 0;">
                     <thead>
                         <tr>
                             <th style="width: 110px;">Actions</th>
@@ -519,7 +490,6 @@
                         </tr>
                     </thead>
                     <tbody id="callingTableBody">
-                        <!-- Data will be populated here -->
                         <tr>
                             <td colspan="8" class="table-placeholder">
                                 <div class="py-8">
@@ -532,29 +502,24 @@
                 </table>
             </div>
             <div id="errorContainer" class="hidden error-message">
-                <i class="fas fa-exclamation-triangle mr-2"></i>
-                <span id="errorMessage">Error loading data</span>
+                <i class="fas fa-exclamation-triangle mr-2"></i> <span id="errorMessage">Error loading data</span>
             </div>
         </div>
     </div>
-    
-    <!-- Success Indicator -->
+
     <div id="successIndicator" class="success-indicator hidden">
         <span id="successMessage">Operation successful!</span>
     </div>
-    
-    <!-- Loading Indicator -->
+
     <div id="loadingIndicator" class="loading-indicator hidden">
         <div class="spinner"></div>
     </div>
-    
-    <!-- Undo Notification -->
+
     <div id="undoNotification" class="undo-indicator hidden">
         <span id="undoMessage">Change saved!</span>
         <button id="undoChangeBtn" class="undo-btn">Undo</button>
     </div>
-    
-    <!-- Comment Modal -->
+
     <div id="commentModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -566,1026 +531,686 @@
                 <textarea id="commentText" class="comment-textarea" placeholder="Type your comment here..."></textarea>
                 <input type="hidden" id="commentRowIndex">
                 <input type="hidden" id="commentColumn">
-                
                 <div class="comment-mode-toggle">
                     <label class="flex items-center">
-                        <input type="radio" name="commentType" value="sheet" checked> 
+                        <input type="radio" name="commentType" value="sheet" checked>
                         <span class="ml-2">Add sheet comment (yellow triangle)</span>
                     </label>
                     <label class="flex items-center">
-                        <input type="radio" name="commentType" value="value"> 
+                        <input type="radio" name="commentType" value="value">
                         <span class="ml-2">Update result value</span>
                     </label>
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="cancelCommentBtn" class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white py-2 px-4 rounded-md hover:bg-gray-400 dark:hover:bg-gray-700">
-                    Cancel
-                </button>
-                <button id="saveCommentBtn" class="custom-btn text-white py-2 px-4 rounded-md">
-                    Save Comment
-                </button>
+                <button id="cancelCommentBtn" class="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400">Cancel</button>
+                <button id="saveCommentBtn" class="custom-btn text-white py-2 px-4 rounded-md">Save Comment</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ==========================================
-        // UTILITIES
-        // ==========================================
-        
-        // Show success message
-        function showSuccess(message) {
-            const indicator = document.getElementById('successIndicator');
-            const messageEl = document.getElementById('successMessage');
-            
-            messageEl.textContent = message;
-            indicator.classList.remove('hidden');
-            
-            setTimeout(() => {
-                indicator.classList.add('hidden');
-            }, 3000);
-        }
+        // *** IMPORTANT: Replace 'YOUR_WEB_APP_URL_HERE' with your actual Google Apps Script Web App URL ***
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwngb8Ka97Re88mDNaT60W-b_Ts4VQTf0DKSrJVUXra1Za8OtdNbG4gmrWIwfSSXaz9Rg/exec'; 
+        const BATCH_SIZE = 50; // Number of records to load initially / per "Show More" click
+        let allData = [];
+        let displayedData = [];
+        let currentIndex = 0;
+        let lastUndoAction = null;
+        const columnNames = ["Actions", "Result", "Mobile", "Name", "Company", "Scheme", "Bank", "Salary"]; // Added "Actions" for the first column
+        let callCount = 0;
+        let longPressTimer;
+        let priorityResultOptions = ["To Call", "No Answer", "Interested", "Busy"];
+        let changedRows = {}; // Track which rows have been changed today
 
-        // Show loading indicator
-        function showLoading() {
-            document.getElementById('loadingIndicator').classList.remove('hidden');
-        }
-
-        // Hide loading indicator
-        function hideLoading() {
-            document.getElementById('loadingIndicator').classList.add('hidden');
-        }
-        
-        // Show error message
-        function showError(message) {
-            const errorContainer = document.getElementById('errorContainer');
-            const errorMessage = document.getElementById('errorMessage');
-            
-            errorMessage.textContent = message;
-            errorContainer.classList.remove('hidden');
-            
-            // Auto-hide after 10 seconds
-            setTimeout(() => {
-                errorContainer.classList.add('hidden');
-            }, 10000);
-        }
-        
-        // Hide error message
-        function hideError() {
-            document.getElementById('errorContainer').classList.add('hidden');
-        }
-        
-        // Copy to clipboard function
-        function copyToClipboard(text) {
-            console.log("Copying to clipboard:", text);
-            // Create a temporary input element
-            const input = document.createElement('input');
-            input.style.position = 'fixed';
-            input.style.opacity = 0;
-            input.value = text;
-            document.body.appendChild(input);
-            input.select();
-            
-            try {
-                // Execute the copy command
-                document.execCommand('copy');
-                return true;
-            } catch (err) {
-                console.error('Failed to copy text: ', err);
-                return false;
-            } finally {
-                document.body.removeChild(input);
-            }
-        }
-        
-        // Format phone number with country code
-        function formatPhoneWithCountryCode(phone) {
-            if (!phone) return '';
-            
-            // Remove any non-digit characters
-            const digits = phone.toString().replace(/\D/g, '');
-            
-            // If it already starts with 971, don't add it again
-            if (digits.startsWith('971')) {
-                return digits;
-            }
-            
-            // If it starts with 0, remove the 0 before adding 971
-            if (digits.startsWith('0')) {
-                return '971' + digits.substring(1);
-            }
-            
-            // Otherwise, just add 971 as prefix
-            return '971' + digits;
-        }
-        
-        // ==========================================
-        // COMMENT MODAL FUNCTIONALITY
-        // ==========================================
-        
-        // Show comment modal
-        function showCommentModal(rowIndex, column, name) {
-            document.getElementById('commentName').textContent = name || 'this record';
-            document.getElementById('commentRowIndex').value = rowIndex;
-            document.getElementById('commentColumn').value = column;
-            document.getElementById('commentText').value = '';
-            
-            // Pre-select the appropriate radio button based on the context
-            if (column === 'Result') {
-                document.querySelector('input[name="commentType"][value="value"]').checked = true;
-            } else {
-                document.querySelector('input[name="commentType"][value="sheet"]').checked = true;
-            }
-            
-            document.getElementById('commentModal').style.display = 'flex';
-        }
-        
-        // Hide comment modal
-        function hideCommentModal() {
-            document.getElementById('commentModal').style.display = 'none';
-        }
-        
-        // Save comment
-        async function saveComment() {
-            const rowIndex = document.getElementById('commentRowIndex').value;
-            const column = document.getElementById('commentColumn').value;
-            const commentText = document.getElementById('commentText').value.trim();
-            const commentType = document.querySelector('input[name="commentType"]:checked').value;
-            
-            if (!commentText) {
-                alert('Please enter a comment');
-                return;
-            }
-            
-            hideCommentModal();
-            showLoading();
-            
-            try {
-                let response, data;
-                
-                if (commentType === 'sheet') {
-                    // Add a Google Sheets comment (note)
-                    console.log(`Adding sheet comment - Row: ${rowIndex}, Column: ${column}, Comment: ${commentText}`);
-                    
-                    response = await fetch(`${scriptURL}?action=addSheetComment&row=${rowIndex}&column=${column}&comment=${encodeURIComponent(commentText)}`);
-                    data = await response.json();
-                    
-                    console.log("Add sheet comment response:", data);
-                    
-                    if (data.success) {
-                        showSuccess('Sheet comment added successfully');
-                    } else {
-                        showError(`Error: ${data.error}`);
-                    }
-                } else {
-                    // Update the cell value (Result column)
-                    console.log(`Updating cell value - Row: ${rowIndex}, Column: Result, Value: ${commentText}`);
-                    
-                    response = await fetch(`${scriptURL}?action=updateCallingCell&row=${rowIndex}&column=Result&value=${encodeURIComponent(commentText)}`);
-                    data = await response.json();
-                    
-                    console.log("Update response:", data);
-                    
-                    if (data.success) {
-                        // Find the index in our data array for this row
-                        const dataIndex = allCallingData.findIndex(item => item.rowIndex === parseInt(rowIndex));
-                        
-                        if (dataIndex !== -1) {
-                            // Update the local data
-                            allCallingData[dataIndex]['Result'] = commentText;
-                            console.log(`Updated local data at index ${dataIndex}`);
-                            
-                            // Add to history
-                            addToHistory(rowIndex, 'Result', allCallingData[dataIndex]['Result'] || '', commentText);
-                        } else {
-                            console.error(`Couldn't find row ${rowIndex} in local data`);
-                        }
-                        
-                        // Find the result dropdown for this row and update it
-                        const tableRows = document.querySelectorAll('#callingTableBody tr');
-                        for (const tr of tableRows) {
-                            const resultDropdown = tr.querySelector('.result-dropdown');
-                            if (resultDropdown && resultDropdown.dataset.row == rowIndex) {
-                                // Either select the matching option if it exists, or add a new option
-                                let optionExists = false;
-                                for (const option of resultDropdown.options) {
-                                    if (option.value === commentText) {
-                                        resultDropdown.value = commentText;
-                                        optionExists = true;
-                                        break;
-                                    }
-                                }
-                                
-                                // If no matching option, add a new one
-                                if (!optionExists) {
-                                    const newOption = document.createElement('option');
-                                    newOption.value = commentText;
-                                    newOption.textContent = commentText;
-                                    resultDropdown.appendChild(newOption);
-                                    resultDropdown.value = commentText;
-                                }
-                                
-                                break;
-                            }
-                        }
-                        
-                        showSuccess('Comment saved as cell value successfully');
-                        
-                        // Refresh the data after adding comment
-                        await fetchCallingData();
-                    } else {
-                        showError(`Error: ${data.error}`);
-                    }
-                }
-            } catch (error) {
-                console.error('Error saving comment:', error);
-                showError(`Error saving comment: ${error.message}`);
-            } finally {
-                hideLoading();
-            }
-        }
-        
-        // ==========================================
-        // UNDO FUNCTIONALITY
-        // ==========================================
-        
-        // Store the change history for undo
-        const changeHistory = [];
-        const MAX_HISTORY = 20; // Maximum number of changes to keep in history
-        
-        // Add a change to history
-        function addToHistory(row, column, oldValue, newValue) {
-            changeHistory.push({ row, column, oldValue, newValue });
-            
-            // Keep history within size limits
-            if (changeHistory.length > MAX_HISTORY) {
-                changeHistory.shift(); // Remove oldest entry
-            }
-            
-            // Enable undo button
-            document.getElementById('undoBtn').classList.remove('bg-gray-300');
-            document.getElementById('undoBtn').classList.add('bg-gray-600');
-            
-            // Show undo notification
-            showUndoNotification();
-        }
-        
-        // Show undo notification
-        function showUndoNotification() {
-            const notification = document.getElementById('undoNotification');
-            notification.classList.remove('hidden');
-            
-            // Auto-hide after 5 seconds
-            setTimeout(() => {
-                notification.classList.add('hidden');
-            }, 5000);
-        }
-        
-        // Undo the last change
-        async function undoLastChange() {
-            if (changeHistory.length === 0) {
-                showSuccess('No changes to undo');
-                return;
-            }
-            
-            const lastChange = changeHistory.pop();
-            
-            // If history is now empty, disable undo button
-            if (changeHistory.length === 0) {
-                document.getElementById('undoBtn').classList.remove('bg-gray-600');
-                document.getElementById('undoBtn').classList.add('bg-gray-300');
-            }
-            
-            // Update the cell with the old value
-            await updateCell(lastChange.row, lastChange.column, lastChange.oldValue, false);
-            
-            // Update the UI to show the old value
-            updateCellInUI(lastChange.row, lastChange.column, lastChange.oldValue);
-            
-            // Hide undo notification
-            document.getElementById('undoNotification').classList.add('hidden');
-            
-            showSuccess('Change undone');
-        }
-        
-        // Update cell in UI
-        function updateCellInUI(row, column, value) {
-            // Find the cell in the UI that needs updating
-            const tableRows = document.querySelectorAll('#callingTableBody tr');
-            
-            for (const tr of tableRows) {
-                const cells = tr.querySelectorAll('td');
-                
-                // Look for editable or result dropdown cells
-                for (const cell of cells) {
-                    if ((cell.classList.contains('editable') || cell.querySelector('.result-dropdown')) && 
-                        cell.dataset.row == row && cell.dataset.column == column) {
-                        
-                        // Update dropdown
-                        if (cell.querySelector('.result-dropdown')) {
-                            const dropdown = cell.querySelector('.result-dropdown');
-                            dropdown.value = value;
-                        } else {
-                            // Update editable cell
-                            cell.textContent = value;
-                            cell.dataset.originalValue = value;
-                        }
-                        
-                        return;
-                    }
-                }
-            }
-        }
-        
-        // ==========================================
-        // DATA HANDLING
-        // ==========================================
-        
-        // Google Apps Script Web App URL
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwngb8Ka97Re88mDNaT60W-b_Ts4VQTf0DKSrJVUXra1Za8OtdNbG4gmrWIwfSSXaz9Rg/exec';
-        
-        // Store all calling data
-        let allCallingData = [];
-        let displayedCallingData = [];
-        let isShowingAll = false;
-        const initialRowLimit = 100; // Increased from 30 to 100
-        const maxRowLimit = 300;     // Increased from 100 to 300
-        let retryCount = 0;
-        const MAX_RETRIES = 3;
-        
-        // Create mock data for testing if needed
-        function createMockData() {
-            const mockData = [];
-            
-            for (let i = 0; i < 150; i++) {
-                mockData.push({
-                    rowIndex: i + 2,
-                    Result: i % 7 === 0 ? 'To Call' : i % 7 === 1 ? 'No Answer' : i % 7 === 2 ? 'Busy' : 
-                            i % 7 === 3 ? 'Interested' : i % 7 === 4 ? 'Completed' : i % 7 === 5 ? 'DNCR' : '',
-                    Mobile: `${Math.floor(50000000 + Math.random() * 9000000)}`,
-                    Name: `Test Person ${i + 1}`,
-                    Company: `Company ${i % 10 + 1}`,
-                    Scheme: i % 4 === 0 ? 'Salary Transfer' : i % 4 === 1 ? 'Self Employed' : i % 4 === 2 ? 'Professional' : 'Commission',
-                    Bank: i % 6 === 0 ? 'ADCB' : i % 6 === 1 ? 'ENBD' : i % 6 === 2 ? 'FAB' : i % 6 === 3 ? 'DIB' : i % 6 === 4 ? 'MASHREQ' : 'Other',
-                    Salary: Math.floor(5000 + Math.random() * 20000)
-                });
-            }
-            
-            return mockData;
-        }
-        
-        // Fetch calling data from Google Sheets
-        async function fetchCallingData() {
-            showLoading();
-            hideError(); // Hide any previous errors
-            
-            try {
-                // Add diagnostic console log
-                console.log("Fetching data from:", `${scriptURL}?action=getCallingData`);
-                
-                const response = await fetch(`${scriptURL}?action=getCallingData`);
-                const data = await response.json();
-                
-                console.log("Response received:", data);
-                
-                if (data.success) {
-                    allCallingData = data.data;
-                    
-                    if (!allCallingData || allCallingData.length === 0) {
-                        showError("No data found in the Calling sheet. Please check if the sheet exists and contains data.");
-                        
-                        // Clear the table and show a message
-                        document.getElementById('callingTableBody').innerHTML = `
-                            <tr>
-                                <td colspan="8" class="table-placeholder">
-                                    <div class="py-8">
-                                        <i class="fas fa-exclamation-circle text-3xl mb-4 text-gray-400"></i>
-                                        <p>No data found in the Calling sheet</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                        
-                        // Update records info
-                        document.getElementById('recordsInfo').textContent = `Showing 0 records`;
-                        
-                        // Hide "Show More" button
-                        document.getElementById('showMoreBtn').classList.add('hidden');
-                    } else {
-                        // Apply any active filters
-                        applyFilters();
-                        
-                        // Show records info
-                        document.getElementById('recordsInfo').textContent = 
-                            `Showing ${Math.min(initialRowLimit, displayedCallingData.length)} of ${displayedCallingData.length} records`;
-                        
-                        // Show/hide "Show More" button
-                        const showMoreBtn = document.getElementById('showMoreBtn');
-                        if (displayedCallingData.length > initialRowLimit) {
-                            showMoreBtn.classList.remove('hidden');
-                        } else {
-                            showMoreBtn.classList.add('hidden');
-                        }
-                        
-                        isShowingAll = false;
-                    }
-                } else {
-                    console.error("API Error:", data.error);
-                    showError(`API Error: ${data.error}`);
-                    
-                    // Try to use mock data for testing in development
-                    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                        console.log("Using mock data for development");
-                        allCallingData = createMockData();
-                        applyFilters();
-                    }
-                }
-                
-                // Reset retry count on successful fetch
-                retryCount = 0;
-            } catch (error) {
-                console.error('Error fetching calling data:', error);
-                
-                if (retryCount < MAX_RETRIES) {
-                    retryCount++;
-                    showError(`Network error. Retrying... (${retryCount}/${MAX_RETRIES})`);
-                    
-                    // Retry after a delay
-                    setTimeout(fetchCallingData, 2000);
-                    return;
-                } else {
-                    showError(`Network error: ${error.message}. Please check your internet connection and try again.`);
-                    
-                    // Try to use mock data for testing in development
-                    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                        console.log("Using mock data for development");
-                        allCallingData = createMockData();
-                        applyFilters();
-                    }
-                }
-            } finally {
-                hideLoading();
-            }
-        }
-        
-        // Apply filters to the data
-        function applyFilters() {
-            const resultFilter = document.getElementById('resultFilter').value;
-            const nameFilter = document.getElementById('nameFilter').value.toLowerCase();
-            const companyFilter = document.getElementById('companyFilter').value.toLowerCase();
-            const schemeFilter = document.getElementById('schemeFilter').value.toLowerCase();
-            const bankFilter = document.getElementById('bankFilter').value.toLowerCase();
-            const salaryFilter = document.getElementById('salaryFilter').value;
-            
-            console.log("Applying filters:", { resultFilter, nameFilter, companyFilter, schemeFilter, bankFilter, salaryFilter });
-            
-            // Filter the data - always exclude DNCR results
-            displayedCallingData = allCallingData.filter(row => {
-                const result = String(row.Result || '');
-                const name = String(row.Name || '').toLowerCase();
-                const company = String(row.Company || '').toLowerCase();
-                const scheme = String(row.Scheme || '').toLowerCase();
-                const bank = String(row.Bank || '').toLowerCase();
-                const salary = parseFloat(row.Salary) || 0;
-                
-                // Exclude DNCR results
-                if (result === 'DNCR') {
-                    return false;
-                }
-                
-                return (
-                    (resultFilter === '' || result === resultFilter) &&
-                    (nameFilter === '' || name.includes(nameFilter)) &&
-                    (companyFilter === '' || company.includes(companyFilter)) &&
-                    (schemeFilter === '' || scheme.includes(schemeFilter)) &&
-                    (bankFilter === '' || bank.includes(bankFilter)) &&
-                    (salaryFilter === '' || salary >= parseFloat(salaryFilter))
-                );
-            });
-            
-            // Sort the data - To Call first, then empty results, then the rest
-            displayedCallingData.sort((a, b) => {
-                const resultA = String(a.Result || '');
-                const resultB = String(b.Result || '');
-                
-                // To Call comes first
-                if (resultA === 'To Call' && resultB !== 'To Call') {
-                    return -1;
-                }
-                if (resultA !== 'To Call' && resultB === 'To Call') {
-                    return 1;
-                }
-                
-                // Empty results come second
-                if (resultA === '' && resultB !== '') {
-                    return -1;
-                }
-                if (resultA !== '' && resultB === '') {
-                    return 1;
-                }
-                
-                // The rest in alphabetical order
-                return resultA.localeCompare(resultB);
-            });
-            
-            console.log("Filtered data:", displayedCallingData);
-            
-            // Update the table with filtered data
-            const limit = isShowingAll ? maxRowLimit : initialRowLimit;
-            const dataToShow = displayedCallingData.slice(0, limit);
-            populateTable(dataToShow);
-            
-            // Update records info
-            document.getElementById('recordsInfo').textContent = 
-                `Showing ${Math.min(limit, displayedCallingData.length)} of ${displayedCallingData.length} records`;
-            
-            // Show/hide "Show More" button
-            const showMoreBtn = document.getElementById('showMoreBtn');
-            if (displayedCallingData.length > limit && limit < maxRowLimit) {
-                showMoreBtn.classList.remove('hidden');
-                showMoreBtn.innerHTML = '<i class="fas fa-expand-alt mr-2"></i> Show More';
-            } else {
-                showMoreBtn.classList.add('hidden');
-            }
-        }
-        
-        // Clear all filters
-        function clearFilters() {
-            document.getElementById('resultFilter').value = '';
-            document.getElementById('nameFilter').value = '';
-            document.getElementById('companyFilter').value = '';
-            document.getElementById('schemeFilter').value = '';
-            document.getElementById('bankFilter').value = '';
-            document.getElementById('salaryFilter').value = '';
-            
-            // Re-apply filters (which will now show all data)
-            applyFilters();
-        }
-        
-        // Update a cell in Google Sheets
-        async function updateCell(row, column, value, addToHistoryFlag = true) {
-            showLoading();
-            
-            // If adding to history, get the current value first
-            let oldValue = '';
-            if (addToHistoryFlag) {
-                // Find the current value in our data
-                const dataIndex = allCallingData.findIndex(item => item.rowIndex === parseInt(row));
-                if (dataIndex !== -1) {
-                    oldValue = allCallingData[dataIndex][column] || '';
-                }
-            }
-            
-            try {
-                console.log(`Updating cell - Row: ${row}, Column: ${column}, Value: ${value}`);
-                
-                // Pass the column name directly to the API
-                const response = await fetch(`${scriptURL}?action=updateCallingCell&row=${row}&column=${column}&value=${encodeURIComponent(value)}`);
-                const data = await response.json();
-                
-                console.log("Update response:", data);
-                
-                if (data.success) {
-                    // Find the index in our data array for this row
-                    const dataIndex = allCallingData.findIndex(item => item.rowIndex === parseInt(row));
-                    
-                    if (dataIndex !== -1) {
-                        // Update the local data
-                        allCallingData[dataIndex][column] = value;
-                        console.log(`Updated local data at index ${dataIndex}`);
-                        
-                        // Add to history if flag is true
-                        if (addToHistoryFlag) {
-                            addToHistory(row, column, oldValue, value);
-                        }
-                    } else {
-                        console.error(`Couldn't find row ${rowIndex} in local data`);
-                    }
-                    
-                    showSuccess('Data updated successfully');
-                } else {
-                    showError(`Error: ${data.error}`);
-                }
-            } catch (error) {
-                console.error('Error updating cell:', error);
-                showError(`Error updating data: ${error.message}`);
-            } finally {
-                hideLoading();
-            }
-        }
-        
-        // ==========================================
-        // TABLE HANDLING
-        // ==========================================
-        
-        // Populate the table with data
-        function populateTable(data) {
-            const tableBody = document.getElementById('callingTableBody');
-            tableBody.innerHTML = '';
-            
-            if (!data || data.length === 0) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="8" class="table-placeholder">
-                            <div class="py-8">
-                                <i class="fas fa-search text-3xl mb-4 text-gray-400"></i>
-                                <p>No matching records found</p>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            data.forEach((row, index) => {
-                const tr = document.createElement('tr');
-                
-                // Call buttons
-                const callCell = document.createElement('td');
-                callCell.style.width = '110px';
-                
-                // Format the mobile number with country code
-                const formattedMobile = formatPhoneWithCountryCode(row.Mobile || '');
-                
-                // Direct call button
-                const directCallBtn = document.createElement('a');
-                directCallBtn.href = `tel:+${formattedMobile}`;
-                directCallBtn.classList.add('call-btn', 'direct-call', 'tooltip');
-                directCallBtn.title = `Call ${row.Name || 'Unknown'}`;
-                directCallBtn.innerHTML = '<i class="fas fa-phone"></i><span class="tooltip-text">Call</span>';
-                
-                // Teams call button - Updated with correct format
-                const teamsCallBtn = document.createElement('button');
-                teamsCallBtn.type = 'button';
-                teamsCallBtn.classList.add('call-btn', 'teams-call', 'tooltip');
-                teamsCallBtn.title = `Teams call to ${row.Name || 'Unknown'}`;
-                teamsCallBtn.innerHTML = '<i class="fab fa-microsoft"></i><span class="tooltip-text">Teams Call</span>';
-                
-                // Format for Teams calling - FIXED FORMAT
-                teamsCallBtn.addEventListener('click', function() {
-                    window.open(`https://teams.microsoft.com/l/call/0/0?users=4:+${formattedMobile}`, '_blank');
-                });
-                
-                // WhatsApp button
-                const whatsappBtn = document.createElement('a');
-                whatsappBtn.href = `https://wa.me/${formattedMobile}?text=Hello ${encodeURIComponent(row.Name || '')},`;
-                whatsappBtn.target = "_blank";
-                whatsappBtn.classList.add('call-btn', 'whatsapp-call', 'tooltip');
-                whatsappBtn.title = `WhatsApp ${row.Name || 'Unknown'}`;
-                whatsappBtn.innerHTML = '<i class="fab fa-whatsapp"></i><span class="tooltip-text">WhatsApp</span>';
-                
-                // Comment button
-                const commentBtn = document.createElement('button');
-                commentBtn.classList.add('call-btn', 'comment-btn', 'tooltip');
-                commentBtn.title = `Add comment for ${row.Name || 'Unknown'}`;
-                commentBtn.innerHTML = '<i class="fas fa-comment"></i><span class="tooltip-text">Comment</span>';
-                commentBtn.dataset.row = row.rowIndex;
-                commentBtn.dataset.name = row.Name || 'Unknown';
-                
-                // Add click event for comment button
-                commentBtn.addEventListener('click', function() {
-                    const rowIndex = this.dataset.row;
-                    const name = this.dataset.name;
-                    showCommentModal(rowIndex, 'Result', name);
-                });
-                
-                callCell.appendChild(directCallBtn);
-                callCell.appendChild(teamsCallBtn);
-                callCell.appendChild(whatsappBtn);
-                callCell.appendChild(commentBtn);
-                tr.appendChild(callCell);
-                
-                // Result dropdown
-                const resultCell = document.createElement('td');
-                resultCell.style.width = '150px';
-                resultCell.dataset.row = row.rowIndex;
-                resultCell.dataset.column = 'Result';
-                
-                const resultSelect = document.createElement('select');
-                resultSelect.classList.add('result-dropdown');
-                resultSelect.dataset.row = row.rowIndex;
-                resultSelect.dataset.column = 'Result';
-                
-                const resultOptions = [
-                    'To Call', 'No Answer', 'Busy', 'DNCR', 'Not Interested', 
-                    'Interested', 'Switched Off', 'In Future, Shared details', 'Rejected', 
-                    'On Hold', 'Referal', 'Applied', 'Already Having', 'Completed', 'Option 1'
-                ];
-                
-                // Add empty option
-                const emptyOption = document.createElement('option');
-                emptyOption.value = '';
-                emptyOption.textContent = 'Select Result';
-                resultSelect.appendChild(emptyOption);
-                
-                // Add all result options
-                resultOptions.forEach(option => {
-                    const optionEl = document.createElement('option');
-                    optionEl.value = option;
-                    optionEl.textContent = option;
-                    if (row.Result === option) {
-                        optionEl.selected = true;
-                    }
-                    resultSelect.appendChild(optionEl);
-                });
-                
-                // Check if the Result is not in our predefined options - could be a custom comment
-                if (row.Result && !resultOptions.includes(row.Result) && row.Result !== '') {
-                    const customOption = document.createElement('option');
-                    customOption.value = row.Result;
-                    customOption.textContent = row.Result;
-                    customOption.selected = true;
-                    resultSelect.appendChild(customOption);
-                }
-                
-                // Add change event listener
-                resultSelect.addEventListener('change', async function() {
-                    const rowIndex = parseInt(this.dataset.row);
-                    const column = this.dataset.column;
-                    const newValue = this.value;
-                    
-                    await updateCell(rowIndex, column, newValue);
-                });
-                
-                // Add cell comment on right-click
-                resultCell.addEventListener('contextmenu', function(e) {
-                    e.preventDefault();
-                    const rowIndex = this.dataset.row;
-                    const name = row.Name || 'Unknown';
-                    showCommentModal(rowIndex, 'Result', name);
-                });
-                
-                resultCell.appendChild(resultSelect);
-                tr.appendChild(resultCell);
-                
-                // Mobile (copyable)
-                const mobileCell = document.createElement('td');
-                mobileCell.classList.add('copyable');
-                mobileCell.dataset.value = row.Mobile || '';
-                mobileCell.dataset.row = row.rowIndex;
-                mobileCell.dataset.column = 'Mobile';
-                mobileCell.textContent = row.Mobile || '';
-                mobileCell.style.width = '120px';
-                
-                // Add click event for copying
-                mobileCell.addEventListener('click', function() {
-                    const value = this.dataset.value;
-                    if (copyToClipboard(value)) {
-                        this.classList.add('copied');
-                        setTimeout(() => {
-                            this.classList.remove('copied');
-                        }, 1500);
-                    }
-                });
-                
-                // Add cell comment on right-click
-                mobileCell.addEventListener('contextmenu', function(e) {
-                    e.preventDefault();
-                    const rowIndex = this.dataset.row;
-                    const name = row.Name || 'Unknown';
-                    showCommentModal(rowIndex, 'Mobile', name);
-                });
-                
-                tr.appendChild(mobileCell);
-                
-                // Name (editable)
-                const nameCell = document.createElement('td');
-                nameCell.classList.add('editable');
-                nameCell.textContent = row.Name || '';
-                nameCell.dataset.row = row.rowIndex;
-                nameCell.dataset.column = 'Name';
-                nameCell.dataset.originalValue = row.Name || '';
-                
-                // Add cell comment on right-click
-                nameCell.addEventListener('contextmenu', function(e) {
-                    e.preventDefault();
-                    const rowIndex = this.dataset.row;
-                    const name = row.Name || 'Unknown';
-                    showCommentModal(rowIndex, 'Name', name);
-                });
-                
-                tr.appendChild(nameCell);
-                
-                // Company (editable)
-                const companyCell = document.createElement('td');
-                companyCell.classList.add('editable');
-                companyCell.textContent = row.Company || '';
-                companyCell.dataset.row = row.rowIndex;
-                companyCell.dataset.column = 'Company';
-                companyCell.dataset.originalValue = row.Company || '';
-                
-                // Add cell comment on right-click
-                companyCell.addEventListener('contextmenu', function(e) {
-                    e.preventDefault();
-                    const rowIndex = this.dataset.row;
-                    const name = row.Name || 'Unknown';
-                    showCommentModal(rowIndex, 'Company', name);
-                });
-                
-                tr.appendChild(companyCell);
-                
-                // Scheme (editable)
-                const schemeCell = document.createElement('td');
-                schemeCell.classList.add('editable');
-                schemeCell.textContent = row.Scheme || '';
-                schemeCell.dataset.row = row.rowIndex;
-                schemeCell.dataset.column = 'Scheme';
-                schemeCell.dataset.originalValue = row.Scheme || '';
-                
-                // Add cell comment on right-click
-                schemeCell.addEventListener('contextmenu', function(e) {
-                    e.preventDefault();
-                    const rowIndex = this.dataset.row;
-                    const name = row.Name || 'Unknown';
-                    showCommentModal(rowIndex, 'Scheme', name);
-                });
-                
-                tr.appendChild(schemeCell);
-                
-                // Bank (editable)
-                const bankCell = document.createElement('td');
-                bankCell.classList.add('editable');
-                bankCell.textContent = row.Bank || '';
-                bankCell.dataset.row = row.rowIndex;
-                bankCell.dataset.column = 'Bank';
-                bankCell.dataset.originalValue = row.Bank || '';
-                
-                // Add cell comment on right-click
-                bankCell.addEventListener('contextmenu', function(e) {
-                    e.preventDefault();
-                    const rowIndex = this.dataset.row;
-                    const name = row.Name || 'Unknown';
-                    showCommentModal(rowIndex, 'Bank', name);
-                });
-                
-                tr.appendChild(bankCell);
-                
-                // Salary (editable)
-                const salaryCell = document.createElement('td');
-                salaryCell.classList.add('editable');
-                salaryCell.textContent = row.Salary || '';
-                salaryCell.dataset.row = row.rowIndex;
-                salaryCell.dataset.column = 'Salary';
-                salaryCell.dataset.originalValue = row.Salary || '';
-                salaryCell.style.width = '100px';
-                
-                // Add cell comment on right-click
-                salaryCell.addEventListener('contextmenu', function(e) {
-                    e.preventDefault();
-                    const rowIndex = this.dataset.row;
-                    const name = row.Name || 'Unknown';
-                    showCommentModal(rowIndex, 'Salary', name);
-                });
-                
-                tr.appendChild(salaryCell);
-                
-                tableBody.appendChild(tr);
-            });
-            
-            // Add event listeners to editable cells
-            setupEditableCells();
-        }
-        
-        // Setup editable cells
-        function setupEditableCells() {
-            const editableCells = document.querySelectorAll('.editable');
-            
-            editableCells.forEach(cell => {
-                cell.addEventListener('click', function() {
-                    // If already being edited, do nothing
-                    if (this.classList.contains('active')) return;
-                    
-                    // Mark as active
-                    this.classList.add('active');
-                    
-                    // Save original content
-                    const originalValue = this.dataset.originalValue;
-                    
-                    // Create input field
-                    const input = document.createElement('input');
-                    input.type = this.dataset.column === 'Salary' ? 'number' : 'text';
-                    input.value = originalValue;
-                    input.style.width = '100%';
-                    input.style.border = 'none';
-                    input.style.background = 'transparent';
-                    input.style.outline = 'none';
-                    input.style.padding = '4px';
-                    
-                    // Clear cell and add input
-                    this.textContent = '';
-                    this.appendChild(input);
-                    input.focus();
-                    
-                    // Handle input blur (finish editing)
-                    input.addEventListener('blur', async function() {
-                        const newValue = this.value;
-                        const row = parseInt(cell.dataset.row);
-                        const column = cell.dataset.column;
-                        
-                        // Remove active state
-                        cell.classList.remove('active');
-                        
-                        // Only update if value has changed
-                        if (newValue !== originalValue) {
-                            // Update cell content first for responsiveness
-                            cell.textContent = newValue;
-                            cell.dataset.originalValue = newValue;
-                            
-                            // Then send update to server
-                            await updateCell(row, column, newValue);
-                        } else {
-                            // Just restore the original text
-                            cell.textContent = originalValue;
-                        }
-                    });
-                    
-                    // Handle Enter key
-                    input.addEventListener('keydown', function(e) {
-                        if (e.key === 'Enter') {
-                            this.blur();
-                        } else if (e.key === 'Escape') {
-                            this.value = originalValue;
-                            this.blur();
-                        }
-                    });
-                });
-            });
-        }
-        
-        // ==========================================
-        // EVENT LISTENERS
-        // ==========================================
-        
-        // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
-            console.log("Page loaded, initializing...");
+            // Load call count and changed rows from localStorage if available
+            loadCallData();
             
-            // Fetch initial data
+            // Check if we need to reset the call counter (new day)
+            checkAndResetDailyCounter();
+            
+            // Initial data load
             fetchCallingData();
-            
-            // Setup event listeners for filters
+
+            // Event Listeners
+            document.getElementById('refreshBtn').addEventListener('click', fetchCallingData);
+            document.getElementById('showMoreBtn').addEventListener('click', loadMoreData);
+            document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
+            document.getElementById('undoBtn').addEventListener('click', undoLastChange);
+            document.getElementById('saveCommentBtn').addEventListener('click', saveComment);
+            document.getElementById('cancelCommentBtn').addEventListener('click', hideCommentModal);
+            document.querySelector('.modal-close').addEventListener('click', hideCommentModal);
+
+            // Filter listeners
             document.getElementById('resultFilter').addEventListener('change', applyFilters);
             document.getElementById('nameFilter').addEventListener('input', applyFilters);
             document.getElementById('companyFilter').addEventListener('input', applyFilters);
             document.getElementById('schemeFilter').addEventListener('input', applyFilters);
             document.getElementById('bankFilter').addEventListener('input', applyFilters);
             document.getElementById('salaryFilter').addEventListener('input', applyFilters);
-            
-            // Clear filters button
-            document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
-            
-            // Refresh button
-            document.getElementById('refreshBtn').addEventListener('click', fetchCallingData);
-            
-            // Undo button
-            document.getElementById('undoBtn').addEventListener('click', undoLastChange);
-            
-            // Undo change button in notification
-            document.getElementById('undoChangeBtn').addEventListener('click', function() {
-                undoLastChange();
-                document.getElementById('undoNotification').classList.add('hidden');
-            });
-            
-            // Show more button
-            document.getElementById('showMoreBtn').addEventListener('click', function() {
-                if (!isShowingAll) {
-                    // Show up to maxRowLimit
-                    const dataToShow = displayedCallingData.slice(0, maxRowLimit);
-                    populateTable(dataToShow);
-                    isShowingAll = true;
-                    this.innerHTML = '<i class="fas fa-compress-alt mr-2"></i> Show Less';
+
+            // Fetch data from Google Sheet
+            async function fetchCallingData() {
+                showLoadingIndicator();
+                hideError();
+                try {
+                    const response = await fetch(`${WEB_APP_URL}?action=getCallingData`);
+                    const result = await response.json();
+
+                    if (result.success) {
+                        allData = result.data;
+                        applyFilters(); // Apply filters to the newly fetched data
+                        showSuccessIndicator('Data refreshed!');
+                    } else {
+                        showError(result.error || 'Failed to fetch data.');
+                    }
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    showError('Network error or invalid Apps Script URL. Check console for details.');
+                } finally {
+                    hideLoadingIndicator();
+                }
+            }
+
+            // Apply filters and populate table
+            function applyFilters() {
+                const resultFilter = document.getElementById('resultFilter').value.toLowerCase();
+                const nameFilter = document.getElementById('nameFilter').value.toLowerCase();
+                const companyFilter = document.getElementById('companyFilter').value.toLowerCase();
+                const schemeFilter = document.getElementById('schemeFilter').value.toLowerCase();
+                const bankFilter = document.getElementById('bankFilter').value.toLowerCase();
+                const salaryFilter = parseFloat(document.getElementById('salaryFilter').value);
+
+                // Filter data, excluding DNCR results
+                const filteredData = allData.filter(record => {
+                    // Skip any record with DNCR as result
+                    if (record.Result === "DNCR") {
+                        return false;
+                    }
                     
-                    // Update records info
-                    document.getElementById('recordsInfo').textContent = 
-                        `Showing ${Math.min(maxRowLimit, displayedCallingData.length)} of ${displayedCallingData.length} records`;
-                } else {
-                    // Show only initialRowLimit
-                    const dataToShow = displayedCallingData.slice(0, initialRowLimit);
-                    populateTable(dataToShow);
-                    isShowingAll = false;
-                    this.innerHTML = '<i class="fas fa-expand-alt mr-2"></i> Show More';
+                    const matchesResult = resultFilter === "" || record.Result.toLowerCase().includes(resultFilter);
+                    const matchesName = nameFilter === "" || record.Name.toLowerCase().includes(nameFilter);
+                    const matchesCompany = companyFilter === "" || record.Company.toLowerCase().includes(companyFilter);
+                    const matchesScheme = schemeFilter === "" || record.Scheme.toLowerCase().includes(schemeFilter);
+                    const matchesBank = bankFilter === "" || record.Bank.toLowerCase().includes(bankFilter);
+                    const matchesSalary = isNaN(salaryFilter) || parseFloat(record.Salary) >= salaryFilter;
                     
-                    // Update records info
-                    document.getElementById('recordsInfo').textContent = 
-                        `Showing ${Math.min(initialRowLimit, displayedCallingData.length)} of ${displayedCallingData.length} records`;
+                    return matchesResult && matchesName && matchesCompany && matchesScheme && matchesBank && matchesSalary;
+                });
+
+                // Sort data by Result value according to priority
+                const sortedData = filteredData.sort((a, b) => {
+                    // Helper function to get priority index
+                    const getPriorityIndex = (result) => {
+                        const index = priorityResultOptions.indexOf(result);
+                        return index === -1 ? priorityResultOptions.length : index;
+                    };
+                    
+                    // Get priority indexes for comparison
+                    const aPriority = getPriorityIndex(a.Result);
+                    const bPriority = getPriorityIndex(b.Result);
+                    
+                    // Sort by priority
+                    return aPriority - bPriority;
+                });
+
+                displayedData = sortedData;
+                currentIndex = 0; // Reset index for new filtered data
+                populateTable(true); // Clear and repopulate
+            }
+
+            // Populate table with data
+            function populateTable(clearExisting = false) {
+                const tableBody = document.getElementById('callingTableBody');
+                if (clearExisting) {
+                    tableBody.innerHTML = '';
+                }
+
+                if (displayedData.length === 0 && clearExisting) {
+                    tableBody.innerHTML = `<tr><td colspan="${columnNames.length}" class="table-placeholder">No records found.</td></tr>`;
+                    document.getElementById('showMoreBtn').classList.add('hidden');
+                    document.getElementById('recordsInfo').textContent = `Showing 0 records`;
+                    return;
+                }
+
+                const fragment = document.createDocumentFragment();
+                const endIndex = Math.min(currentIndex + BATCH_SIZE, displayedData.length);
+
+                for (let i = currentIndex; i < endIndex; i++) {
+                    const record = displayedData[i];
+                    const row = document.createElement('tr');
+                    
+                    // Actions column
+                    const actionsCell = document.createElement('td');
+                    actionsCell.innerHTML = `
+                        <button class="call-btn direct-call tooltip" data-mobile="${record.Mobile}">
+                            <i class="fas fa-phone"></i>
+                            <span class="tooltip-text">Call Direct</span>
+                        </button>
+                        <button class="call-btn teams-call tooltip" data-mobile="${record.Mobile}">
+                            <i class="fas fa-users"></i>
+                            <span class="tooltip-text">Teams Call</span>
+                        </button>
+                        <button class="call-btn whatsapp-call tooltip" data-mobile="${record.Mobile}">
+                            <i class="fab fa-whatsapp"></i>
+                            <span class="tooltip-text">WhatsApp</span>
+                        </button>
+                        <button class="call-btn comment-btn tooltip" data-row-index="${record.rowIndex}" data-column-name="Result">
+                            <i class="fas fa-comment"></i>
+                            <span class="tooltip-text">Add Comment</span>
+                        </button>
+                    `;
+                    row.appendChild(actionsCell);
+
+                    // Data columns
+                    columnNames.slice(1).forEach(colName => {
+                        const cell = document.createElement('td');
+                        const value = record[colName] || '';
+                        
+                        if (colName === 'Result') {
+                            // Result dropdown with actual values from Google Sheet
+                            const select = document.createElement('select');
+                            select.className = 'result-dropdown';
+                            
+                            // Create option elements for priority options first
+                            let optionsHTML = '';
+                            
+                            // Add "Select Result" as first option for empty values
+                            optionsHTML += `<option value="">Select Result</option>`;
+                            
+                            // Get unique values from the data for Result column (excluding DNCR)
+                            const uniqueResults = [...new Set(allData
+                                .filter(item => item.Result && item.Result !== "DNCR")
+                                .map(item => item.Result))];
+                            
+                            // First add the priority options
+                            priorityResultOptions.forEach(option => {
+                                if (uniqueResults.includes(option)) {
+                                    optionsHTML += `<option value="${option}" ${value === option ? 'selected' : ''}>${option}</option>`;
+                                }
+                            });
+                            
+                            // Then add all other unique options from the data
+                            uniqueResults
+                                .filter(option => !priorityResultOptions.includes(option))
+                                .forEach(option => {
+                                    optionsHTML += `<option value="${option}" ${value === option ? 'selected' : ''}>${option}</option>`;
+                                });
+                            
+                            select.innerHTML = optionsHTML;
+                            
+                            // Set the select value to match the actual value from the sheet
+                            // If empty, it will default to "Select Result"
+                            if (value) {
+                                select.value = value;
+                            }
+                            
+                            select.addEventListener('change', function() {
+                                const oldValue = value;
+                                const newValue = this.value;
+                                updateCell(record.rowIndex, colName, newValue, oldValue);
+                                // Track this row as changed and maybe increment counter
+                                trackRowChange(record.rowIndex);
+                            });
+                            cell.appendChild(select);
+                        } else if (colName === 'Mobile') {
+                            cell.textContent = value;
+                            cell.classList.add('copyable');
+                            cell.addEventListener('click', function() {
+                                copyToClipboard(this.textContent, this);
+                            });
+                        } else {
+                            // Make all other columns editable on long press
+                            cell.textContent = value;
+                            cell.classList.add('editable-cell');
+                            
+                            // Set up long press handling
+                            cell.addEventListener('mousedown', function(e) {
+                                const element = this;
+                                longPressTimer = setTimeout(function() {
+                                    makeEditable(element, record.rowIndex, colName, value);
+                                }, 1000); // 1000ms = 1 second
+                            });
+                            
+                            cell.addEventListener('mouseup', function() {
+                                clearTimeout(longPressTimer);
+                            });
+                            
+                            cell.addEventListener('mouseleave', function() {
+                                clearTimeout(longPressTimer);
+                            });
+                            
+                            // For touch devices
+                            cell.addEventListener('touchstart', function(e) {
+                                const element = this;
+                                longPressTimer = setTimeout(function() {
+                                    makeEditable(element, record.rowIndex, colName, value);
+                                }, 1000);
+                            });
+                            
+                            cell.addEventListener('touchend', function() {
+                                clearTimeout(longPressTimer);
+                            });
+                            
+                            cell.addEventListener('touchcancel', function() {
+                                clearTimeout(longPressTimer);
+                            });
+                        }
+                        row.appendChild(cell);
+                    });
+                    fragment.appendChild(row);
+                }
+
+                tableBody.appendChild(fragment);
+                currentIndex = endIndex;
+
+                // Attach event listeners for dynamically added buttons
+                attachButtonListeners(tableBody);
+
+                updateRecordsInfo();
+            }
+
+            // Make a cell editable
+            function makeEditable(cell, rowIndex, columnName, currentValue) {
+                cell.classList.add('editing');
+                cell.innerHTML = '';
+                
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = currentValue;
+                input.classList.add('edit-input');
+                
+                cell.appendChild(input);
+                input.focus();
+                
+                // Handle saving on blur or Enter key
+                input.addEventListener('blur', function() {
+                    saveEditedCell(cell, rowIndex, columnName, this.value, currentValue);
+                });
+                
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        saveEditedCell(cell, rowIndex, columnName, this.value, currentValue);
+                    } else if (e.key === 'Escape') {
+                        cell.innerHTML = currentValue;
+                        cell.classList.remove('editing');
+                    }
+                });
+            }
+            
+            // Save edited cell value
+            function saveEditedCell(cell, rowIndex, columnName, newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    updateCell(rowIndex, columnName, newValue, oldValue);
                 }
                 
-                // Hide button if we're showing all the data
-                if (displayedCallingData.length <= (isShowingAll ? maxRowLimit : initialRowLimit)) {
-                    this.classList.add('hidden');
+                cell.textContent = newValue;
+                cell.classList.remove('editing');
+            }
+
+            function loadMoreData() {
+                populateTable(false); // Do not clear existing data
+            }
+
+            function updateRecordsInfo() {
+                const recordsInfo = document.getElementById('recordsInfo');
+                recordsInfo.textContent = `Showing ${displayedData.length} records`;
+
+                const showMoreBtn = document.getElementById('showMoreBtn');
+                if (currentIndex < displayedData.length) {
+                    showMoreBtn.classList.remove('hidden');
+                } else {
+                    showMoreBtn.classList.add('hidden');
                 }
-            });
+            }
+
+            // Clear filter inputs
+            function clearFilters() {
+                document.getElementById('resultFilter').value = "";
+                document.getElementById('nameFilter').value = "";
+                document.getElementById('companyFilter').value = "";
+                document.getElementById('schemeFilter').value = "";
+                document.getElementById('bankFilter').value = "";
+                document.getElementById('salaryFilter').value = "";
+                applyFilters();
+            }
+
+            // Attach event listeners for call and comment buttons
+            function attachButtonListeners(container) {
+                container.querySelectorAll('.direct-call').forEach(button => {
+                    button.removeEventListener('click', handleCallClick); // Prevent double-listening
+                    button.addEventListener('click', handleCallClick);
+                });
+                container.querySelectorAll('.teams-call').forEach(button => {
+                    button.removeEventListener('click', handleTeamsClick); // Prevent double-listening
+                    button.addEventListener('click', handleTeamsClick);
+                });
+                container.querySelectorAll('.whatsapp-call').forEach(button => {
+                    button.removeEventListener('click', handleWhatsappClick); // Prevent double-listening
+                    button.addEventListener('click', handleWhatsappClick);
+                });
+                container.querySelectorAll('.comment-btn').forEach(button => {
+                    button.removeEventListener('click', handleCommentClick); // Prevent double-listening
+                    button.addEventListener('click', handleCommentClick);
+                });
+            }
+
+            function handleCallClick(event) {
+                const mobile = this.dataset.mobile;
+                if (mobile) {
+                    window.location.href = `tel:${mobile}`;
+                } else {
+                    alert('Mobile number not available.');
+                }
+            }
             
-            // Comment modal close button
-            document.querySelector('.modal-close').addEventListener('click', hideCommentModal);
+            function handleTeamsClick(event) {
+                const mobile = this.dataset.mobile;
+                if (mobile) {
+                    window.open(`https://teams.microsoft.com/l/call/0/0?users=4:+971${mobile}`, '_blank');
+                } else {
+                    alert('Mobile number not available for Teams call.');
+                }
+            }
+
+            function handleWhatsappClick(event) {
+                const mobile = this.dataset.mobile;
+                if (mobile) {
+                    window.open(`https://wa.me/${mobile}`, '_blank');
+                } else {
+                    alert('Mobile number not available for WhatsApp.');
+                }
+            }
+
+            function handleCommentClick() {
+                const rowIndex = this.dataset.rowIndex;
+                const columnName = this.dataset.columnName; // This is always 'Result' from your HTML
+                // Assuming 'Name' is always in the 4th cell (index 3 if 0-indexed) of the same row
+                const customerName = this.closest('tr').querySelector('td:nth-child(4)').textContent; 
+                showCommentModal(rowIndex, columnName, customerName);
+            }
+
+            // Track row changes for call counter
+            function trackRowChange(rowIndex) {
+                const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+                
+                // If this row hasn't been changed today
+                if (!changedRows[rowIndex]) {
+                    // Mark as changed
+                    changedRows[rowIndex] = today;
+                    // Increment call counter
+                    incrementCallCounter();
+                    // Save updated tracking data
+                    saveCallData();
+                }
+            }
+
+            // Update cell value in Google Sheet
+            async function updateCell(rowIndex, columnName, newValue, oldValue) {
+                showLoadingIndicator();
+                hideError();
+                try {
+                    const response = await fetch(`${WEB_APP_URL}?action=updateCallingCell&row=${rowIndex}&column=${columnName}&value=${encodeURIComponent(newValue)}`);
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showSuccessIndicator('Cell updated successfully!');
+                        // Store undo information
+                        lastUndoAction = {
+                            action: 'update',
+                            rowIndex: rowIndex,
+                            columnName: columnName,
+                            oldValue: oldValue,
+                            newValue: newValue
+                        };
+                        showUndoNotification();
+                    } else {
+                        showError(result.error || 'Failed to update cell.');
+                        // Revert the UI change if update failed
+                        // Find the original cell and revert its value/selection
+                        const tableBody = document.getElementById('callingTableBody');
+                        const rows = tableBody.querySelectorAll('tr');
+                        
+                        for (let i = 0; i < rows.length; i++) {
+                            const row = rows[i];
+                            const cells = row.querySelectorAll('td');
+                            
+                            // Check if this is the row we're looking for
+                            if (cells.length > 0) {
+                                const actionCell = cells[0];
+                                const commentBtn = actionCell.querySelector('.comment-btn');
+                                
+                                if (commentBtn && commentBtn.dataset.rowIndex == rowIndex) {
+                                    // This is our row
+                                    const colIndexInHtmlTable = columnNames.indexOf(columnName);
+                                    if (colIndexInHtmlTable !== -1) {
+                                        const targetCell = cells[colIndexInHtmlTable];
+                                        if (columnName === 'Result') {
+                                            targetCell.querySelector('.result-dropdown').value = oldValue;
+                                        } else {
+                                            targetCell.textContent = oldValue;
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error updating cell:', error);
+                    showError('Network error during cell update. Check console for details.');
+                    // Similar reversion code as above for network errors
+                } finally {
+                    hideLoadingIndicator();
+                }
+            }
+
+            async function undoLastChange() {
+                if (!lastUndoAction) {
+                    alert('No action to undo.');
+                    return;
+                }
+
+                showLoadingIndicator();
+                hideUndoNotification(); // Hide undo notification immediately
+                try {
+                    const { action, rowIndex, columnName, oldValue } = lastUndoAction;
+                    let response;
+                    let result;
+
+                    if (action === 'update') {
+                        // Undo an update by setting the value back to oldValue
+                        response = await fetch(`${WEB_APP_URL}?action=updateCallingCell&row=${rowIndex}&column=${columnName}&value=${encodeURIComponent(oldValue)}`);
+                        result = await response.json();
+
+                        if (result.success) {
+                            showSuccessIndicator('Last change undone!');
+                            // Update UI to reflect undone change
+                            fetchCallingData(); // Re-fetch to ensure consistency
+                            
+                            // If undoing a Result column change, remove this row from today's changed rows
+                            if (columnName === 'Result' && changedRows[rowIndex]) {
+                                delete changedRows[rowIndex];
+                                decrementCallCounter();
+                                saveCallData();
+                            }
+                            
+                            lastUndoAction = null; // Clear undo action after successful undo
+                        } else {
+                            showError(result.error || 'Failed to undo change.');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error undoing change:', error);
+                    showError('Network error during undo. Check console for details.');
+                } finally {
+                    hideLoadingIndicator();
+                }
+            }
+
+            // Function to handle saving the comment
+            async function saveComment() {
+                const rowIndex = document.getElementById('commentRowIndex').value;
+                const column = document.getElementById('commentColumn').value; // This will be 'Result'
+                const commentText = document.getElementById('commentText').value;
+                const commentType = document.querySelector('input[name="commentType"]:checked').value; // 'sheet' or 'value'
+
+                if (!commentText.trim()) {
+                    alert('Comment cannot be empty.');
+                    return;
+                }
+
+                showLoadingIndicator();
+                try {
+                    let apiUrl = `${WEB_APP_URL}`;
+                    let successMessage = '';
+
+                    if (commentType === 'sheet') {
+                        // This sends a GET request to doGet with action=addCellComment
+                        apiUrl += `?action=addCellComment&row=${rowIndex}&column=${column}&comment=${encodeURIComponent(commentText)}`;
+                        successMessage = 'Comment added to cell!';
+                    } else if (commentType === 'value') {
+                        // This sends a GET request to doGet with action=updateCallingCell
+                        apiUrl += `?action=updateCallingCell&row=${rowIndex}&column=${column}&value=${encodeURIComponent(commentText)}`;
+                        successMessage = 'Cell value updated!';
+                        
+                        // Track row change for call counter
+                        trackRowChange(rowIndex);
+                    }
+                    
+                    const response = await fetch(apiUrl);
+                    const result = await response.json(); // Apps Script returns JSON
+
+                    if (result.success) {
+                        showSuccessIndicator(successMessage);
+                        hideCommentModal();
+                        if (commentType === 'value') {
+                            // If value was updated, refresh data to reflect the change
+                            fetchCallingData();
+                        }
+                    } else {
+                        showError(result.error || 'Unknown error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showError('Failed to add comment: ' + error.message);
+                } finally {
+                    hideLoadingIndicator();
+                }
+            }
             
-            // Cancel comment button
-            document.getElementById('cancelCommentBtn').addEventListener('click', hideCommentModal);
+            // Call counter functions
+            function incrementCallCounter() {
+                callCount++;
+                document.getElementById('callCounter').textContent = callCount;
+                saveCallData();
+            }
             
-            // Save comment button
-            document.getElementById('saveCommentBtn').addEventListener('click', saveComment);
+            function decrementCallCounter() {
+                if (callCount > 0) {
+                    callCount--;
+                    document.getElementById('callCounter').textContent = callCount;
+                    saveCallData();
+                }
+            }
             
+            function saveCallData() {
+                const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+                localStorage.setItem('callCount', callCount.toString());
+                localStorage.setItem('callCountDate', today);
+                localStorage.setItem('changedRows', JSON.stringify(changedRows));
+            }
+            
+            function loadCallData() {
+                const storedCount = localStorage.getItem('callCount');
+                if (storedCount !== null) {
+                    callCount = parseInt(storedCount, 10);
+                    document.getElementById('callCounter').textContent = callCount;
+                }
+                
+                const storedChangedRows = localStorage.getItem('changedRows');
+                if (storedChangedRows) {
+                    changedRows = JSON.parse(storedChangedRows);
+                }
+            }
+            
+            function checkAndResetDailyCounter() {
+                const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+                const lastDate = localStorage.getItem('callCountDate');
+                
+                if (lastDate !== today) {
+                    // It's a new day, reset counter and changed rows tracking
+                    callCount = 0;
+                    changedRows = {};
+                    document.getElementById('callCounter').textContent = '0';
+                    saveCallData();
+                }
+            }
+
+            // Modal functions
+            function showCommentModal(rowIndex, columnName, customerName) {
+                document.getElementById('commentModal').style.display = 'flex';
+                document.getElementById('commentRowIndex').value = rowIndex;
+                document.getElementById('commentColumn').value = columnName; // 'Result'
+                document.getElementById('commentName').textContent = customerName;
+                document.getElementById('commentText').value = ''; // Clear previous comment
+                document.querySelector('input[name="commentType"][value="sheet"]').checked = true; // Default to sheet comment
+            }
+
+            function hideCommentModal() {
+                document.getElementById('commentModal').style.display = 'none';
+            }
+
+            // Utility functions
+            function showLoadingIndicator() {
+                document.getElementById('loadingIndicator').classList.remove('hidden');
+            }
+
+            function hideLoadingIndicator() {
+                document.getElementById('loadingIndicator').classList.add('hidden');
+            }
+
+            function showSuccessIndicator(message) {
+                const indicator = document.getElementById('successIndicator');
+                document.getElementById('successMessage').textContent = message;
+                indicator.classList.remove('hidden');
+                indicator.style.opacity = '1';
+                indicator.style.animation = 'none'; // Reset animation
+                void indicator.offsetWidth; // Trigger reflow
+                indicator.style.animation = 'fadeOut 2s forwards'; // Re-apply animation
+            }
+
+            function showError(message) {
+                const errorContainer = document.getElementById('errorContainer');
+                document.getElementById('errorMessage').textContent = message;
+                errorContainer.classList.remove('hidden');
+            }
+
+            function hideError() {
+                document.getElementById('errorContainer').classList.add('hidden');
+            }
+
+            function showUndoNotification() {
+                const undoNotification = document.getElementById('undoNotification');
+                undoNotification.classList.remove('hidden');
+            }
+
+            function hideUndoNotification() {
+                document.getElementById('undoNotification').classList.add('hidden');
+            }
+
+            function copyToClipboard(text, element) {
+                navigator.clipboard.writeText(text).then(() => {
+                    element.classList.add('copied');
+                    setTimeout(() => {
+                        element.classList.remove('copied');
+                    }, 1500); // Matches animation duration
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                });
+            }
+
             // Close modal if clicked outside
             window.addEventListener('click', function(event) {
                 const modal = document.getElementById('commentModal');
@@ -1600,18 +1225,6 @@
             infoDiv.className = 'text-sm text-gray-600 mt-2';
             infoDiv.innerHTML = 'Tip: Right-click on any cell to add a Google Sheets comment (appears as a yellow triangle). Click the comment button <i class="fas fa-comment text-yellow-500"></i> to update the Result value.';
             tableContainer.parentNode.insertBefore(infoDiv, tableContainer.nextSibling);
-            
-            // Support dark mode
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.documentElement.classList.add('dark');
-            }
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-                if (event.matches) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
-            });
         });
     </script>
 </body>
