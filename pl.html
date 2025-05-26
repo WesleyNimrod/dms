@@ -188,6 +188,10 @@
         .direct-call {
             background-color: #16a34a;
         }
+
+        .teams-call {
+            background-color: #4f46e5;
+        }
         
         .whatsapp-call {
             background-color: #25D366;
@@ -1384,6 +1388,18 @@
                 directCallBtn.title = `Call ${getColumnValue(row, 'Name') || 'Unknown'}`;
                 directCallBtn.innerHTML = '<i class="fas fa-phone"></i><span class="tooltip-text">Call</span>';
                 
+                // Teams call button
+                const teamsCallBtn = document.createElement('button');
+                teamsCallBtn.type = 'button';
+                teamsCallBtn.classList.add('call-btn', 'teams-call', 'tooltip');
+                teamsCallBtn.title = `Teams call to ${getColumnValue(row, 'Name') || 'Unknown'}`;
+                teamsCallBtn.innerHTML = '<i class="fab fa-microsoft"></i><span class="tooltip-text">Teams Call</span>';
+                
+                // Format for Teams calling - FIXED FORMAT
+                teamsCallBtn.addEventListener('click', function() {
+                    window.open(`https://teams.microsoft.com/l/call/0/0?users=4:+${formattedMobile}`, '_blank');
+                });
+                
                 // WhatsApp button
                 const whatsappBtn = document.createElement('a');
                 whatsappBtn.href = `https://wa.me/${formattedMobile}?text=Hello ${encodeURIComponent(getColumnValue(row, 'Name') || '')},`;
@@ -1410,6 +1426,7 @@
                 });
                 
                 callCell.appendChild(directCallBtn);
+                callCell.appendChild(teamsCallBtn);
                 callCell.appendChild(whatsappBtn);
                 callCell.appendChild(commentBtn);
                 tr.appendChild(callCell);
