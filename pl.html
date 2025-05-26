@@ -13,6 +13,9 @@
             font-family: 'Tahoma', Geneva, sans-serif;
             background-color: #f5f5f5;
             color: #333;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
         }
         
         .custom-btn {
@@ -167,14 +170,14 @@
 
         /* Call buttons */
         .call-btn {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             border-radius: 4px;
             color: white;
-            margin-right: 8px;
+            margin-right: 3px;
             transition: transform 0.2s;
         }
         
@@ -188,6 +191,10 @@
         
         .whatsapp-call {
             background-color: #25D366;
+        }
+        
+        .comment-btn {
+            background-color: #eab308;
         }
 
         /* Result dropdown styling */
@@ -304,10 +311,140 @@
         .format-date {
             text-align: center;
         }
+        
+        /* Comment Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        
+        .dark .modal-content {
+            background-color: #333;
+            color: white;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .dark .modal-header {
+            border-bottom: 1px solid #555;
+        }
+        
+        .modal-close {
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .dark .modal-close {
+            color: #ccc;
+        }
+        
+        .modal-close:hover {
+            color: black;
+        }
+        
+        .dark .modal-close:hover {
+            color: white;
+        }
+        
+        .modal-body {
+            margin-bottom: 20px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .comment-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            font-size: 16px;
+        }
+        
+        .dark .comment-textarea {
+            background-color: #444;
+            color: white;
+            border-color: #555;
+        }
+
+        /* Comment toggle */
+        .comment-mode-toggle {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        /* Dark mode styles */
+        .dark body {
+            background-color: #121212;
+            color: #f5f5f5;
+        }
+        
+        .dark .bg-white {
+            background-color: #1e1e1e;
+        }
+        
+        .dark .text-gray-600 {
+            color: #d1d1d1;
+        }
+        
+        .dark .pl-table tr:nth-child(even) {
+            background-color: #2a2a2a;
+        }
+        
+        .dark .pl-table tr:hover {
+            background-color: #333;
+        }
+        
+        .dark .pl-table td {
+            border-color: #444;
+        }
+        
+        .dark .editable:hover {
+            background-color: rgba(111, 44, 79, 0.2);
+        }
+        
+        .dark .result-dropdown {
+            background-color: #333;
+            color: white;
+            border-color: #555;
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-tahoma">
-    <div class="container mx-auto px-3 py-4 max-w-6xl">
+    <div class="container mx-auto px-3 py-4 w-full">
         <h1 class="text-2xl font-bold text-[#6f2c4f] mb-4">PL Management System</h1>
         
         <!-- Controls and Info Section -->
@@ -391,7 +528,7 @@
                 <table id="plTable" class="pl-table">
                     <thead>
                         <tr>
-                            <th style="width: 80px;">Actions</th>
+                            <th style="width: 110px;">Actions</th>
                             <th style="width: 100px;">Date</th>
                             <th style="width: 150px;">Result</th>
                             <th style="width: 120px;">Mobile</th>
@@ -437,6 +574,42 @@
     <div id="undoNotification" class="undo-indicator hidden">
         <span id="undoMessage">Change saved!</span>
         <button id="undoChangeBtn" class="undo-btn">Undo</button>
+    </div>
+    
+    <!-- Comment Modal -->
+    <div id="commentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-lg font-semibold">Add Comment</h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p class="mb-2">Enter your comment for <span id="commentName" class="font-semibold"></span></p>
+                <textarea id="commentText" class="comment-textarea" placeholder="Type your comment here..."></textarea>
+                <input type="hidden" id="commentRowIndex">
+                <input type="hidden" id="commentColumn">
+                <input type="hidden" id="commentSheetOrigin">
+                
+                <div class="comment-mode-toggle">
+                    <label class="flex items-center">
+                        <input type="radio" name="commentType" value="sheet" checked> 
+                        <span class="ml-2">Add sheet comment (yellow triangle)</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="commentType" value="value"> 
+                        <span class="ml-2">Update result value</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelCommentBtn" class="bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white py-2 px-4 rounded-md hover:bg-gray-400 dark:hover:bg-gray-700">
+                    Cancel
+                </button>
+                <button id="saveCommentBtn" class="custom-btn text-white py-2 px-4 rounded-md">
+                    Save Comment
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -597,6 +770,137 @@
                 }
             } catch (e) {
                 return number;
+            }
+        }
+        
+        // ==========================================
+        // COMMENT MODAL FUNCTIONALITY
+        // ==========================================
+        
+        // Show comment modal
+        function showCommentModal(rowIndex, column, name, sheetOrigin) {
+            document.getElementById('commentName').textContent = name || 'this record';
+            document.getElementById('commentRowIndex').value = rowIndex;
+            document.getElementById('commentColumn').value = column;
+            document.getElementById('commentSheetOrigin').value = sheetOrigin || '';
+            document.getElementById('commentText').value = '';
+            
+            // Pre-select the appropriate radio button based on the context
+            if (column === 'Result') {
+                document.querySelector('input[name="commentType"][value="value"]').checked = true;
+            } else {
+                document.querySelector('input[name="commentType"][value="sheet"]').checked = true;
+            }
+            
+            document.getElementById('commentModal').style.display = 'flex';
+        }
+        
+        // Hide comment modal
+        function hideCommentModal() {
+            document.getElementById('commentModal').style.display = 'none';
+        }
+        
+        // Save comment
+        async function saveComment() {
+            const rowIndex = document.getElementById('commentRowIndex').value;
+            const column = document.getElementById('commentColumn').value;
+            const sheetOrigin = document.getElementById('commentSheetOrigin').value;
+            const commentText = document.getElementById('commentText').value.trim();
+            const commentType = document.querySelector('input[name="commentType"]:checked').value;
+            
+            if (!commentText) {
+                alert('Please enter a comment');
+                return;
+            }
+            
+            hideCommentModal();
+            showLoading();
+            
+            try {
+                let response, data;
+                
+                // Get the selected sheet, or use sheetOrigin if available
+                const selectedSheet = sheetOrigin || document.getElementById('plSheetSelector').value;
+                
+                if (commentType === 'sheet') {
+                    // Add a Google Sheets comment (note)
+                    console.log(`Adding sheet comment - Sheet: ${selectedSheet}, Row: ${rowIndex}, Column: ${column}, Comment: ${commentText}`);
+                    
+                    response = await fetch(`${scriptURL}?action=addPLSheetComment&sheet=${encodeURIComponent(selectedSheet)}&row=${rowIndex}&column=${column}&comment=${encodeURIComponent(commentText)}`);
+                    data = await response.json();
+                    
+                    console.log("Add sheet comment response:", data);
+                    
+                    if (data.success) {
+                        showSuccess('Sheet comment added successfully');
+                    } else {
+                        showError(`Error: ${data.error}`);
+                    }
+                } else {
+                    // Update the cell value (Result column)
+                    console.log(`Updating cell value - Sheet: ${selectedSheet}, Row: ${rowIndex}, Column: Result, Value: ${commentText}`);
+                    
+                    response = await fetch(`${scriptURL}?action=updatePLCell&sheet=${encodeURIComponent(selectedSheet)}&row=${rowIndex}&column=Result&value=${encodeURIComponent(commentText)}`);
+                    data = await response.json();
+                    
+                    console.log("Update response:", data);
+                    
+                    if (data.success) {
+                        // Find the index in our data array for this row
+                        const dataIndex = allPLData.findIndex(item => item.rowIndex === parseInt(rowIndex));
+                        
+                        if (dataIndex !== -1) {
+                            // Update the local data
+                            allPLData[dataIndex]['Result'] = commentText;
+                            console.log(`Updated local data at index ${dataIndex}`);
+                            
+                            // Add to history
+                            addToHistory(selectedSheet, rowIndex, 'Result', getColumnValue(allPLData[dataIndex], 'Result') || '', commentText);
+                        } else {
+                            console.error(`Couldn't find row ${rowIndex} in local data`);
+                        }
+                        
+                        // Find the result dropdown for this row and update it
+                        const tableRows = document.querySelectorAll('#plTableBody tr');
+                        for (const tr of tableRows) {
+                            const resultDropdown = tr.querySelector('.result-dropdown');
+                            if (resultDropdown && resultDropdown.dataset.row == rowIndex) {
+                                // Either select the matching option if it exists, or add a new option
+                                let optionExists = false;
+                                for (const option of resultDropdown.options) {
+                                    if (option.value === commentText) {
+                                        resultDropdown.value = commentText;
+                                        optionExists = true;
+                                        break;
+                                    }
+                                }
+                                
+                                // If no matching option, add a new one
+                                if (!optionExists) {
+                                    const newOption = document.createElement('option');
+                                    newOption.value = commentText;
+                                    newOption.textContent = commentText;
+                                    resultDropdown.appendChild(newOption);
+                                    resultDropdown.value = commentText;
+                                }
+                                
+                                break;
+                            }
+                        }
+                        
+                        showSuccess('Comment saved as cell value successfully');
+                        
+                        // Refresh the data after adding comment
+                        await fetchPLData();
+                    } else {
+                        showError(`Error: ${data.error}`);
+                    }
+                }
+            } catch (error) {
+                console.error('Error saving comment:', error);
+                showError(`Error saving comment: ${error.message}`);
+            } finally {
+                hideLoading();
             }
         }
         
@@ -1068,7 +1372,7 @@
                 
                 // Call buttons
                 const callCell = document.createElement('td');
-                callCell.style.width = '80px';
+                callCell.style.width = '110px';
                 
                 // Format the mobile number with country code
                 const formattedMobile = formatPhoneWithCountryCode(getColumnValue(row, 'Mobile') || '');
@@ -1088,8 +1392,26 @@
                 whatsappBtn.title = `WhatsApp ${getColumnValue(row, 'Name') || 'Unknown'}`;
                 whatsappBtn.innerHTML = '<i class="fab fa-whatsapp"></i><span class="tooltip-text">WhatsApp</span>';
                 
+                // Comment button
+                const commentBtn = document.createElement('button');
+                commentBtn.classList.add('call-btn', 'comment-btn', 'tooltip');
+                commentBtn.title = `Add comment for ${getColumnValue(row, 'Name') || 'Unknown'}`;
+                commentBtn.innerHTML = '<i class="fas fa-comment"></i><span class="tooltip-text">Comment</span>';
+                commentBtn.dataset.row = row.rowIndex;
+                commentBtn.dataset.name = getColumnValue(row, 'Name') || 'Unknown';
+                commentBtn.dataset.sheetOrigin = row.sheetOrigin || '';
+                
+                // Add click event for comment button
+                commentBtn.addEventListener('click', function() {
+                    const rowIndex = this.dataset.row;
+                    const name = this.dataset.name;
+                    const sheetOrigin = this.dataset.sheetOrigin;
+                    showCommentModal(rowIndex, 'Result', name, sheetOrigin);
+                });
+                
                 callCell.appendChild(directCallBtn);
                 callCell.appendChild(whatsappBtn);
+                callCell.appendChild(commentBtn);
                 tr.appendChild(callCell);
                 
                 // Date (editable)
@@ -1101,6 +1423,16 @@
                 dateCell.dataset.originalValue = getColumnValue(row, 'Date') || '';
                 dateCell.dataset.sheetOrigin = row.sheetOrigin || '';
                 dateCell.style.width = '100px';
+                
+                // Add cell comment on right-click
+                dateCell.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    const rowIndex = this.dataset.row;
+                    const name = getColumnValue(row, 'Name') || 'Unknown';
+                    const sheetOrigin = this.dataset.sheetOrigin;
+                    showCommentModal(rowIndex, 'Date', name, sheetOrigin);
+                });
+                
                 tr.appendChild(dateCell);
                 
                 // Result dropdown
@@ -1110,8 +1442,20 @@
                 resultCell.dataset.column = 'Result';
                 resultCell.dataset.sheetOrigin = row.sheetOrigin || '';
                 
+                // Add cell comment on right-click
+                resultCell.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    const rowIndex = this.dataset.row;
+                    const name = getColumnValue(row, 'Name') || 'Unknown';
+                    const sheetOrigin = this.dataset.sheetOrigin;
+                    showCommentModal(rowIndex, 'Result', name, sheetOrigin);
+                });
+                
                 const resultSelect = document.createElement('select');
                 resultSelect.classList.add('result-dropdown');
+                resultSelect.dataset.row = row.rowIndex;
+                resultSelect.dataset.column = 'Result';
+                resultSelect.dataset.sheetOrigin = row.sheetOrigin || '';
                 
                 const resultOptions = [
                     'To Call', 'No Answer', 'Busy', 'DNCR', 'Not Interested', 
@@ -1137,11 +1481,20 @@
                     resultSelect.appendChild(optionEl);
                 });
                 
+                // Check if the Result is not in our predefined options - could be a custom comment
+                if (getColumnValue(row, 'Result') && !resultOptions.includes(getColumnValue(row, 'Result')) && getColumnValue(row, 'Result') !== '') {
+                    const customOption = document.createElement('option');
+                    customOption.value = getColumnValue(row, 'Result');
+                    customOption.textContent = getColumnValue(row, 'Result');
+                    customOption.selected = true;
+                    resultSelect.appendChild(customOption);
+                }
+                
                 // Add change event listener
                 resultSelect.addEventListener('change', async function() {
-                    const rowIndex = parseInt(resultCell.dataset.row);
-                    const column = resultCell.dataset.column;
-                    const sheetOrigin = resultCell.dataset.sheetOrigin || '';
+                    const rowIndex = parseInt(this.dataset.row);
+                    const column = this.dataset.column;
+                    const sheetOrigin = this.dataset.sheetOrigin || '';
                     const newValue = this.value;
                     
                     // Get the selected sheet, or use sheetOrigin if available
@@ -1180,6 +1533,15 @@
                     }
                 });
                 
+                // Add cell comment on right-click
+                mobileCell.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    const rowIndex = this.dataset.row;
+                    const name = getColumnValue(row, 'Name') || 'Unknown';
+                    const sheetOrigin = this.dataset.sheetOrigin;
+                    showCommentModal(rowIndex, 'Mobile', name, sheetOrigin);
+                });
+                
                 tr.appendChild(mobileCell);
                 
                 // Name (editable)
@@ -1190,6 +1552,16 @@
                 nameCell.dataset.column = 'Name';
                 nameCell.dataset.originalValue = getColumnValue(row, 'Name') || '';
                 nameCell.dataset.sheetOrigin = row.sheetOrigin || '';
+                
+                // Add cell comment on right-click
+                nameCell.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    const rowIndex = this.dataset.row;
+                    const name = getColumnValue(row, 'Name') || 'Unknown';
+                    const sheetOrigin = this.dataset.sheetOrigin;
+                    showCommentModal(rowIndex, 'Name', name, sheetOrigin);
+                });
+                
                 tr.appendChild(nameCell);
                 
                 // Amount (editable)
@@ -1201,6 +1573,16 @@
                 amountCell.dataset.originalValue = getColumnValue(row, 'Amount') || '';
                 amountCell.dataset.sheetOrigin = row.sheetOrigin || '';
                 amountCell.style.width = '100px';
+                
+                // Add cell comment on right-click
+                amountCell.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    const rowIndex = this.dataset.row;
+                    const name = getColumnValue(row, 'Name') || 'Unknown';
+                    const sheetOrigin = this.dataset.sheetOrigin;
+                    showCommentModal(rowIndex, 'Amount', name, sheetOrigin);
+                });
+                
                 tr.appendChild(amountCell);
                 
                 // ROI (editable)
@@ -1212,6 +1594,16 @@
                 roiCell.dataset.originalValue = getColumnValue(row, 'ROI') || '';
                 roiCell.dataset.sheetOrigin = row.sheetOrigin || '';
                 roiCell.style.width = '80px';
+                
+                // Add cell comment on right-click
+                roiCell.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    const rowIndex = this.dataset.row;
+                    const name = getColumnValue(row, 'Name') || 'Unknown';
+                    const sheetOrigin = this.dataset.sheetOrigin;
+                    showCommentModal(rowIndex, 'ROI', name, sheetOrigin);
+                });
+                
                 tr.appendChild(roiCell);
                 
                 // Country (editable)
@@ -1222,6 +1614,16 @@
                 countryCell.dataset.column = 'Country';
                 countryCell.dataset.originalValue = getColumnValue(row, 'Country') || '';
                 countryCell.dataset.sheetOrigin = row.sheetOrigin || '';
+                
+                // Add cell comment on right-click
+                countryCell.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    const rowIndex = this.dataset.row;
+                    const name = getColumnValue(row, 'Name') || 'Unknown';
+                    const sheetOrigin = this.dataset.sheetOrigin;
+                    showCommentModal(rowIndex, 'Country', name, sheetOrigin);
+                });
+                
                 tr.appendChild(countryCell);
                 
                 // Company Name (editable)
@@ -1232,6 +1634,16 @@
                 companyCell.dataset.column = 'Company Name';
                 companyCell.dataset.originalValue = getColumnValue(row, 'Company Name') || '';
                 companyCell.dataset.sheetOrigin = row.sheetOrigin || '';
+                
+                // Add cell comment on right-click
+                companyCell.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    const rowIndex = this.dataset.row;
+                    const name = getColumnValue(row, 'Name') || 'Unknown';
+                    const sheetOrigin = this.dataset.sheetOrigin;
+                    showCommentModal(rowIndex, 'Company Name', name, sheetOrigin);
+                });
+                
                 tr.appendChild(companyCell);
                 
                 // Salary (editable)
@@ -1243,6 +1655,16 @@
                 salaryCell.dataset.originalValue = getColumnValue(row, 'Salary') || '';
                 salaryCell.dataset.sheetOrigin = row.sheetOrigin || '';
                 salaryCell.style.width = '100px';
+                
+                // Add cell comment on right-click
+                salaryCell.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    const rowIndex = this.dataset.row;
+                    const name = getColumnValue(row, 'Name') || 'Unknown';
+                    const sheetOrigin = this.dataset.sheetOrigin;
+                    showCommentModal(rowIndex, 'Salary', name, sheetOrigin);
+                });
+                
                 tr.appendChild(salaryCell);
                 
                 tableBody.appendChild(tr);
@@ -1442,6 +1864,42 @@
                 // Hide button if we're showing all the data
                 if (displayedPLData.length <= (isShowingAll ? maxRowLimit : initialRowLimit)) {
                     this.classList.add('hidden');
+                }
+            });
+            
+            // Comment modal close button
+            document.querySelector('.modal-close').addEventListener('click', hideCommentModal);
+            
+            // Cancel comment button
+            document.getElementById('cancelCommentBtn').addEventListener('click', hideCommentModal);
+            
+            // Save comment button
+            document.getElementById('saveCommentBtn').addEventListener('click', saveComment);
+            
+            // Close modal if clicked outside
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('commentModal');
+                if (event.target === modal) {
+                    hideCommentModal();
+                }
+            });
+            
+            // Add information about cell comments
+            const tableContainer = document.querySelector('.table-container');
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'text-sm text-gray-600 mt-2';
+            infoDiv.innerHTML = 'Tip: Right-click on any cell to add a Google Sheets comment (appears as a yellow triangle). Click the comment button <i class="fas fa-comment text-yellow-500"></i> to update the Result value.';
+            tableContainer.parentNode.insertBefore(infoDiv, tableContainer.nextSibling);
+            
+            // Support dark mode
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+                if (event.matches) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
                 }
             });
         });
