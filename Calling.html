@@ -169,14 +169,14 @@
 
         /* Call buttons */
         .call-btn {
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             border-radius: 4px;
             color: white;
-            margin-right: 3px;
+            margin-right: 8px;
             transition: transform 0.2s;
         }
         
@@ -187,7 +187,7 @@
         .direct-call {
             background-color: #16a34a;
         }
-
+        
         .teams-call {
             background-color: #4f46e5;
         }
@@ -422,6 +422,9 @@
                     <button id="refreshBtn" class="custom-btn text-white py-2 px-4 rounded-md flex items-center">
                         <i class="fas fa-sync-alt mr-2"></i> Refresh Data
                     </button>
+                    <a href="https://docs.google.com/spreadsheets/d/1VfEPU_2EvNqB6g2ldAzD05fvwFigL1yN3L0wLOwZP4o/edit?gid=276425933#gid=276425933" target="_blank" class="custom-btn text-white py-2 px-4 rounded-md flex items-center">
+                        <i class="fas fa-file-excel mr-2"></i> Sheet
+                    </a>
                     <button id="undoBtn" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 flex items-center tooltip">
                         <i class="fas fa-undo mr-2"></i> Undo
                         <span class="tooltip-text">Undo last change</span>
@@ -443,17 +446,18 @@
                             <option value="To Call">To Call</option>
                             <option value="No Answer">No Answer</option>
                             <option value="Busy">Busy</option>
-                            <option value="Interested">Interested</option>
                             <option value="Not Interested">Not Interested</option>
-                            <option value="Switched Off">Switched Off</option>
-                            <option value="In Future, Shared details">In Future, Shared details</option>
-                            <option value="Rejected">Rejected</option>
+                            <option value="Interested">Interested</option>
+                            <option value="ROI Inquired">ROI Inquired</option>
+                            <option value="Call back">Call back</option>
                             <option value="On Hold">On Hold</option>
+                            <option value="In Future, Shared details">In Future, Shared details</option>
+                            <option value="Switched off">Switched off</option>
                             <option value="Referal">Referal</option>
-                            <option value="Applied">Applied</option>
-                            <option value="Already Having">Already Having</option>
                             <option value="Completed">Completed</option>
+                            <option value="Rejected">Rejected</option>
                             <option value="Option 1">Option 1</option>
+                            <option value="Option 2">Option 2</option>
                         </select>
                     </div>
                     <div class="filter-item">
@@ -590,6 +594,27 @@
             document.getElementById('bankFilter').addEventListener('input', applyFilters);
             document.getElementById('salaryFilter').addEventListener('input', applyFilters);
 
+            // Format phone number with country code
+            function formatPhoneWithCountryCode(phone) {
+                if (!phone) return '';
+                
+                // Remove any non-digit characters
+                const digits = phone.toString().replace(/\D/g, '');
+                
+                // If it already starts with 971, don't add it again
+                if (digits.startsWith('971')) {
+                    return digits;
+                }
+                
+                // If it starts with 0, remove the 0 before adding 971
+                if (digits.startsWith('0')) {
+                    return '971' + digits.substring(1);
+                }
+                
+                // Otherwise, just add 971 as prefix
+                return '971' + digits;
+            }
+
             // Fetch data from Google Sheet
             async function fetchCallingData() {
                 showLoadingIndicator();
@@ -683,24 +708,45 @@
                     
                     // Actions column
                     const actionsCell = document.createElement('td');
-                    actionsCell.innerHTML = `
-                        <button class="call-btn direct-call tooltip" data-mobile="${record.Mobile}">
-                            <i class="fas fa-phone"></i>
-                            <span class="tooltip-text">Call Direct</span>
-                        </button>
-                        <button class="call-btn teams-call tooltip" data-mobile="${record.Mobile}">
-                            <i class="fas fa-users"></i>
-                            <span class="tooltip-text">Teams Call</span>
-                        </button>
-                        <button class="call-btn whatsapp-call tooltip" data-mobile="${record.Mobile}">
-                            <i class="fab fa-whatsapp"></i>
-                            <span class="tooltip-text">WhatsApp</span>
-                        </button>
-                        <button class="call-btn comment-btn tooltip" data-row-index="${record.rowIndex}" data-column-name="Result">
-                            <i class="fas fa-comment"></i>
-                            <span class="tooltip-text">Add Comment</span>
-                        </button>
-                    `;
+                    actionsCell.style.width = '110px';
+                    
+                    // Format the mobile number with country code
+                    const formattedMobile = formatPhoneWithCountryCode(record.Mobile || '');
+                    
+                    // Direct call button
+                    const directCallBtn = document.createElement('a');
+                    directCallBtn.href = `tel:+${formattedMobile}`;
+                    directCallBtn.classList.add('call-btn', 'direct-call', 'tooltip');
+                    directCallBtn.title = `Call ${record.Name || 'Unknown'}`;
+                    directCallBtn.innerHTML = '<i class="fas fa-phone"></i><span class="tooltip-text">Call</span>';
+                    
+                    // Teams call button
+                    const teamsBtn = document.createElement('a');
+                    teamsBtn.href = `https://teams.microsoft.com/l/call/0/0?users=4:+971${formattedMobile}`;
+                    teamsBtn.target = "_blank";
+                    teamsBtn.classList.add('call-btn', 'teams-call', 'tooltip');
+                    teamsBtn.title = `Teams Call ${record.Name || 'Unknown'}`;
+                    teamsBtn.innerHTML = '<i class="fas fa-users"></i><span class="tooltip-text">Teams</span>';
+                    
+                    // WhatsApp button
+                    const whatsappBtn = document.createElement('a');
+                    whatsappBtn.href = `https://wa.me/${formattedMobile}?text=Hello ${encodeURIComponent(record.Name || '')},`;
+                    whatsappBtn.target = "_blank";
+                    whatsappBtn.classList.add('call-btn', 'whatsapp-call', 'tooltip');
+                    whatsappBtn.title = `WhatsApp ${record.Name || 'Unknown'}`;
+                    whatsappBtn.innerHTML = '<i class="fab fa-whatsapp"></i><span class="tooltip-text">WhatsApp</span>';
+                    
+                    // Comment button
+                    const commentBtn = document.createElement('button');
+                    commentBtn.classList.add('call-btn', 'comment-btn', 'tooltip');
+                    commentBtn.dataset.rowIndex = record.rowIndex;
+                    commentBtn.dataset.columnName = 'Result';
+                    commentBtn.innerHTML = '<i class="fas fa-comment"></i><span class="tooltip-text">Add Comment</span>';
+                    
+                    actionsCell.appendChild(directCallBtn);
+                    actionsCell.appendChild(teamsBtn);
+                    actionsCell.appendChild(whatsappBtn);
+                    actionsCell.appendChild(commentBtn);
                     row.appendChild(actionsCell);
 
                     // Data columns
@@ -713,39 +759,32 @@
                             const select = document.createElement('select');
                             select.className = 'result-dropdown';
                             
-                            // Create option elements for priority options first
-                            let optionsHTML = '';
+                            // Create empty option first
+                            const emptyOption = document.createElement('option');
+                            emptyOption.value = '';
+                            emptyOption.textContent = 'Select Result';
+                            select.appendChild(emptyOption);
                             
-                            // Add "Select Result" as first option for empty values
-                            optionsHTML += `<option value="">Select Result</option>`;
+                            // All possible result options including DNCR
+                            const resultOptions = [
+                                'To Call', 'No Answer', 'Busy', 'DNCR', 'Not Interested', 
+                                'Interested', 'ROI Inquired', 'Call back', 'On Hold', 
+                                'In Future, Shared details', 'Switched off', 'Referal',
+                                'Completed', 'Rejected', 'Option 1', 'Option 2'
+                            ];
                             
-                            // Get unique values from the data for Result column (excluding DNCR)
-                            const uniqueResults = [...new Set(allData
-                                .filter(item => item.Result && item.Result !== "DNCR")
-                                .map(item => item.Result))];
-                            
-                            // First add the priority options
-                            priorityResultOptions.forEach(option => {
-                                if (uniqueResults.includes(option)) {
-                                    optionsHTML += `<option value="${option}" ${value === option ? 'selected' : ''}>${option}</option>`;
+                            // Add all result options
+                            resultOptions.forEach(option => {
+                                const optionEl = document.createElement('option');
+                                optionEl.value = option;
+                                optionEl.textContent = option;
+                                if (value === option) {
+                                    optionEl.selected = true;
                                 }
+                                select.appendChild(optionEl);
                             });
                             
-                            // Then add all other unique options from the data
-                            uniqueResults
-                                .filter(option => !priorityResultOptions.includes(option))
-                                .forEach(option => {
-                                    optionsHTML += `<option value="${option}" ${value === option ? 'selected' : ''}>${option}</option>`;
-                                });
-                            
-                            select.innerHTML = optionsHTML;
-                            
-                            // Set the select value to match the actual value from the sheet
-                            // If empty, it will default to "Select Result"
-                            if (value) {
-                                select.value = value;
-                            }
-                            
+                            // Add change event listener
                             select.addEventListener('change', function() {
                                 const oldValue = value;
                                 const newValue = this.value;
@@ -897,29 +936,26 @@
             }
 
             function handleCallClick(event) {
-                const mobile = this.dataset.mobile;
+                const mobile = this.getAttribute('href').replace('tel:+', '');
                 if (mobile) {
-                    window.location.href = `tel:${mobile}`;
+                    incrementCallCounter();
+                    window.location.href = `tel:+${mobile}`;
                 } else {
                     alert('Mobile number not available.');
                 }
             }
             
             function handleTeamsClick(event) {
-                const mobile = this.dataset.mobile;
+                const mobile = this.getAttribute('href').replace('https://teams.microsoft.com/l/call/0/0?users=4:+971', '');
                 if (mobile) {
-                    window.open(`https://teams.microsoft.com/l/call/0/0?users=4:+971${mobile}`, '_blank');
-                } else {
-                    alert('Mobile number not available for Teams call.');
+                    incrementCallCounter();
                 }
             }
 
             function handleWhatsappClick(event) {
-                const mobile = this.dataset.mobile;
+                const mobile = this.getAttribute('href').replace('https://wa.me/', '').split('?')[0];
                 if (mobile) {
-                    window.open(`https://wa.me/${mobile}`, '_blank');
-                } else {
-                    alert('Mobile number not available for WhatsApp.');
+                    incrementCallCounter();
                 }
             }
 
