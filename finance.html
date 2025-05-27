@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        peacock: {
+                            light: '#0CF7C8',
+                            DEFAULT: '#0CF7C8',
+                            dark: '#2830BF'
+                        },
+                        teal: {
+                            light: '#0CF7C8',
+                            DEFAULT: '#0CF7C8',
+                            dark: '#2830BF'
+                        },
+                        accent: {
+                            pink: '#EEAECA',
+                            blue: '#94BBE9'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --primary-blue: #2830BF;
+            --primary-teal: #0CF7C8;
+            --secondary-pink: #EEAECA;
+            --secondary-blue: #94BBE9;
+            --peacock-light: #0CF7C8;
+            --peacock: #0CF7C8;
+            --peacock-dark: #2830BF;
+            --teal-light: #0CF7C8;
+            --teal: #0CF7C8;
+            --teal-dark: #2830BF;
+            --gradient-primary: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-teal) 100%);
+            --gradient-secondary: linear-gradient(135deg, var(--secondary-pink) 0%, var(--secondary-blue) 100%);
+        }
+        
+        body {
+            font-family: 'Tahoma', Geneva, sans-serif;
+            background-color: #f8fafb;
+            color: #333;
+        }
+        
+        .dark {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        
+        .gradient-primary {
+            background: var(--gradient-primary);
+        }
+        
+        .gradient-secondary {
+            background: var(--gradient-secondary);
+        }
+        
+        .custom-btn {
+            background: var(--gradient-primary);
+            transition: all 0.3s;
+        }
+        
+        .custom-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table th {
+            background: var(--gradient-primary);
+            color: white;
+            text-align: left;
+            padding: 12px 8px;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .data-table tr:nth-child(even) {
+            background-color: rgba(12, 247, 200, 0.05);
+        }
+        
+        .data-table tr:hover {
+            background-color: rgba(12, 247, 200, 0.1);
+        }
+        
+        .data-table td {
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 8px;
+        }
+        
+        .data-table tr.total-row {
+            font-weight: 700;
+            background-color: rgba(12, 247, 200, 0.15);
+        }
+        
+        .data-table tr.total-row td {
+            border-top: 2px solid var(--peacock);
+            border-bottom: 2px solid var(--peacock);
+        }
+        
+        .card {
+            border-radius: 12px;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 16px;
+            font-weight: 600;
+        }
+        
+        .card-header-alt {
+            background: var(--gradient-secondary);
+            color: white;
+            padding: 16px;
+            font-weight: 600;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: var(--gradient-primary);
+            transition: width 0.5s ease;
+        }
+        
+        input[type="number"], input[type="text"], select {
+            border: 1px solid #e2e8f0;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+        
+        input[type="number"]:focus, input[type="text"]:focus, select:focus {
+            border-color: var(--peacock);
+            box-shadow: 0 0 0 3px rgba(12, 247, 200, 0.2);
+            outline: none;
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            background-color: white;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 20;
+            min-width: 180px;
+            display: none;
+        }
+        
+        .dropdown-menu.show {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+        
+        .dropdown-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .dropdown-item:hover {
+            background-color: rgba(12, 247, 200, 0.1);
+        }
+        
+        .dropdown-item i {
+            margin-right: 10px;
+            color: var(--peacock);
+        }
+        
+        .dashboard-stat {
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .dashboard-stat:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dashboard-stat .value {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .dashboard-stat .label {
+            font-size: 14px;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Dark mode styles */
+        .dark .card {
+            background-color: #1e1e1e;
+        }
+        
+        .dark .dropdown-menu {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+        }
+        
+        .dark .dropdown-item:hover {
+            background-color: #333;
+        }
+        
+        .dark input, .dark select {
+            background-color: #2d2d2d;
+            border-color: #444;
+            color: #e0e0e0;
+        }
+        
+        .dark .data-table tr:nth-child(even) {
+            background-color: rgba(12, 247, 200, 0.05);
+        }
+        
+        .dark .data-table tr:hover {
+            background-color: rgba(12, 247, 200, 0.1);
+        }
+        
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            transform: translateY(-100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .data-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .grid-cols-4 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            
+            .grid-cols-3 {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .grid-cols-4, .grid-cols-2 {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="container mx-auto px-4 py-6 max-w-6xl">
+        <!-- Header Section -->
+        <header class="mb-8">
+            <div class="flex flex-wrap justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-peacock-dark">Finance Dashboard</h1>
+                    <p class="text-gray-600 mt-1">Track and manage your financial obligations</p>
+                </div>
+                <div class="flex items-center mt-4 sm:mt-0">
+                    <button id="toggleThemeBtn" class="mr-4 text-gray-500 hover:text-peacock">
+                        <i class="fas fa-moon text-xl"></i>
+                    </button>
+                    <button id="refreshDataBtn" class="custom-btn text-white px-4 py-2 rounded-lg flex items-center">
+                        <i class="fas fa-sync-alt mr-2"></i> Refresh Data
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Financial Summary Cards -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold text-peacock-dark mb-4">Financial Overview</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <!-- Total Credit Card Debt -->
+                <div class="dashboard-stat bg-white">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="label">Credit Card Debt</div>
+                            <div class="value text-red-500" id="totalCreditCardDebt">د.إ0</div>
+                            <div class="text-sm text-gray-500">Across <span id="creditCardCount">0</span> cards</div>
+                        </div>
+                        <div class="stat-icon bg-red-100">
+                            <i class="fas fa-credit-card text-red-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Total Auto Loan -->
+                <div class="dashboard-stat bg-white">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="label">Auto Loan</div>
+                            <div class="value text-orange-500" id="totalAutoLoan">د.إ0</div>
+                            <div class="text-sm text-gray-500"><span id="autoLoanCount">0</span> active loans</div>
+                        </div>
+                        <div class="stat-icon bg-orange-100">
+                            <i class="fas fa-car text-orange-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Monthly Expenses -->
+                <div class="dashboard-stat bg-white">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="label">Monthly Expenses</div>
+                            <div class="value text-blue-500" id="totalMonthlyExpenses">د.إ0</div>
+                            <div class="text-sm text-gray-500"><span id="expenseCount">0</span> expense categories</div>
+                        </div>
+                        <div class="stat-icon bg-blue-100">
+                            <i class="fas fa-file-invoice-dollar text-blue-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Available Cash Flow -->
+                <div class="dashboard-stat bg-white">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="label">Cash Flow</div>
+                            <div class="value text-green-500" id="availableCashFlow">د.إ0</div>
+                            <div class="text-sm text-gray-500">Available after expenses</div>
+                        </div>
+                        <div class="stat-icon bg-green-100">
+                            <i class="fas fa-wallet text-green-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Credit Cards & Loans Section -->
+        <section class="mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-peacock-dark">Credit Cards & Loans</h2>
+                <div class="relative" id="addItemDropdown">
+                    <button class="custom-btn text-white px-4 py-2 rounded-lg flex items-center" id="addItemBtn">
+                        <i class="fas fa-plus mr-2"></i> Add Item
+                    </button>
+                    <div class="dropdown-menu right-0 mt-2" id="addItemMenu">
+                        <div class="dropdown-item" data-type="credit-card">
+                            <i class="fas fa-credit-card"></i> Credit Card
+                        </div>
+                        <div class="dropdown-item" data-type="auto-loan">
+                            <i class="fas fa-car"></i> Auto Loan
+                        </div>
+                        <div class="dropdown-item" data-type="personal-loan">
+                            <i class="fas fa-money-bill-wave"></i> Personal Loan
+                        </div>
+                        <div class="dropdown-item" data-type="mortgage">
+                            <i class="fas fa-home"></i> Mortgage
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Cards & Loans Table -->
+            <div class="overflow-x-auto mb-4">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Bank</th>
+                            <th>Limit</th>
+                            <th>Fixed Installment</th>
+                            <th>Usage %</th>
+                            <th>Outstanding</th>
+                            <th>Available</th>
+                            <th>After Payment</th>
+                            <th>Statement Date</th>
+                            <th>Due Date</th>
+                            <th>Due Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="creditCardsTableBody">
+                        <!-- Data will be loaded dynamically -->
+                    </tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td>TOTAL</td>
+                            <td id="totalLimit">0</td>
+                            <td id="totalInstallment">0</td>
+                            <td id="avgUsage">0%</td>
+                            <td id="totalOutstanding">0</td>
+                            <td id="totalAvailable">0</td>
+                            <td id="totalAfterPayment">0</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td id="totalDueAmount">0</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Monthly Expenses Section -->
+        <section class="mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-peacock-dark">Monthly Expenses</h2>
+                <div class="relative" id="addExpenseDropdown">
+                    <button class="custom-btn text-white px-4 py-2 rounded-lg flex items-center" id="addExpenseBtn">
+                        <i class="fas fa-plus mr-2"></i> Add Expense
+                    </button>
+                    <div class="dropdown-menu right-0 mt-2" id="addExpenseMenu">
+                        <div class="dropdown-item" data-type="rent">
+                            <i class="fas fa-home"></i> Rent
+                        </div>
+                        <div class="dropdown-item" data-type="mobile">
+                            <i class="fas fa-mobile-alt"></i> Mobile Bill
+                        </div>
+                        <div class="dropdown-item" data-type="parking">
+                            <i class="fas fa-parking"></i> Parking
+                        </div>
+                        <div class="dropdown-item" data-type="household">
+                            <i class="fas fa-shopping-basket"></i> Household
+                        </div>
+                        <div class="dropdown-item" data-type="other">
+                            <i class="fas fa-ellipsis-h"></i> Other
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Expenses Table -->
+            <div class="overflow-x-auto mb-4">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th>Due Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expensesTableBody">
+                        <!-- Data will be loaded dynamically -->
+                    </tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td>TOTAL</td>
+                            <td>-</td>
+                            <td id="totalExpenseAmount">0</td>
+                            <td>-</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Income & Cash Flow Section -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold text-peacock-dark mb-4">Income & Cash Flow</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Income Section -->
+                <div class="card">
+                    <div class="card-header flex justify-between items-center">
+                        <h3 class="text-lg font-semibold">Income Sources</h3>
+                        <button class="text-white" id="addIncomeBtn">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b">
+                                        <th class="text-left py-2">Source</th>
+                                        <th class="text-right py-2">Amount</th>
+                                        <th class="text-right py-2">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="incomeTableBody">
+                                    <!-- Income sources will be added here -->
+                                </tbody>
+                                <tfoot>
+                                    <tr class="font-bold">
+                                        <td class="py-2">Total Income</td>
+                                        <td class="text-right py-2" id="totalIncome">د.إ0</td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cash Flow Summary -->
+                <div class="card">
+                    <div class="card-header-alt">
+                        <h3 class="text-lg font-semibold">Cash Flow Summary</h3>
+                    </div>
+                    <div class="p-4">
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-medium">Total Income</span>
+                                    <span id="cashFlowIncome" class="text-green-500">د.إ0</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill bg-green-500" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-medium">Credit Card Payments</span>
+                                    <span id="cashFlowCreditCards" class="text-red-500">-د.إ0</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill bg-red-500" id="creditCardPaymentsBar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-medium">Loan Payments</span>
+                                    <span id="cashFlowLoans" class="text-orange-500">-د.إ0</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill bg-orange-500" id="loanPaymentsBar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-medium">Monthly Expenses</span>
+                                    <span id="cashFlowExpenses" class="text-blue-500">-د.إ0</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill bg-blue-500" id="expensesBar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="border-t pt-4 mt-4">
+                                <div class="flex justify-between">
+                                    <span class="font-bold">Available Cash Flow</span>
+                                    <span id="cashFlowAvailable" class="font-bold text-peacock">د.إ0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Visualizations Section -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold text-peacock-dark mb-4">Financial Visualizations</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Expense Breakdown -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-lg font-semibold">Expense Breakdown</h3>
+                    </div>
+                    <div class="p-4">
+                        <canvas id="expenseChart" height="250"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Credit Utilization -->
+                <div class="card">
+                    <div class="card-header-alt">
+                        <h3 class="text-lg font-semibold">Credit Utilization</h3>
+                    </div>
+                    <div class="p-4">
+                        <canvas id="utilizationChart" height="250"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Cash Flow Trend -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-lg font-semibold">Monthly Cash Flow</h3>
+                    </div>
+                    <div class="p-4">
+                        <canvas id="cashFlowChart" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- Modal for Adding/Editing Credit Card or Loan -->
+    <div id="accountModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold" id="modalTitle">Add Credit Card</h3>
+                <button id="closeAccountModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="accountForm" class="space-y-4">
+                <input type="hidden" id="accountId" value="">
+                <input type="hidden" id="accountType" value="credit-card">
+                
+                <div>
+                    <label for="bank" class="block text-sm font-medium text-gray-700 mb-1">Bank</label>
+                    <select id="bank" class="w-full">
+                        <option value="">Select Bank</option>
+                        <option value="ENBD">ENBD</option>
+                        <option value="ADCB">ADCB</option>
+                        <option value="EI">EI</option>
+                        <option value="ADIB">ADIB</option>
+                        <option value="MASHREQ">MASHREQ</option>
+                        <option value="DIB">DIB</option>
+                        <option value="RAK">RAK</option>
+                        <option value="FAB">FAB</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <div id="otherBankContainer" class="hidden">
+                    <label for="otherBank" class="block text-sm font-medium text-gray-700 mb-1">Specify Bank</label>
+                    <input type="text" id="otherBank" class="w-full">
+                </div>
+                
+                <div>
+                    <label for="limit" class="block text-sm font-medium text-gray-700 mb-1">Limit/Principal</label>
+                    <input type="number" id="limit" class="w-full" placeholder="Enter amount">
+                </div>
+                
+                <div>
+                    <label for="installment" class="block text-sm font-medium text-gray-700 mb-1">Fixed Installment</label>
+                    <input type="number" id="installment" class="w-full" placeholder="Enter amount">
+                </div>
+                
+                <div>
+                    <label for="outstanding" class="block text-sm font-medium text-gray-700 mb-1">Outstanding Balance</label>
+                    <input type="number" id="outstanding" class="w-full" placeholder="Enter amount">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="statementDate" class="block text-sm font-medium text-gray-700 mb-1">Statement Date</label>
+                        <input type="number" id="statementDate" class="w-full" min="1" max="31" placeholder="Day of month">
+                    </div>
+                    
+                    <div>
+                        <label for="dueDate" class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+                        <input type="number" id="dueDate" class="w-full" min="1" max="31" placeholder="Day of month">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="dueAmount" class="block text-sm font-medium text-gray-700 mb-1">Due Amount</label>
+                    <input type="number" id="dueAmount" class="w-full" placeholder="Enter amount">
+                </div>
+                
+                <div class="flex justify-end pt-4">
+                    <button type="button" id="cancelAccountBtn" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg mr-2">
+                        Cancel
+                    </button>
+                    <button type="submit" class="custom-btn text-white px-4 py-2 rounded-lg">
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal for Adding/Editing Expense -->
+    <div id="expenseModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg w-full max-w-md p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold" id="expenseModalTitle">Add Expense</h3>
+                <button id="closeExpenseModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="expenseForm" class="space-y-4">
+                <input type="hidden" id="expenseId" value="">
+                
+                <div>
+                    <label for="expenseCategory" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <select id="expenseCategory" class="w-full">
+                        <option value="">Select Category</option>
+                        <option value="rent">Rent</option>
+                        <option value="mobile">Mobile Bill</option>
+                        <option value="parking">Parking</option>
+                        <option value="household">Household</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div id="otherExpenseCategoryContainer" class="hidden">
+                    <label for="otherExpenseCategory" class="block text-sm font-medium text-gray-700 mb-1">Specify Category</label>
+                    <input type="text" id="otherExpenseCategory" class="w-full">
+                </div>
+                
+                <div>
+                    <label for="expenseDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <input type="text" id="expenseDescription" class="w-full" placeholder="Enter description">
+                </div>
+                
+                <div>
+                    <label for="expenseAmount" class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+                    <input type="number" id="expenseAmount" class="w-full" placeholder="Enter amount">
+                </div>
+                
+                <div>
+                    <label for="expenseDueDate" class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+                    <input type="number" id="expenseDueDate" class="w-full" min="1" max="31" placeholder="Day of month">
+                </div>
+                
+                <div class="flex justify-end pt-4">
+                    <button type="button" id="cancelExpenseBtn" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg mr-2">
+                        Cancel
+                    </button>
+                    <button type="submit" class="custom-btn text-white px-4 py-2 rounded-lg">
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal for Adding/Editing Income -->
+    <div id="incomeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg w-full max-w-md p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold" id="incomeModalTitle">Add Income Source</h3>
+                <button id="closeIncomeModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="incomeForm" class="space-y-4">
+                <input type="hidden" id="incomeId" value="">
+                
+                <div>
+                    <label for="incomeSource" class="block text-sm font-medium text-gray-700 mb-1">Source</label>
+                    <input type="text" id="incomeSource" class="w-full" placeholder="Enter income source">
+                </div>
+                
+                <div>
+                    <label for="incomeAmount" class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+                    <input type="number" id="incomeAmount" class="w-full" placeholder="Enter amount">
+                </div>
+                
+                <div class="flex justify-end pt-4">
+                    <button type="button" id="cancelIncomeBtn" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg mr-2">
+                        Cancel
+                    </button>
+                    <button type="submit" class="custom-btn text-white px-4 py-2 rounded-lg">
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span id="toastMessage">Operation successful!</span>
+    </div>
+    
+    <script>
+        // Sample data for initial display
+        let creditCards = [
+            { id: 1, type: 'credit-card', bank: 'ENBD', limit: 15000, installment: 1033, outstanding: 13868, statementDate: 6, dueDate: 30, dueAmount: 700 },
+            { id: 2, type: 'credit-card', bank: 'EI', limit: 5000, installment: 91.23, outstanding: 4766, statementDate: 12, dueDate: 5, dueAmount: 0 },
+            { id: 3, type: 'credit-card', bank: 'ADCB', limit: 10000, installment: 1737, outstanding: 6549, statementDate: 25, dueDate: 10, dueAmount: 100 },
+            { id: 4, type: 'auto-loan', bank: 'MASHREQ', limit: 5000, installment: 900, outstanding: 1000, statementDate: 5, dueDate: 19, dueAmount: 0 },
+            { id: 5, type: 'auto-loan', bank: 'ENBD AUTO LOAN', limit: 40000, installment: 970, outstanding: 37795, statementDate: 5, dueDate: 5, dueAmount: 0 }
+        ];
+        
+        let expenses = [
+            { id: 1, category: 'rent', description: 'Rent + parking', amount: 2400, dueDate: 5 },
+            { id: 2, category: 'mobile', description: 'Mobile bill', amount: 800, dueDate: 15 }
+        ];
+        
+        let income = [
+            { id: 1, source: 'Salary', amount: 12000 },
+            { id: 2, source: 'Side Business', amount: 2000 }
+        ];
+        
+        // Initialize charts
+        let expenseChart, utilizationChart, cashFlowChart;
+        
+        // DOM Elements
+        const creditCardsTableBody = document.getElementById('creditCardsTableBody');
+        const expensesTableBody = document.getElementById('expensesTableBody');
+        const incomeTableBody = document.getElementById('incomeTableBody');
+        
+        // Theme toggle functionality
+        const toggleThemeBtn = document.getElementById('toggleThemeBtn');
+        toggleThemeBtn.addEventListener('click', function() {
+            document.body.classList.toggle('dark');
+            if (document.body.classList.contains('dark')) {
+                toggleThemeBtn.innerHTML = '<i class="fas fa-sun text-xl"></i>';
+            } else {
+                toggleThemeBtn.innerHTML = '<i class="fas fa-moon text-xl"></i>';
+            }
+            
+            // Redraw charts with appropriate theme colors
+            updateCharts();
+        });
+        
+        // Handle dropdown functionality
+        document.addEventListener('click', function(e) {
+            // Close all dropdowns first
+            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                if (!menu.parentElement.contains(e.target)) {
+                    menu.classList.remove('show');
+                }
+            });
+            
+            // Open clicked dropdown
+            if (e.target.closest('#addItemBtn')) {
+                document.getElementById('addItemMenu').classList.toggle('show');
+                e.stopPropagation();
+            } else if (e.target.closest('#addExpenseBtn')) {
+                document.getElementById('addExpenseMenu').classList.toggle('show');
+                e.stopPropagation();
+            }
+        });
+        
+        // Modal functionality
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+        
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+        
+        // Account Modal
+        document.getElementById('closeAccountModal').addEventListener('click', () => hideModal('accountModal'));
+        document.getElementById('cancelAccountBtn').addEventListener('click', () => hideModal('accountModal'));
+        
+        // Expense Modal
+        document.getElementById('closeExpenseModal').addEventListener('click', () => hideModal('expenseModal'));
+        document.getElementById('cancelExpenseBtn').addEventListener('click', () => hideModal('expenseModal'));
+        
+        // Income Modal
+        document.getElementById('closeIncomeModal').addEventListener('click', () => hideModal('incomeModal'));
+        document.getElementById('cancelIncomeBtn').addEventListener('click', () => hideModal('incomeModal'));
+        
+        // Toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Format currency
+        function formatCurrency(amount) {
+            return 'د.إ' + parseFloat(amount).toLocaleString('en-IN', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            });
+        }
+        
+        // Calculate percentages
+        function calculatePercentage(value, total) {
+            return total > 0 ? Math.round((value / total) * 100) : 0;
+        }
+        
+        // Add a new credit card or loan
+        document.getElementById('addItemMenu').addEventListener('click', function(e) {
+            if (e.target.closest('.dropdown-item')) {
+                const type = e.target.closest('.dropdown-item').dataset.type;
+                document.getElementById('accountId').value = '';
+                document.getElementById('accountType').value = type;
+                document.getElementById('bank').value = '';
+                document.getElementById('otherBank').value = '';
+                document.getElementById('limit').value = '';
+                document.getElementById('installment').value = '';
+                document.getElementById('outstanding').value = '';
+                document.getElementById('statementDate').value = '';
+                document.getElementById('dueDate').value = '';
+                document.getElementById('dueAmount').value = '';
+                document.getElementById('otherBankContainer').classList.add('hidden');
+                
+                // Set appropriate modal title
+                if (type === 'credit-card') {
+                    document.getElementById('modalTitle').textContent = 'Add Credit Card';
+                } else if (type === 'auto-loan') {
+                    document.getElementById('modalTitle').textContent = 'Add Auto Loan';
+                } else if (type === 'personal-loan') {
+                    document.getElementById('modalTitle').textContent = 'Add Personal Loan';
+                } else if (type === 'mortgage') {
+                    document.getElementById('modalTitle').textContent = 'Add Mortgage';
+                }
+                
+                showModal('accountModal');
+                document.getElementById('addItemMenu').classList.remove('show');
+            }
+        });
+        
+        // Handle Other Bank selection
+        document.getElementById('bank').addEventListener('change', function() {
+            if (this.value === 'Other') {
+                document.getElementById('otherBankContainer').classList.remove('hidden');
+            } else {
+                document.getElementById('otherBankContainer').classList.add('hidden');
+            }
+        });
+        
+        // Handle account form submission
+        document.getElementById('accountForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('accountId').value || Date.now();
+            const type = document.getElementById('accountType').value;
+            let bank = document.getElementById('bank').value;
+            
+            if (bank === 'Other') {
+                bank = document.getElementById('otherBank').value;
+            }
+            
+            const limit = parseFloat(document.getElementById('limit').value) || 0;
+            const installment = parseFloat(document.getElementById('installment').value) || 0;
+            const outstanding = parseFloat(document.getElementById('outstanding').value) || 0;
+            const statementDate = parseInt(document.getElementById('statementDate').value) || 1;
+            const dueDate = parseInt(document.getElementById('dueDate').value) || 1;
+            const dueAmount = parseFloat(document.getElementById('dueAmount').value) || 0;
+            
+            // Validate required fields
+            if (!bank) {
+                alert('Please select or enter a bank');
+                return;
+            }
+            
+            if (limit <= 0) {
+                alert('Please enter a valid limit or principal amount');
+                return;
+            }
+            
+            // Create or update account object
+            const account = {
+                id: parseInt(id),
+                type,
+                bank,
+                limit,
+                installment,
+                outstanding,
+                statementDate,
+                dueDate,
+                dueAmount
+            };
+            
+            // Check if editing or adding new
+            const existingIndex = creditCards.findIndex(card => card.id === parseInt(id));
+            
+            if (existingIndex >= 0) {
+                creditCards[existingIndex] = account;
+                showToast('Account updated successfully!');
+            } else {
+                creditCards.push(account);
+                showToast('Account added successfully!');
+            }
+            
+            // Refresh data and hide modal
+            renderCreditCards();
+            updateFinancialSummary();
+            updateCharts();
+            hideModal('accountModal');
+        });
+        
+        // Add a new expense
+        document.getElementById('addExpenseMenu').addEventListener('click', function(e) {
+            if (e.target.closest('.dropdown-item')) {
+                const category = e.target.closest('.dropdown-item').dataset.type;
+                document.getElementById('expenseId').value = '';
+                document.getElementById('expenseCategory').value = category;
+                document.getElementById('otherExpenseCategory').value = '';
+                document.getElementById('expenseDescription').value = '';
+                document.getElementById('expenseAmount').value = '';
+                document.getElementById('expenseDueDate').value = '';
+                
+                if (category === 'other') {
+                    document.getElementById('otherExpenseCategoryContainer').classList.remove('hidden');
+                } else {
+                    document.getElementById('otherExpenseCategoryContainer').classList.add('hidden');
+                }
+                
+                document.getElementById('expenseModalTitle').textContent = 'Add Expense';
+                showModal('expenseModal');
+                document.getElementById('addExpenseMenu').classList.remove('show');
+            }
+        });
+        
+        // Handle Other Expense Category selection
+        document.getElementById('expenseCategory').addEventListener('change', function() {
+            if (this.value === 'other') {
+                document.getElementById('otherExpenseCategoryContainer').classList.remove('hidden');
+            } else {
+                document.getElementById('otherExpenseCategoryContainer').classList.add('hidden');
+            }
+        });
+        
+        // Handle expense form submission
+        document.getElementById('expenseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('expenseId').value || Date.now();
+            let category = document.getElementById('expenseCategory').value;
+            
+            if (category === 'other') {
+                category = document.getElementById('otherExpenseCategory').value;
+            }
+            
+            const description = document.getElementById('expenseDescription').value;
+            const amount = parseFloat(document.getElementById('expenseAmount').value) || 0;
+            const dueDate = parseInt(document.getElementById('expenseDueDate').value) || 1;
+            
+            // Validate required fields
+            if (!category) {
+                alert('Please select or enter a category');
+                return;
+            }
+            
+            if (amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+            
+            // Create or update expense object
+            const expense = {
+                id: parseInt(id),
+                category,
+                description,
+                amount,
+                dueDate
+            };
+            
+            // Check if editing or adding new
+            const existingIndex = expenses.findIndex(exp => exp.id === parseInt(id));
+            
+            if (existingIndex >= 0) {
+                expenses[existingIndex] = expense;
+                showToast('Expense updated successfully!');
+            } else {
+                expenses.push(expense);
+                showToast('Expense added successfully!');
+            }
+            
+            // Refresh data and hide modal
+            renderExpenses();
+            updateFinancialSummary();
+            updateCharts();
+            hideModal('expenseModal');
+        });
+        
+        // Add Income Source
+        document.getElementById('addIncomeBtn').addEventListener('click', function() {
+            document.getElementById('incomeId').value = '';
+            document.getElementById('incomeSource').value = '';
+            document.getElementById('incomeAmount').value = '';
+            document.getElementById('incomeModalTitle').textContent = 'Add Income Source';
+            showModal('incomeModal');
+        });
+        
+        // Handle income form submission
+        document.getElementById('incomeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('incomeId').value || Date.now();
+            const source = document.getElementById('incomeSource').value;
+            const amount = parseFloat(document.getElementById('incomeAmount').value) || 0;
+            
+            // Validate required fields
+            if (!source) {
+                alert('Please enter an income source');
+                return;
+            }
+            
+            if (amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+            
+            // Create or update income object
+            const incomeItem = {
+                id: parseInt(id),
+                source,
+                amount
+            };
+            
+            // Check if editing or adding new
+            const existingIndex = income.findIndex(inc => inc.id === parseInt(id));
+            
+            if (existingIndex >= 0) {
+                income[existingIndex] = incomeItem;
+                showToast('Income updated successfully!');
+            } else {
+                income.push(incomeItem);
+                showToast('Income added successfully!');
+            }
+            
+            // Refresh data and hide modal
+            renderIncome();
+            updateFinancialSummary();
+            updateCharts();
+            hideModal('incomeModal');
+        });
+        
+        // Render credit cards and loans to table
+        function renderCreditCards() {
+            creditCardsTableBody.innerHTML = '';
+            
+            creditCards.forEach(card => {
+                const available = card.limit - card.outstanding;
+                const afterPayment = available + card.installment;
+                const usagePercentage = calculatePercentage(card.outstanding, card.limit);
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${card.bank}</td>
+                    <td>${formatCurrency(card.limit)}</td>
+                    <td>${formatCurrency(card.installment)}</td>
+                    <td>${usagePercentage}%</td>
+                    <td>${formatCurrency(card.outstanding)}</td>
+                    <td>${formatCurrency(available)}</td>
+                    <td>${formatCurrency(afterPayment)}</td>
+                    <td>${card.statementDate}</td>
+                    <td>${card.dueDate}</td>
+                    <td>${formatCurrency(card.dueAmount)}</td>
+                    <td>
+                        <button class="edit-account-btn text-peacock hover:text-peacock-dark p-1" data-id="${card.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-account-btn text-red-500 hover:text-red-700 p-1" data-id="${card.id}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                `;
+                creditCardsTableBody.appendChild(row);
+            });
+            
+            // Calculate and update totals
+            updateCreditCardTotals();
+            
+            // Add event listeners to edit and delete buttons
+            document.querySelectorAll('.edit-account-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.dataset.id);
+                    editAccount(id);
+                });
+            });
+            
+            document.querySelectorAll('.delete-account-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.dataset.id);
+                    deleteAccount(id);
+                });
+            });
+        }
+        
+        // Update credit card totals
+        function updateCreditCardTotals() {
+            let totalLimit = 0;
+            let totalInstallment = 0;
+            let totalOutstanding = 0;
+            let totalDueAmount = 0;
+            
+            creditCards.forEach(card => {
+                totalLimit += card.limit;
+                totalInstallment += card.installment;
+                totalOutstanding += card.outstanding;
+                totalDueAmount += card.dueAmount;
+            });
+            
+            const totalAvailable = totalLimit - totalOutstanding;
+            const totalAfterPayment = totalAvailable + totalInstallment;
+            const avgUsage = calculatePercentage(totalOutstanding, totalLimit);
+            
+            document.getElementById('totalLimit').textContent = formatCurrency(totalLimit);
+            document.getElementById('totalInstallment').textContent = formatCurrency(totalInstallment);
+            document.getElementById('avgUsage').textContent = avgUsage + '%';
+            document.getElementById('totalOutstanding').textContent = formatCurrency(totalOutstanding);
+            document.getElementById('totalAvailable').textContent = formatCurrency(totalAvailable);
+            document.getElementById('totalAfterPayment').textContent = formatCurrency(totalAfterPayment);
+            document.getElementById('totalDueAmount').textContent = formatCurrency(totalDueAmount);
+        }
+        
+        // Edit account
+        function editAccount(id) {
+            const account = creditCards.find(card => card.id === id);
+            
+            if (account) {
+                document.getElementById('accountId').value = account.id;
+                document.getElementById('accountType').value = account.type;
+                document.getElementById('bank').value = account.bank;
+                
+                // Handle bank not in the list
+                if (!document.getElementById('bank').value) {
+                    document.getElementById('bank').value = 'Other';
+                    document.getElementById('otherBank').value = account.bank;
+                    document.getElementById('otherBankContainer').classList.remove('hidden');
+                } else {
+                    document.getElementById('otherBankContainer').classList.add('hidden');
+                }
+                
+                document.getElementById('limit').value = account.limit;
+                document.getElementById('installment').value = account.installment;
+                document.getElementById('outstanding').value = account.outstanding;
+                document.getElementById('statementDate').value = account.statementDate;
+                document.getElementById('dueDate').value = account.dueDate;
+                document.getElementById('dueAmount').value = account.dueAmount;
+                
+                // Set appropriate modal title
+                if (account.type === 'credit-card') {
+                    document.getElementById('modalTitle').textContent = 'Edit Credit Card';
+                } else if (account.type === 'auto-loan') {
+                    document.getElementById('modalTitle').textContent = 'Edit Auto Loan';
+                } else if (account.type === 'personal-loan') {
+                    document.getElementById('modalTitle').textContent = 'Edit Personal Loan';
+                } else if (account.type === 'mortgage') {
+                    document.getElementById('modalTitle').textContent = 'Edit Mortgage';
+                }
+                
+                showModal('accountModal');
+            }
+        }
+        
+        // Delete account
+        function deleteAccount(id) {
+            if (confirm('Are you sure you want to delete this account?')) {
+                creditCards = creditCards.filter(card => card.id !== id);
+                renderCreditCards();
+                updateFinancialSummary();
+                updateCharts();
+                showToast('Account deleted successfully!');
+            }
+        }
+        
+        // Render expenses to table
+        function renderExpenses() {
+            expensesTableBody.innerHTML = '';
+            
+            expenses.forEach(expense => {
+                const row = document.createElement('tr');
+                
+                // Get icon based on category
+                let icon = 'fas fa-question';
+                
+                if (expense.category === 'rent') {
+                    icon = 'fas fa-home';
+                } else if (expense.category === 'mobile') {
+                    icon = 'fas fa-mobile-alt';
+                } else if (expense.category === 'parking') {
+                    icon = 'fas fa-parking';
+                } else if (expense.category === 'household') {
+                    icon = 'fas fa-shopping-basket';
+                }
+                
+                // Format category name
+                let categoryDisplay = expense.category.charAt(0).toUpperCase() + expense.category.slice(1);
+                
+                row.innerHTML = `
+                    <td><i class="${icon} text-peacock mr-2"></i> ${categoryDisplay}</td>
+                    <td>${expense.description}</td>
+                    <td>${formatCurrency(expense.amount)}</td>
+                    <td>${expense.dueDate}</td>
+                    <td>
+                        <button class="edit-expense-btn text-peacock hover:text-peacock-dark p-1" data-id="${expense.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-expense-btn text-red-500 hover:text-red-700 p-1" data-id="${expense.id}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                `;
+                expensesTableBody.appendChild(row);
+            });
+            
+            // Calculate and update total
+            const totalExpense = expenses.reduce((total, expense) => total + expense.amount, 0);
+            document.getElementById('totalExpenseAmount').textContent = formatCurrency(totalExpense);
+            
+            // Add event listeners to edit and delete buttons
+            document.querySelectorAll('.edit-expense-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.dataset.id);
+                    editExpense(id);
+                });
+            });
+            
+            document.querySelectorAll('.delete-expense-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.dataset.id);
+                    deleteExpense(id);
+                });
+            });
+        }
+        
+        // Edit expense
+        function editExpense(id) {
+            const expense = expenses.find(exp => exp.id === id);
+            
+            if (expense) {
+                document.getElementById('expenseId').value = expense.id;
+                
+                // Set category
+                if (['rent', 'mobile', 'parking', 'household'].includes(expense.category)) {
+                    document.getElementById('expenseCategory').value = expense.category;
+                    document.getElementById('otherExpenseCategoryContainer').classList.add('hidden');
+                } else {
+                    document.getElementById('expenseCategory').value = 'other';
+                    document.getElementById('otherExpenseCategory').value = expense.category;
+                    document.getElementById('otherExpenseCategoryContainer').classList.remove('hidden');
+                }
+                
+                document.getElementById('expenseDescription').value = expense.description;
+                document.getElementById('expenseAmount').value = expense.amount;
+                document.getElementById('expenseDueDate').value = expense.dueDate;
+                
+                document.getElementById('expenseModalTitle').textContent = 'Edit Expense';
+                showModal('expenseModal');
+            }
+        }
+        
+        // Delete expense
+        function deleteExpense(id) {
+            if (confirm('Are you sure you want to delete this expense?')) {
+                expenses = expenses.filter(exp => exp.id !== id);
+                renderExpenses();
+                updateFinancialSummary();
+                updateCharts();
+                showToast('Expense deleted successfully!');
+            }
+        }
+        
+        // Render income sources
+        function renderIncome() {
+            incomeTableBody.innerHTML = '';
+            
+            income.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="py-2">${item.source}</td>
+                    <td class="text-right py-2">${formatCurrency(item.amount)}</td>
+                    <td class="text-right py-2">
+                        <button class="edit-income-btn text-peacock hover:text-peacock-dark p-1" data-id="${item.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-income-btn text-red-500 hover:text-red-700 p-1" data-id="${item.id}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                `;
+                incomeTableBody.appendChild(row);
+            });
+            
+            // Calculate and update total
+            const totalIncome = income.reduce((total, item) => total + item.amount, 0);
+            document.getElementById('totalIncome').textContent = formatCurrency(totalIncome);
+            
+            // Add event listeners to edit and delete buttons
+            document.querySelectorAll('.edit-income-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.dataset.id);
+                    editIncome(id);
+                });
+            });
+            
+            document.querySelectorAll('.delete-income-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.dataset.id);
+                    deleteIncome(id);
+                });
+            });
+        }
+        
+        // Edit income
+        function editIncome(id) {
+            const incomeItem = income.find(item => item.id === id);
+            
+            if (incomeItem) {
+                document.getElementById('incomeId').value = incomeItem.id;
+                document.getElementById('incomeSource').value = incomeItem.source;
+                document.getElementById('incomeAmount').value = incomeItem.amount;
+                
+                document.getElementById('incomeModalTitle').textContent = 'Edit Income Source';
+                showModal('incomeModal');
+            }
+        }
+        
+        // Delete income
+        function deleteIncome(id) {
+            if (confirm('Are you sure you want to delete this income source?')) {
+                income = income.filter(item => item.id !== id);
+                renderIncome();
+                updateFinancialSummary();
+                updateCharts();
+                showToast('Income source deleted successfully!');
+            }
+        }
+        
+        // Update financial summary
+        function updateFinancialSummary() {
+            // Calculate total credit card debt
+            const creditCardDebt = creditCards.filter(card => card.type === 'credit-card')
+                .reduce((total, card) => total + card.outstanding, 0);
+            const creditCardCount = creditCards.filter(card => card.type === 'credit-card').length;
+            
+            // Calculate total auto loan
+            const autoLoan = creditCards.filter(card => card.type === 'auto-loan')
+                .reduce((total, card) => total + card.outstanding, 0);
+            const autoLoanCount = creditCards.filter(card => card.type === 'auto-loan').length;
+            
+            // Calculate total monthly expenses
+            const monthlyExpenses = expenses.reduce((total, expense) => total + expense.amount, 0);
+            const expenseCount = expenses.length;
+            
+            // Calculate total income
+            const totalIncome = income.reduce((total, item) => total + item.amount, 0);
+            
+            // Calculate total installments
+            const totalInstallments = creditCards.reduce((total, card) => total + card.installment, 0);
+            
+            // Calculate available cash flow
+            const availableCashFlow = totalIncome - monthlyExpenses - totalInstallments;
+            
+            // Update summary cards
+            document.getElementById('totalCreditCardDebt').textContent = formatCurrency(creditCardDebt);
+            document.getElementById('creditCardCount').textContent = creditCardCount;
+            
+            document.getElementById('totalAutoLoan').textContent = formatCurrency(autoLoan);
+            document.getElementById('autoLoanCount').textContent = autoLoanCount;
+            
+            document.getElementById('totalMonthlyExpenses').textContent = formatCurrency(monthlyExpenses);
+            document.getElementById('expenseCount').textContent = expenseCount;
+            
+            document.getElementById('availableCashFlow').textContent = formatCurrency(availableCashFlow);
+            
+            // Update cash flow summary
+            document.getElementById('cashFlowIncome').textContent = formatCurrency(totalIncome);
+            
+            const ccPayments = creditCards.filter(card => card.type === 'credit-card')
+                .reduce((total, card) => total + card.installment, 0);
+            document.getElementById('cashFlowCreditCards').textContent = `-${formatCurrency(ccPayments)}`;
+            
+            const loanPayments = creditCards.filter(card => card.type !== 'credit-card')
+                .reduce((total, card) => total + card.installment, 0);
+            document.getElementById('cashFlowLoans').textContent = `-${formatCurrency(loanPayments)}`;
+            
+            document.getElementById('cashFlowExpenses').textContent = `-${formatCurrency(monthlyExpenses)}`;
+            document.getElementById('cashFlowAvailable').textContent = formatCurrency(availableCashFlow);
+            
+            // Update progress bars
+            if (totalIncome > 0) {
+                const ccPercentage = Math.min(100, Math.round((ccPayments / totalIncome) * 100));
+                document.getElementById('creditCardPaymentsBar').style.width = `${ccPercentage}%`;
+                
+                const loanPercentage = Math.min(100, Math.round((loanPayments / totalIncome) * 100));
+                document.getElementById('loanPaymentsBar').style.width = `${loanPercentage}%`;
+                
+                const expensesPercentage = Math.min(100, Math.round((monthlyExpenses / totalIncome) * 100));
+                document.getElementById('expensesBar').style.width = `${expensesPercentage}%`;
+            }
+        }
+        
+        // Initialize and update charts
+        function initializeCharts() {
+            const isDarkMode = document.body.classList.contains('dark');
+            const textColor = isDarkMode ? '#e0e0e0' : '#333333';
+            
+            // Get the chart canvases
+            const expenseChartCanvas = document.getElementById('expenseChart').getContext('2d');
+            const utilizationChartCanvas = document.getElementById('utilizationChart').getContext('2d');
+            const cashFlowChartCanvas = document.getElementById('cashFlowChart').getContext('2d');
+            
+            // Setup chart options
+            Chart.defaults.color = textColor;
+            Chart.defaults.font.family = "'Tahoma', Geneva, sans-serif";
+            
+            // Initialize Expense Breakdown Chart (Pie Chart)
+            expenseChart = new Chart(expenseChartCanvas, {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [
+                            '#2830BF',
+                            '#0CF7C8',
+                            '#EEAECA',
+                            '#94BBE9',
+                            '#36A2EB',
+                            '#FFCE56',
+                            '#4BC0C0'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                boxWidth: 12
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Initialize Credit Utilization Chart (Bar Chart)
+            utilizationChart = new Chart(utilizationChartCanvas, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Usage %',
+                        data: [],
+                        backgroundColor: '#2830BF',
+                        borderWidth: 0,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            
+            // Initialize Cash Flow Chart (Line Chart)
+            cashFlowChart = new Chart(cashFlowChartCanvas, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Income',
+                        data: [12000, 12000, 12000, 12000, 12000, 12000],
+                        borderColor: '#0CF7C8',
+                        backgroundColor: 'rgba(12, 247, 200, 0.1)',
+                        fill: true
+                    },
+                    {
+                        label: 'Expenses',
+                        data: [8000, 8200, 8500, 8300, 8400, 8100],
+                        borderColor: '#EEAECA',
+                        backgroundColor: 'rgba(238, 174, 202, 0.1)',
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: {
+                                callback: function(value) {
+                                    return 'د.إ' + value.toLocaleString('en-IN');
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Update chart data
+        function updateCharts() {
+            // Update Expense Breakdown Chart
+            const expenseCategories = {};
+            
+            // Add expense items
+            expenses.forEach(expense => {
+                const category = expense.category.charAt(0).toUpperCase() + expense.category.slice(1);
+                if (expenseCategories[category]) {
+                    expenseCategories[category] += expense.amount;
+                } else {
+                    expenseCategories[category] = expense.amount;
+                }
+            });
+            
+            // Add credit card and loan installments
+            creditCards.forEach(card => {
+                let category;
+                if (card.type === 'credit-card') {
+                    category = 'Credit Card';
+                } else if (card.type === 'auto-loan') {
+                    category = 'Auto Loan';
+                } else if (card.type === 'personal-loan') {
+                    category = 'Personal Loan';
+                } else if (card.type === 'mortgage') {
+                    category = 'Mortgage';
+                } else {
+                    category = 'Other Loan';
+                }
+                
+                if (expenseCategories[category]) {
+                    expenseCategories[category] += card.installment;
+                } else {
+                    expenseCategories[category] = card.installment;
+                }
+            });
+            
+            // Update expense chart
+            if (expenseChart) {
+                expenseChart.data.labels = Object.keys(expenseCategories);
+                expenseChart.data.datasets[0].data = Object.values(expenseCategories);
+                expenseChart.update();
+            }
+            
+            // Update Credit Utilization Chart (only for credit cards)
+            const creditCardData = creditCards.filter(card => card.type === 'credit-card');
+            const bankLabels = creditCardData.map(card => card.bank);
+            const usageData = creditCardData.map(card => 
+                calculatePercentage(card.outstanding, card.limit)
+            );
+            
+            if (utilizationChart) {
+                utilizationChart.data.labels = bankLabels;
+                utilizationChart.data.datasets[0].data = usageData;
+                
+                // Update colors based on usage percentage
+                const colors = usageData.map(usage => {
+                    if (usage >= 80) return '#ef4444';  // Red for high utilization
+                    if (usage >= 50) return '#f97316';  // Orange for medium
+                    return '#0CF7C8';  // Teal for low utilization
+                });
+                
+                utilizationChart.data.datasets[0].backgroundColor = colors;
+                utilizationChart.update();
+            }
+            
+            // Cash Flow Chart is already set with sample data
+            if (cashFlowChart) {
+                // Can be extended to show actual data if available
+                cashFlowChart.update();
+            }
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCreditCards();
+            renderExpenses();
+            renderIncome();
+            updateFinancialSummary();
+            initializeCharts();
+            updateCharts();
+            
+            // Check for dark mode preference
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.body.classList.add('dark');
+                toggleThemeBtn.innerHTML = '<i class="fas fa-sun text-xl"></i>';
+            }
+            
+            // Refresh button functionality
+            document.getElementById('refreshDataBtn').addEventListener('click', function() {
+                renderCreditCards();
+                renderExpenses();
+                renderIncome();
+                updateFinancialSummary();
+                updateCharts();
+                showToast('Data refreshed successfully!');
+            });
+        });
+    </script>
+</body>
+</html>
