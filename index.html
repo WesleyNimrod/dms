@@ -230,6 +230,8 @@
             position: relative;
             transition: all 0.3s;
             white-space: nowrap;
+            padding-top: 6px;
+            padding-bottom: 6px;
         }
         
         .tab-btn:after {
@@ -440,6 +442,12 @@
                 </button>
                 <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="rategrid">
                     <i class="fas fa-table mr-2"></i>Rate Grid
+                </button>
+                <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="finance">
+                    <i class="fas fa-hand-holding-usd mr-2"></i>Finance
+                </button>
+                <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="brochures">
+                    <i class="fas fa-file-pdf mr-2"></i>Brochures
                 </button>
             </div>
             
@@ -915,6 +923,16 @@
         <div id="tab-rategrid" class="tab-content">
             <iframe src="rategrid.html" title="Rate Grid" id="rategridIframe"></iframe>
         </div>
+        
+        <!-- Finance Tab (New) -->
+        <div id="tab-finance" class="tab-content">
+            <iframe src="finance.html" title="Finance" id="financeIframe"></iframe>
+        </div>
+        
+        <!-- Brochures Tab (New) -->
+        <div id="tab-brochures" class="tab-content">
+            <iframe src="brochures.html" title="Brochures" id="brochuresIframe"></iframe>
+        </div>
     </div>
     
     <!-- Success Indicator -->
@@ -1203,7 +1221,7 @@
                     }
                     
                     // Force iframe reload as a last resort
-                    if (iframe.id === 'misIframe' || iframe.id === 'advcalcIframe' || iframe.id === 'rategridIframe' || iframe.id === 'callingIframe' || iframe.id === 'plDataIframe') {
+                    if (iframe.id === 'misIframe' || iframe.id === 'advcalcIframe' || iframe.id === 'rategridIframe' || iframe.id === 'callingIframe' || iframe.id === 'plDataIframe' || iframe.id === 'financeIframe' || iframe.id === 'brochuresIframe') {
                         const currentSrc = iframe.src;
                         iframe.src = '';
                         setTimeout(() => {
@@ -1274,13 +1292,25 @@
         document.getElementById('screenshotComparison').addEventListener('click', function() {
             const comparisonSection = document.getElementById('tab-comparison').querySelector('.bg-white.dark\\:bg-gray-800');
             
-            html2canvas(comparisonSection).then(canvas => {
+            // Show loading indicator
+            showSuccess('Capturing screenshot...');
+            
+            // Increase scale for better quality
+            html2canvas(comparisonSection, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff'
+            }).then(canvas => {
                 const imageData = canvas.toDataURL('image/png');
                 const link = document.createElement('a');
                 link.href = imageData;
                 link.download = 'loan_comparison.png';
                 link.click();
                 showSuccess('Comparison screenshot saved!');
+            }).catch(err => {
+                console.error('Screenshot error:', err);
+                showSuccess('Error creating screenshot: ' + err.message);
             });
         });
         
