@@ -225,32 +225,60 @@
             border-color: #4b5563;
         }
         
-        /* New styles for tabbed interface */
+        /* New styles for vertical tabbed interface */
+        .layout-container {
+            display: flex;
+            height: calc(100vh - 20px);
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .vertical-tabs {
+            width: 240px;
+            min-width: 240px;
+            height: 100%;
+            overflow-y: auto;
+            border-radius: 12px;
+            padding: 15px 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
         .tab-btn {
             position: relative;
             transition: all 0.3s;
             white-space: nowrap;
-            padding-top: 6px;
-            padding-bottom: 6px;
+            padding: 12px 15px;
+            margin: 2px 12px;
+            border-radius: 8px;
+            text-align: left;
+            display: flex;
+            align-items: center;
         }
         
-        .tab-btn:after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: white;
-            transition: width 0.3s;
+        .tab-btn i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
         }
         
         .tab-btn.active {
             color: white;
+            background: rgba(255, 255, 255, 0.15);
         }
         
-        .tab-btn.active:after {
-            width: 100%;
+        .tab-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .content-container {
+            flex: 1;
+            height: 100%;
+            overflow-y: auto;
+            padding: 20px;
+            border-radius: 12px;
+            margin-left: 15px;
         }
         
         .tab-content {
@@ -375,6 +403,29 @@
         .dark .screenshot-btn:hover {
             background: #4b5563;
         }
+        
+        /* Theme toggle in tabs */
+        .theme-toggle-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px 0;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Header profile controls */
+        .header-controls {
+            background-color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .dark .header-controls {
+            background-color: #1f2937;
+        }
     </style>
 </head>
 <body class="bg-gray-50 transition-colors duration-200 font-tahoma">
@@ -395,543 +446,557 @@
         </div>
     </div>
     
-    <div class="w-full px-3 py-2" id="printableArea">
-        <div class="flex justify-between items-center mb-4">
-            <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Management Information System</h1>
-            <!-- Theme toggle moved next to heading -->
-            <div class="flex items-center">
-                <span class="mr-2 text-gray-700 dark:text-gray-300"><i class="fas fa-sun"></i></span>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="themeToggle">
-                    <span class="toggle-slider"></span>
-                </label>
-                <span class="ml-2 text-gray-700 dark:text-gray-300"><i class="fas fa-moon"></i></span>
-            </div>
-        </div>
+    <div class="w-full h-full" id="printableArea">
+        <!-- Main heading - Centered -->
+        <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent text-center py-3">Management Information System</h1>
         
-        <!-- Tabbed Interface -->
-        <div class="mb-4 bg-gradient-to-r from-primary/90 to-secondary/90 p-2 rounded-lg shadow-md">
-            <!-- Tab Navigation -->
-            <div class="flex border-b border-gray-200 dark:border-gray-700 mb-4 overflow-x-auto">
-                <button class="tab-btn active py-2 px-4 text-white font-medium" data-tab="main">
-                    <i class="fas fa-home mr-2"></i>Main
+        <!-- Main layout with vertical tabs -->
+        <div class="layout-container">
+            <!-- Vertical Tabs on the left side -->
+            <div class="vertical-tabs gradient-primary">
+                <!-- Theme toggle at the top of tabs -->
+                <div class="theme-toggle-container">
+                    <span class="mr-2 text-gray-300"><i class="fas fa-sun"></i></span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="themeToggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="ml-2 text-gray-300"><i class="fas fa-moon"></i></span>
+                </div>
+                
+                <!-- Tab Navigation - Vertical -->
+                <button class="tab-btn active text-white font-medium" data-tab="main">
+                    <i class="fas fa-home"></i>Main
                 </button>
-                <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="mis">
-                    <i class="fas fa-book mr-2"></i>MIS
+                <button class="tab-btn text-white/80 font-medium" data-tab="mis">
+                    <i class="fas fa-book"></i>MIS
                 </button>
-                <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="datasheet">
-                    <i class="fas fa-chart-line mr-2"></i>Follow-Up
+                <button class="tab-btn text-white/80 font-medium" data-tab="datasheet">
+                    <i class="fas fa-chart-line"></i>Follow-Up
                 </button>
-                <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="calling">
-                    <i class="fas fa-phone mr-2"></i>Calling
+                <button class="tab-btn text-white/80 font-medium" data-tab="calling">
+                    <i class="fas fa-phone"></i>Calling
                 </button>
-                <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="pldata">
-                    <i class="fas fa-database mr-2"></i>PL Data
+                <button class="tab-btn text-white/80 font-medium" data-tab="pldata">
+                    <i class="fas fa-database"></i>PL Data
                 </button>
-                <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="share">
-                    <i class="fas fa-share-alt mr-2"></i>Share
+                <button class="tab-btn text-white/80 font-medium" data-tab="share">
+                    <i class="fas fa-share-alt"></i>Share
                 </button>
-                <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="emichart">
-                    <i class="fas fa-chart-bar mr-2"></i>EMI Chart
+                <button class="tab-btn text-white/80 font-medium" data-tab="emichart">
+                    <i class="fas fa-chart-bar"></i>EMI Chart
                 </button>
-                <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="comparison">
-                    <i class="fas fa-balance-scale mr-2"></i>Comparison
+                <button class="tab-btn text-white/80 font-medium" data-tab="comparison">
+                    <i class="fas fa-balance-scale"></i>Comparison
                 </button>
-                <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="advcalc">
-                    <i class="fas fa-calculator mr-2"></i>Advance
+                <button class="tab-btn text-white/80 font-medium" data-tab="advcalc">
+                    <i class="fas fa-calculator"></i>Advance
                 </button>
-                <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="rategrid">
-                    <i class="fas fa-table mr-2"></i>Rate Grid
+                <button class="tab-btn text-white/80 font-medium" data-tab="rategrid">
+                    <i class="fas fa-table"></i>Rate Grid
                 </button>
-                <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="finance">
-                    <i class="fas fa-hand-holding-usd mr-2"></i>Finance
+                <button class="tab-btn text-white/80 font-medium" data-tab="finance">
+                    <i class="fas fa-hand-holding-usd"></i>Finance
                 </button>
-                <button class="tab-btn py-2 px-4 text-white/80 font-medium" data-tab="brochures">
-                    <i class="fas fa-file-pdf mr-2"></i>Brochures
+                <button class="tab-btn text-white/80 font-medium" data-tab="brochures">
+                    <i class="fas fa-file-pdf"></i>Brochures
                 </button>
             </div>
             
-            <!-- Customer Name, Saved Profiles and WhatsApp Input Group - Centered -->
-            <div id="headerControls" class="flex flex-col items-center justify-center px-2 mb-2">
-                <div class="flex flex-wrap items-center justify-center gap-2 w-full">
-                    <input type="text" id="customerName" placeholder="Customer Name" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white max-w-[160px]">
-                    <select id="savedProfiles" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white max-w-[160px]">
-                        <option value="">Select a profile</option>
-                    </select>
-                    <button id="retrieveProfileBtn" class="custom-btn text-white p-2 rounded-md flex items-center justify-center">
-                        <i class="fas fa-download"></i>
-                    </button>
-                    <button id="deleteProfileBtn" class="bg-gradient-to-r from-red-500 to-red-600 text-white p-2 rounded-md hover:opacity-90 flex items-center justify-center">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                    <input type="tel" id="whatsappNumber" placeholder="WhatsApp number" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white max-w-[160px]">
-                    <button id="sendWhatsAppBtn" class="bg-gradient-to-r from-green-600 to-green-700 text-white p-2 rounded-md hover:opacity-90">
-                        <i class="fab fa-whatsapp"></i>
-                    </button>
+            <!-- Content Container -->
+            <div class="content-container bg-white dark:bg-gray-800 shadow-md">
+                <!-- Customer Name, Saved Profiles and WhatsApp Input Group - Only in Main Tab -->
+                <div id="headerControls" class="header-controls">
+                    <div class="flex flex-wrap items-center justify-center gap-2 w-full">
+                        <input type="text" id="customerName" placeholder="Customer Name" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white max-w-[160px]">
+                        <select id="savedProfiles" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white max-w-[160px]">
+                            <option value="">Select a profile</option>
+                        </select>
+                        <button id="retrieveProfileBtn" class="custom-btn text-white p-2 rounded-md flex items-center justify-center">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button id="deleteProfileBtn" class="bg-gradient-to-r from-red-500 to-red-600 text-white p-2 rounded-md hover:opacity-90 flex items-center justify-center">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        
+                        <!-- Profile file export/import buttons -->
+                        <button id="exportProfileBtn" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-2 rounded-md hover:opacity-90 flex items-center justify-center">
+                            <i class="fas fa-file-export"></i>
+                        </button>
+                        <button id="importProfileBtn" class="bg-gradient-to-r from-green-600 to-green-700 text-white p-2 rounded-md hover:opacity-90 flex items-center justify-center">
+                            <i class="fas fa-file-import"></i>
+                        </button>
+                        <input type="file" id="profileFileInput" class="hidden" accept=".json">
+                        
+                        <input type="tel" id="whatsappNumber" placeholder="WhatsApp number" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white max-w-[160px]">
+                        <button id="sendWhatsAppBtn" class="bg-gradient-to-r from-green-600 to-green-700 text-white p-2 rounded-md hover:opacity-90">
+                            <i class="fab fa-whatsapp"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
-        </div>
-        
-        <!-- Tab Content Containers -->
-        <div id="tab-main" class="tab-content active">
-            <!-- Main Calculator Container -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 
-                <!-- Left Column - DBR Calculator -->
-                <div id="dbrCalculator" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md border-l-4 border-primary compact-form">
-                    <h2 class="text-xl font-bold text-primary dark:text-white mb-4">DBR CALCULATOR</h2>
-                    
-                    <div class="space-y-2">
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Salary (AED):</label>
-                            <input type="number" id="salary" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
-                        </div>
+                <!-- Tab Content Containers -->
+                <div id="tab-main" class="tab-content active">
+                    <!-- Main Calculator Container -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         
-                        <!-- Add-back section -->
-                        <div id="addbacks-container">
-                            <div class="grid grid-cols-3 gap-2 items-center addback-entry">
-                                <label class="text-gray-700 dark:text-gray-300 font-medium">Add-back:</label>
-                                <div class="col-span-2">
-                                    <select class="addback-type border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white w-full">
-                                        <option value="">Select Add-back Type</option>
-                                        <option value="hra">HRA</option>
-                                        <option value="airfare">Airfare Allowance</option>
-                                        <option value="overtime">Over-time</option>
-                                        <option value="servicecharge">Service Charge</option>
-                                        <option value="incentives">Incentives</option>
-                                        <option value="telephone">Telephone Allowance</option>
-                                    </select>
+                        <!-- Left Column - DBR Calculator -->
+                        <div id="dbrCalculator" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md border-l-4 border-primary compact-form">
+                            <h2 class="text-xl font-bold text-primary dark:text-white mb-4">DBR CALCULATOR</h2>
+                            
+                            <div class="space-y-2">
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Salary (AED):</label>
+                                    <input type="number" id="salary" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <div class="dynamic-addback-fields"></div>
-                        
-                        <div class="flex justify-start gap-2 mb-2">
-                            <button id="addMoreAddbackBtn" class="custom-btn text-white p-1.5 rounded-md text-sm">+ Add More</button>
-                            <button id="removeAddbackBtn" class="custom-btn text-white p-1.5 rounded-md text-sm disabled:opacity-50" disabled>- Remove</button>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Gross Salary:</label>
-                            <input type="text" id="grossSalary" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Allowed Liability:</label>
-                            <input type="text" id="allowedLiability" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">DBR %:</label>
-                            <div class="col-span-2 flex items-center">
-                                <input type="text" id="dbrPercentage" class="w-full border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
-                            </div>
-                        </div>
-                        
-                        <button id="addExistingLoanBtn" class="custom-btn text-white p-2 rounded-md w-full">+ Existing Loans</button>
-                        
-                        <!-- Existing Loans Container -->
-                        <div id="existingLoansContainer" class="mt-2 space-y-2 hidden"></div>
+                                
+                                <!-- Add-back section -->
+                                <div id="addbacks-container">
+                                    <div class="grid grid-cols-3 gap-2 items-center addback-entry">
+                                        <label class="text-gray-700 dark:text-gray-300 font-medium">Add-back:</label>
+                                        <div class="col-span-2">
+                                            <select class="addback-type border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white w-full">
+                                                <option value="">Select Add-back Type</option>
+                                                <option value="hra">HRA</option>
+                                                <option value="airfare">Airfare Allowance</option>
+                                                <option value="overtime">Over-time</option>
+                                                <option value="servicecharge">Service Charge</option>
+                                                <option value="incentives">Incentives</option>
+                                                <option value="telephone">Telephone Allowance</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="dynamic-addback-fields"></div>
+                                
+                                <div class="flex justify-start gap-2 mb-2">
+                                    <button id="addMoreAddbackBtn" class="custom-btn text-white p-1.5 rounded-md text-sm">+ Add More</button>
+                                    <button id="removeAddbackBtn" class="custom-btn text-white p-1.5 rounded-md text-sm disabled:opacity-50" disabled>- Remove</button>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Gross Salary:</label>
+                                    <input type="text" id="grossSalary" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Allowed Liability:</label>
+                                    <input type="text" id="allowedLiability" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">DBR %:</label>
+                                    <div class="col-span-2 flex items-center">
+                                        <input type="text" id="dbrPercentage" class="w-full border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
+                                    </div>
+                                </div>
+                                
+                                <button id="addExistingLoanBtn" class="custom-btn text-white p-2 rounded-md w-full">+ Existing Loans</button>
+                                
+                                <!-- Existing Loans Container -->
+                                <div id="existingLoansContainer" class="mt-2 space-y-2 hidden"></div>
 
-                        <!-- Credit Cards Section -->
-                        <div id="creditCardsContainer">
-                            <div class="credit-card-entry mb-2">
-                                <div class="flex justify-between items-center mb-1">
-                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Credit Card 1:</label>
-                                    <button class="settle-card-btn custom-btn text-white px-3 py-1 rounded text-sm">Settle</button>
+                                <!-- Credit Cards Section -->
+                                <div id="creditCardsContainer">
+                                    <div class="credit-card-entry mb-2">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <label class="text-gray-700 dark:text-gray-300 font-medium">Credit Card 1:</label>
+                                            <button class="settle-card-btn custom-btn text-white px-3 py-1 rounded text-sm">Settle</button>
+                                        </div>
+                                        <div class="grid grid-cols-4 gap-2">
+                                            <select class="card-bank-select border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white col-span-1">
+                                                <option value="ADCB">ADCB</option>
+                                                <option value="ENBD">ENBD</option>
+                                                <option value="EIB">EIB</option>
+                                                <option value="FAB">FAB</option>
+                                                <option value="ADIB">ADIB</option>
+                                                <option value="CBD">CBD</option>
+                                                <option value="HSBC">HSBC</option>
+                                                <option value="CITI">CITI</option>
+                                                <option value="SCB">SCB</option>
+                                                <option value="MASHREQ">MASHREQ</option>
+                                                <option value="DIB">DIB</option>
+                                                <option value="OTHER">OTHER</option>
+                                            </select>
+                                            <input type="number" placeholder="Credit Limit" class="credit-card-amount border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white col-span-1">
+                                            <input type="number" placeholder="Outstanding" class="credit-card-outstanding border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white col-span-2">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="grid grid-cols-4 gap-2">
-                                    <select class="card-bank-select border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white col-span-1">
-                                        <option value="ADCB">ADCB</option>
-                                        <option value="ENBD">ENBD</option>
-                                        <option value="EIB">EIB</option>
-                                        <option value="FAB">FAB</option>
-                                        <option value="ADIB">ADIB</option>
-                                        <option value="CBD">CBD</option>
-                                        <option value="HSBC">HSBC</option>
-                                        <option value="CITI">CITI</option>
-                                        <option value="SCB">SCB</option>
-                                        <option value="MASHREQ">MASHREQ</option>
-                                        <option value="DIB">DIB</option>
-                                        <option value="OTHER">OTHER</option>
+                                
+                                <div class="flex gap-2">
+                                    <button id="addCreditCardBtn" class="custom-btn text-white p-1.5 rounded-md text-sm">+ Add Card</button>
+                                    <button id="removeCreditCardBtn" class="custom-btn text-white p-1.5 rounded-md text-sm disabled:opacity-50" disabled>- Remove Card</button>
+                                </div>
+                                
+                                <!-- Moved Credit Card Suggestion above Total CC Limit -->
+                                <div id="ccSuggestionContainer" class="border border-primary p-2 rounded-lg mt-2 hidden">
+                                    <h3 class="text-base font-bold text-primary mb-1">CREDIT CARD SUGGESTION</h3>
+                                    <p id="ccSuggestionText" class="text-gray-700 dark:text-gray-300 text-sm"></p>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Total CC Limit:</label>
+                                    <input type="text" id="totalCCLimit" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">DBR Of Credit Card:</label>
+                                    <div class="col-span-2 flex items-center">
+                                        <input type="text" id="dbrCC" class="border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white flex-grow" readonly>
+                                        <div class="ml-2 flex items-center">
+                                            <span class="text-gray-700 dark:text-gray-300 text-sm mr-1">3%</span>
+                                            <label class="toggle-switch mx-1" style="width: 40px; height: 20px;">
+                                                <input type="checkbox" id="dbrRateToggle">
+                                                <span class="toggle-slider" style="border-radius: 20px;"></span>
+                                            </label>
+                                            <span class="text-gray-700 dark:text-gray-300 text-sm ml-1">5%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Total Liabilities:</label>
+                                    <input type="text" id="totalLiabilities" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Available Liability:</label>
+                                    <input type="text" id="availableLiability" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">New Total Liabilities:</label>
+                                    <input type="text" id="newTotalLiabilities" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Special Note:</label>
+                                    <textarea id="specialNote" class="col-span-2 w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Right Column - EMI Calculator -->
+                        <div id="emiCalculator" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md border-l-4 border-primary compact-form">
+                            <h2 class="text-xl font-bold text-primary dark:text-white mb-4">EMI CALCULATOR</h2>
+                            
+                            <div class="space-y-2">
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Loan Type:</label>
+                                    <select id="loanType" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                                        <option value="fresh-0-30">Fresh (0-30 days)</option>
+                                        <option value="fresh-30-60">Fresh (30-60 days)</option>
+                                        <option value="topup-0-30">Top-up (0-30 days)</option>
+                                        <option value="topup-30-60">Top-up (30-60 days)</option>
+                                        <option value="takeover-60-90">Take over (60-90 days)</option>
                                     </select>
-                                    <input type="number" placeholder="Credit Limit" class="credit-card-amount border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white col-span-1">
-                                    <input type="number" placeholder="Outstanding" class="credit-card-outstanding border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white col-span-2">
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Disbursal Date:</label>
+                                    <input type="date" id="disbursalDate" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">First Payment Date:</label>
+                                    <input type="date" id="firstPaymentDate" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                                    <p id="dateError" class="col-span-3 text-red-600 dark:text-red-400 text-sm hidden">Error: Invalid Payment Date</p>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Days Between:</label>
+                                    <input type="text" id="daysBetween" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Multiples Of Salary:</label>
+                                    <input type="number" id="multiplesOfSalary" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" value="15">
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Max Loan Eligibility (AED):</label>
+                                    <input type="text" id="maxLoanEligibility" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Tenure:</label>
+                                    <input type="number" id="tenureMonths" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" value="48" min="1" max="300">
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Loan Amount (AED):</label>
+                                    <div class="col-span-2 flex gap-2">
+                                        <input type="number" id="loanAmount" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white flex-grow">
+                                        <input type="text" id="loanMultiples" class="border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white w-16 text-center" readonly>
+                                    </div>
+                                    <p id="loanAmountError" class="col-span-3 text-red-600 dark:text-red-400 text-sm hidden">Error: Loan Amount Will Exceed DBR Limit!</p>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Reducing Rate %:</label>
+                                    <input type="number" id="reducingRate" step="0.01" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" value="10">
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Flat Rate %:</label>
+                                    <input type="text" id="flatRate" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">EMI (AED):</label>
+                                    <input type="text" id="emi" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Total Payment (AED):</label>
+                                    <input type="text" id="totalPayment" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Total Interest (AED):</label>
+                                    <input type="text" id="totalInterest" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Processing Fees + VAT (AED):</label>
+                                    <input type="text" id="processingFees" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Total Outstanding:</label>
+                                    <input type="text" id="totalOutstanding" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Cash In Hand - NetPay (AED):</label>
+                                    <input type="text" id="cashInHand" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 mt-2">
+                                    <button id="findOptimalLoanBtn" class="custom-btn text-white p-2 rounded-md text-sm">
+                                        <i class="fas fa-search-dollar mr-1"></i> Optimal
+                                    </button>
+                                    <button id="resetBtn" class="custom-btn text-white p-2 rounded-md text-sm">
+                                        <i class="fas fa-redo-alt mr-1"></i> Reset
+                                    </button>
+                                    <button id="saveProfileBtn" class="custom-btn text-white p-2 rounded-md text-sm">
+                                        <i class="fas fa-save mr-1"></i> Save
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- EMI Chart Section -->
+                    <div id="emiChartSection" class="mt-4 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md border-l-4 border-primary hidden">
+                        <h2 class="text-xl font-bold text-primary dark:text-white mb-4">EMI PAYMENT SCHEDULE</h2>
+                        <div class="relative" style="height: 350px;">
+                            <canvas id="emiChart"></canvas>
+                        </div>
+                        <div class="mt-4 overflow-x-auto">
+                            <table class="w-full border-collapse text-sm">
+                                <thead>
+                                    <tr class="bg-primary text-white">
+                                        <th class="border border-gray-300 p-2">Month</th>
+                                        <th class="border border-gray-300 p-2">EMI (AED)</th>
+                                        <th class="border border-gray-300 p-2">Principal (AED)</th>
+                                        <th class="border border-gray-300 p-2">Interest (AED)</th>
+                                        <th class="border border-gray-300 p-2">Balance (AED)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="emiScheduleBody">
+                                    <!-- Will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- MIS Tab -->
+                <div id="tab-mis" class="tab-content">
+                    <iframe src="mis.html" title="MIS Information" id="misIframe"></iframe>
+                </div>
+                
+                <!-- Follow-Up Tab (previously Data Sheet) -->
+                <div id="tab-datasheet" class="tab-content">
+                    <iframe src="https://script.google.com/macros/s/AKfycbyt6zvvO5POe2jMnyaR2bJOPu09L2f2Rr3Aeh72_APIR1C-6JVzSDOZvGfi4ZOZbQL0/exec" frameborder="0" width="100%" height="600px"></iframe>
+                </div>
+                
+                <!-- Calling Tab (New) -->
+                <div id="tab-calling" class="tab-content">
+                    <iframe src="Calling.html" title="Calling" id="callingIframe"></iframe>
+                </div>
+                
+                <!-- PL Data Tab (New) -->
+                <div id="tab-pldata" class="tab-content">
+                    <iframe src="pl.html" title="PL Data" id="plDataIframe"></iframe>
+                </div>
+                
+                <!-- Share Tab -->
+                <div id="tab-share" class="tab-content">
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                        <h2 class="text-xl font-bold text-primary dark:text-white mb-4">SHARE LOAN INFORMATION</h2>
+                        
+                        <button id="shareTabBtn" class="custom-btn text-white p-2 rounded-md text-sm mb-4">
+                            <i class="fas fa-share-alt mr-1"></i> Share Loan Information
+                        </button>
+                        
+                        <div class="text-gray-700 dark:text-gray-300 mt-4">
+                            <p class="mb-2">Click the Share button above to view and share the full loan information, including:</p>
+                            <ul class="list-disc ml-5 space-y-1">
+                                <li>Loan details (amount, type, tenure)</li>
+                                <li>Interest rates (reducing and flat)</li>
+                                <li>EMI and payment details</li>
+                                <li>Processing fees and charges</li>
+                                <li>Complete EMI schedule</li>
+                            </ul>
+                            
+                            <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800">
+                                <p class="text-blue-800 dark:text-blue-300 font-medium">Share Options:</p>
+                                <p class="text-sm mt-1">You can export as PDF, print directly, or send information via WhatsApp using the number field at the top of the page.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- EMI Chart Tab -->
+                <div id="tab-emichart" class="tab-content">
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                        <h2 class="text-xl font-bold text-primary dark:text-white mb-4">EMI PAYMENT SCHEDULE</h2>
+                        
+                        <button id="showEmiChartBtnTab" class="custom-btn text-white p-2 rounded-md text-sm mb-4">
+                            <i class="fas fa-chart-bar mr-1"></i> Generate EMI Chart
+                        </button>
+                        
+                        <div class="relative" style="height: 400px;">
+                            <canvas id="emiChartStandalone"></canvas>
+                        </div>
+                        <div class="mt-4 overflow-x-auto">
+                            <table class="w-full border-collapse text-sm">
+                                <thead>
+                                    <tr class="bg-primary text-white">
+                                        <th class="border border-gray-300 p-2">Month</th>
+                                        <th class="border border-gray-300 p-2">EMI (AED)</th>
+                                        <th class="border border-gray-300 p-2">Principal (AED)</th>
+                                        <th class="border border-gray-300 p-2">Interest (AED)</th>
+                                        <th class="border border-gray-300 p-2">Balance (AED)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="emiScheduleBodyStandalone">
+                                    <!-- Will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Comparison Tab -->
+                <div id="tab-comparison" class="tab-content">
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold text-primary dark:text-white">LOAN COMPARISON</h2>
+                            <button id="screenshotComparison" class="screenshot-btn" title="Take Screenshot">
+                                <i class="fas fa-camera"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- First Bank -->
+                            <div class="space-y-2">
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Bank Name:</label>
+                                    <input type="text" id="bank1Name" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Loan Amount (AED):</label>
+                                    <input type="number" id="bank1LoanAmount" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Tenure (Months):</label>
+                                    <input type="number" id="bank1Tenure" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Reducing Rate (%):</label>
+                                    <input type="number" id="bank1Rate" step="0.01" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">EMI (AED):</label>
+                                    <input type="text" id="bank1EMI" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Total Interest (AED):</label>
+                                    <input type="text" id="bank1TotalInterest" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
+                                </div>
+                            </div>
+                            
+                            <!-- Second Bank -->
+                            <div class="space-y-2">
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Bank Name:</label>
+                                    <input type="text" id="bank2Name" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Loan Amount (AED):</label>
+                                    <input type="number" id="bank2LoanAmount" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Tenure (Months):</label>
+                                    <input type="number" id="bank2Tenure" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Reducing Rate (%):</label>
+                                    <input type="number" id="bank2Rate" step="0.01" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">EMI (AED):</label>
+                                    <input type="text" id="bank2EMI" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
+                                </div>
+                                
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Total Interest (AED):</label>
+                                    <input type="text" id="bank2TotalInterest" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="flex gap-2">
-                            <button id="addCreditCardBtn" class="custom-btn text-white p-1.5 rounded-md text-sm">+ Add Card</button>
-                            <button id="removeCreditCardBtn" class="custom-btn text-white p-1.5 rounded-md text-sm disabled:opacity-50" disabled>- Remove Card</button>
-                        </div>
-                        
-                        <!-- Moved Credit Card Suggestion above Total CC Limit -->
-                        <div id="ccSuggestionContainer" class="border border-primary p-2 rounded-lg mt-2 hidden">
-                            <h3 class="text-base font-bold text-primary mb-1">CREDIT CARD SUGGESTION</h3>
-                            <p id="ccSuggestionText" class="text-gray-700 dark:text-gray-300 text-sm"></p>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Total CC Limit:</label>
-                            <input type="text" id="totalCCLimit" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">DBR Of Credit Card:</label>
-                            <div class="col-span-2 flex items-center">
-                                <input type="text" id="dbrCC" class="border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white flex-grow" readonly>
-                                <div class="ml-2 flex items-center">
-                                    <span class="text-gray-700 dark:text-gray-300 text-sm mr-1">3%</span>
-                                    <label class="toggle-switch mx-1" style="width: 40px; height: 20px;">
-                                        <input type="checkbox" id="dbrRateToggle">
-                                        <span class="toggle-slider" style="border-radius: 20px;"></span>
-                                    </label>
-                                    <span class="text-gray-700 dark:text-gray-300 text-sm ml-1">5%</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Total Liabilities:</label>
-                            <input type="text" id="totalLiabilities" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Available Liability:</label>
-                            <input type="text" id="availableLiability" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">New Total Liabilities:</label>
-                            <input type="text" id="newTotalLiabilities" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Special Note:</label>
-                            <textarea id="specialNote" class="col-span-2 w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" rows="2"></textarea>
+                        <div class="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg" id="comparisonResultSection">
+                            <h3 class="text-xl font-semibold text-primary dark:text-white mb-2">COMPARISON RESULT</h3>
+                            <p id="comparisonResultTab" class="text-gray-700 dark:text-gray-300">Enter Details For Both Banks To Compare.</p>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Right Column - EMI Calculator -->
-                <div id="emiCalculator" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md border-l-4 border-primary compact-form">
-                    <h2 class="text-xl font-bold text-primary dark:text-white mb-4">EMI CALCULATOR</h2>
-                    
-                    <div class="space-y-2">
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Loan Type:</label>
-                            <select id="loanType" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
-                                <option value="fresh-0-30">Fresh (0-30 days)</option>
-                                <option value="fresh-30-60">Fresh (30-60 days)</option>
-                                <option value="topup-0-30">Top-up (0-30 days)</option>
-                                <option value="topup-30-60">Top-up (30-60 days)</option>
-                                <option value="takeover-60-90">Take over (60-90 days)</option>
-                            </select>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Disbursal Date:</label>
-                            <input type="date" id="disbursalDate" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">First Payment Date:</label>
-                            <input type="date" id="firstPaymentDate" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
-                            <p id="dateError" class="col-span-3 text-red-600 dark:text-red-400 text-sm hidden">Error: Invalid Payment Date</p>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Days Between:</label>
-                            <input type="text" id="daysBetween" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Multiples Of Salary:</label>
-                            <input type="number" id="multiplesOfSalary" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" value="15">
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Max Loan Eligibility (AED):</label>
-                            <input type="text" id="maxLoanEligibility" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Tenure:</label>
-                            <input type="number" id="tenureMonths" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" value="48" min="1" max="300">
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Loan Amount (AED):</label>
-                            <div class="col-span-2 flex gap-2">
-                                <input type="number" id="loanAmount" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white flex-grow">
-                                <input type="text" id="loanMultiples" class="border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white w-16 text-center" readonly>
-                            </div>
-                            <p id="loanAmountError" class="col-span-3 text-red-600 dark:text-red-400 text-sm hidden">Error: Loan Amount Will Exceed DBR Limit!</p>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Reducing Rate %:</label>
-                            <input type="number" id="reducingRate" step="0.01" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" value="10">
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Flat Rate %:</label>
-                            <input type="text" id="flatRate" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">EMI (AED):</label>
-                            <input type="text" id="emi" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Total Payment (AED):</label>
-                            <input type="text" id="totalPayment" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Total Interest (AED):</label>
-                            <input type="text" id="totalInterest" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Processing Fees + VAT (AED):</label>
-                            <input type="text" id="processingFees" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Total Outstanding:</label>
-                            <input type="text" id="totalOutstanding" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Cash In Hand - NetPay (AED):</label>
-                            <input type="text" id="cashInHand" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 mt-2">
-                            <button id="findOptimalLoanBtn" class="custom-btn text-white p-2 rounded-md text-sm">
-                                <i class="fas fa-search-dollar mr-1"></i> Optimal
-                            </button>
-                            <button id="resetBtn" class="custom-btn text-white p-2 rounded-md text-sm">
-                                <i class="fas fa-redo-alt mr-1"></i> Reset
-                            </button>
-                            <button id="saveProfileBtn" class="custom-btn text-white p-2 rounded-md text-sm">
-                                <i class="fas fa-save mr-1"></i> Save
-                            </button>
-                        </div>
-                    </div>
+                <!-- Advance Tab (previously Adv Calc) -->
+                <div id="tab-advcalc" class="tab-content">
+                    <iframe src="advcalc.html" title="Advanced Calculator" id="advcalcIframe"></iframe>
+                </div>
+                
+                <!-- Rate Grid Tab -->
+                <div id="tab-rategrid" class="tab-content">
+                    <iframe src="rategrid.html" title="Rate Grid" id="rategridIframe"></iframe>
+                </div>
+                
+                <!-- Finance Tab (New) -->
+                <div id="tab-finance" class="tab-content">
+                    <iframe src="finance.html" title="Finance" id="financeIframe"></iframe>
+                </div>
+                
+                <!-- Brochures Tab (New) -->
+                <div id="tab-brochures" class="tab-content">
+                    <iframe src="brochures.html" title="Brochures" id="brochuresIframe"></iframe>
                 </div>
             </div>
-            
-            <!-- EMI Chart Section -->
-            <div id="emiChartSection" class="mt-4 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md border-l-4 border-primary hidden">
-                <h2 class="text-xl font-bold text-primary dark:text-white mb-4">EMI PAYMENT SCHEDULE</h2>
-                <div class="relative" style="height: 350px;">
-                    <canvas id="emiChart"></canvas>
-                </div>
-                <div class="mt-4 overflow-x-auto">
-                    <table class="w-full border-collapse text-sm">
-                        <thead>
-                            <tr class="bg-primary text-white">
-                                <th class="border border-gray-300 p-2">Month</th>
-                                <th class="border border-gray-300 p-2">EMI (AED)</th>
-                                <th class="border border-gray-300 p-2">Principal (AED)</th>
-                                <th class="border border-gray-300 p-2">Interest (AED)</th>
-                                <th class="border border-gray-300 p-2">Balance (AED)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="emiScheduleBody">
-                            <!-- Will be populated by JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        
-        <!-- MIS Tab -->
-        <div id="tab-mis" class="tab-content">
-            <iframe src="mis.html" title="MIS Information" id="misIframe"></iframe>
-        </div>
-        
-        <!-- Follow-Up Tab (previously Data Sheet) -->
-        <div id="tab-datasheet" class="tab-content">
-            <iframe src="https://script.google.com/macros/s/AKfycbyt6zvvO5POe2jMnyaR2bJOPu09L2f2Rr3Aeh72_APIR1C-6JVzSDOZvGfi4ZOZbQL0/exec" frameborder="0" width="100%" height="600px"></iframe>
-        </div>
-        
-        <!-- Calling Tab (New) -->
-        <div id="tab-calling" class="tab-content">
-            <iframe src="Calling.html" title="Calling" id="callingIframe"></iframe>
-        </div>
-        
-        <!-- PL Data Tab (New) -->
-        <div id="tab-pldata" class="tab-content">
-            <iframe src="pl.html" title="PL Data" id="plDataIframe"></iframe>
-        </div>
-        
-        <!-- Share Tab -->
-        <div id="tab-share" class="tab-content">
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
-                <h2 class="text-xl font-bold text-primary dark:text-white mb-4">SHARE LOAN INFORMATION</h2>
-                
-                <button id="shareTabBtn" class="custom-btn text-white p-2 rounded-md text-sm mb-4">
-                    <i class="fas fa-share-alt mr-1"></i> Share Loan Information
-                </button>
-                
-                <div class="text-gray-700 dark:text-gray-300 mt-4">
-                    <p class="mb-2">Click the Share button above to view and share the full loan information, including:</p>
-                    <ul class="list-disc ml-5 space-y-1">
-                        <li>Loan details (amount, type, tenure)</li>
-                        <li>Interest rates (reducing and flat)</li>
-                        <li>EMI and payment details</li>
-                        <li>Processing fees and charges</li>
-                        <li>Complete EMI schedule</li>
-                    </ul>
-                    
-                    <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800">
-                        <p class="text-blue-800 dark:text-blue-300 font-medium">Share Options:</p>
-                        <p class="text-sm mt-1">You can export as PDF, print directly, or send information via WhatsApp using the number field at the top of the page.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- EMI Chart Tab -->
-        <div id="tab-emichart" class="tab-content">
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
-                <h2 class="text-xl font-bold text-primary dark:text-white mb-4">EMI PAYMENT SCHEDULE</h2>
-                
-                <button id="showEmiChartBtnTab" class="custom-btn text-white p-2 rounded-md text-sm mb-4">
-                    <i class="fas fa-chart-bar mr-1"></i> Generate EMI Chart
-                </button>
-                
-                <div class="relative" style="height: 400px;">
-                    <canvas id="emiChartStandalone"></canvas>
-                </div>
-                <div class="mt-4 overflow-x-auto">
-                    <table class="w-full border-collapse text-sm">
-                        <thead>
-                            <tr class="bg-primary text-white">
-                                <th class="border border-gray-300 p-2">Month</th>
-                                <th class="border border-gray-300 p-2">EMI (AED)</th>
-                                <th class="border border-gray-300 p-2">Principal (AED)</th>
-                                <th class="border border-gray-300 p-2">Interest (AED)</th>
-                                <th class="border border-gray-300 p-2">Balance (AED)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="emiScheduleBodyStandalone">
-                            <!-- Will be populated by JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Comparison Tab -->
-        <div id="tab-comparison" class="tab-content">
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold text-primary dark:text-white">LOAN COMPARISON</h2>
-                    <button id="screenshotComparison" class="screenshot-btn" title="Take Screenshot">
-                        <i class="fas fa-camera"></i>
-                    </button>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- First Bank -->
-                    <div class="space-y-2">
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Bank Name:</label>
-                            <input type="text" id="bank1Name" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Loan Amount (AED):</label>
-                            <input type="number" id="bank1LoanAmount" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Tenure (Months):</label>
-                            <input type="number" id="bank1Tenure" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Reducing Rate (%):</label>
-                            <input type="number" id="bank1Rate" step="0.01" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">EMI (AED):</label>
-                            <input type="text" id="bank1EMI" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Total Interest (AED):</label>
-                            <input type="text" id="bank1TotalInterest" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
-                        </div>
-                    </div>
-                    
-                    <!-- Second Bank -->
-                    <div class="space-y-2">
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Bank Name:</label>
-                            <input type="text" id="bank2Name" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Loan Amount (AED):</label>
-                            <input type="number" id="bank2LoanAmount" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Tenure (Months):</label>
-                            <input type="number" id="bank2Tenure" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Reducing Rate (%):</label>
-                            <input type="number" id="bank2Rate" step="0.01" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white">
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">EMI (AED):</label>
-                            <input type="text" id="bank2EMI" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2 items-center">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium">Total Interest (AED):</label>
-                            <input type="text" id="bank2TotalInterest" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white" readonly>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg" id="comparisonResultSection">
-                    <h3 class="text-xl font-semibold text-primary dark:text-white mb-2">COMPARISON RESULT</h3>
-                    <p id="comparisonResultTab" class="text-gray-700 dark:text-gray-300">Enter Details For Both Banks To Compare.</p>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Advance Tab (previously Adv Calc) -->
-        <div id="tab-advcalc" class="tab-content">
-            <iframe src="advcalc.html" title="Advanced Calculator" id="advcalcIframe"></iframe>
-        </div>
-        
-        <!-- Rate Grid Tab -->
-        <div id="tab-rategrid" class="tab-content">
-            <iframe src="rategrid.html" title="Rate Grid" id="rategridIframe"></iframe>
-        </div>
-        
-        <!-- Finance Tab (New) -->
-        <div id="tab-finance" class="tab-content">
-            <iframe src="finance.html" title="Finance" id="financeIframe"></iframe>
-        </div>
-        
-        <!-- Brochures Tab (New) -->
-        <div id="tab-brochures" class="tab-content">
-            <iframe src="brochures.html" title="Brochures" id="brochuresIframe"></iframe>
         </div>
     </div>
     
@@ -1463,6 +1528,11 @@
             const exportPdfBtn = document.getElementById('exportPdfBtn');
             const printPageBtn = document.getElementById('printPageBtn');
             
+            // File export/import elements
+            const exportProfileBtn = document.getElementById('exportProfileBtn');
+            const importProfileBtn = document.getElementById('importProfileBtn');
+            const profileFileInput = document.getElementById('profileFileInput');
+            
             // Bank comparison inputs - Tab
             const bank1NameTab = document.getElementById('bank1Name');
             const bank1LoanAmountTab = document.getElementById('bank1LoanAmount');
@@ -1538,6 +1608,17 @@
             retrieveProfileBtn.addEventListener('click', retrieveCustomerProfile);
             deleteProfileBtn.addEventListener('click', deleteCustomerProfile);
             
+            // Export profile to file
+            exportProfileBtn.addEventListener('click', exportProfileToFile);
+            
+            // Import profile from file button click handler
+            importProfileBtn.addEventListener('click', function() {
+                profileFileInput.click();
+            });
+            
+            // Import profile from file change handler
+            profileFileInput.addEventListener('change', importProfileFromFile);
+            
             function saveCustomerProfile() {
                 const customerName = customerNameInput.value.trim();
                 if (!customerName) {
@@ -1607,6 +1688,111 @@
                     console.error('Error saving profile:', error);
                     showSuccess('Error saving profile. Please try again.');
                 }
+            }
+            
+            // Export profile to a downloadable file
+            function exportProfileToFile() {
+                const customerName = customerNameInput.value.trim();
+                
+                if (!customerName) {
+                    showSuccess('Please enter a customer name before exporting');
+                    return;
+                }
+                
+                try {
+                    // Get existing profiles
+                    const existingProfiles = JSON.parse(localStorage.getItem('customerProfiles')) || {};
+                    
+                    // Get the current profile
+                    const profileData = existingProfiles[customerName];
+                    
+                    if (!profileData) {
+                        // Save the current profile first if it doesn't exist
+                        saveCustomerProfile();
+                        // Then get it from localStorage
+                        const updatedProfiles = JSON.parse(localStorage.getItem('customerProfiles')) || {};
+                        const profileData = updatedProfiles[customerName];
+                        exportProfile(profileData, customerName);
+                    } else {
+                        exportProfile(profileData, customerName);
+                    }
+                } catch (error) {
+                    console.error('Error exporting profile:', error);
+                    showSuccess('Error exporting profile. Please try again.');
+                }
+            }
+            
+            // Helper function to actually export the profile
+            function exportProfile(profileData, customerName) {
+                if (!profileData) {
+                    showSuccess('No profile data found to export');
+                    return;
+                }
+                
+                // Create a Blob with the profile data
+                const blob = new Blob([JSON.stringify(profileData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                // Create a download link
+                const downloadLink = document.createElement('a');
+                downloadLink.href = url;
+                downloadLink.download = `${customerName.replace(/\s+/g, '_')}_profile.json`;
+                downloadLink.style.display = 'none';
+                document.body.appendChild(downloadLink);
+                
+                // Trigger the download
+                downloadLink.click();
+                
+                // Clean up
+                setTimeout(() => {
+                    document.body.removeChild(downloadLink);
+                    URL.revokeObjectURL(url);
+                }, 100);
+                
+                showSuccess('Profile exported successfully!');
+            }
+            
+            // Import profile from file
+            function importProfileFromFile(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const profileData = JSON.parse(e.target.result);
+                        
+                        if (!profileData || !profileData.customerName) {
+                            showSuccess('Invalid profile file format');
+                            return;
+                        }
+                        
+                        // Get existing profiles
+                        const existingProfiles = JSON.parse(localStorage.getItem('customerProfiles')) || {};
+                        
+                        // Add/update this profile
+                        existingProfiles[profileData.customerName] = profileData;
+                        
+                        // Save back to localStorage
+                        localStorage.setItem('customerProfiles', JSON.stringify(existingProfiles));
+                        
+                        // Update dropdown and select the imported profile
+                        loadSavedProfiles();
+                        savedProfilesSelect.value = profileData.customerName;
+                        
+                        // Load the imported profile
+                        retrieveCustomerProfile();
+                        
+                        showSuccess('Profile imported successfully!');
+                    } catch (error) {
+                        console.error('Error importing profile:', error);
+                        showSuccess('Error importing profile. Please check the file format.');
+                    }
+                    
+                    // Reset the file input
+                    profileFileInput.value = '';
+                };
+                reader.readAsText(file);
             }
             
             function loadSavedProfiles() {
