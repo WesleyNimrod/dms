@@ -14,6 +14,11 @@
         
         body {
             font-family: 'Tahoma', Geneva, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow-x: hidden;
         }
         
         .custom-btn {
@@ -562,11 +567,11 @@
     </style>
 </head>
 <body class="bg-gray-50 font-tahoma">
-    <div class="container mx-auto px-3 py-2 max-w-6xl">
+    <div class="container mx-auto px-1 py-1 max-w-full">
 
         
         <!-- Section Navigation Buttons -->
-        <div class="mb-4 flex justify-center gap-4 flex-wrap">
+        <div class="mb-2 flex justify-center gap-4 flex-wrap">
             <button id="showSummaryBtn" class="custom-btn text-white py-2 px-6 rounded-md flex items-center">
                 <i class="fas fa-chart-pie mr-2"></i> Summary
             </button>
@@ -576,6 +581,9 @@
             <button id="showViewBtn" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-6 rounded-md flex items-center">
                 <i class="fas fa-table mr-2"></i> View
             </button>
+            <a href="https://docs.google.com/spreadsheets/d/1VfEPU_2EvNqB6g2ldAzD05fvwFigL1yN3L0wLOwZP4o/edit?gid=0#gid=0" target="_blank" class="bg-green-600 hover:bg-green-700 text-white py-2 px-6 rounded-md flex items-center">
+                <i class="fas fa-file-excel mr-2"></i> Sheet
+            </a>
         </div>
         
         <!-- Section Content Containers -->
@@ -793,8 +801,8 @@
                         <div class="space-y-4">
                             <!-- CID -->
                             <div>
-                                <label for="cid" class="block text-gray-700 font-medium required">CID</label>
-                                <input type="number" id="cid" name="cid" class="w-full border rounded-md p-2 text-base" required>
+                                <label for="cid" class="block text-gray-700 font-medium">CID</label>
+                                <input type="number" id="cid" name="cid" class="w-full border rounded-md p-2 text-base">
                                 <p id="cidError" class="text-red-500 text-sm hidden">CID must be unique</p>
                             </div>
                             
@@ -1377,6 +1385,8 @@
             } else {
                 otherBankingSection.classList.add('hidden');
             }
+            // Recalculate points when banking changes (for CC point reduction)
+            calculateTotalPoints();
         });
 
         // Status select change event
@@ -1663,12 +1673,10 @@
                 // Check for specific ACC product names
                 if (editingProductString.includes("MDSA")) {
                     selectOptionByText(accSelect, "MDSA");
-                } else if (editingProductString.includes("Privilege 20K-30K")) {
-                    selectOptionByText(accSelect, "Privilege 20K-30K");
-                } else if (editingProductString.includes("Privilege 30K-75K")) {
-                    selectOptionByText(accSelect, "Privilege 30K-75K");
-                } else if (editingProductString.includes("Privilege 75K")) {
-                    selectOptionByText(accSelect, "Privilege 75K");
+                } else if (editingProductString.includes("Privilege 20K-40K")) {
+                    selectOptionByText(accSelect, "Privilege 20K-40K");
+                } else if (editingProductString.includes("Privilege 40K")) {
+                    selectOptionByText(accSelect, "Privilege 40K");
                 } else if (editingProductString.includes("Aspire 5K-10K")) {
                     selectOptionByText(accSelect, "Aspire 5K-10K");
                 } else if (editingProductString.includes("Aspire 10K-20K")) {
@@ -2019,21 +2027,17 @@
             const options = [];
             
             // Add all options regardless of salary, but annotate with requirements
-            options.push({ value: "Aspire5K-10K", text: "Aspire 5K-10K (Salary: 5000-9999)", points: 75, minSalary: 5000, maxSalary: 9999, disableSTL: false });
-            options.push({ value: "Aspire10K-20K", text: "Aspire 10K-20K (Salary: 10000-19999)", points: 175, minSalary: 10000, maxSalary: 19999, disableSTL: false });
-            options.push({ value: "Privilege20K-30K", text: "Privilege 20K-30K (Salary: 20000-29999)", points: 450, minSalary: 20000, maxSalary: 29999, disableSTL: true });
-            options.push({ value: "Privilege30K-75K", text: "Privilege 30K-75K (Salary: 30000-74999)", points: 750, minSalary: 30000, maxSalary: 74999, disableSTL: true });
-            options.push({ value: "Privilege75K+", text: "Privilege 75K & Above (Salary: 75000+)", points: 1300, minSalary: 75000, maxSalary: Infinity, disableSTL: true });
+            options.push({ value: "Aspire5K-10K", text: "Aspire 5K-10K (Salary: 5000-9999)", points: 150, minSalary: 5000, maxSalary: 9999, disableSTL: false });
+            options.push({ value: "Aspire10K-20K", text: "Aspire 10K-20K (Salary: 10000-19999)", points: 400, minSalary: 10000, maxSalary: 19999, disableSTL: false });
+            options.push({ value: "Privilege20K-40K", text: "Privilege 20K-40K (Salary: 20000-39999)", points: 550, minSalary: 20000, maxSalary: 39999, disableSTL: true });
+            options.push({ value: "Privilege40K+", text: "Privilege 40K & Above (Salary: 40000+)", points: 800, minSalary: 40000, maxSalary: Infinity, disableSTL: true });
             
             // Add Islamic-specific option
             if (proposition === "Islamic" || proposition === "Both") {
                 options.push({ 
                     value: "MDSA", 
                     text: "MDSA", 
-                    points: salary >= 75000 ? 1300 : 
-                           salary >= 30000 ? 750 : 
-                           salary >= 20000 ? 450 : 
-                           salary >= 10000 ? 175 : 75,
+                    points: 175,
                     minSalary: 5000,
                     maxSalary: Infinity,
                     disableSTL: salary >= 20000 // Disable STL for salary >= 20000
@@ -2047,19 +2051,19 @@
         function getCCOptions(proposition) {
             if (proposition === "Conventional") {
                 return [
-                    { value: "TouchpointsGoldVisa", text: "Touchpoints Gold Visa", points: 250, paid: false },
-                    { value: "TouchpointsTitaniumMC", text: "Touchpoints Titanium MC", points: 250, paid: false },
-                    { value: "EssientialCashbackMC", text: "Essiential Cashback MC", points: 250, paid: false },
-                    { value: "TalabatMC", text: "Talabat MC", points: 250, paid: false },
-                    { value: "LuluTitaniumMC", text: "Lulu Titanium MC", points: 250, paid: false },
-                    { value: "LuluPlatinumMC", text: "Lulu Platinum MC", points: 250, paid: false },
+                    { value: "TouchpointsGoldVisa", text: "Touchpoints Gold Visa", points: 300, paid: false },
+                    { value: "TouchpointsTitaniumMC", text: "Touchpoints Titanium MC", points: 200, paid: false },
+                    { value: "EssientialCashbackMC", text: "Essiential Cashback MC", points: 200, paid: false },
+                    { value: "TalabatMC", text: "Talabat MC", points: 150, paid: false },
+                    { value: "LuluTitaniumMC", text: "Lulu Titanium MC", points: 200, paid: false },
+                    { value: "LuluPlatinumMC", text: "Lulu Platinum MC", points: 200, paid: false },
                     { value: "TouchpointsPlatinumMC", text: "Touchpoints Platinum MC", points: 400, paid: true },
                     { value: "365CashbackVisa", text: "365 Cashback Visa", points: 500, paid: true },
                     { value: "ShukranPlatinumVisa", text: "Shukran Platinum Visa", points: 500, paid: true },
                     { value: "EtihadGuestPlatinumVisa", text: "Etihad Guest Platinum Visa", points: 500, paid: true },
-                    { value: "AllSignatureVisa", text: "All Signature Visa", points: 750, paid: true },
+                    { value: "AllSignatureVisa", text: "All Signature Visa", points: 500, paid: true },
                     { value: "AllInfiniteVisa", text: "All Infinite Visa", points: 750, paid: true },
-                    { value: "EtihadGuestSignatureVisa", text: "Etihad Guest Signature Visa", points: 750, paid: true },
+                    { value: "EtihadGuestSignatureVisa", text: "Etihad Guest Signature Visa", points: 500, paid: true },
                     { value: "EtihadGuestInfiniteVisa", text: "Etihad Guest Infinite Visa", points: 750, paid: true },
                     { value: "TouchpointsInfiniteVisa", text: "Touchpoints Infinite Visa", points: 750, paid: true },
                     { value: "TravellerMCWorldElite", text: "Traveller MC World Elite", points: 750, paid: true },
@@ -2067,13 +2071,13 @@
                 ];
             } else if (proposition === "Islamic") {
                 return [
-                    { value: "TouchpointsGoldVisa", text: "Touchpoints Gold Visa", points: 250, paid: false },
-                    { value: "TalabatMC", text: "Talabat MC", points: 250, paid: false },
+                    { value: "TouchpointsGoldVisa", text: "Touchpoints Gold Visa", points: 300, paid: false },
+                    { value: "TalabatMC", text: "Talabat MC", points: 150, paid: false },
                     { value: "TouchpointsPlatinumVisa", text: "Touchpoints Platinum Visa", points: 500, paid: true },
                     { value: "365CashbackVisa", text: "365 Cashback Visa", points: 500, paid: true },
                     { value: "ShukranPlatinumVisa", text: "Shukran Platinum Visa", points: 500, paid: true },
                     { value: "EtihadGuestPlatinumVisa", text: "Etihad Guest Platinum Visa", points: 500, paid: true },
-                    { value: "EtihadGuestSignatureVisa", text: "Etihad Guest Signature Visa", points: 750, paid: true },
+                    { value: "EtihadGuestSignatureVisa", text: "Etihad Guest Signature Visa", points: 500, paid: true },
                     { value: "TouchpointsInfiniteVisa", text: "Touchpoints Infinite Visa", points: 750, paid: true },
                     { value: "EtihadGuestInfiniteVisa", text: "Etihad Guest Infinite Visa", points: 750, paid: true },
                     { value: "EmiratiIslamicInfiniteVisa", text: "Emirati Islamic Infinite Visa", points: 750, paid: true }
@@ -2124,12 +2128,13 @@
                 if (accSelect && accSelect.value) {
                     const selectedOption = accSelect.options[accSelect.selectedIndex];
                     const accPoints = parseInt(selectedOption.dataset.points) || 0;
-                    totalPoints += accPoints;
                     
-                    // Add points for STL if checked (same as ACC), but only if not disabled
+                    // Only add ACC points if STL is checked and not disabled
                     if (productSTL.checked && !productSTL.disabled) {
                         totalPoints += accPoints;
                     }
+                    
+                    // No extra points for STL itself - STL checkbox only enables points calculation
                 }
             }
             
@@ -2138,7 +2143,14 @@
                 const ccSelect = document.getElementById('CCSelect');
                 if (ccSelect && ccSelect.value) {
                     const selectedOption = ccSelect.options[ccSelect.selectedIndex];
-                    totalPoints += parseInt(selectedOption.dataset.points) || 0;
+                    let ccPoints = parseInt(selectedOption.dataset.points) || 0;
+                    
+                    // Change 3: Reduce CC points by 30% if banking is not ADCB
+                    if (bankingSelect.value !== 'ADCB') {
+                        ccPoints = Math.round(ccPoints * 0.7); // 30% reduction
+                    }
+                    
+                    totalPoints += ccPoints;
                     
                     // Check for 2nd CC
                     if (product2ndCC.checked) {
@@ -2146,8 +2158,9 @@
                         if (cc2Select && cc2Select.value) {
                             const selectedOption2 = cc2Select.options[cc2Select.selectedIndex];
                             const isPaid = selectedOption2.dataset.paid === "true";
-                            // Apply different points based on whether it's a paid or free card
-                            totalPoints += isPaid ? 250 : 125;
+                            
+                            // Change 2: Set 2nd CC free cards to 80 points (paid remains the same at 250)
+                            totalPoints += isPaid ? 250 : 80;
                         }
                     }
                 }
@@ -2820,8 +2833,8 @@
                 if (data.success) {
                     showSuccess('Data submitted successfully!');
                     resetForm();
-                    fetchAllData(); // Refresh data table
-                    fetchAllDataForSummary(); // Also refresh summary data
+                    // Stay on the form section after submitting
+                    showSection('entry');
                 } else {
                     showSuccess(`Error: ${data.error}`);
                 }
@@ -2848,8 +2861,8 @@
                 if (data.success) {
                     showSuccess('Record updated successfully!');
                     resetForm();
-                    fetchAllData(); // Refresh data table
-                    fetchAllDataForSummary(); // Also refresh summary data
+                    // Navigate to View section after update
+                    showSection('view');
                 } else {
                     showSuccess(`Error: ${data.error}`);
                 }
@@ -2873,8 +2886,14 @@
                 if (data.success) {
                     showSuccess('Record deleted successfully!');
                     resetForm();
-                    fetchAllData(); // Refresh data table
-                    fetchAllDataForSummary(); // Also refresh summary data
+                    if (document.getElementById('entrySection').classList.contains('active')) {
+                        // If we're in the entry section, stay there
+                        showSection('entry');
+                    } else {
+                        // Otherwise refresh the current view
+                        fetchAllData();
+                        fetchAllDataForSummary();
+                    }
                 } else {
                     showSuccess(`Error: ${data.error}`);
                 }
@@ -3157,14 +3176,7 @@
             document.getElementById('mobileError').classList.add('hidden');
             document.getElementById('productsError').classList.add('hidden');
             
-            // Basic field validation
-            if (!cidInput.value.trim()) {
-                cidInput.classList.add('error-field');
-                isValid = false;
-            } else {
-                cidInput.classList.remove('error-field');
-            }
-            
+            // Change 5: Remove CID from required fields
             if (!dateInput.value) {
                 dateInput.classList.add('error-field');
                 isValid = false;
@@ -3211,8 +3223,8 @@
             
             // For update operations, we don't need to check uniqueness for the current record
             if (document.getElementById('updateBtn').classList.contains('hidden')) {
-                // Check uniqueness only if basic validation passes
-                if (isValid) {
+                // Check uniqueness only if basic validation passes and CID check is needed
+                if (isValid && cidInput.value.trim()) {
                     showLoading();
                     const uniquenessCheck = await checkUniqueness(
                         cidInput.value.trim(),
@@ -3222,12 +3234,7 @@
                     hideLoading();
                     
                     if (uniquenessCheck.success && uniquenessCheck.data) {
-                        if (uniquenessCheck.data.cidExists) {
-                            document.getElementById('cidError').classList.remove('hidden');
-                            cidInput.classList.add('error-field');
-                            isValid = false;
-                        }
-                        
+                        // Change 5: Remove CID uniqueness check
                         if (uniquenessCheck.data.nameExists) {
                             document.getElementById('nameError').classList.remove('hidden');
                             customerNameInput.classList.add('error-field');
