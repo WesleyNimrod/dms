@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Information Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .gradient-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .gradient-button {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        .gradient-send {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        .dark .gradient-bg {
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+        }
+        .dark .gradient-card {
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- Dark mode detection -->
+    <script>
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+    </script>
+
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Header -->
+        <div class="gradient-bg rounded-2xl p-8 mb-8 text-white">
+            <h1 class="text-4xl font-bold text-center mb-2">Product Information Manager</h1>
+            <p class="text-center text-lg opacity-90">Manage and share your product details efficiently</p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="mb-8">
+            <div class="flex bg-white dark:bg-gray-800 rounded-xl p-1 shadow-lg max-w-md mx-auto">
+                <button id="conventionalTab" class="flex-1 py-3 px-6 rounded-lg font-semibold transition-all duration-300 bg-primary text-white">
+                    Conventional
+                </button>
+                <button id="islamicTab" class="flex-1 py-3 px-6 rounded-lg font-semibold transition-all duration-300 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    Islamic
+                </button>
+            </div>
+        </div>
+
+        <!-- Conventional Tab Content -->
+        <div id="conventionalContent" class="space-y-8">
+            <!-- Product Selection -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Select Product</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <button class="product-btn gradient-button text-white font-semibold py-4 px-6 rounded-xl hover:scale-105 transition-all duration-300 shadow-lg" data-product="Touchpoints Gold Visa">
+                        Touchpoints Gold Visa
+                    </button>
+                    <button class="product-btn gradient-button text-white font-semibold py-4 px-6 rounded-xl hover:scale-105 transition-all duration-300 shadow-lg" data-product="Touchpoints Titanium Mastercard">
+                        Touchpoints Titanium Mastercard
+                    </button>
+                    <button class="product-btn gradient-button text-white font-semibold py-4 px-6 rounded-xl hover:scale-105 transition-all duration-300 shadow-lg" data-product="Talabat Mastercard">
+                        Talabat Mastercard
+                    </button>
+                    <button class="product-btn gradient-button text-white font-semibold py-4 px-6 rounded-xl hover:scale-105 transition-all duration-300 shadow-lg" data-product="Essential Cashback Mastercard">
+                        Essential Cashback Mastercard
+                    </button>
+                    <button class="product-btn gradient-button text-white font-semibold py-4 px-6 rounded-xl hover:scale-105 transition-all duration-300 shadow-lg" data-product="Lulu Titanium Mastercard">
+                        Lulu Titanium Mastercard
+                    </button>
+                    <button class="product-btn gradient-button text-white font-semibold py-4 px-6 rounded-xl hover:scale-105 transition-all duration-300 shadow-lg" data-product="Lulu Platinum Mastercard">
+                        Lulu Platinum Mastercard
+                    </button>
+                    <button class="product-btn gradient-button text-white font-semibold py-4 px-6 rounded-xl hover:scale-105 transition-all duration-300 shadow-lg" data-product="365 Cashback Visa">
+                        365 Cashback Visa
+                    </button>
+                    <button class="product-btn gradient-button text-white font-semibold py-4 px-6 rounded-xl hover:scale-105 transition-all duration-300 shadow-lg" data-product="Touchpoints Platinum Visa">
+                        Touchpoints Platinum Visa
+                    </button>
+                    <button class="product-btn gradient-button text-white font-semibold py-4 px-6 rounded-xl hover:scale-105 transition-all duration-300 shadow-lg" data-product="Shukran Platinum Visa">
+                        Shukran Platinum Visa
+                    </button>
+                </div>
+            </div>
+
+            <!-- Selected Product Info -->
+            <div id="productInfo" class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl hidden">
+                <h3 id="selectedProductName" class="text-2xl font-bold mb-4 text-gray-800 dark:text-white"></h3>
+                <textarea id="productDetails" placeholder="Paste product details and benefits here..." 
+                    class="w-full h-64 p-4 border-2 border-gray-300 dark:border-gray-600 rounded-xl resize-none focus:border-primary focus:outline-none bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white text-base"></textarea>
+                <div class="mt-4 flex justify-end">
+                    <button id="saveProduct" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-300 font-semibold">
+                        Save Details
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Input and Send -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Message Composition</h2>
+                <textarea id="mainTextbox" placeholder="Type your message here..." 
+                    class="w-full h-32 p-4 border-2 border-gray-300 dark:border-gray-600 rounded-xl resize-none focus:border-primary focus:outline-none bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white text-base mb-4"></textarea>
+                
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <select id="productSelect" class="flex-1 p-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:border-primary focus:outline-none bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-base">
+                        <option value="">Select a product to include details</option>
+                    </select>
+                    <button id="sendWhatsApp" class="gradient-send text-white font-bold py-3 px-8 rounded-xl hover:scale-105 transition-all duration-300 shadow-lg">
+                        📱 Send to WhatsApp
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Islamic Tab Content -->
+        <div id="islamicContent" class="hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl text-center">
+                <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Islamic Products</h2>
+                <p class="text-gray-600 dark:text-gray-300">Islamic product features coming soon...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data storage (session-based since localStorage is not available in iframe)
+        let productData = {};
+        let currentProduct = null;
+
+        // Tab functionality
+        const conventionalTab = document.getElementById('conventionalTab');
+        const islamicTab = document.getElementById('islamicTab');
+        const conventionalContent = document.getElementById('conventionalContent');
+        const islamicContent = document.getElementById('islamicContent');
+
+        conventionalTab.addEventListener('click', () => {
+            conventionalTab.classList.add('bg-primary', 'text-white');
+            conventionalTab.classList.remove('text-gray-600', 'dark:text-gray-300');
+            islamicTab.classList.remove('bg-primary', 'text-white');
+            islamicTab.classList.add('text-gray-600', 'dark:text-gray-300');
+            conventionalContent.classList.remove('hidden');
+            islamicContent.classList.add('hidden');
+        });
+
+        islamicTab.addEventListener('click', () => {
+            islamicTab.classList.add('bg-primary', 'text-white');
+            islamicTab.classList.remove('text-gray-600', 'dark:text-gray-300');
+            conventionalTab.classList.remove('bg-primary', 'text-white');
+            conventionalTab.classList.add('text-gray-600', 'dark:text-gray-300');
+            islamicContent.classList.remove('hidden');
+            conventionalContent.classList.add('hidden');
+        });
+
+        // Product buttons functionality
+        const productButtons = document.querySelectorAll('.product-btn');
+        const productInfo = document.getElementById('productInfo');
+        const selectedProductName = document.getElementById('selectedProductName');
+        const productDetails = document.getElementById('productDetails');
+        const productSelect = document.getElementById('productSelect');
+
+        // Populate product select dropdown
+        productButtons.forEach(btn => {
+            const option = document.createElement('option');
+            option.value = btn.dataset.product;
+            option.textContent = btn.dataset.product;
+            productSelect.appendChild(option);
+        });
+
+        productButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentProduct = btn.dataset.product;
+                selectedProductName.textContent = currentProduct;
+                productInfo.classList.remove('hidden');
+                
+                // Load existing data if available
+                if (productData[currentProduct]) {
+                    productDetails.value = productData[currentProduct];
+                } else {
+                    productDetails.value = '';
+                }
+                
+                // Scroll to product info
+                productInfo.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Save product details
+        document.getElementById('saveProduct').addEventListener('click', () => {
+            if (currentProduct && productDetails.value.trim()) {
+                productData[currentProduct] = productDetails.value.trim();
+                
+                // Show success message
+                const saveBtn = document.getElementById('saveProduct');
+                const originalText = saveBtn.textContent;
+                saveBtn.textContent = 'Saved!';
+                saveBtn.classList.add('bg-green-500');
+                saveBtn.classList.remove('bg-primary');
+                
+                setTimeout(() => {
+                    saveBtn.textContent = originalText;
+                    saveBtn.classList.remove('bg-green-500');
+                    saveBtn.classList.add('bg-primary');
+                }, 2000);
+            }
+        });
+
+        // WhatsApp send functionality
+        document.getElementById('sendWhatsApp').addEventListener('click', () => {
+            const mainText = document.getElementById('mainTextbox').value.trim();
+            const selectedProduct = productSelect.value;
+            
+            let message = mainText;
+            
+            if (selectedProduct && productData[selectedProduct]) {
+                message += `\n\n${selectedProduct}:\n${productData[selectedProduct]}`;
+            }
+            
+            if (message.trim()) {
+                const encodedMessage = encodeURIComponent(message);
+                const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+                window.open(whatsappUrl, '_blank');
+            } else {
+                alert('Please enter a message to send.');
+            }
+        });
+    </script>
+</body>
+</html>
