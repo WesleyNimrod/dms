@@ -592,8 +592,8 @@
             <div class="bg-white p-3 rounded-lg shadow-md">
                 <div class="flex justify-between items-center mb-3">
                     <h2 class="text-xl font-bold text-[#6F2C4F]">Summary Dashboard</h2>
-                    <button id="printSummaryBtn" class="bg-gray-600 text-white p-2 rounded-md hover:bg-gray-700 no-print">
-                        <i class="fas fa-print"></i>
+                    <button id="copySummaryBtn" class="bg-gray-600 text-white p-2 rounded-md hover:bg-gray-700 no-print">
+                        <i class="fas fa-copy"></i>
                     </button>
                 </div>
                 
@@ -894,6 +894,10 @@
                                         <input type="checkbox" name="products" value="PL" class="form-checkbox" id="productPL">
                                         <span class="ml-2 text-gray-700">PL</span>
                                     </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="products" value="Other" class="form-checkbox" id="productOther">
+                                        <span class="ml-2 text-gray-700">Other</span>
+                                    </label>
                                 </div>
                                 <p id="productsError" class="text-red-500 text-sm hidden">Please select at least one product</p>
                             </div>
@@ -907,6 +911,12 @@
                             <div id="loanAmountSection" class="hidden">
                                 <label for="loanAmount" class="block text-gray-700 font-medium">Loan Amount</label>
                                 <input type="number" id="loanAmount" name="loanAmount" class="w-full border rounded-md p-2 text-base">
+                            </div>
+                            
+                            <!-- Other Points (Only shown for Other product) -->
+                            <div id="otherPointsSection" class="hidden">
+                                <label for="otherPoints" class="block text-gray-700 font-medium">Other Points (Miscellaneous)</label>
+                                <input type="number" id="otherPoints" name="otherPoints" class="w-full border rounded-md p-2 text-base" placeholder="Enter other points">
                             </div>
                             
                             <!-- Banking -->
@@ -1064,7 +1074,7 @@
                 
                 <!-- Search Container (Moved from separate section) -->
                 <div class="search-container">
-                    <h3 class="text-lg font-semibold text-primary mb-3">Find Records</h3>
+                    <h3 class="text-lg font-semibold text-primary mb-3">Find Records (Master Sheet)</h3>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div>
@@ -1083,7 +1093,7 @@
                     
                     <div class="flex justify-center mb-4">
                         <button id="searchBtn" class="custom-btn text-white py-2 px-6 rounded-md flex items-center">
-                            <i class="fas fa-search mr-2"></i> Search
+                            <i class="fas fa-search mr-2"></i> Search Master
                         </button>
                     </div>
                     
@@ -1167,7 +1177,7 @@
                                     <th>Customer Name</th>
                                     <th>Product</th>
                                     <th>Status</th>
-                                    <th>Amount</th>
+                                    <th id="amountHeader">Amount</th>
                                 </tr>
                             </thead>
                             <tbody id="exportTableBody">
@@ -1320,8 +1330,11 @@
         const product2ndCC = document.getElementById('product2ndCC');
         const productBTCCL = document.getElementById('productBTCCL');
         const productPL = document.getElementById('productPL');
+        const productOther = document.getElementById('productOther');
         const loanAmountSection = document.getElementById('loanAmountSection');
         const loanAmountInput = document.getElementById('loanAmount');
+        const otherPointsSection = document.getElementById('otherPointsSection');
+        const otherPointsInput = document.getElementById('otherPoints');
         const productOptionsContainer = document.getElementById('productOptionsContainer');
         
         // Reset button
@@ -1334,6 +1347,7 @@
             entryForm.reset();
             productOptionsContainer.innerHTML = '';
             loanAmountSection.classList.add('hidden');
+            otherPointsSection.classList.add('hidden');
             otherBankingSection.classList.add('hidden');
             otherStatusSection.classList.add('hidden');
             
@@ -1355,7 +1369,11 @@
             productSTL.disabled = true;
             product2ndCC.disabled = true;
             
+            // Reset Other product checkbox
+            productOther.checked = false;
+            
             // Enable CID input for new records
+            cidInput.disabled = false;
             cidInput.readOnly = false;
             
             // Clear any error styling
@@ -1444,6 +1462,20 @@
         });
 
         productBTCCL.addEventListener('change', function() {
+            calculateTotalPoints();
+        });
+
+        productOther.addEventListener('change', function() {
+            if (this.checked) {
+                otherPointsSection.classList.remove('hidden');
+            } else {
+                otherPointsSection.classList.add('hidden');
+                otherPointsInput.value = '';
+            }
+            calculateTotalPoints();
+        });
+
+        otherPointsInput.addEventListener('input', function() {
             calculateTotalPoints();
         });
 
@@ -2171,6 +2203,12 @@
                 totalPoints += 100;
             }
             
+            // Add other points (miscellaneous)
+            if (productOther.checked) {
+                const otherPointsValue = parseFloat(otherPointsInput.value) || 0;
+                totalPoints += otherPointsValue;
+            }
+            
             // Calculate points for PL
             if (productPL.checked) {
                 const plSelect = document.getElementById('PLSelect');
@@ -2641,10 +2679,70 @@
             });
         }
         
-        // Print summary page
-        document.getElementById('printSummaryBtn').addEventListener('click', function() {
-            window.print();
+        // Copy summary to clipboard
+        document.getElementById('copySummaryBtn').addEventListener('click', function() {
+            const summaryText = generateSummaryText();
+            if (copyToClipboard(summaryText)) {
+                showSuccess('Summary copied to clipboard successfully!');
+            } else {
+                showSuccess('Failed to copy summary. Please try again.');
+            }
         });
+        
+        // Generate summary text with proper formatting like the second image
+        function generateSummaryText() {
+            const earnedPoints = document.getElementById('summaryEarnedPoints').textContent;
+            const pendingPoints = document.getElementById('summaryPendingPoints').textContent;
+            const totalPoints = document.getElementById('summaryTotalPoints').textContent;
+            
+            const inProgressCC = document.getElementById('summaryInProgressCC').textContent;
+            const inProgressPL = document.getElementById('summaryInProgressPL').textContent;
+            
+            const completedCC = document.getElementById('summaryCompletedCC').textContent;
+            const completedPL = document.getElementById('summaryCompletedPL').textContent;
+            
+            const totalCC = document.getElementById('summaryTotalCC').textContent;
+            const totalPL = document.getElementById('summaryTotalPL').textContent;
+            
+            // Get progress percentages
+            const progressCC = document.getElementById('progressCC').textContent;
+            const progressPL = document.getElementById('progressPL').textContent;
+            const progressACC = document.getElementById('progressACC').textContent;
+            
+            const summaryText = `MANAGEMENT INFORMATION SYSTEM - SUMMARY REPORT
+Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}
+
+POINTS SUMMARY
+Earned Points: ${earnedPoints}
+Pending Points: ${pendingPoints}
+Total Points: ${totalPoints}
+
+IN PROGRESS
+Credit Cards: ${inProgressCC}
+Personal Loans: ${inProgressPL}
+
+COMPLETED
+Credit Cards: ${completedCC}
+Personal Loans: ${completedPL}
+
+EFFORT (TOTAL)
+Credit Cards: ${totalCC}
+Personal Loans: ${totalPL}
+
+TARGET PROGRESS
+Credit Cards Progress: ${progressCC}
+Personal Loans Progress: ${progressPL}
+Accounts Progress: ${progressACC}
+
+VISUALIZATIONS DATA
+Proposition Distribution: Based on Conventional vs Islamic vs Both customer preferences
+Account Types: Distribution across Aspire, Privilege, and MDSA account types
+Scheme Distribution: Performance across TML ALL, TML CC, TM SELECT, and NTML schemes (completed records only)
+
+This report provides a comprehensive overview of current performance metrics and progress towards targets.`;
+            
+            return summaryText;
+        }
 
         // Function to categorize product type
         function categorizeProductType(productString) {
@@ -2684,7 +2782,7 @@
             return "Unknown";
         }
 
-        // Search for data
+        // Search for data from Master sheet
         async function searchData() {
             const cid = document.getElementById('searchCID').value;
             const name = document.getElementById('searchName').value;
@@ -2697,7 +2795,7 @@
             
             showLoading();
             try {
-                const response = await fetch(`${scriptURL}?action=search&cid=${cid}&name=${encodeURIComponent(name)}&mobile=${mobile}`);
+                const response = await fetch(`${scriptURL}?action=searchMaster&cid=${cid}&name=${encodeURIComponent(name)}&mobile=${mobile}`);
                 const data = await response.json();
                 
                 if (data.success) {
@@ -2750,11 +2848,13 @@
                 const tr = document.createElement('tr');
                 const mobileNumber = row.Mobile || '';
                 const cidValue = row.CID || '';
+                const appIdValue = row['App ID'] || '';
+                const customerNameValue = row['Customer Name'] || '';
                 
                 tr.innerHTML = `
                     <td class="copyable" data-value="${cidValue}">${cidValue}</td>
-                    <td>${row['App ID'] || ''}</td>
-                    <td>${row['Customer Name'] || ''}</td>
+                    <td class="copyable" data-value="${appIdValue}">${appIdValue}</td>
+                    <td class="copyable" data-value="${customerNameValue}">${customerNameValue}</td>
                     <td class="copyable" data-value="${mobileNumber}">${mobileNumber}</td>
                     <td>${row.Product || ''}</td>
                     <td>${row.Status || ''}</td>
@@ -3025,7 +3125,8 @@
             
             // Populate basic fields
             cidInput.value = data.CID || '';
-            cidInput.readOnly = true; // CID should not be editable during update
+            cidInput.disabled = false; // Enable CID for editing
+            cidInput.readOnly = false; // Make sure it's not readonly
             appIdInput.value = data['App ID'] || '';
             
             // Set date with proper formatting
@@ -3079,10 +3180,17 @@
             productPL.checked = productStringContains(productString, 'Asipire Cat') ||
                                productStringContains(productString, 'Privilege Cat') ||
                                productStringContains(productString, 'PL');
+                               
+            productOther.checked = productStringContains(productString, 'Other');
             
             if (productPL.checked) {
                 loanAmountSection.classList.remove('hidden');
                 loanAmountInput.value = data['Loan Amount'] || '';
+            }
+            
+            if (productOther.checked) {
+                otherPointsSection.classList.remove('hidden');
+                otherPointsInput.value = data['Other Points'] || '';
             }
             
             // Enable/disable dependent checkboxes
@@ -3214,7 +3322,7 @@
             
             // Product validation - at least one product must be selected
             const productSelected = productACC.checked || productSTL.checked || productCC.checked || 
-                                   product2ndCC.checked || productBTCCL.checked || productPL.checked;
+                                   product2ndCC.checked || productBTCCL.checked || productPL.checked || productOther.checked;
             
             if (!productSelected) {
                 document.getElementById('productsError').classList.remove('hidden');
@@ -3347,6 +3455,12 @@
             // Include BT/CCL if checked
             if (productBTCCL.checked) {
                 selectedProductOptions.push('BT/CCL');
+            }
+            
+            // Include Other if checked
+            if (productOther.checked) {
+                selectedProductOptions.push('Other');
+                formData.append('otherPoints', otherPointsInput.value);
             }
             
             // Get PL selection
@@ -3544,7 +3658,7 @@
             }
         });
         
-        // Export selected data as PDF - FIXED version with proper row selection and column widths
+        // Export selected data as PDF
         confirmExportBtn.addEventListener('click', function() {
             const checkedRows = document.querySelectorAll('#exportTableBody .row-checkbox:checked');
             
@@ -3553,6 +3667,16 @@
                 showSuccess("Please select at least one record to export");
                 return;
             }
+            
+            // Check if all amount fields are empty
+            let hasAmounts = false;
+            checkedRows.forEach(checkbox => {
+                const row = checkbox.closest('tr');
+                const amountInput = row.querySelector('.amount-input');
+                if (amountInput && amountInput.value && amountInput.value.trim() !== '') {
+                    hasAmounts = true;
+                }
+            });
             
             // Extract data directly from the checked rows
             let selectedData = [];
@@ -3564,14 +3688,20 @@
                     const amount = amountInput ? amountInput.value : '';
                     
                     if (cells.length >= 7) {
-                        selectedData.push({
+                        const rowData = {
                             CID: cells[1].textContent,
                             Date: cells[2].textContent,
                             'Customer Name': cells[3].textContent,
                             Product: cells[4].textContent,
-                            Status: cells[5].textContent,
-                            Amount: amount
-                        });
+                            Status: cells[5].textContent
+                        };
+                        
+                        // Only include amount if there are amounts in the data
+                        if (hasAmounts) {
+                            rowData.Amount = amount;
+                        }
+                        
+                        selectedData.push(rowData);
                         
                         // Save amount to corresponding record in allRecordsData for profile saving
                         const cid = checkbox.getAttribute('data-cid');
@@ -3585,43 +3715,39 @@
             
             // Fallback to test data if still no data
             if (selectedData.length === 0) {
-                selectedData = testData.map(item => ({...item, Amount: "0"}));
+                selectedData = testData.map(item => {
+                    const data = {...item};
+                    if (hasAmounts) {
+                        data.Amount = "0";
+                    }
+                    return data;
+                });
                 showSuccess("Using fallback data for PDF export.");
             }
             
-            // Extract required columns and prepare data for PDF - now with serial numbers
-            const exportData = selectedData.map((record, index) => {
-                return {
-                    // Add serial number (1-based index)
-                    No: (index + 1).toString(),
-                    CID: record.CID || '',
-                    Date: record.Date || '',
-                    'Customer Name': record['Customer Name'] || '',
-                    Product: record.Product || '',
-                    Status: record.Status || '',
-                    Amount: record.Amount || '0'
-                };
-            });
+            // Calculate total amount for PDF (only if amounts exist)
+            let totalAmount = 0;
+            if (hasAmounts) {
+                totalAmount = selectedData.reduce((total, record) => {
+                    return total + (parseFloat(record.Amount) || 0);
+                }, 0);
+            }
             
-            // Calculate total amount for PDF
-            const totalAmount = exportData.reduce((total, record) => {
-                return total + (parseFloat(record.Amount) || 0);
-            }, 0);
-            
-            // Create PDF with improved column spacing
-            createPDF(exportData, totalAmount);
+            // Create PDF with conditional Amount column
+            createPDF(selectedData, totalAmount, hasAmounts);
             
             // Close modal
             closeExportModal();
             
             // Show success message
-            showSuccess(`Exported ${exportData.length} records as PDF successfully`);
+            showSuccess(`Exported ${selectedData.length} records as PDF successfully`);
         });
         
-        // FIXED PDF generation function
-        function createPDF(data, totalAmount) {
+        // Updated PDF generation function to handle optional Amount column
+        function createPDF(data, totalAmount, includeAmount) {
             try {
                 console.log("Creating PDF with data:", JSON.stringify(data));
+                console.log("Include amount column:", includeAmount);
                 
                 // Create a new jsPDF instance
                 const doc = new jsPDF();
@@ -3629,7 +3755,7 @@
                 // Add title with better styling
                 doc.setFontSize(18);
                 doc.setTextColor(111, 44, 79); // Purple color matching the UI
-                doc.text('Customer Data Report', 15, 15);
+                doc.text('Sales Report', 15, 15);
                 
                 // Add date with better styling
                 doc.setFontSize(11);
@@ -3640,33 +3766,43 @@
                 const totalWidth = 180;
                 // Margin from left edge
                 const leftMargin = 15;
-                                
-                // Define column widths according to required percentages
-                const colWidthNo = totalWidth * 0.05;      // 5%
-                const colWidthCID = totalWidth * 0.10;     // 10%
-                const colWidthDate = totalWidth * 0.10;    // 10%
-                const colWidthName = totalWidth * 0.30;    // 30%
-                const colWidthProduct = totalWidth * 0.10; // 10%
-                const colWidthStatus = totalWidth * 0.15;  // 15%
-                const colWidthAmount = totalWidth * 0.20;  // 20%
-                                
-                // Calculate column positions (starting X coordinate for each column)
-                const col0X = leftMargin + 3;                                          // Serial No. (with slight indent)
-                const col1X = leftMargin + colWidthNo;                                 // CID
-                const col2X = col1X + colWidthCID;                                     // Date
-                const col3X = col2X + colWidthDate;                                    // Customer Name
-                const col4X = col3X + colWidthName;                                    // Product
-                const col5X = col4X + colWidthProduct;                                 // Status
-                const col6X = col5X + colWidthStatus;                                  // Amount
-                                
-                // Define text truncation/wrapping lengths (slightly smaller than column width)
-                const widthNo = colWidthNo - 2;
-                const widthCID = colWidthCID - 2;
-                const widthDate = colWidthDate - 2;
-                const widthName = colWidthName - 2;
-                const widthProduct = colWidthProduct - 2;
-                const widthStatus = colWidthStatus - 2;
-                const widthAmount = colWidthAmount - 2;
+                
+                let colWidthNo, colWidthCID, colWidthDate, colWidthName, colWidthProduct, colWidthStatus, colWidthAmount;
+                let col0X, col1X, col2X, col3X, col4X, col5X, col6X;
+                
+                if (includeAmount) {
+                    // Define column widths with amount column
+                    colWidthNo = totalWidth * 0.05;      // 5%
+                    colWidthCID = totalWidth * 0.10;     // 10%
+                    colWidthDate = totalWidth * 0.10;    // 10%
+                    colWidthName = totalWidth * 0.30;    // 30%
+                    colWidthProduct = totalWidth * 0.10; // 10%
+                    colWidthStatus = totalWidth * 0.15;  // 15%
+                    colWidthAmount = totalWidth * 0.20;  // 20%
+                    
+                    col0X = leftMargin + 3;
+                    col1X = leftMargin + colWidthNo;
+                    col2X = col1X + colWidthCID;
+                    col3X = col2X + colWidthDate;
+                    col4X = col3X + colWidthName;
+                    col5X = col4X + colWidthProduct;
+                    col6X = col5X + colWidthStatus;
+                } else {
+                    // Define column widths without amount column
+                    colWidthNo = totalWidth * 0.06;      // 6%
+                    colWidthCID = totalWidth * 0.12;     // 12%
+                    colWidthDate = totalWidth * 0.12;    // 12%
+                    colWidthName = totalWidth * 0.40;    // 40%
+                    colWidthProduct = totalWidth * 0.15; // 15%
+                    colWidthStatus = totalWidth * 0.15;  // 15%
+                    
+                    col0X = leftMargin + 3;
+                    col1X = leftMargin + colWidthNo;
+                    col2X = col1X + colWidthCID;
+                    col3X = col2X + colWidthDate;
+                    col4X = col3X + colWidthName;
+                    col5X = col4X + colWidthProduct;
+                }
                 
                 // Add header with colored background
                 doc.setFillColor(111, 44, 79); // Purple header
@@ -3683,7 +3819,9 @@
                 doc.text('Customer Name', col3X, 35);
                 doc.text('Product', col4X, 35);
                 doc.text('Status', col5X, 35);
-                doc.text('Amount', col6X, 35);
+                if (includeAmount) {
+                    doc.text('Amount', col6X, 35);
+                }
                 
                 // Reset font and color for data rows
                 doc.setFont(undefined, 'normal');
@@ -3711,7 +3849,9 @@
                         doc.text('Customer Name', col3X, y);
                         doc.text('Product', col4X, y);
                         doc.text('Status', col5X, y);
-                        doc.text('Amount', col6X, y);
+                        if (includeAmount) {
+                            doc.text('Amount', col6X, y);
+                        }
                         
                         // Reset font for data
                         doc.setFont(undefined, 'normal');
@@ -3726,88 +3866,40 @@
                         doc.rect(15, y-5, 180, 8, 'F');
                     }
                     
-                    // Helper function for wrapping text
-                    function wrapText(text, maxWidth) {
-                        const words = text.split(' ');
-                        let line = '';
-                        let lines = [];
-                        
-                        for (let i = 0; i < words.length; i++) {
-                            const testLine = line + (line ? ' ' : '') + words[i];
-                            if (testLine.length <= maxWidth) {
-                                line = testLine;
-                            } else {
-                                lines.push(line);
-                                line = words[i];
-                            }
-                        }
-                        if (line) {
-                            lines.push(line);
-                        }
-                        return lines.length > 0 ? lines : [''];
+                    // Add row data
+                    doc.text((i + 1).toString(), col0X, y);
+                    doc.text(row.CID?.toString() || '', col1X, y);
+                    doc.text(row.Date?.toString() || '', col2X, y);
+                    doc.text(row['Customer Name']?.toString() || '', col3X, y);
+                    doc.text(row.Product?.toString() || '', col4X, y);
+                    doc.text(row.Status?.toString() || '', col5X, y);
+                    
+                    if (includeAmount) {
+                        const amountValue = parseFloat(row.Amount) || 0;
+                        const formattedAmount = amountValue.toLocaleString('en-US');
+                        doc.text(formattedAmount, col6X + colWidthAmount - 5, y, { align: 'right' });
                     }
                     
-                    // Add row data with wrapping for longer texts
-                    let rowHeight = 0;
-                    
-                    // Serial number (doesn't need wrapping)
-                    doc.text((i + 1).toString(), col0X, y);
-                    
-                    // CID (doesn't need wrapping)
-                    doc.text(truncateText(row.CID?.toString() || '', widthCID), col1X, y);
-                    
-                    // Date (doesn't need wrapping)
-                    doc.text(truncateText(row.Date?.toString() || '', widthDate), col2X, y);
-                    
-                    // Customer Name (needs wrapping)
-                    const nameLines = wrapText(row['Customer Name']?.toString() || '', widthName);
-                    nameLines.forEach((line, lineIndex) => {
-                        doc.text(line, col3X, y + (lineIndex * 4));
-                        rowHeight = Math.max(rowHeight, lineIndex * 4);
-                    });
-                    
-                    // Product (may need wrapping)
-                    const productLines = wrapText(row.Product?.toString() || '', widthProduct);
-                    productLines.forEach((line, lineIndex) => {
-                        doc.text(line, col4X, y + (lineIndex * 4));
-                        rowHeight = Math.max(rowHeight, lineIndex * 4);
-                    });
-                    
-                    // Status (may need wrapping)
-                    const statusLines = wrapText(row.Status?.toString() || '', widthStatus);
-                    statusLines.forEach((line, lineIndex) => {
-                        doc.text(line, col5X, y + (lineIndex * 4));
-                        rowHeight = Math.max(rowHeight, lineIndex * 4);
-                    });
-                    
-                    // Amount (right-aligned)
-                    const amountValue = parseFloat(row.Amount) || 0;
-                    const formattedAmount = amountValue.toLocaleString('en-US');
-                    doc.text(formattedAmount, col6X + widthAmount - 5, y, { align: 'right' });
-                    
-                    // Adjust y for next row based on the tallest wrapped text
-                    y += Math.max(10, rowHeight + 6); // Use at least 10 for single line rows
+                    y += 10;
                 });
                 
-                // Add total row
-                // Draw total row background
-                doc.setFillColor(240, 240, 240);
-                doc.rect(15, y-5, 180, 8, 'F');
-                
-                // Draw top border for total row
-                doc.setDrawColor(111, 44, 79);
-                doc.setLineWidth(0.5);
-                doc.line(15, y-5, 195, y-5);
-                
-                // Add total text
-                doc.setFont(undefined, 'bold');
-                doc.text('Total:', col5X, y);
-                
-                // Add formatted total amount (right-aligned)
-                const formattedTotal = totalAmount.toLocaleString('en-US');
-                doc.text(formattedTotal, col6X + widthAmount - 5, y, { align: 'right' });
-                
-                y += 10;
+                // Add total row only if amount column is included
+                if (includeAmount) {
+                    doc.setFillColor(240, 240, 240);
+                    doc.rect(15, y-5, 180, 8, 'F');
+                    
+                    doc.setDrawColor(111, 44, 79);
+                    doc.setLineWidth(0.5);
+                    doc.line(15, y-5, 195, y-5);
+                    
+                    doc.setFont(undefined, 'bold');
+                    doc.text('Total:', col5X, y);
+                    
+                    const formattedTotal = totalAmount.toLocaleString('en-US');
+                    doc.text(formattedTotal, col6X + colWidthAmount - 5, y, { align: 'right' });
+                    
+                    y += 10;
+                }
                 
                 // Draw border around the table
                 doc.setDrawColor(111, 44, 79);
@@ -3816,9 +3908,9 @@
                     doc.setPage(i);
                     const pageHeight = doc.internal.pageSize.height;
                     if (i === doc.internal.getNumberOfPages()) {
-                        doc.rect(15, 30, 180, Math.min(y - 35, pageHeight - 40)); // Border for last page
+                        doc.rect(15, 30, 180, Math.min(y - 35, pageHeight - 40));
                     } else {
-                        doc.rect(15, 30, 180, pageHeight - 40); // Border for other pages
+                        doc.rect(15, 30, 180, pageHeight - 40);
                     }
                 }
                 
