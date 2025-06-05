@@ -80,11 +80,8 @@
         <!-- Main Card -->
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
             <!-- Banner/Header -->
-            <div class="bg-gradient-to-r from-blue-400 to-purple-900 p-4 flex justify-between items-center">
+            <div class="bg-gradient-to-r from-blue-400 to-purple-900 p-4">
                 <h2 id="pricingTitle" class="text-xl font-bold text-white">PIL Pricing</h2>
-                <a href="index.html" class="bg-white text-purple-900 hover:bg-gray-200 font-medium py-1 px-4 rounded-md transition-all duration-200">
-                    Back to Home
-                </a>
             </div>
 
             <!-- Form Section -->
@@ -96,6 +93,67 @@
                         <div class="md:col-span-2">
                             <select id="nationality" name="nationality" class="w-full">
                                 <!-- Will be populated with countries -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- UAE Fields -->
+                    <div id="uaeFields" style="display: none;">
+                        <!-- Profession -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                            <label for="profession" class="text-gray-700 dark:text-gray-300 font-medium">Profession:</label>
+                            <select id="profession" name="profession" 
+                                class="md:col-span-2 border border-gray-300 dark:border-gray-600 rounded-md p-2 
+                                focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+                                <option value="" disabled selected>Select Profession</option>
+                                <option value="Salaried">Salaried</option>
+                                <option value="Armed & MOD">Armed & MOD</option>
+                            </select>
+                        </div>
+
+                        <!-- Category for Salaried only -->
+                        <div id="uaeCategoryField" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center" style="display: none;">
+                            <label for="uaeCategory" class="text-gray-700 dark:text-gray-300 font-medium">Category:</label>
+                            <select id="uaeCategory" name="uaeCategory" 
+                                class="md:col-span-2 border border-gray-300 dark:border-gray-600 rounded-md p-2 
+                                focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+                                <option value="" disabled selected>Select Category</option>
+                                <option value="CAT A">CAT A</option>
+                                <option value="CAT B">CAT B</option>
+                                <option value="CAT C">CAT C</option>
+                                <option value="CAT D">CAT D</option>
+                                <option value="CAT E">CAT E</option>
+                            </select>
+                        </div>
+
+                        <!-- ADCB Score for UAE -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                            <label for="uaeAdcbScore" class="text-gray-700 dark:text-gray-300 font-medium">ADCB Score:</label>
+                            <select id="uaeAdcbScore" name="uaeAdcbScore" 
+                                class="md:col-span-2 border border-gray-300 dark:border-gray-600 rounded-md p-2 
+                                focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+                                <option value="" disabled selected>Select ADCB Score</option>
+                                <option value="VLR">Very Low Risk (VLR)</option>
+                                <option value="LR">Low Risk (LR)</option>
+                                <option value="MR">Medium Risk (MR)</option>
+                                <option value="HR">High Risk (HR)</option>
+                                <option value="VHR">Very High Risk (VHR)</option>
+                            </select>
+                        </div>
+
+                        <!-- ECB Score for UAE -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                            <label for="uaeEcbScore" class="text-gray-700 dark:text-gray-300 font-medium">ECB Score:</label>
+                            <select id="uaeEcbScore" name="uaeEcbScore" 
+                                class="md:col-span-2 border border-gray-300 dark:border-gray-600 rounded-md p-2 
+                                focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+                                <option value="" disabled selected>Select ECB Score</option>
+                                <option value="NS">No Score (NS)</option>
+                                <option value="VLR">Very Low Risk (VLR)</option>
+                                <option value="LR">Low Risk (LR)</option>
+                                <option value="MR">Medium Risk (MR)</option>
+                                <option value="HR">High Risk (HR)</option>
+                                <option value="VHR">Very High Risk (VHR)</option>
                             </select>
                         </div>
                     </div>
@@ -119,7 +177,7 @@
                         </div>
                         
                         <!-- ADCB Score (Added) -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mt-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                             <label for="adcbScore" class="text-gray-700 dark:text-gray-300 font-medium">ADCB Score:</label>
                             <select id="adcbScore" name="adcbScore" 
                                 class="md:col-span-2 border border-gray-300 dark:border-gray-600 rounded-md p-2 
@@ -134,7 +192,7 @@
                         </div>
 
                         <!-- Category -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mt-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                             <label for="category" class="text-gray-700 dark:text-gray-300 font-medium">Category:</label>
                             <select id="category" name="category" 
                                 class="md:col-span-2 border border-gray-300 dark:border-gray-600 rounded-md p-2 
@@ -181,6 +239,10 @@
                     <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-md shadow">
                         <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-3">Customer Profile</h4>
                         <ul class="space-y-2">
+                            <li id="resultProfessionRow" class="flex justify-between" style="display: none;">
+                                <span class="text-gray-600 dark:text-gray-400">Profession:</span>
+                                <span id="resultProfession" class="font-medium text-gray-800 dark:text-white"></span>
+                            </li>
                             <li id="resultRiskBandRow" class="flex justify-between">
                                 <span class="text-gray-600 dark:text-gray-400">Risk Band (ECB):</span>
                                 <span id="resultRiskBand" class="font-medium text-gray-800 dark:text-white"></span>
@@ -391,33 +453,276 @@
                 <!-- UAE Rate Grid -->
                 <div id="uaeRateGrid" class="hidden">
                     <h3 class="text-center font-bold text-lg text-primary dark:text-white mb-3">UAE Nationals</h3>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full border-collapse border border-gray-300 dark:border-gray-700">
-                            <thead>
-                                <tr class="bg-secondary text-white text-center">
-                                    <th class="border border-gray-300 dark:border-gray-700 p-2">Salary</th>
-                                    <th class="border border-gray-300 dark:border-gray-700 p-2">STD ROI</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="text-center bg-gray-50 dark:bg-gray-700">
-                                    <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">&lt;20K</td>
-                                    <td class="border border-gray-300 dark:border-gray-600 p-2">6.49%</td>
-                                </tr>
-                                <tr class="text-center">
-                                    <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">20K-40K</td>
-                                    <td class="border border-gray-300 dark:border-gray-600 p-2">5.99%</td>
-                                </tr>
-                                <tr class="text-center bg-gray-50 dark:bg-gray-700">
-                                    <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">40K-70K</td>
-                                    <td class="border border-gray-300 dark:border-gray-600 p-2">5.74%</td>
-                                </tr>
-                                <tr class="text-center">
-                                    <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">&gt;=70K/Excellency</td>
-                                    <td class="border border-gray-300 dark:border-gray-600 p-2">5.49%</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    
+                    <!-- UAE Standard Rate Table -->
+                    <div class="mb-6">
+                        <h4 class="text-center font-bold text-md text-primary dark:text-white mb-3">UAE Nationals - Standard Rate</h4>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full border-collapse border border-gray-300 dark:border-gray-700">
+                                <thead>
+                                    <tr class="bg-secondary text-white text-center">
+                                        <th class="border border-gray-300 dark:border-gray-700 p-2">Salary</th>
+                                        <th class="border border-gray-300 dark:border-gray-700 p-2">STD ROI</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="text-center bg-gray-50 dark:bg-gray-700">
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">&lt;20K</td>
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2">6.49%</td>
+                                    </tr>
+                                    <tr class="text-center">
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">20K-40K</td>
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2">5.99%</td>
+                                    </tr>
+                                    <tr class="text-center bg-gray-50 dark:bg-gray-700">
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">40K-70K</td>
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2">5.74%</td>
+                                    </tr>
+                                    <tr class="text-center">
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">&gt;=70K/Excellency</td>
+                                        <td class="border border-gray-300 dark:border-gray-600 p-2">5.49%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Rate Tables for UAE -->
+                    <div class="space-y-6">
+                        <!-- CAT A, B, C, D Table -->
+                        <div>
+                            <h4 class="text-center font-bold text-md text-primary dark:text-white mb-3">CAT A, CAT B, CAT C & CAT D</h4>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full border-collapse border border-gray-300 dark:border-gray-700">
+                                    <thead>
+                                        <tr class="bg-secondary text-white text-center">
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2" rowspan="2">Category</th>
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2" colspan="6">ECB Score</th>
+                                        </tr>
+                                        <tr class="bg-secondary text-white text-center">
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2">VHR</th>
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2">HR</th>
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2">MR</th>
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2">LR</th>
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2">VLR</th>
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2">NS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="text-center bg-gray-50 dark:bg-gray-700">
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">VHR</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">10x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                        </tr>
+                                        <tr class="text-center">
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">HR</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                        </tr>
+                                        <tr class="text-center bg-gray-50 dark:bg-gray-700">
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">MR</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                        </tr>
+                                        <tr class="text-center">
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">LR</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                        </tr>
+                                        <tr class="text-center bg-gray-50 dark:bg-gray-700">
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">VLR</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- CAT E Table -->
+                        <div>
+                            <h4 class="text-center font-bold text-md text-primary dark:text-white mb-3">CAT E</h4>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full border-collapse border border-gray-300 dark:border-gray-700">
+                                    <thead>
+                                        <tr class="bg-secondary text-white text-center">
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2" rowspan="2">Category</th>
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2" colspan="6">ECB Score</th>
+                                        </tr>
+                                        <tr class="bg-secondary text-white text-center">
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2">VHR</th>
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2">HR</th>
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2">MR</th>
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2">LR</th>
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2">VLR</th>
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2">NS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="text-center bg-gray-50 dark:bg-gray-700">
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">VHR</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">10x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">10x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">10x</td>
+                                        </tr>
+                                        <tr class="text-center">
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">HR</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">10x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">10x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">10x</td>
+                                        </tr>
+                                        <tr class="text-center bg-gray-50 dark:bg-gray-700">
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">MR</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                        </tr>
+                                        <tr class="text-center">
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">LR</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                        </tr>
+                                        <tr class="text-center bg-gray-50 dark:bg-gray-700">
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">VLR</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Armed & MOD Table -->
+                        <div>
+                            <h4 class="text-center font-bold text-md text-primary dark:text-white mb-3">Armed Forces and MOD customers Grid</h4>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full border-collapse border border-gray-300 dark:border-gray-700">
+                                    <thead>
+                                        <tr class="bg-secondary text-white text-center">
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2" rowspan="2">GHQ/MOD</th>
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2" colspan="6">ECB Score</th>
+                                        </tr>
+                                        <tr class="bg-secondary text-white text-center">
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2">VHR</th>
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2">HR</th>
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2">MR</th>
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2">LR</th>
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2">VLR</th>
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2">NS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="text-center bg-gray-50 dark:bg-gray-700">
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">VHR</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">10x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                        </tr>
+                                        <tr class="text-center">
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">HR</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                        </tr>
+                                        <tr class="text-center bg-gray-50 dark:bg-gray-700">
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">MR</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                        </tr>
+                                        <tr class="text-center">
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">LR</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                        </tr>
+                                        <tr class="text-center bg-gray-50 dark:bg-gray-700">
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">VLR</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Maximum Loan Amount for UAE -->
+                        <div class="mt-6">
+                            <h3 class="text-center font-bold text-lg text-primary dark:text-white mb-3">Maximum Loan Amount (UAE)</h3>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full border-collapse border border-gray-300 dark:border-gray-700">
+                                    <thead>
+                                        <tr class="bg-secondary text-white text-center">
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2">Profession</th>
+                                            <th class="border border-gray-300 dark:border-gray-700 p-2">Max Multiple</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="text-center bg-gray-50 dark:bg-gray-700">
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">Salaried</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">20x</td>
+                                        </tr>
+                                        <tr class="text-center">
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2 font-medium">Armed & MOD</td>
+                                            <td class="border border-gray-300 dark:border-gray-600 p-2">15x</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -465,6 +770,52 @@
                 "MR": {"VHR": "N/A", "HR": "5X", "MR": "5X", "LR": "10X", "VLR": "10X", "NS": "5X"},
                 "LR": {"VHR": "N/A", "HR": "5X", "MR": "10X", "LR": "15X", "VLR": "15X", "NS": "5X"},
                 "VLR": {"VHR": "N/A", "HR": "10X", "MR": "10X", "LR": "15X", "VLR": "15X", "NS": "5X"}
+            }
+        };
+
+        // UAE ADCB Matrix for Max Multiples
+        const uaeAdcbMatrix = {
+            "CAT A": {
+                "VHR": {"VHR": "10X", "HR": "15X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "15X"},
+                "HR": {"VHR": "15X", "HR": "20X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "15X"},
+                "MR": {"VHR": "20X", "HR": "20X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "20X"},
+                "LR": {"VHR": "20X", "HR": "20X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "20X"},
+                "VLR": {"VHR": "20X", "HR": "20X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "20X"}
+            },
+            "CAT B": {
+                "VHR": {"VHR": "10X", "HR": "15X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "15X"},
+                "HR": {"VHR": "15X", "HR": "20X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "15X"},
+                "MR": {"VHR": "20X", "HR": "20X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "20X"},
+                "LR": {"VHR": "20X", "HR": "20X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "20X"},
+                "VLR": {"VHR": "20X", "HR": "20X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "20X"}
+            },
+            "CAT C": {
+                "VHR": {"VHR": "10X", "HR": "15X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "15X"},
+                "HR": {"VHR": "15X", "HR": "20X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "15X"},
+                "MR": {"VHR": "20X", "HR": "20X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "20X"},
+                "LR": {"VHR": "20X", "HR": "20X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "20X"},
+                "VLR": {"VHR": "20X", "HR": "20X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "20X"}
+            },
+            "CAT D": {
+                "VHR": {"VHR": "10X", "HR": "15X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "15X"},
+                "HR": {"VHR": "15X", "HR": "20X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "15X"},
+                "MR": {"VHR": "20X", "HR": "20X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "20X"},
+                "LR": {"VHR": "20X", "HR": "20X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "20X"},
+                "VLR": {"VHR": "20X", "HR": "20X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "20X"}
+            },
+            "CAT E": {
+                "VHR": {"VHR": "10X", "HR": "10X", "MR": "15X", "LR": "20X", "VLR": "20X", "NS": "10X"},
+                "HR": {"VHR": "10X", "HR": "10X", "MR": "15X", "LR": "20X", "VLR": "20X", "NS": "10X"},
+                "MR": {"VHR": "15X", "HR": "15X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "15X"},
+                "LR": {"VHR": "20X", "HR": "20X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "20X"},
+                "VLR": {"VHR": "20X", "HR": "20X", "MR": "20X", "LR": "20X", "VLR": "20X", "NS": "20X"}
+            },
+            "Armed & MOD": {
+                "VHR": {"VHR": "10X", "HR": "15X", "MR": "15X", "LR": "15X", "VLR": "15X", "NS": "15X"},
+                "HR": {"VHR": "15X", "HR": "15X", "MR": "15X", "LR": "15X", "VLR": "15X", "NS": "15X"},
+                "MR": {"VHR": "15X", "HR": "15X", "MR": "15X", "LR": "15X", "VLR": "15X", "NS": "15X"},
+                "LR": {"VHR": "15X", "HR": "15X", "MR": "15X", "LR": "15X", "VLR": "15X", "NS": "15X"},
+                "VLR": {"VHR": "15X", "HR": "15X", "MR": "15X", "LR": "15X", "VLR": "15X", "NS": "15X"}
             }
         };
         
@@ -649,7 +1000,7 @@
             });
             
             // Add event listeners for automatic calculation
-            $('#nationality, #riskBand, #adcbScore, #category, #salary, #discountRate').on('change input', function() {
+            $('#nationality, #riskBand, #adcbScore, #category, #salary, #discountRate, #profession, #uaeCategory, #uaeAdcbScore, #uaeEcbScore').on('change input', function() {
                 calculateRate();
             });
             
@@ -659,17 +1010,32 @@
                 if (nationality === "United Arab Emirates") {
                     // UAE Nationals - show special fields
                     $('#nonUaeFields').hide();
+                    $('#uaeFields').show();
                     $('#pricingTitle').text('PIL Pricing - UAE Nationals');
                     $('#nonUaeRateGrid').hide();
                     $('#uaeRateGrid').show();
                     $('#resultRiskBandRow, #resultADCBScoreRow, #resultCategoryRow').hide();
+                    $('#resultProfessionRow').show();
                 } else {
                     // Non-UAE - show standard fields
                     $('#nonUaeFields').show();
+                    $('#uaeFields').hide();
                     $('#pricingTitle').text('PIL Pricing - Expats');
                     $('#nonUaeRateGrid').show();
                     $('#uaeRateGrid').hide();
                     $('#resultRiskBandRow, #resultADCBScoreRow, #resultCategoryRow').show();
+                    $('#resultProfessionRow').hide();
+                }
+                calculateRate();
+            });
+
+            // Handle profession change for UAE nationals
+            $('#profession').on('change', function() {
+                const profession = $(this).val();
+                if (profession === "Salaried") {
+                    $('#uaeCategoryField').show();
+                } else {
+                    $('#uaeCategoryField').hide();
                 }
                 calculateRate();
             });
@@ -749,40 +1115,93 @@
         }
         
         // Function to determine max multiples and max loan amount
-        function calculateMaximumValues(nationality, ecbScore, adcbScore, category, salary) {
+        function calculateMaximumValues(nationality, ecbScore, adcbScore, category, salary, profession) {
             let maxMultiples = "N/A";
             let maxLoanAmount = "N/A";
             
-            // Get the category key for lookup
-            const categoryKey = category;
-            
-            // Check if the values are N/A first
-            if (ecbScore && adcbScore && category) {
-                const categoryGroup = getCategoryGroup(category);
-                // Try to get the multiples from the matrix - note that ADCB Score is rows, ECB Score is columns
-                if (adcbMatrix[categoryGroup] && 
-                    adcbMatrix[categoryGroup][adcbScore] && 
-                    adcbMatrix[categoryGroup][adcbScore][ecbScore]) {
-                    maxMultiples = adcbMatrix[categoryGroup][adcbScore][ecbScore];
-                }
-                
-                // If it's high risk nationality and not LR/VLR combo, limit to 5X or 250,000
-                if (isHighRiskNationality(nationality, salary)) {
-                    if (!((ecbScore === "LR" || ecbScore === "VLR") && 
-                          (adcbScore === "LR" || adcbScore === "VLR"))) {
-                        if (maxMultiples !== "N/A") {
-                            maxMultiples = "5X";
+            if (nationality === "United Arab Emirates") {
+                // UAE calculations
+                if (profession && ecbScore && adcbScore) {
+                    // For UAE, use category if salaried, otherwise use profession for Armed & MOD
+                    if (profession === "Salaried" && category) {
+                        if (uaeAdcbMatrix[category] && 
+                            uaeAdcbMatrix[category][adcbScore] && 
+                            uaeAdcbMatrix[category][adcbScore][ecbScore]) {
+                            maxMultiples = uaeAdcbMatrix[category][adcbScore][ecbScore];
                         }
-                        maxLoanAmount = "250,000";
+                    } else if (profession === "Armed & MOD") {
+                        if (uaeAdcbMatrix["Armed & MOD"] && 
+                            uaeAdcbMatrix["Armed & MOD"][adcbScore] && 
+                            uaeAdcbMatrix["Armed & MOD"][adcbScore][ecbScore]) {
+                            maxMultiples = uaeAdcbMatrix["Armed & MOD"][adcbScore][ecbScore];
+                        }
                     }
                 }
                 
-                // Get maximum loan amount from the matrix
-                if (maxLoanAmounts[categoryKey]) {
-                    if (ecbScore === "NS") {
-                        maxLoanAmount = maxLoanAmounts[categoryKey]["noECB"];
-                    } else {
-                        maxLoanAmount = maxLoanAmounts[categoryKey]["withECB"];
+                // Calculate max loan amount for UAE - Salary * Max Multiples
+                if (maxMultiples !== "N/A" && salary) {
+                    const multiplier = parseInt(maxMultiples.replace('X', ''));
+                    let calculatedLoan = salary * multiplier;
+                    
+                    // Only apply profession limits if it exceeds the calculated amount
+                    let professionLimit = Infinity;
+                    if (profession === "Salaried") {
+                        professionLimit = salary * 20; // Max 20x for salaried
+                    } else if (profession === "Armed & MOD") {
+                        professionLimit = salary * 15; // Max 15x for Armed & MOD
+                    }
+                    
+                    // Use the minimum of calculated loan and profession limit only if profession limit is exceeded
+                    if (calculatedLoan > professionLimit) {
+                        calculatedLoan = professionLimit;
+                    }
+                    
+                    maxLoanAmount = calculatedLoan.toLocaleString();
+                }
+            } else {
+                // Non-UAE calculations (existing logic)
+                const categoryKey = category;
+                
+                if (ecbScore && adcbScore && category) {
+                    const categoryGroup = getCategoryGroup(category);
+                    if (adcbMatrix[categoryGroup] && 
+                        adcbMatrix[categoryGroup][adcbScore] && 
+                        adcbMatrix[categoryGroup][adcbScore][ecbScore]) {
+                        maxMultiples = adcbMatrix[categoryGroup][adcbScore][ecbScore];
+                    }
+                    
+                    // If it's high risk nationality and not LR/VLR combo, limit to 5X or 250,000
+                    if (isHighRiskNationality(nationality, salary)) {
+                        if (!((ecbScore === "LR" || ecbScore === "VLR") && 
+                              (adcbScore === "LR" || adcbScore === "VLR"))) {
+                            if (maxMultiples !== "N/A") {
+                                maxMultiples = "5X";
+                            }
+                            maxLoanAmount = "250,000";
+                            return { maxMultiples, maxLoanAmount };
+                        }
+                    }
+                    
+                    // Calculate max loan amount for non-UAE - Salary * Max Multiples
+                    if (maxMultiples !== "N/A" && salary) {
+                        const multiplier = parseInt(maxMultiples.replace('X', ''));
+                        let calculatedLoan = salary * multiplier;
+                        
+                        // Apply caps from max loan amounts table only if exceeded
+                        if (maxLoanAmounts[categoryKey]) {
+                            let cap;
+                            if (ecbScore === "NS") {
+                                cap = parseInt(maxLoanAmounts[categoryKey]["noECB"].replace(/,/g, ''));
+                            } else {
+                                cap = parseInt(maxLoanAmounts[categoryKey]["withECB"].replace(/,/g, ''));
+                            }
+                            // Only apply cap if calculated loan exceeds it
+                            if (calculatedLoan > cap) {
+                                calculatedLoan = cap;
+                            }
+                        }
+                        
+                        maxLoanAmount = calculatedLoan.toLocaleString();
                     }
                 }
                 
@@ -822,6 +1241,11 @@
             
             if (nationality === "United Arab Emirates") {
                 // UAE Nationals calculation
+                const profession = $('#profession').val();
+                const uaeCategory = $('#uaeCategory').val();
+                const uaeEcbScore = $('#uaeEcbScore').val();
+                const uaeAdcbScore = $('#uaeAdcbScore').val();
+                
                 baseRate = uaeRateGrid[salaryRange];
                 finalRate = Math.max(0, baseRate - discountRate);
                 
@@ -833,6 +1257,22 @@
                 // Update results section
                 $('#resultSalary').text(`${salary.toLocaleString()} AED`);
                 $('#resultNationality').text(nationality);
+                $('#resultProfession').text(profession || "Not Selected");
+                
+                // Show category for salaried, hide for Armed & MOD
+                if (profession === "Salaried") {
+                    $('#resultCategory').text(uaeCategory || "Not Selected");
+                    $('#resultCategoryRow').show();
+                } else {
+                    $('#resultCategoryRow').hide();
+                }
+                
+                // Show ADCB and ECB scores
+                $('#resultADCBScore').text(uaeAdcbScore || "Not Selected");
+                $('#resultRiskBand').text(uaeEcbScore || "Not Selected");
+                $('#resultRiskBandRow').show();
+                $('#resultADCBScoreRow').show();
+                
                 $('#baseRate').text(`${baseRate.toFixed(2)}%`);
                 
                 if (discountRate > 0) {
@@ -841,9 +1281,14 @@
                 
                 $('#finalRate').text(`${finalRate.toFixed(2)}%`);
                 
-                // Hide Max Multiples for UAE Nationals
-                $('#resultMaxMultiplesRow').hide();
-                $('#resultMaxLoanRow').hide();
+                // Calculate Max Multiples and Max Loan Amount for UAE
+                const { maxMultiples, maxLoanAmount } = calculateMaximumValues(nationality, uaeEcbScore, uaeAdcbScore, uaeCategory, salary, profession);
+                
+                // Show Max Multiples and Max Loan Amount
+                $('#resultMaxMultiplesRow').show();
+                $('#resultMaxLoanRow').show();
+                $('#resultMaxMultiples').text(maxMultiples);
+                $('#resultMaxLoan').text(maxLoanAmount);
             } else {
                 // Non-UAE calculation
                 const ecbScore = $('#riskBand').val();
