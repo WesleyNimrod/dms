@@ -32,6 +32,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tahoma:wght@400;700&display=swap');
         
@@ -182,7 +183,7 @@
         }
         
         .success-indicator {
-            background: rgb(22, 163, 74);
+            background: linear-gradient(135deg, #66d9e8 0%, #63e6be 100%);
             color: white;
             padding: 8px 12px;
             border-radius: 4px;
@@ -542,7 +543,7 @@
                             <i class="fas fa-trash-alt"></i>
                         </button>
                         
-                        <!-- Google Drive button (placeholder for now) -->
+                        <!-- Google Drive button -->
                         <button id="googleDriveBtn" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-2 rounded-md hover:opacity-90 flex items-center justify-center" title="Google Drive">
                             <i class="fab fa-google-drive"></i>
                         </button>
@@ -1212,6 +1213,180 @@
     
     <script>
         // ==========================================
+        // GOOGLE DRIVE INTEGRATION
+        // ==========================================
+        
+        // Google Drive API configuration
+        const GOOGLE_DRIVE_CONFIG = {
+            apiKey: 'AIzaSyC2zR4p8b8VWefV4D2z-IArCPRUHunS4xA',
+            clientId: '332801486388-ful7pgrul7tr72drqtvptclqh50jobld.apps.googleusercontent.com',
+            discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+            scope: 'https://www.googleapis.com/auth/drive.file'
+        };
+        
+        // Google Drive API state
+        let gapi = null;
+        let isGapiLoaded = false;
+        let isSignedIn = false;
+        
+        // Initialize Google Drive API
+        function initializeGoogleDrive() {
+            if (typeof window.gapi !== 'undefined') {
+                gapi = window.gapi;
+                gapi.load('auth2:client', initClient);
+            } else {
+                console.error('Google API not loaded');
+                showSuccess('Google Drive API not available. Using local storage.');
+            }
+        }
+        
+        function initClient() {
+            gapi.client.init({
+                apiKey: GOOGLE_DRIVE_CONFIG.apiKey,
+                clientId: GOOGLE_DRIVE_CONFIG.clientId,
+                discoveryDocs: GOOGLE_DRIVE_CONFIG.discoveryDocs,
+                scope: GOOGLE_DRIVE_CONFIG.scope
+            }).then(() => {
+                isGapiLoaded = true;
+                const authInstance = gapi.auth2.getAuthInstance();
+                isSignedIn = authInstance.isSignedIn.get();
+                
+                // Listen for sign-in state changes
+                authInstance.isSignedIn.listen(updateSigninStatus);
+                
+                console.log('Google Drive API initialized');
+            }).catch(error => {
+                console.error('Error initializing Google Drive API:', error);
+                showSuccess('Failed to initialize Google Drive. Using local storage.');
+            });
+        }
+        
+        function updateSigninStatus(isSignedIn) {
+            window.isSignedIn = isSignedIn;
+            if (isSignedIn) {
+                loadGoogleDriveProfiles();
+            }
+        }
+        
+        // Sign in to Google Drive
+        function signInToGoogleDrive() {
+            if (!isGapiLoaded) {
+                showSuccess('Google Drive API not ready. Please try again.');
+                return Promise.reject('API not ready');
+            }
+            
+            const authInstance = gapi.auth2.getAuthInstance();
+            if (authInstance.isSignedIn.get()) {
+                return Promise.resolve();
+            }
+            
+            return authInstance.signIn().then(() => {
+                isSignedIn = true;
+                showSuccess('Successfully signed in to Google Drive');
+            }).catch(error => {
+                console.error('Sign-in error:', error);
+                showSuccess('Failed to sign in to Google Drive');
+                throw error;
+            });
+        }
+        
+        // Save profile to Google Drive
+        async function saveProfileToGoogleDrive(profileName, profileData) {
+            try {
+                await signInToGoogleDrive();
+                
+                const fileMetadata = {
+                    name: `${profileName}_profile.json`,
+                    parents: [] // Save to root folder
+                };
+                
+                const form = new FormData();
+                form.append('metadata', new Blob([JSON.stringify(fileMetadata)], {type: 'application/json'}));
+                form.append('file', new Blob([JSON.stringify(profileData)], {type: 'application/json'}));
+                
+                const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+                    method: 'POST',
+                    headers: new Headers({
+                        'Authorization': `Bearer ${gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token}`
+                    }),
+                    body: form
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Profile saved to Google Drive:', result);
+                    return result;
+                } else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error saving to Google Drive:', error);
+                throw error;
+            }
+        }
+        
+        // Load profiles from Google Drive
+        async function loadGoogleDriveProfiles() {
+            try {
+                if (!isSignedIn) return;
+                
+                const response = await gapi.client.drive.files.list({
+                    q: "name contains '_profile.json'",
+                    fields: 'files(id, name, modifiedTime)'
+                });
+                
+                const files = response.result.files;
+                if (files && files.length > 0) {
+                    // Clear existing profiles except first option
+                    const savedProfilesSelect = document.getElementById('savedProfiles');
+                    while (savedProfilesSelect.options.length > 1) {
+                        savedProfilesSelect.options.remove(1);
+                    }
+                    
+                    // Add Google Drive profiles
+                    files.forEach(file => {
+                        const profileName = file.name.replace('_profile.json', '');
+                        const option = document.createElement('option');
+                        option.value = `gdrive:${file.id}:${profileName}`;
+                        option.textContent = `${profileName} (Drive)`;
+                        savedProfilesSelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading Google Drive profiles:', error);
+            }
+        }
+        
+        // Retrieve profile from Google Drive
+        async function retrieveProfileFromGoogleDrive(fileId) {
+            try {
+                const response = await gapi.client.drive.files.get({
+                    fileId: fileId,
+                    alt: 'media'
+                });
+                
+                return JSON.parse(response.body);
+            } catch (error) {
+                console.error('Error retrieving profile from Google Drive:', error);
+                throw error;
+            }
+        }
+        
+        // Delete profile from Google Drive
+        async function deleteProfileFromGoogleDrive(fileId) {
+            try {
+                await gapi.client.drive.files.delete({
+                    fileId: fileId
+                });
+                
+                console.log('Profile deleted from Google Drive');
+            } catch (error) {
+                console.error('Error deleting profile from Google Drive:', error);
+                throw error;
+            }
+        }
+        
+        // ==========================================
         // AUTHENTICATION
         // ==========================================
         
@@ -1265,7 +1440,10 @@
         });
         
         // Check authentication on page load
-        document.addEventListener('DOMContentLoaded', checkAuthentication);
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthentication();
+            initializeGoogleDrive();
+        });
         
         // ==========================================
         // INITIALIZATION AND UTILITIES
@@ -1509,7 +1687,7 @@
             const exportPdfBtn = document.getElementById('exportPdfBtn');
             const printPageBtn = document.getElementById('printPageBtn');
             
-            // Google Drive placeholder button
+            // Google Drive button
             const googleDriveBtn = document.getElementById('googleDriveBtn');
             
             // Bank comparison inputs - Tab
@@ -1572,16 +1750,28 @@
             dbrRateToggle.checked = false;
             
             // ==========================================
-            // GOOGLE DRIVE PLACEHOLDER
+            // GOOGLE DRIVE FUNCTIONALITY
             // ==========================================
             
-            // Google Drive button placeholder functionality
-            googleDriveBtn.addEventListener('click', function() {
-                showSuccess('Google Drive integration requires API setup. This feature is planned for future implementation.');
+            // Google Drive button functionality
+            googleDriveBtn.addEventListener('click', async function() {
+                try {
+                    if (!isGapiLoaded) {
+                        showSuccess('Google Drive API not loaded. Please refresh the page.');
+                        return;
+                    }
+                    
+                    await signInToGoogleDrive();
+                    await loadGoogleDriveProfiles();
+                    showSuccess('Google Drive connected successfully!');
+                } catch (error) {
+                    console.error('Google Drive error:', error);
+                    showSuccess('Failed to connect to Google Drive');
+                }
             });
             
             // ==========================================
-            // PROFILE MANAGEMENT
+            // PROFILE MANAGEMENT (Updated for Google Drive)
             // ==========================================
             
             // Initialize profiles and check for temporary state
@@ -1596,7 +1786,7 @@
             retrieveProfileBtn.addEventListener('click', retrieveCustomerProfile);
             deleteProfileBtn.addEventListener('click', deleteCustomerProfile);
             
-            function saveCustomerProfile() {
+            async function saveCustomerProfile() {
                 const customerName = customerNameInput.value.trim();
                 if (!customerName) {
                     showSuccess('Please enter a customer name before saving');
@@ -1642,60 +1832,88 @@
                     addbackData: addbackData
                 };
                 
-                // Save to localStorage
                 try {
-                    // Get existing profiles
-                    const existingProfiles = JSON.parse(localStorage.getItem('customerProfiles')) || {};
-                    
-                    // Add/update this profile
-                    existingProfiles[customerName] = profileData;
-                    
-                    // Save back to localStorage
-                    localStorage.setItem('customerProfiles', JSON.stringify(existingProfiles));
+                    // Try to save to Google Drive first
+                    if (isGapiLoaded && isSignedIn) {
+                        await saveProfileToGoogleDrive(customerName, profileData);
+                        showSuccess('Profile saved to Google Drive successfully!');
+                    } else {
+                        // Fallback to localStorage
+                        const existingProfiles = JSON.parse(localStorage.getItem('customerProfiles')) || {};
+                        existingProfiles[customerName] = profileData;
+                        localStorage.setItem('customerProfiles', JSON.stringify(existingProfiles));
+                        showSuccess('Profile saved locally successfully!');
+                    }
                     
                     // Update dropdown and select the current profile
-                    loadSavedProfiles();
-                    savedProfilesSelect.value = customerName;
+                    await loadSavedProfiles();
+                    
+                    // Find and select the saved profile in dropdown
+                    const options = savedProfilesSelect.options;
+                    for (let i = 0; i < options.length; i++) {
+                        if (options[i].textContent.includes(customerName)) {
+                            savedProfilesSelect.value = options[i].value;
+                            break;
+                        }
+                    }
                     
                     // Save as last used profile
                     localStorage.setItem('lastUsedProfile', customerName);
                     
-                    showSuccess('Profile saved successfully!');
                 } catch (error) {
                     console.error('Error saving profile:', error);
-                    showSuccess('Error saving profile. Please try again.');
+                    // Fallback to localStorage
+                    try {
+                        const existingProfiles = JSON.parse(localStorage.getItem('customerProfiles')) || {};
+                        existingProfiles[customerName] = profileData;
+                        localStorage.setItem('customerProfiles', JSON.stringify(existingProfiles));
+                        showSuccess('Profile saved locally (Google Drive failed)');
+                        loadSavedProfiles();
+                    } catch (localError) {
+                        console.error('Error saving to localStorage:', localError);
+                        showSuccess('Error saving profile. Please try again.');
+                    }
                 }
             }
             
-            function loadSavedProfiles() {
+            async function loadSavedProfiles() {
                 // Clear existing options except the first one
                 while (savedProfilesSelect.options.length > 1) {
                     savedProfilesSelect.options.remove(1);
                 }
                 
-                // Get profiles from localStorage
                 try {
-                    const profiles = JSON.parse(localStorage.getItem('customerProfiles')) || {};
+                    // Load from Google Drive if available
+                    if (isGapiLoaded && isSignedIn) {
+                        await loadGoogleDriveProfiles();
+                    }
                     
-                    // Add options to select
+                    // Also load from localStorage
+                    const profiles = JSON.parse(localStorage.getItem('customerProfiles')) || {};
                     Object.keys(profiles).forEach(name => {
                         const option = document.createElement('option');
-                        option.value = name;
-                        option.textContent = name;
+                        option.value = `local:${name}`;
+                        option.textContent = `${name} (Local)`;
                         savedProfilesSelect.appendChild(option);
                     });
                     
                     // Set the last used profile if available
                     const lastUsedProfile = localStorage.getItem('lastUsedProfile');
-                    if (lastUsedProfile && savedProfilesSelect.querySelector(`option[value="${lastUsedProfile}"]`)) {
-                        savedProfilesSelect.value = lastUsedProfile;
+                    if (lastUsedProfile) {
+                        const options = savedProfilesSelect.options;
+                        for (let i = 0; i < options.length; i++) {
+                            if (options[i].textContent.includes(lastUsedProfile)) {
+                                savedProfilesSelect.value = options[i].value;
+                                break;
+                            }
+                        }
                     }
                 } catch (error) {
                     console.error('Error loading profiles:', error);
                 }
             }
             
-            function retrieveCustomerProfile() {
+            async function retrieveCustomerProfile() {
                 const selectedProfile = savedProfilesSelect.value;
                 if (!selectedProfile) {
                     showSuccess('Please select a profile to retrieve');
@@ -1703,8 +1921,19 @@
                 }
                 
                 try {
-                    const profiles = JSON.parse(localStorage.getItem('customerProfiles')) || {};
-                    const profileData = profiles[selectedProfile];
+                    let profileData = null;
+                    
+                    if (selectedProfile.startsWith('gdrive:')) {
+                        // Google Drive profile
+                        const parts = selectedProfile.split(':');
+                        const fileId = parts[1];
+                        profileData = await retrieveProfileFromGoogleDrive(fileId);
+                    } else if (selectedProfile.startsWith('local:')) {
+                        // Local storage profile
+                        const profileName = selectedProfile.substring(6); // Remove 'local:' prefix
+                        const profiles = JSON.parse(localStorage.getItem('customerProfiles')) || {};
+                        profileData = profiles[profileName];
+                    }
                     
                     if (!profileData) {
                         showSuccess('Profile not found');
@@ -1803,7 +2032,7 @@
                     }
                     
                     // Save as last used profile
-                    localStorage.setItem('lastUsedProfile', selectedProfile);
+                    localStorage.setItem('lastUsedProfile', profileData.customerName);
                     
                     // Trigger calculation updates
                     updateGrossSalary();
@@ -1814,6 +2043,58 @@
                 } catch (error) {
                     console.error('Error retrieving profile:', error);
                     showSuccess('Error retrieving profile. Please try again.');
+                }
+            }
+            
+            async function deleteCustomerProfile() {
+                const selectedProfile = savedProfilesSelect.value;
+                if (!selectedProfile) {
+                    showSuccess('Please select a profile to delete');
+                    return;
+                }
+                
+                const profileName = selectedProfile.includes(':') ? 
+                    selectedProfile.split(':').slice(-1)[0] : selectedProfile;
+                
+                if (!confirm(`Are you sure you want to delete the profile "${profileName}"?`)) {
+                    return;
+                }
+                
+                try {
+                    if (selectedProfile.startsWith('gdrive:')) {
+                        // Google Drive profile
+                        const parts = selectedProfile.split(':');
+                        const fileId = parts[1];
+                        await deleteProfileFromGoogleDrive(fileId);
+                        showSuccess('Profile deleted from Google Drive successfully!');
+                    } else if (selectedProfile.startsWith('local:')) {
+                        // Local storage profile
+                        const profileName = selectedProfile.substring(6); // Remove 'local:' prefix
+                        const existingProfiles = JSON.parse(localStorage.getItem('customerProfiles')) || {};
+                        
+                        if (existingProfiles[profileName]) {
+                            delete existingProfiles[profileName];
+                            localStorage.setItem('customerProfiles', JSON.stringify(existingProfiles));
+                            showSuccess('Profile deleted from local storage successfully!');
+                        } else {
+                            showSuccess('Profile not found in local storage');
+                        }
+                    }
+                    
+                    // If we deleted the last used profile, remove it
+                    if (localStorage.getItem('lastUsedProfile') === profileName) {
+                        localStorage.removeItem('lastUsedProfile');
+                    }
+                    
+                    // Update dropdown
+                    await loadSavedProfiles();
+                    
+                    // Reset the select to default option
+                    savedProfilesSelect.value = '';
+                    
+                } catch (error) {
+                    console.error('Error deleting profile:', error);
+                    showSuccess('Error deleting profile. Please try again.');
                 }
             }
             
@@ -1958,49 +2239,6 @@
                 setTimeout(() => {
                     updateGrossSalary();
                 }, 100);
-            }
-            
-            function deleteCustomerProfile() {
-                const selectedProfile = savedProfilesSelect.value;
-                if (!selectedProfile) {
-                    showSuccess('Please select a profile to delete');
-                    return;
-                }
-                
-                if (!confirm(`Are you sure you want to delete the profile "${selectedProfile}"?`)) {
-                    return;
-                }
-                
-                try {
-                    // Get existing profiles
-                    const existingProfiles = JSON.parse(localStorage.getItem('customerProfiles')) || {};
-                    
-                    // Delete the selected profile
-                    if (existingProfiles[selectedProfile]) {
-                        delete existingProfiles[selectedProfile];
-                        
-                        // Save back to localStorage
-                        localStorage.setItem('customerProfiles', JSON.stringify(existingProfiles));
-                        
-                        // If we deleted the last used profile, remove it
-                        if (localStorage.getItem('lastUsedProfile') === selectedProfile) {
-                            localStorage.removeItem('lastUsedProfile');
-                        }
-                        
-                        // Update dropdown
-                        loadSavedProfiles();
-                        
-                        // Reset the select to default option
-                        savedProfilesSelect.value = '';
-                        
-                        showSuccess('Profile deleted successfully!');
-                    } else {
-                        showSuccess('Profile not found');
-                    }
-                } catch (error) {
-                    console.error('Error deleting profile:', error);
-                    showSuccess('Error deleting profile. Please try again.');
-                }
             }
             
             // Functions to save and load temporary state
