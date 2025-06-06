@@ -13,17 +13,16 @@
                 extend: {
                     colors: {
                         primary: {
-                            DEFAULT: '#0B1845',
-                            light: '#50848A'
+                            DEFAULT: '#2A293E',
+                            light: '#7b68ee'
                         },
                         secondary: {
-                            pink: '#EEAECA',
-                            blue: '#94BBE9'
+                            DEFAULT: '#7b68ee'
                         },
                         bank: {
                             enbd: '#27408B',
-                            ei: '#ff8c00',
-                            adcb: '#27408B',
+                            ei: '#9b1b9d',
+                            adcb: '#ff2500',
                             mashreq: '#ff8c00'
                         }
                     }
@@ -33,16 +32,18 @@
     </script>
     <style>
         :root {
-            --primary-dark: #001157;
-            --primary-light: #ABA3CF;
-            --secondary-pink: #EEAECA;
-            --secondary-blue: #94BBE9;
+            --primary: #2A293E;
+            --primary-light: #7b68ee;
+            --secondary: #7b68ee;
             --bank-enbd: #27408B;
-            --bank-ei: #ff8c00;
-            --bank-adcb: #27408B;
+            --bank-ei: #9b1b9d;
+            --bank-adcb: #ff2500;
             --bank-mashreq: #ff8c00;
-            --gradient-primary: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-light) 100%);
-            --gradient-secondary: linear-gradient(135deg, var(--secondary-pink) 0%, var(--secondary-blue) 100%);
+        }
+        
+        @font-face {
+            font-family: 'UAEDirham';
+            src: url('data:font/woff2;base64,') format('woff2');
         }
         
         body {
@@ -56,16 +57,8 @@
             color: #e0e0e0;
         }
         
-        .gradient-primary {
-            background: var(--gradient-primary);
-        }
-        
-        .gradient-secondary {
-            background: var(--gradient-secondary);
-        }
-        
         .custom-btn {
-            background: var(--gradient-primary);
+            background: var(--primary);
             transition: all 0.3s;
         }
         
@@ -75,16 +68,38 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
+        .bank-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 2px;
+        }
+        
+        .bank-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .bank-enbd { background-color: var(--bank-enbd); }
+        .bank-ei { background-color: var(--bank-ei); }
+        .bank-adcb { background-color: var(--bank-adcb); }
+        .bank-mashreq { background-color: var(--bank-mashreq); }
+        
         .data-table {
             width: 100%;
             border-collapse: collapse;
+            font-size: 14px;
         }
         
         .data-table th {
-            background: var(--gradient-primary);
+            background: var(--primary);
             color: white;
             text-align: left;
-            padding: 12px 8px;
+            padding: 8px 6px;
             font-weight: 600;
             position: sticky;
             top: 0;
@@ -92,21 +107,21 @@
         }
         
         .data-table tr:nth-child(even) {
-            background-color: rgba(171, 163, 207, 0.05);
+            background-color: rgba(123, 104, 238, 0.05);
         }
         
         .data-table tr:hover {
-            background-color: rgba(171, 163, 207, 0.1);
+            background-color: rgba(123, 104, 238, 0.1);
         }
         
         .data-table td {
             border-bottom: 1px solid #e2e8f0;
-            padding: 12px 8px;
+            padding: 8px 6px;
         }
         
         .data-table tr.total-row {
             font-weight: 700;
-            background-color: rgba(171, 163, 207, 0.15);
+            background-color: rgba(123, 104, 238, 0.15);
         }
         
         .data-table tr.total-row td {
@@ -117,71 +132,87 @@
         .card {
             border-radius: 12px;
             background-color: white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
             overflow: hidden;
         }
         
         .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
         
         .card-header {
-            background: var(--gradient-primary);
+            background: var(--primary);
             color: white;
-            padding: 16px;
+            padding: 12px 16px;
             font-weight: 600;
         }
         
         .card-header-alt {
-            background: var(--gradient-secondary);
+            background: var(--secondary);
             color: white;
-            padding: 16px;
+            padding: 12px 16px;
             font-weight: 600;
         }
         
         .progress-bar {
-            height: 8px;
+            height: 6px;
             background-color: #e2e8f0;
-            border-radius: 4px;
+            border-radius: 3px;
             overflow: hidden;
         }
         
         .progress-fill {
             height: 100%;
-            border-radius: 4px;
-            background: var(--gradient-primary);
+            border-radius: 3px;
+            background: var(--primary);
             transition: width 0.5s ease;
         }
         
-        input[type="number"], input[type="text"], select {
+        input[type="number"], input[type="text"], input[type="date"], select {
             border: 1px solid #e2e8f0;
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: 6px;
             transition: all 0.3s;
-            font-size: 16px;
+            font-size: 14px;
         }
         
-        input[type="number"]:focus, input[type="text"]:focus, select:focus {
+        input[type="number"]:focus, input[type="text"]:focus, input[type="date"]:focus, select:focus {
             border-color: var(--primary-light);
-            box-shadow: 0 0 0 3px rgba(171, 163, 207, 0.2);
+            box-shadow: 0 0 0 3px rgba(123, 104, 238, 0.2);
             outline: none;
         }
         
         .quick-add-container {
             background: white;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            padding: 20px;
-            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .modal-input {
+            position: absolute;
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            padding: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            display: none;
+        }
+        
+        .modal-input.show {
+            display: flex;
+            gap: 8px;
         }
         
         .loading {
             display: inline-block;
-            width: 30px;
-            height: 30px;
-            border: 3px solid rgba(255,255,255,.3);
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,.3);
             border-radius: 50%;
             border-top-color: #fff;
             animation: spin 1s ease-in-out infinite;
@@ -195,8 +226,8 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            padding: 15px 25px;
-            background: var(--gradient-primary);
+            padding: 12px 20px;
+            background: var(--primary);
             color: white;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -225,11 +256,36 @@
             background-color: #1e1e1e;
         }
         
+        .compact-card {
+            padding: 12px;
+        }
+        
+        .financial-metric {
+            text-align: center;
+            padding: 8px;
+            border-radius: 8px;
+            margin: 4px;
+            background: linear-gradient(45deg, var(--primary), var(--primary-light));
+            color: white;
+        }
+        
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .metric-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
         @media (max-width: 768px) {
             .data-table {
                 display: block;
                 overflow-x: auto;
                 white-space: nowrap;
+                font-size: 12px;
             }
             
             .grid-cols-4 {
@@ -249,217 +305,359 @@
     </style>
 </head>
 <body class="antialiased">
-    <div class="container mx-auto px-4 py-6 max-w-6xl">
+    <div class="container mx-auto px-4 py-4 max-w-7xl">
         <!-- Header Section -->
-        <header class="mb-8">
+        <header class="mb-6">
             <div class="flex flex-wrap justify-between items-center">
                 <div>
-                    <h1 class="text-3xl font-bold" style="color: var(--primary-dark)">Finance Dashboard</h1>
-                    <p class="text-gray-600 mt-1">Track and manage your financial obligations</p>
+                    <h1 class="text-2xl font-bold flex items-center" style="color: var(--primary)">
+                        <i class="fas fa-chart-line mr-2 text-primary-light"></i>
+                        Finance Dashboard
+                    </h1>
+                    <p class="text-gray-600 mt-1 text-sm">
+                        <i class="fas fa-analytics mr-1"></i>
+                        Track and manage your financial obligations
+                    </p>
                 </div>
-                <div class="flex items-center mt-4 sm:mt-0">
-                    <button id="toggleThemeBtn" class="mr-4 text-gray-500 hover:text-gray-700">
-                        <i class="fas fa-moon text-xl"></i>
+                <div class="flex items-center mt-4 sm:mt-0 gap-2">
+                    <button id="toggleThemeBtn" class="p-2 text-gray-500 hover:text-gray-700 rounded-lg">
+                        <i class="fas fa-moon text-lg"></i>
                     </button>
-                    <button id="refreshDataBtn" class="custom-btn text-white px-4 py-2 rounded-lg flex items-center">
-                        <i class="fas fa-sync-alt mr-2"></i> Refresh Data
+                    <button id="refreshDataBtn" class="custom-btn text-white px-3 py-2 rounded-lg flex items-center text-sm">
+                        <i class="fas fa-sync-alt mr-1"></i> Refresh
                     </button>
                 </div>
             </div>
         </header>
         
         <!-- Quick Add Section -->
-        <section class="mb-8">
+        <section class="mb-6">
             <div class="quick-add-container">
-                <h2 class="text-lg font-semibold mb-4" style="color: var(--primary-dark)">Quick Update - Credit Cards & Loans</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="quickAddContainer">
-                    <!-- Quick add items will be populated here -->
+                <h2 class="text-lg font-semibold mb-3 flex items-center" style="color: var(--primary)">
+                    <i class="fas fa-bolt mr-2"></i>
+                    Quick Add
+                </h2>
+                <div class="flex flex-wrap gap-2" id="quickAddContainer">
+                    <!-- Quick add buttons will be populated here -->
                 </div>
             </div>
         </section>
         
         <!-- Financial Summary Cards -->
-        <section class="mb-8">
-            <h2 class="text-xl font-semibold mb-4" style="color: var(--primary-dark)">Financial Overview</h2>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <!-- Total Credit Card Debt -->
-                <div class="card p-5">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <div class="text-sm text-gray-500 uppercase">Credit Card Debt</div>
-                            <div class="text-2xl font-bold text-red-500" id="totalCreditCardDebt">AED 0</div>
-                            <div class="text-sm text-gray-500">Utilization: <span id="creditUtilizationPercent">0%</span></div>
+        <section class="mb-6">
+            <h2 class="text-lg font-semibold mb-3 flex items-center" style="color: var(--primary)">
+                <i class="fas fa-tachometer-alt mr-2"></i>
+                Financial Overview
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                <!-- Credit Card Debt -->
+                <div class="card compact-card">
+                    <div class="text-center">
+                        <i class="fas fa-credit-card text-red-500 text-xl mb-2"></i>
+                        <div class="text-lg font-bold text-red-500" id="totalCreditCardDebt">
+                            <span style="font-family: 'UAEDirham'">&#x00EA;</span>0
                         </div>
-                        <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-credit-card text-red-500 text-xl"></i>
-                        </div>
+                        <div class="text-xs text-gray-500">CC Debt</div>
+                        <div class="text-xs text-gray-500" id="creditUtilizationPercent">0%</div>
                     </div>
                 </div>
                 
-                <!-- Total Auto Loan -->
-                <div class="card p-5">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <div class="text-sm text-gray-500 uppercase">Auto Loan</div>
-                            <div class="text-2xl font-bold text-orange-500" id="totalAutoLoan">AED 0</div>
-                            <div class="text-sm text-gray-500">Remaining balance</div>
+                <!-- Auto Loan -->
+                <div class="card compact-card">
+                    <div class="text-center">
+                        <i class="fas fa-car text-orange-500 text-xl mb-2"></i>
+                        <div class="text-lg font-bold text-orange-500" id="totalAutoLoan">
+                            <span style="font-family: 'UAEDirham'">&#x00EA;</span>0
                         </div>
-                        <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-car text-orange-500 text-xl"></i>
-                        </div>
+                        <div class="text-xs text-gray-500">Auto Loan</div>
                     </div>
                 </div>
                 
                 <!-- Monthly Expenses -->
-                <div class="card p-5">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <div class="text-sm text-gray-500 uppercase">Monthly Expenses</div>
-                            <div class="text-2xl font-bold text-blue-500" id="totalMonthlyExpenses">AED 0</div>
-                            <div class="text-sm text-gray-500"><span id="expenseCount">0</span> categories</div>
+                <div class="card compact-card">
+                    <div class="text-center">
+                        <i class="fas fa-file-invoice-dollar text-blue-500 text-xl mb-2"></i>
+                        <div class="text-lg font-bold text-blue-500" id="totalMonthlyExpenses">
+                            <span style="font-family: 'UAEDirham'">&#x00EA;</span>0
                         </div>
-                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-file-invoice-dollar text-blue-500 text-xl"></i>
+                        <div class="text-xs text-gray-500">Expenses</div>
+                    </div>
+                </div>
+                
+                <!-- Monthly Income -->
+                <div class="card compact-card">
+                    <div class="text-center">
+                        <i class="fas fa-money-bill-wave text-green-500 text-xl mb-2"></i>
+                        <div class="text-lg font-bold text-green-500" id="totalMonthlyIncome">
+                            <span style="font-family: 'UAEDirham'">&#x00EA;</span>0
                         </div>
+                        <div class="text-xs text-gray-500">Income</div>
                     </div>
                 </div>
                 
                 <!-- Monthly Savings -->
-                <div class="card p-5">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <div class="text-sm text-gray-500 uppercase">Monthly Savings</div>
-                            <div class="text-2xl font-bold text-green-500" id="monthlySavings">AED 0</div>
-                            <div class="text-sm text-gray-500">Available for saving</div>
+                <div class="card compact-card">
+                    <div class="text-center">
+                        <i class="fas fa-piggy-bank text-purple-500 text-xl mb-2"></i>
+                        <div class="text-lg font-bold text-purple-500" id="monthlySavings">
+                            <span style="font-family: 'UAEDirham'">&#x00EA;</span>0
                         </div>
-                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-piggy-bank text-green-500 text-xl"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Credit Cards & Loans Section -->
-        <section class="mb-8">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold" style="color: var(--primary-dark)">Credit Cards & Loans</h2>
-                <button class="custom-btn text-white px-4 py-2 rounded-lg flex items-center" id="addAccountBtn">
-                    <i class="fas fa-plus mr-2"></i> Add Account
-                </button>
-            </div>
-            
-            <!-- Cards & Loans Table -->
-            <div class="overflow-x-auto mb-4">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Bank</th>
-                            <th>Limit</th>
-                            <th>Outstanding</th>
-                            <th>Available</th>
-                            <th>Due Amount</th>
-                            <th>Due Date</th>
-                            <th>Fixed Installments</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="creditCardsTableBody">
-                        <!-- Data will be loaded dynamically -->
-                    </tbody>
-                    <tfoot>
-                        <tr class="total-row">
-                            <td>TOTAL</td>
-                            <td id="totalLimit">AED 0</td>
-                            <td id="totalOutstanding">AED 0</td>
-                            <td id="totalAvailable">AED 0</td>
-                            <td id="totalDueAmount">AED 0</td>
-                            <td>-</td>
-                            <td id="totalInstallments">AED 0</td>
-                            <td></td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </section>
-        
-        <!-- Monthly Expenses Section -->
-        <section class="mb-8">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold" style="color: var(--primary-dark)">Monthly Expenses</h2>
-                <button class="custom-btn text-white px-4 py-2 rounded-lg flex items-center" id="addExpenseBtn">
-                    <i class="fas fa-plus mr-2"></i> Add Expense
-                </button>
-            </div>
-            
-            <!-- Expenses Table -->
-            <div class="overflow-x-auto mb-4">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Category</th>
-                            <th>Amount</th>
-                            <th>Due Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="expensesTableBody">
-                        <!-- Data will be loaded dynamically -->
-                    </tbody>
-                    <tfoot>
-                        <tr class="total-row">
-                            <td>TOTAL</td>
-                            <td id="totalExpenseAmount">AED 0</td>
-                            <td>-</td>
-                            <td></td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </section>
-        
-        <!-- Visualizations Section -->
-        <section class="mb-8">
-            <h2 class="text-xl font-semibold mb-4" style="color: var(--primary-dark)">Financial Visualizations</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Credit Utilization -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="text-lg font-semibold">Credit Utilization by Bank</h3>
-                    </div>
-                    <div class="p-4">
-                        <canvas id="utilizationChart" height="250"></canvas>
+                        <div class="text-xs text-gray-500">Savings</div>
                     </div>
                 </div>
                 
-                <!-- Payment Completion Forecast -->
-                <div class="card">
-                    <div class="card-header-alt">
-                        <h3 class="text-lg font-semibold">Payment Completion Forecast</h3>
-                    </div>
-                    <div class="p-4">
-                        <canvas id="paymentForecastChart" height="250"></canvas>
+                <!-- Cash Flow -->
+                <div class="card compact-card">
+                    <div class="text-center">
+                        <i class="fas fa-water text-cyan-500 text-xl mb-2"></i>
+                        <div class="text-lg font-bold text-cyan-500" id="cashFlow">
+                            <span style="font-family: 'UAEDirham'">&#x00EA;</span>0
+                        </div>
+                        <div class="text-xs text-gray-500">Cash Flow</div>
                     </div>
                 </div>
             </div>
         </section>
         
+        <!-- Advanced Financial Metrics -->
+        <section class="mb-6">
+            <h2 class="text-lg font-semibold mb-3 flex items-center" style="color: var(--primary)">
+                <i class="fas fa-analytics mr-2"></i>
+                Advanced Metrics
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                <div class="financial-metric">
+                    <span class="metric-value" id="debtToIncomeRatio">0%</span>
+                    <span class="metric-label">Debt/Income</span>
+                </div>
+                <div class="financial-metric">
+                    <span class="metric-value" id="savingsRate">0%</span>
+                    <span class="metric-label">Savings Rate</span>
+                </div>
+                <div class="financial-metric">
+                    <span class="metric-value" id="emergencyFund">0</span>
+                    <span class="metric-label">Emergency (months)</span>
+                </div>
+                <div class="financial-metric">
+                    <span class="metric-value" id="avgCreditUtil">0%</span>
+                    <span class="metric-label">Avg CC Util</span>
+                </div>
+                <div class="financial-metric">
+                    <span class="metric-value" id="monthlyDebtPayment">
+                        <span style="font-family: 'UAEDirham'">&#x00EA;</span><span id="debtPaymentAmount">0</span>
+                    </span>
+                    <span class="metric-label">Debt Payments</span>
+                </div>
+                <div class="financial-metric">
+                    <span class="metric-value" id="projectedDebtFree">0</span>
+                    <span class="metric-label">Debt Free (months)</span>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Credit Cards & Loans Section -->
+                <section>
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-lg font-semibold flex items-center" style="color: var(--primary)">
+                            <i class="fas fa-credit-card mr-2"></i>
+                            Credit Cards & Loans
+                        </h2>
+                        <button class="custom-btn text-white px-3 py-2 rounded-lg flex items-center text-sm" id="addAccountBtn">
+                            <i class="fas fa-plus mr-1"></i> Add
+                        </button>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-university mr-1"></i>Bank</th>
+                                    <th><i class="fas fa-coins mr-1"></i>Limit</th>
+                                    <th><i class="fas fa-exclamation-triangle mr-1"></i>Outstanding</th>
+                                    <th><i class="fas fa-check-circle mr-1"></i>Available</th>
+                                    <th><i class="fas fa-calendar-day mr-1"></i>Due Amount</th>
+                                    <th><i class="fas fa-calendar mr-1"></i>Due Date</th>
+                                    <th><i class="fas fa-money-bill mr-1"></i>Installment</th>
+                                    <th><i class="fas fa-cogs mr-1"></i>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="creditCardsTableBody">
+                                <!-- Data will be loaded dynamically -->
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td><i class="fas fa-calculator mr-1"></i>TOTAL</td>
+                                    <td id="totalLimit"><span style="font-family: 'UAEDirham'">&#x00EA;</span>0</td>
+                                    <td id="totalOutstanding"><span style="font-family: 'UAEDirham'">&#x00EA;</span>0</td>
+                                    <td id="totalAvailable"><span style="font-family: 'UAEDirham'">&#x00EA;</span>0</td>
+                                    <td id="totalDueAmount"><span style="font-family: 'UAEDirham'">&#x00EA;</span>0</td>
+                                    <td>-</td>
+                                    <td id="totalInstallments"><span style="font-family: 'UAEDirham'">&#x00EA;</span>0</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </section>
+                
+                <!-- Monthly Expenses Section -->
+                <section>
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-lg font-semibold flex items-center" style="color: var(--primary)">
+                            <i class="fas fa-receipt mr-2"></i>
+                            Monthly Expenses
+                        </h2>
+                        <button class="custom-btn text-white px-3 py-2 rounded-lg flex items-center text-sm" id="addExpenseBtn">
+                            <i class="fas fa-plus mr-1"></i> Add
+                        </button>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-tag mr-1"></i>Category</th>
+                                    <th><i class="fas fa-money-bill mr-1"></i>Amount</th>
+                                    <th><i class="fas fa-calendar mr-1"></i>Due Date</th>
+                                    <th><i class="fas fa-cogs mr-1"></i>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expensesTableBody">
+                                <!-- Data will be loaded dynamically -->
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td><i class="fas fa-calculator mr-1"></i>TOTAL</td>
+                                    <td id="totalExpenseAmount"><span style="font-family: 'UAEDirham'">&#x00EA;</span>0</td>
+                                    <td>-</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </section>
+                
+                <!-- Monthly Income Section -->
+                <section>
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-lg font-semibold flex items-center" style="color: var(--primary)">
+                            <i class="fas fa-money-bill-wave mr-2"></i>
+                            Monthly Income
+                        </h2>
+                        <button class="custom-btn text-white px-3 py-2 rounded-lg flex items-center text-sm" id="addIncomeBtn">
+                            <i class="fas fa-plus mr-1"></i> Add
+                        </button>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-briefcase mr-1"></i>Source</th>
+                                    <th><i class="fas fa-money-bill mr-1"></i>Amount</th>
+                                    <th><i class="fas fa-calendar mr-1"></i>Date</th>
+                                    <th><i class="fas fa-cogs mr-1"></i>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="incomeTableBody">
+                                <!-- Data will be loaded dynamically -->
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td><i class="fas fa-calculator mr-1"></i>TOTAL</td>
+                                    <td id="totalIncomeAmount"><span style="font-family: 'UAEDirham'">&#x00EA;</span>0</td>
+                                    <td>-</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </section>
+            </div>
+            
+            <!-- Right Column -->
+            <div class="space-y-6">
+                <!-- Credit Utilization Chart -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-sm font-semibold flex items-center">
+                            <i class="fas fa-chart-bar mr-2"></i>
+                            Credit Utilization
+                        </h3>
+                    </div>
+                    <div class="p-4">
+                        <canvas id="utilizationChart" height="200"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Payment Forecast -->
+                <div class="card">
+                    <div class="card-header-alt">
+                        <h3 class="text-sm font-semibold flex items-center">
+                            <i class="fas fa-crystal-ball mr-2"></i>
+                            Payment Forecast
+                        </h3>
+                    </div>
+                    <div class="p-4">
+                        <canvas id="paymentForecastChart" height="200"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Cash Flow Prediction -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-sm font-semibold flex items-center">
+                            <i class="fas fa-chart-line mr-2"></i>
+                            Cash Flow Trend
+                        </h3>
+                    </div>
+                    <div class="p-4">
+                        <canvas id="cashFlowTrendChart" height="200"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Debt Payoff Plan -->
+                <div class="card">
+                    <div class="card-header-alt">
+                        <h3 class="text-sm font-semibold flex items-center">
+                            <i class="fas fa-target mr-2"></i>
+                            Debt Payoff Plan
+                        </h3>
+                    </div>
+                    <div class="p-4">
+                        <div id="debtPayoffPlan" class="space-y-2">
+                            <!-- Debt payoff plan will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <!-- History Section -->
-        <section class="mb-8">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold" style="color: var(--primary-dark)">Financial History</h2>
-                <button class="custom-btn text-white px-4 py-2 rounded-lg flex items-center" id="saveHistoryBtn">
-                    <i class="fas fa-save mr-2"></i> Save Current Month
+        <section class="mt-6">
+            <div class="flex justify-between items-center mb-3">
+                <h2 class="text-lg font-semibold flex items-center" style="color: var(--primary)">
+                    <i class="fas fa-history mr-2"></i>
+                    Financial History
+                </h2>
+                <button class="custom-btn text-white px-3 py-2 rounded-lg flex items-center text-sm" id="saveHistoryBtn">
+                    <i class="fas fa-save mr-1"></i> Save Month
                 </button>
             </div>
             
             <div class="card">
                 <div class="card-header">
-                    <h3 class="text-lg font-semibold">Monthly Financial Summary</h3>
+                    <h3 class="text-sm font-semibold flex items-center">
+                        <i class="fas fa-chart-area mr-2"></i>
+                        Monthly Summary
+                    </h3>
                 </div>
                 <div class="p-4">
-                    <canvas id="historyChart" height="300"></canvas>
+                    <canvas id="historyChart" height="250"></canvas>
                 </div>
             </div>
         </section>
@@ -467,53 +665,68 @@
     
     <!-- Modal for Adding/Editing Account -->
     <div id="accountModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+        <div class="bg-white rounded-lg w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold" id="modalTitle">Add Account</h3>
+                <h3 class="text-lg font-bold flex items-center" id="modalTitle">
+                    <i class="fas fa-plus mr-2"></i>
+                    Add Account
+                </h3>
                 <button id="closeAccountModal" class="text-gray-500 hover:text-gray-700">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             
-            <form id="accountForm" class="space-y-4">
+            <form id="accountForm" class="space-y-3">
                 <input type="hidden" id="accountRowIndex" value="">
                 
                 <div>
-                    <label for="bank" class="block text-sm font-medium text-gray-700 mb-1">Bank</label>
+                    <label for="bank" class="block text-sm font-medium text-gray-700 mb-1">
+                        <i class="fas fa-university mr-1"></i>Bank
+                    </label>
                     <input type="text" id="bank" class="w-full" placeholder="Enter bank name" required>
                 </div>
                 
                 <div>
-                    <label for="limit" class="block text-sm font-medium text-gray-700 mb-1">Limit</label>
+                    <label for="limit" class="block text-sm font-medium text-gray-700 mb-1">
+                        <i class="fas fa-coins mr-1"></i>Limit
+                    </label>
                     <input type="number" id="limit" class="w-full" placeholder="Enter limit amount" required>
                 </div>
                 
                 <div>
-                    <label for="outstanding" class="block text-sm font-medium text-gray-700 mb-1">Outstanding</label>
-                    <input type="number" id="outstanding" class="w-full" placeholder="Enter outstanding amount" required>
+                    <label for="available" class="block text-sm font-medium text-gray-700 mb-1">
+                        <i class="fas fa-check-circle mr-1"></i>Available
+                    </label>
+                    <input type="number" id="available" class="w-full" placeholder="Enter available amount" required>
                 </div>
                 
                 <div>
-                    <label for="dueAmount" class="block text-sm font-medium text-gray-700 mb-1">Due Amount</label>
+                    <label for="dueAmount" class="block text-sm font-medium text-gray-700 mb-1">
+                        <i class="fas fa-calendar-day mr-1"></i>Due Amount
+                    </label>
                     <input type="number" id="dueAmount" class="w-full" placeholder="Enter due amount" required>
                 </div>
                 
                 <div>
-                    <label for="dueDate" class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+                    <label for="dueDate" class="block text-sm font-medium text-gray-700 mb-1">
+                        <i class="fas fa-calendar mr-1"></i>Due Date
+                    </label>
                     <input type="number" id="dueDate" class="w-full" min="1" max="31" placeholder="Day of month" required>
                 </div>
                 
                 <div>
-                    <label for="installment" class="block text-sm font-medium text-gray-700 mb-1">Fixed Installment</label>
+                    <label for="installment" class="block text-sm font-medium text-gray-700 mb-1">
+                        <i class="fas fa-money-bill mr-1"></i>Fixed Installment
+                    </label>
                     <input type="number" id="installment" class="w-full" placeholder="Enter installment amount" required>
                 </div>
                 
-                <div class="flex justify-end pt-4">
-                    <button type="button" id="cancelAccountBtn" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg mr-2">
-                        Cancel
+                <div class="flex justify-end pt-3 gap-2">
+                    <button type="button" id="cancelAccountBtn" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg text-sm">
+                        <i class="fas fa-times mr-1"></i>Cancel
                     </button>
-                    <button type="submit" class="custom-btn text-white px-4 py-2 rounded-lg">
-                        Save
+                    <button type="submit" class="custom-btn text-white px-4 py-2 rounded-lg text-sm">
+                        <i class="fas fa-save mr-1"></i>Save
                     </button>
                 </div>
             </form>
@@ -524,49 +737,119 @@
     <div id="expenseModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-lg w-full max-w-md p-6">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold" id="expenseModalTitle">Add Expense</h3>
+                <h3 class="text-lg font-bold flex items-center" id="expenseModalTitle">
+                    <i class="fas fa-receipt mr-2"></i>
+                    Add Expense
+                </h3>
                 <button id="closeExpenseModal" class="text-gray-500 hover:text-gray-700">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             
-            <form id="expenseForm" class="space-y-4">
+            <form id="expenseForm" class="space-y-3">
                 <input type="hidden" id="expenseRowIndex" value="">
                 
                 <div>
-                    <label for="expenseCategory" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <label for="expenseCategory" class="block text-sm font-medium text-gray-700 mb-1">
+                        <i class="fas fa-tag mr-1"></i>Category
+                    </label>
                     <select id="expenseCategory" class="w-full" required>
                         <option value="">Select Category</option>
-                        <option value="Rent">Rent</option>
-                        <option value="Parking">Parking</option>
-                        <option value="Utility">Utility</option>
-                        <option value="Borrowed">Borrowed</option>
-                        <option value="Household">Household</option>
-                        <option value="Fuel">Fuel</option>
-                        <option value="Other">Other</option>
+                        <option value="Rent">🏠 Rent</option>
+                        <option value="Parking">🚗 Parking</option>
+                        <option value="Utility">⚡ Utility</option>
+                        <option value="Borrowed">💸 Borrowed</option>
+                        <option value="Household">🏡 Household</option>
+                        <option value="Fuel">⛽ Fuel</option>
+                        <option value="Other">📝 Other</option>
                     </select>
                 </div>
                 
                 <div>
-                    <label for="expenseAmount" class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+                    <label for="expenseAmount" class="block text-sm font-medium text-gray-700 mb-1">
+                        <i class="fas fa-money-bill mr-1"></i>Amount
+                    </label>
                     <input type="number" id="expenseAmount" class="w-full" placeholder="Enter amount" required>
                 </div>
                 
                 <div>
-                    <label for="expenseDueDate" class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+                    <label for="expenseDueDate" class="block text-sm font-medium text-gray-700 mb-1">
+                        <i class="fas fa-calendar mr-1"></i>Due Date
+                    </label>
                     <input type="number" id="expenseDueDate" class="w-full" min="1" max="31" placeholder="Day of month" required>
                 </div>
                 
-                <div class="flex justify-end pt-4">
-                    <button type="button" id="cancelExpenseBtn" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg mr-2">
-                        Cancel
+                <div class="flex justify-end pt-3 gap-2">
+                    <button type="button" id="cancelExpenseBtn" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg text-sm">
+                        <i class="fas fa-times mr-1"></i>Cancel
                     </button>
-                    <button type="submit" class="custom-btn text-white px-4 py-2 rounded-lg">
-                        Save
+                    <button type="submit" class="custom-btn text-white px-4 py-2 rounded-lg text-sm">
+                        <i class="fas fa-save mr-1"></i>Save
                     </button>
                 </div>
             </form>
         </div>
+    </div>
+    
+    <!-- Modal for Adding/Editing Income -->
+    <div id="incomeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg w-full max-w-md p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold flex items-center" id="incomeModalTitle">
+                    <i class="fas fa-money-bill-wave mr-2"></i>
+                    Add Income
+                </h3>
+                <button id="closeIncomeModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="incomeForm" class="space-y-3">
+                <input type="hidden" id="incomeRowIndex" value="">
+                
+                <div>
+                    <label for="incomeSource" class="block text-sm font-medium text-gray-700 mb-1">
+                        <i class="fas fa-briefcase mr-1"></i>Source
+                    </label>
+                    <input type="text" id="incomeSource" class="w-full" placeholder="Enter income source" required>
+                </div>
+                
+                <div>
+                    <label for="incomeAmount" class="block text-sm font-medium text-gray-700 mb-1">
+                        <i class="fas fa-money-bill mr-1"></i>Amount
+                    </label>
+                    <input type="number" id="incomeAmount" class="w-full" placeholder="Enter amount" required>
+                </div>
+                
+                <div>
+                    <label for="incomeDate" class="block text-sm font-medium text-gray-700 mb-1">
+                        <i class="fas fa-calendar mr-1"></i>Date
+                    </label>
+                    <input type="date" id="incomeDate" class="w-full" required>
+                </div>
+                
+                <div class="flex justify-end pt-3 gap-2">
+                    <button type="button" id="cancelIncomeBtn" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg text-sm">
+                        <i class="fas fa-times mr-1"></i>Cancel
+                    </button>
+                    <button type="submit" class="custom-btn text-white px-4 py-2 rounded-lg text-sm">
+                        <i class="fas fa-save mr-1"></i>Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Quick Add Modal Input -->
+    <div id="quickAddModal" class="modal-input">
+        <input type="number" id="quickAvailable" placeholder="Available" class="w-20 text-sm">
+        <input type="number" id="quickPaid" placeholder="Paid" class="w-20 text-sm">
+        <button id="saveQuickAdd" class="bg-green-500 text-white px-2 py-1 rounded text-sm">
+            <i class="fas fa-check"></i>
+        </button>
+        <button id="cancelQuickAdd" class="bg-red-500 text-white px-2 py-1 rounded text-sm">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
     
     <!-- Toast Notification -->
@@ -582,21 +865,22 @@
         let financeData = {
             creditCards: [],
             expenses: [],
+            income: [],
             history: []
         };
         let charts = {};
+        let currentQuickAddIndex = -1;
         
         // Bank color mapping
         const bankColors = {
             'ENBD': '#27408B',
-            'EI': '#ff8c00',
-            'ADCB': '#27408B',
+            'EI': '#9b1b9d',
+            'ADCB': '#ff2500',
             'MASHREQ': '#ff8c00'
         };
         
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            // Default to light mode
             initializeEventListeners();
             loadFinanceData();
         });
@@ -612,6 +896,7 @@
             // Add buttons
             document.getElementById('addAccountBtn').addEventListener('click', () => showAccountModal());
             document.getElementById('addExpenseBtn').addEventListener('click', () => showExpenseModal());
+            document.getElementById('addIncomeBtn').addEventListener('click', () => showIncomeModal());
             document.getElementById('saveHistoryBtn').addEventListener('click', saveCurrentMonthHistory);
             
             // Modal close buttons
@@ -619,10 +904,30 @@
             document.getElementById('cancelAccountBtn').addEventListener('click', () => hideModal('accountModal'));
             document.getElementById('closeExpenseModal').addEventListener('click', () => hideModal('expenseModal'));
             document.getElementById('cancelExpenseBtn').addEventListener('click', () => hideModal('expenseModal'));
+            document.getElementById('closeIncomeModal').addEventListener('click', () => hideModal('incomeModal'));
+            document.getElementById('cancelIncomeBtn').addEventListener('click', () => hideModal('incomeModal'));
             
             // Form submissions
             document.getElementById('accountForm').addEventListener('submit', handleAccountSubmit);
             document.getElementById('expenseForm').addEventListener('submit', handleExpenseSubmit);
+            document.getElementById('incomeForm').addEventListener('submit', handleIncomeSubmit);
+            
+            // Quick add modal
+            document.getElementById('saveQuickAdd').addEventListener('click', saveQuickAdd);
+            document.getElementById('cancelQuickAdd').addEventListener('click', hideQuickAddModal);
+            
+            // Auto-calculate outstanding when limit or available changes
+            document.getElementById('limit').addEventListener('input', calculateOutstanding);
+            document.getElementById('available').addEventListener('input', calculateOutstanding);
+        }
+        
+        function calculateOutstanding() {
+            const limit = parseFloat(document.getElementById('limit').value) || 0;
+            const available = parseFloat(document.getElementById('available').value) || 0;
+            // Outstanding = Limit - Available
+            const outstanding = limit - available;
+            // Display the calculated outstanding (read-only)
+            console.log('Calculated Outstanding:', outstanding);
         }
         
         // Load finance data from Google Sheets
@@ -637,6 +942,7 @@
                     renderAllData();
                     updateFinancialSummary();
                     initializeCharts();
+                    updateAdvancedMetrics();
                 } else {
                     showToast('Error loading data: ' + result.error, 'error');
                 }
@@ -653,67 +959,105 @@
             renderQuickAdd();
             renderCreditCards();
             renderExpenses();
+            renderIncome();
         }
         
-        // Render quick add section
+        // Render quick add section with compact buttons
         function renderQuickAdd() {
             const container = document.getElementById('quickAddContainer');
             container.innerHTML = '';
             
-            financeData.creditCards.forEach((card, index) => {
-                const quickAddItem = document.createElement('div');
-                quickAddItem.className = 'p-4 border rounded-lg';
-                quickAddItem.innerHTML = `
-                    <h4 class="font-semibold mb-2">${card.bank}</h4>
-                    <div class="space-y-2">
-                        <div>
-                            <label class="text-sm text-gray-600">Available</label>
-                            <input type="number" class="w-full text-base border rounded px-2 py-1" 
-                                   value="${card.available || 0}" 
-                                   onchange="updateQuickField(${index}, 'available', this.value)">
-                        </div>
-                        <div>
-                            <label class="text-sm text-gray-600">Paid</label>
-                            <input type="number" class="w-full text-base border rounded px-2 py-1" 
-                                   value="${card.paid || 0}" 
-                                   onchange="updateQuickField(${index}, 'paid', this.value)">
-                        </div>
-                    </div>
-                `;
-                container.appendChild(quickAddItem);
+            // Only show credit cards (exclude auto loans)
+            const creditCards = financeData.creditCards.filter(card => card.rowIndex <= 5);
+            
+            creditCards.forEach((card, index) => {
+                const bankClass = `bank-${card.bank.toLowerCase()}`;
+                const button = document.createElement('button');
+                button.className = `bank-btn ${bankClass}`;
+                button.textContent = card.bank;
+                button.onclick = () => showQuickAddModal(index, card.bank, card.available, card.paid);
+                container.appendChild(button);
             });
         }
         
-        // Update quick field
-        async function updateQuickField(index, field, value) {
+        function showQuickAddModal(index, bankName, currentAvailable, currentPaid) {
+            currentQuickAddIndex = index;
+            const modal = document.getElementById('quickAddModal');
+            const quickAvailable = document.getElementById('quickAvailable');
+            const quickPaid = document.getElementById('quickPaid');
+            
+            quickAvailable.placeholder = `Available: ${currentAvailable || 0}`;
+            quickPaid.placeholder = `Paid: ${currentPaid || 0}`;
+            quickAvailable.value = currentAvailable || 0;
+            quickPaid.value = currentPaid || 0;
+            
+            modal.classList.add('show');
+            modal.style.left = '50%';
+            modal.style.top = '50%';
+            modal.style.transform = 'translate(-50%, -50%)';
+        }
+        
+        function hideQuickAddModal() {
+            document.getElementById('quickAddModal').classList.remove('show');
+            currentQuickAddIndex = -1;
+        }
+        
+        async function saveQuickAdd() {
+            if (currentQuickAddIndex === -1) return;
+            
+            const available = parseFloat(document.getElementById('quickAvailable').value) || 0;
+            const paid = parseFloat(document.getElementById('quickPaid').value) || 0;
+            
             try {
-                const rowIndex = index + 2; // Adjust for header and 0-based index
-                const column = field === 'available' ? 'D' : 'H';
+                const rowIndex = currentQuickAddIndex + 2;
                 
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams({
-                        action: 'updateFinanceCell',
-                        row: rowIndex,
-                        column: column,
-                        value: value
-                    })
-                });
+                // Update Available (column D)
+                await updateFinanceCell(rowIndex, 'D', available);
+                // Update Paid (column H)  
+                await updateFinanceCell(rowIndex, 'H', paid);
                 
-                const result = await response.json();
-                if (result.success) {
-                    financeData.creditCards[index][field] = parseFloat(value) || 0;
-                    updateFinancialSummary();
-                    updateCharts();
-                } else {
-                    showToast('Error updating field: ' + result.error, 'error');
-                }
+                // Update local data
+                financeData.creditCards[currentQuickAddIndex].available = available;
+                financeData.creditCards[currentQuickAddIndex].paid = paid;
+                
+                // Recalculate outstanding: Limit - Available
+                const limit = financeData.creditCards[currentQuickAddIndex].limit;
+                const outstanding = limit - available;
+                financeData.creditCards[currentQuickAddIndex].outstanding = outstanding;
+                
+                // Update Outstanding in sheet (column C)
+                await updateFinanceCell(rowIndex, 'C', outstanding);
+                
+                updateFinancialSummary();
+                updateCharts();
+                updateAdvancedMetrics();
+                renderCreditCards();
+                
+                showToast('Quick update successful!');
+                hideQuickAddModal();
             } catch (error) {
-                console.error('Error updating quick field:', error);
-                showToast('Error updating field', 'error');
+                console.error('Error in quick update:', error);
+                showToast('Error updating data', 'error');
+            }
+        }
+        
+        async function updateFinanceCell(row, column, value) {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    action: 'updateFinanceCell',
+                    row: row,
+                    column: column,
+                    value: value
+                })
+            });
+            
+            const result = await response.json();
+            if (!result.success) {
+                throw new Error(result.error);
             }
         }
         
@@ -725,19 +1069,16 @@
             financeData.creditCards.forEach((card, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${card.bank}</td>
+                    <td><span class="bank-btn ${card.bank.toLowerCase()}" style="padding: 2px 6px; font-size: 12px;">${card.bank}</span></td>
                     <td>${formatCurrency(card.limit)}</td>
                     <td>${formatCurrency(card.outstanding)}</td>
-                    <td>${formatCurrency(card.available || (card.limit - card.outstanding))}</td>
+                    <td>${formatCurrency(card.available)}</td>
                     <td>${formatCurrency(card.dueAmount)}</td>
                     <td>${card.dueDate}</td>
                     <td>${formatCurrency(card.installment)}</td>
                     <td>
                         <button class="text-blue-500 hover:text-blue-700 p-1" onclick="editAccount(${index})">
                             <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="text-red-500 hover:text-red-700 p-1" onclick="deleteAccount(${index})">
-                            <i class="fas fa-trash-alt"></i>
                         </button>
                     </td>
                 `;
@@ -752,17 +1093,17 @@
             const totals = financeData.creditCards.reduce((acc, card) => {
                 acc.limit += card.limit || 0;
                 acc.outstanding += card.outstanding || 0;
-                acc.available += card.available || (card.limit - card.outstanding) || 0;
+                acc.available += card.available || 0;
                 acc.dueAmount += card.dueAmount || 0;
                 acc.installments += card.installment || 0;
                 return acc;
             }, { limit: 0, outstanding: 0, available: 0, dueAmount: 0, installments: 0 });
             
-            document.getElementById('totalLimit').textContent = formatCurrency(totals.limit);
-            document.getElementById('totalOutstanding').textContent = formatCurrency(totals.outstanding);
-            document.getElementById('totalAvailable').textContent = formatCurrency(totals.available);
-            document.getElementById('totalDueAmount').textContent = formatCurrency(totals.dueAmount);
-            document.getElementById('totalInstallments').textContent = formatCurrency(totals.installments);
+            document.getElementById('totalLimit').innerHTML = formatCurrency(totals.limit);
+            document.getElementById('totalOutstanding').innerHTML = formatCurrency(totals.outstanding);
+            document.getElementById('totalAvailable').innerHTML = formatCurrency(totals.available);
+            document.getElementById('totalDueAmount').innerHTML = formatCurrency(totals.dueAmount);
+            document.getElementById('totalInstallments').innerHTML = formatCurrency(totals.installments);
         }
         
         // Render expenses table
@@ -773,15 +1114,12 @@
             financeData.expenses.forEach((expense, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${expense.category}</td>
+                    <td><i class="fas fa-tag mr-1"></i>${expense.category}</td>
                     <td>${formatCurrency(expense.amount)}</td>
                     <td>${expense.dueDate}</td>
                     <td>
                         <button class="text-blue-500 hover:text-blue-700 p-1" onclick="editExpense(${index})">
                             <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="text-red-500 hover:text-red-700 p-1" onclick="deleteExpense(${index})">
-                            <i class="fas fa-trash-alt"></i>
                         </button>
                     </td>
                 `;
@@ -789,21 +1127,45 @@
             });
             
             const totalExpenses = financeData.expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
-            document.getElementById('totalExpenseAmount').textContent = formatCurrency(totalExpenses);
-            document.getElementById('expenseCount').textContent = financeData.expenses.length;
+            document.getElementById('totalExpenseAmount').innerHTML = formatCurrency(totalExpenses);
+        }
+        
+        // Render income table
+        function renderIncome() {
+            const tbody = document.getElementById('incomeTableBody');
+            tbody.innerHTML = '';
+            
+            financeData.income.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><i class="fas fa-briefcase mr-1"></i>${item.source}</td>
+                    <td>${formatCurrency(item.amount)}</td>
+                    <td>${item.date}</td>
+                    <td>
+                        <button class="text-blue-500 hover:text-blue-700 p-1" onclick="editIncome(${index})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            const totalIncome = financeData.income.reduce((sum, item) => sum + (item.amount || 0), 0);
+            document.getElementById('totalIncomeAmount').innerHTML = formatCurrency(totalIncome);
         }
         
         // Update financial summary
         function updateFinancialSummary() {
             const creditCardDebt = financeData.creditCards
-                .filter(card => card.rowIndex <= 5) // A2:H5 are credit cards
+                .filter(card => card.rowIndex <= 5)
                 .reduce((sum, card) => sum + (card.outstanding || 0), 0);
             
             const autoLoan = financeData.creditCards
-                .filter(card => card.rowIndex === 6) // A6:H6 is auto loan
+                .filter(card => card.rowIndex === 6)
                 .reduce((sum, card) => sum + (card.outstanding || 0), 0);
             
             const totalExpenses = financeData.expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
+            const totalIncome = financeData.income.reduce((sum, item) => sum + (item.amount || 0), 0);
             
             const totalLimit = financeData.creditCards
                 .filter(card => card.rowIndex <= 5)
@@ -811,22 +1173,99 @@
             
             const utilizationPercent = totalLimit > 0 ? Math.round((creditCardDebt / totalLimit) * 100) : 0;
             
-            // Calculate savings (this would need income data - placeholder for now)
-            const estimatedIncome = 15000; // This should come from actual data
             const totalInstallments = financeData.creditCards.reduce((sum, card) => sum + (card.installment || 0), 0);
-            const savings = estimatedIncome - totalExpenses - totalInstallments;
+            const savings = totalIncome - totalExpenses - totalInstallments;
+            const cashFlow = savings; // Same as savings for now
             
-            document.getElementById('totalCreditCardDebt').textContent = formatCurrency(creditCardDebt);
+            document.getElementById('totalCreditCardDebt').innerHTML = formatCurrency(creditCardDebt);
             document.getElementById('creditUtilizationPercent').textContent = `${utilizationPercent}%`;
-            document.getElementById('totalAutoLoan').textContent = formatCurrency(autoLoan);
-            document.getElementById('totalMonthlyExpenses').textContent = formatCurrency(totalExpenses);
-            document.getElementById('monthlySavings').textContent = formatCurrency(savings);
+            document.getElementById('totalAutoLoan').innerHTML = formatCurrency(autoLoan);
+            document.getElementById('totalMonthlyExpenses').innerHTML = formatCurrency(totalExpenses);
+            document.getElementById('totalMonthlyIncome').innerHTML = formatCurrency(totalIncome);
+            document.getElementById('monthlySavings').innerHTML = formatCurrency(savings);
+            document.getElementById('cashFlow').innerHTML = formatCurrency(cashFlow);
+        }
+        
+        // Update advanced metrics
+        function updateAdvancedMetrics() {
+            const totalIncome = financeData.income.reduce((sum, item) => sum + (item.amount || 0), 0);
+            const totalDebt = financeData.creditCards.reduce((sum, card) => sum + (card.outstanding || 0), 0);
+            const totalInstallments = financeData.creditCards.reduce((sum, card) => sum + (card.installment || 0), 0);
+            const totalExpenses = financeData.expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
+            const savings = totalIncome - totalExpenses - totalInstallments;
+            
+            // Debt to Income Ratio
+            const debtToIncomeRatio = totalIncome > 0 ? Math.round((totalInstallments / totalIncome) * 100) : 0;
+            document.getElementById('debtToIncomeRatio').textContent = `${debtToIncomeRatio}%`;
+            
+            // Savings Rate
+            const savingsRate = totalIncome > 0 ? Math.round((savings / totalIncome) * 100) : 0;
+            document.getElementById('savingsRate').textContent = `${savingsRate}%`;
+            
+            // Emergency Fund (months of expenses)
+            const monthlyExpenses = totalExpenses + totalInstallments;
+            const emergencyFund = monthlyExpenses > 0 ? Math.round(savings / monthlyExpenses) : 0;
+            document.getElementById('emergencyFund').textContent = emergencyFund;
+            
+            // Average Credit Utilization
+            const creditCards = financeData.creditCards.filter(card => card.rowIndex <= 5);
+            const avgUtil = creditCards.length > 0 ? 
+                Math.round(creditCards.reduce((sum, card) => {
+                    const util = card.limit > 0 ? (card.outstanding / card.limit) * 100 : 0;
+                    return sum + util;
+                }, 0) / creditCards.length) : 0;
+            document.getElementById('avgCreditUtil').textContent = `${avgUtil}%`;
+            
+            // Monthly Debt Payment
+            document.getElementById('debtPaymentAmount').textContent = totalInstallments.toLocaleString();
+            
+            // Projected Debt Free (months)
+            const projectedDebtFree = totalInstallments > 0 ? Math.ceil(totalDebt / totalInstallments) : 0;
+            document.getElementById('projectedDebtFree').textContent = projectedDebtFree;
+            
+            // Update debt payoff plan
+            updateDebtPayoffPlan();
+        }
+        
+        function updateDebtPayoffPlan() {
+            const container = document.getElementById('debtPayoffPlan');
+            container.innerHTML = '';
+            
+            const creditCards = financeData.creditCards.filter(card => card.rowIndex <= 5 && card.outstanding > 0);
+            
+            // Sort by highest interest rate first (debt avalanche) - assuming higher utilization = higher priority
+            creditCards.sort((a, b) => {
+                const utilA = a.limit > 0 ? (a.outstanding / a.limit) : 0;
+                const utilB = b.limit > 0 ? (b.outstanding / b.limit) : 0;
+                return utilB - utilA;
+            });
+            
+            creditCards.forEach((card, index) => {
+                const monthsToPayoff = card.installment > 0 ? Math.ceil(card.outstanding / card.installment) : 0;
+                const priority = index + 1;
+                
+                const planItem = document.createElement('div');
+                planItem.className = 'flex justify-between items-center p-2 bg-gray-50 rounded text-sm';
+                planItem.innerHTML = `
+                    <div>
+                        <span class="font-semibold">${priority}. ${card.bank}</span>
+                        <br>
+                        <span class="text-gray-600">${formatCurrency(card.outstanding)}</span>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-semibold">${monthsToPayoff} months</div>
+                        <div class="text-gray-600">${formatCurrency(card.installment)}/mo</div>
+                    </div>
+                `;
+                container.appendChild(planItem);
+            });
         }
         
         // Initialize charts
         function initializeCharts() {
             initializeCreditUtilizationChart();
             initializePaymentForecastChart();
+            initializeCashFlowTrendChart();
             initializeHistoryChart();
         }
         
@@ -874,18 +1313,6 @@
                     plugins: {
                         legend: {
                             display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const card = creditCards[context.dataIndex];
-                                    return [
-                                        `Utilization: ${context.parsed.y}%`,
-                                        `Outstanding: ${formatCurrency(card.outstanding)}`,
-                                        `Limit: ${formatCurrency(card.limit)}`
-                                    ];
-                                }
-                            }
                         }
                     }
                 }
@@ -896,10 +1323,9 @@
         function initializePaymentForecastChart() {
             const ctx = document.getElementById('paymentForecastChart').getContext('2d');
             
-            // Calculate payment completion dates based on paid amounts
             const forecastData = financeData.creditCards.map(card => {
-                const monthsToComplete = card.outstanding > 0 && card.paid > 0 ? 
-                    Math.ceil(card.outstanding / card.paid) : 0;
+                const monthsToComplete = card.outstanding > 0 && card.installment > 0 ? 
+                    Math.ceil(card.outstanding / card.installment) : 0;
                 return {
                     bank: card.bank,
                     months: monthsToComplete
@@ -917,9 +1343,8 @@
                     datasets: [{
                         label: 'Months to Complete',
                         data: forecastData.map(item => item.months),
-                        backgroundColor: 'rgba(171, 163, 207, 0.8)',
-                        borderColor: '#001157',
-                        borderWidth: 1,
+                        backgroundColor: '#7b68ee',
+                        borderWidth: 0,
                         borderRadius: 4
                     }]
                 },
@@ -930,13 +1355,52 @@
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                stepSize: 1,
-                                callback: function(value) {
-                                    return value + ' months';
-                                }
+                                stepSize: 1
                             }
                         }
                     },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Initialize cash flow trend chart
+        function initializeCashFlowTrendChart() {
+            const ctx = document.getElementById('cashFlowTrendChart').getContext('2d');
+            
+            // Generate 6 months of projected cash flow
+            const months = ['Current', '+1mo', '+2mo', '+3mo', '+4mo', '+5mo'];
+            const totalIncome = financeData.income.reduce((sum, item) => sum + (item.amount || 0), 0);
+            const totalExpenses = financeData.expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
+            const totalInstallments = financeData.creditCards.reduce((sum, card) => sum + (card.installment || 0), 0);
+            const currentCashFlow = totalIncome - totalExpenses - totalInstallments;
+            
+            const cashFlowData = months.map(() => currentCashFlow);
+            
+            if (charts.cashFlowTrend) {
+                charts.cashFlowTrend.destroy();
+            }
+            
+            charts.cashFlowTrend = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Cash Flow',
+                        data: cashFlowData,
+                        borderColor: '#2A293E',
+                        backgroundColor: 'rgba(42, 41, 62, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             display: false
@@ -976,8 +1440,8 @@
                         {
                             label: 'Savings',
                             data: financeData.history.map(item => item.savings),
-                            borderColor: '#001157',
-                            backgroundColor: 'rgba(0, 17, 87, 0.1)',
+                            borderColor: '#2A293E',
+                            backgroundColor: 'rgba(42, 41, 62, 0.1)',
                             fill: true
                         }
                     ]
@@ -985,23 +1449,9 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return formatCurrency(value);
-                                }
-                            }
-                        }
-                    },
                     plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.dataset.label + ': ' + formatCurrency(context.parsed.y);
-                                }
-                            }
+                        legend: {
+                            position: 'top'
                         }
                     }
                 }
@@ -1016,13 +1466,16 @@
             if (charts.forecast) {
                 initializePaymentForecastChart();
             }
+            if (charts.cashFlowTrend) {
+                initializeCashFlowTrendChart();
+            }
         }
         
         // Save current month history
         async function saveCurrentMonthHistory() {
             try {
                 const currentMonth = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
-                const totalIncome = 15000; // This should come from actual data
+                const totalIncome = financeData.income.reduce((sum, item) => sum + (item.amount || 0), 0);
                 const totalExpenses = financeData.expenses.reduce((sum, exp) => sum + (exp.amount || 0), 0);
                 const totalInstallments = financeData.creditCards.reduce((sum, card) => sum + (card.installment || 0), 0);
                 const moneyOut = totalExpenses + totalInstallments;
@@ -1045,7 +1498,7 @@
                 const result = await response.json();
                 if (result.success) {
                     showToast('History saved successfully!');
-                    loadFinanceData(); // Reload to get updated history
+                    loadFinanceData();
                 } else {
                     showToast('Error saving history: ' + result.error, 'error');
                 }
@@ -1070,15 +1523,15 @@
                 document.getElementById('accountRowIndex').value = index;
                 document.getElementById('bank').value = account.bank;
                 document.getElementById('limit').value = account.limit;
-                document.getElementById('outstanding').value = account.outstanding;
+                document.getElementById('available').value = account.available;
                 document.getElementById('dueAmount').value = account.dueAmount;
                 document.getElementById('dueDate').value = account.dueDate;
                 document.getElementById('installment').value = account.installment;
-                document.getElementById('modalTitle').textContent = 'Edit Account';
+                document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit mr-2"></i>Edit Account';
             } else {
                 document.getElementById('accountForm').reset();
                 document.getElementById('accountRowIndex').value = '';
-                document.getElementById('modalTitle').textContent = 'Add Account';
+                document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus mr-2"></i>Add Account';
             }
             showModal('accountModal');
         }
@@ -1090,13 +1543,29 @@
                 document.getElementById('expenseCategory').value = expense.category;
                 document.getElementById('expenseAmount').value = expense.amount;
                 document.getElementById('expenseDueDate').value = expense.dueDate;
-                document.getElementById('expenseModalTitle').textContent = 'Edit Expense';
+                document.getElementById('expenseModalTitle').innerHTML = '<i class="fas fa-edit mr-2"></i>Edit Expense';
             } else {
                 document.getElementById('expenseForm').reset();
                 document.getElementById('expenseRowIndex').value = '';
-                document.getElementById('expenseModalTitle').textContent = 'Add Expense';
+                document.getElementById('expenseModalTitle').innerHTML = '<i class="fas fa-plus mr-2"></i>Add Expense';
             }
             showModal('expenseModal');
+        }
+        
+        function showIncomeModal(index = null) {
+            if (index !== null) {
+                const incomeItem = financeData.income[index];
+                document.getElementById('incomeRowIndex').value = index;
+                document.getElementById('incomeSource').value = incomeItem.source;
+                document.getElementById('incomeAmount').value = incomeItem.amount;
+                document.getElementById('incomeDate').value = incomeItem.date;
+                document.getElementById('incomeModalTitle').innerHTML = '<i class="fas fa-edit mr-2"></i>Edit Income';
+            } else {
+                document.getElementById('incomeForm').reset();
+                document.getElementById('incomeRowIndex').value = '';
+                document.getElementById('incomeModalTitle').innerHTML = '<i class="fas fa-plus mr-2"></i>Add Income';
+            }
+            showModal('incomeModal');
         }
         
         // Form handlers
@@ -1106,6 +1575,11 @@
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData);
             const index = data.accountRowIndex;
+            
+            // Calculate outstanding: Limit - Available
+            const limit = parseFloat(data.limit) || 0;
+            const available = parseFloat(data.available) || 0;
+            data.outstanding = limit - available;
             
             try {
                 const response = await fetch(API_URL, {
@@ -1166,77 +1640,59 @@
             }
         }
         
+        async function handleIncomeSubmit(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            const index = data.incomeRowIndex;
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: index ? 'updateFinanceIncome' : 'addFinanceIncome',
+                        ...data
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    showToast(index ? 'Income updated successfully!' : 'Income added successfully!');
+                    hideModal('incomeModal');
+                    loadFinanceData();
+                } else {
+                    showToast('Error: ' + result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Error submitting income:', error);
+                showToast('Error submitting income', 'error');
+            }
+        }
+        
         // Edit/Delete functions
         function editAccount(index) {
             showAccountModal(index);
-        }
-        
-        async function deleteAccount(index) {
-            if (confirm('Are you sure you want to delete this account?')) {
-                try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: new URLSearchParams({
-                            action: 'deleteFinanceAccount',
-                            index: index
-                        })
-                    });
-                    
-                    const result = await response.json();
-                    if (result.success) {
-                        showToast('Account deleted successfully!');
-                        loadFinanceData();
-                    } else {
-                        showToast('Error deleting account: ' + result.error, 'error');
-                    }
-                } catch (error) {
-                    console.error('Error deleting account:', error);
-                    showToast('Error deleting account', 'error');
-                }
-            }
         }
         
         function editExpense(index) {
             showExpenseModal(index);
         }
         
-        async function deleteExpense(index) {
-            if (confirm('Are you sure you want to delete this expense?')) {
-                try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: new URLSearchParams({
-                            action: 'deleteFinanceExpense',
-                            index: index
-                        })
-                    });
-                    
-                    const result = await response.json();
-                    if (result.success) {
-                        showToast('Expense deleted successfully!');
-                        loadFinanceData();
-                    } else {
-                        showToast('Error deleting expense: ' + result.error, 'error');
-                    }
-                } catch (error) {
-                    console.error('Error deleting expense:', error);
-                    showToast('Error deleting expense', 'error');
-                }
-            }
+        function editIncome(index) {
+            showIncomeModal(index);
         }
         
         // Utility functions
         function formatCurrency(amount) {
-            return 'AED ' + parseFloat(amount || 0).toLocaleString('en-IN', {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 2
-            });
+            return '<span style="font-family: \'UAEDirham\'">&#x00EA;</span>' + 
+                   parseFloat(amount || 0).toLocaleString('en-IN', {
+                       minimumFractionDigits: 0,
+                       maximumFractionDigits: 2
+                   });
         }
         
         function showToast(message, type = 'success') {
@@ -1257,7 +1713,7 @@
                 refreshBtn.innerHTML = '<div class="loading"></div> Loading...';
                 refreshBtn.disabled = true;
             } else {
-                refreshBtn.innerHTML = '<i class="fas fa-sync-alt mr-2"></i> Refresh Data';
+                refreshBtn.innerHTML = '<i class="fas fa-sync-alt mr-1"></i> Refresh';
                 refreshBtn.disabled = false;
             }
         }
@@ -1269,12 +1725,11 @@
             body.classList.toggle('dark');
             
             if (body.classList.contains('dark')) {
-                themeBtn.innerHTML = '<i class="fas fa-sun text-xl"></i>';
+                themeBtn.innerHTML = '<i class="fas fa-sun text-lg"></i>';
             } else {
-                themeBtn.innerHTML = '<i class="fas fa-moon text-xl"></i>';
+                themeBtn.innerHTML = '<i class="fas fa-moon text-lg"></i>';
             }
             
-            // Update charts with new theme
             updateCharts();
         }
     </script>
