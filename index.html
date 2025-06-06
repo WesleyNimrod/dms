@@ -1,3 +1,38 @@
+*Thinking...*
+
+> Looking at the images, I can see:
+> 
+> 1. First image shows "Google Drive API not loaded. Please refresh the page." message in the notification area
+> 2. Second image shows "Profile saved locally successfully!" message
+> 
+> The user is reporting that the Google Drive integration is not working - it's falling back to local storage instead of saving to Google Drive.
+> 
+> Looking at the code I provided, I can see a few potential issues:
+> 
+> 1. The Google APIs script is loaded via `<script src="https://apis.google.com/js/api.js"></script>` but this might not be loading properly
+> 2. The initialization might be failing 
+> 3. The authentication flow might not be working correctly
+> 
+> Let me check the Google Drive integration code more carefully:
+> 
+> 1. The `initializeGoogleDrive()` function checks if `window.gapi` is available
+> 2. If not available, it shows the error message we see in the first image
+> 3. The `saveCustomerProfile()` function tries to save to Google Drive first, but falls back to localStorage if it fails
+> 
+> The issue seems to be that the Google API is not loading properly. I need to:
+> 
+> 1. Make sure the Google API script loads correctly
+> 2. Improve error handling and initialization
+> 3. Make sure the client is properly initialized with the correct credentials
+> 
+> Let me fix this by:
+> 1. Using the correct Google API loading method
+> 2. Adding proper error handling
+> 3. Making sure the initialization is robust
+> 4. Adding loading indicators for the Google Drive operations
+
+I can see the issue. The Google Drive API is not loading properly. Let me fix the Google Drive integration with proper initialization and error handling.
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,7 +67,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://apis.google.com/js/api.js"></script>
+    <script async defer src="https://apis.google.com/js/api.js" onload="handleGoogleApiLoad()"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tahoma:wght@400;700&display=swap');
         
@@ -451,6 +486,15 @@
         
         .dark .header-controls {
             background-color: #1f2937;
+        }
+
+        /* Google Drive button states */
+        .gdrive-connecting {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
+        }
+        
+        .gdrive-connected {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
         }
     </style>
 </head>
@@ -1213,7 +1257,7 @@
     
     <script>
         // ==========================================
-        // GOOGLE DRIVE INTEGRATION
+        // GOOGLE DRIVE INTEGRATION (Fixed)
         // ==========================================
         
         // Google Drive API configuration
@@ -1228,51 +1272,92 @@
         let gapi = null;
         let isGapiLoaded = false;
         let isSignedIn = false;
+        let googleDriveBtn = null;
         
-        // Initialize Google Drive API
-        function initializeGoogleDrive() {
+        // Global function to handle Google API load
+        function handleGoogleApiLoad() {
+            console.log('Google API loaded');
             if (typeof window.gapi !== 'undefined') {
                 gapi = window.gapi;
-                gapi.load('auth2:client', initClient);
-            } else {
-                console.error('Google API not loaded');
-                showSuccess('Google Drive API not available. Using local storage.');
+                initializeGoogleDrive();
             }
         }
         
+        // Initialize Google Drive API
+        function initializeGoogleDrive() {
+            console.log('Initializing Google Drive API...');
+            if (!gapi) {
+                console.error('gapi not available');
+                return;
+            }
+            
+            gapi.load('auth2:client', initClient);
+        }
+        
         function initClient() {
+            console.log('Initializing Google API client...');
+            
             gapi.client.init({
                 apiKey: GOOGLE_DRIVE_CONFIG.apiKey,
                 clientId: GOOGLE_DRIVE_CONFIG.clientId,
                 discoveryDocs: GOOGLE_DRIVE_CONFIG.discoveryDocs,
                 scope: GOOGLE_DRIVE_CONFIG.scope
             }).then(() => {
+                console.log('Google API client initialized successfully');
                 isGapiLoaded = true;
+                
                 const authInstance = gapi.auth2.getAuthInstance();
                 isSignedIn = authInstance.isSignedIn.get();
                 
                 // Listen for sign-in state changes
                 authInstance.isSignedIn.listen(updateSigninStatus);
                 
-                console.log('Google Drive API initialized');
+                // Update button state
+                updateGoogleDriveButtonState();
+                
+                if (isSignedIn) {
+                    console.log('User already signed in');
+                    loadGoogleDriveProfiles();
+                }
             }).catch(error => {
                 console.error('Error initializing Google Drive API:', error);
-                showSuccess('Failed to initialize Google Drive. Using local storage.');
+                showSuccess('Google Drive API initialization failed');
+                isGapiLoaded = false;
             });
         }
         
-        function updateSigninStatus(isSignedIn) {
-            window.isSignedIn = isSignedIn;
-            if (isSignedIn) {
+        function updateSigninStatus(signedIn) {
+            console.log('Sign-in status changed:', signedIn);
+            isSignedIn = signedIn;
+            updateGoogleDriveButtonState();
+            
+            if (signedIn) {
                 loadGoogleDriveProfiles();
+                showSuccess('Google Drive connected successfully!');
+            } else {
+                showSuccess('Signed out from Google Drive');
+            }
+        }
+        
+        function updateGoogleDriveButtonState() {
+            if (!googleDriveBtn) return;
+            
+            if (!isGapiLoaded) {
+                googleDriveBtn.className = 'bg-gradient-to-r from-gray-400 to-gray-500 text-white p-2 rounded-md flex items-center justify-center';
+                googleDriveBtn.title = 'Google Drive API Loading...';
+            } else if (isSignedIn) {
+                googleDriveBtn.className = 'gdrive-connected text-white p-2 rounded-md hover:opacity-90 flex items-center justify-center';
+                googleDriveBtn.title = 'Google Drive Connected';
+            } else {
+                googleDriveBtn.className = 'bg-gradient-to-r from-blue-500 to-blue-600 text-white p-2 rounded-md hover:opacity-90 flex items-center justify-center';
+                googleDriveBtn.title = 'Connect to Google Drive';
             }
         }
         
         // Sign in to Google Drive
-        function signInToGoogleDrive() {
+        async function signInToGoogleDrive() {
             if (!isGapiLoaded) {
-                showSuccess('Google Drive API not ready. Please try again.');
-                return Promise.reject('API not ready');
+                throw new Error('Google Drive API not ready');
             }
             
             const authInstance = gapi.auth2.getAuthInstance();
@@ -1280,12 +1365,16 @@
                 return Promise.resolve();
             }
             
+            // Update button state to show connecting
+            googleDriveBtn.className = 'gdrive-connecting text-white p-2 rounded-md flex items-center justify-center';
+            googleDriveBtn.title = 'Connecting to Google Drive...';
+            
             return authInstance.signIn().then(() => {
                 isSignedIn = true;
-                showSuccess('Successfully signed in to Google Drive');
+                console.log('Successfully signed in to Google Drive');
             }).catch(error => {
                 console.error('Sign-in error:', error);
-                showSuccess('Failed to sign in to Google Drive');
+                updateGoogleDriveButtonState(); // Reset button state
                 throw error;
             });
         }
@@ -1295,33 +1384,74 @@
             try {
                 await signInToGoogleDrive();
                 
-                const fileMetadata = {
-                    name: `${profileName}_profile.json`,
-                    parents: [] // Save to root folder
-                };
+                // Check if file already exists
+                const existingFile = await findExistingProfileFile(profileName);
                 
-                const form = new FormData();
-                form.append('metadata', new Blob([JSON.stringify(fileMetadata)], {type: 'application/json'}));
-                form.append('file', new Blob([JSON.stringify(profileData)], {type: 'application/json'}));
+                const content = JSON.stringify(profileData, null, 2);
+                const blob = new Blob([content], { type: 'application/json' });
                 
-                const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-                    method: 'POST',
-                    headers: new Headers({
-                        'Authorization': `Bearer ${gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token}`
-                    }),
-                    body: form
-                });
-                
-                if (response.ok) {
-                    const result = await response.json();
-                    console.log('Profile saved to Google Drive:', result);
-                    return result;
+                if (existingFile) {
+                    // Update existing file
+                    const response = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${existingFile.id}?uploadType=media`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Authorization': `Bearer ${gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: blob
+                    });
+                    
+                    if (response.ok) {
+                        console.log('Profile updated in Google Drive');
+                        return await response.json();
+                    } else {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
                 } else {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    // Create new file
+                    const fileMetadata = {
+                        name: `${profileName}_profile.json`,
+                        parents: [] // Save to root folder
+                    };
+                    
+                    const form = new FormData();
+                    form.append('metadata', new Blob([JSON.stringify(fileMetadata)], {type: 'application/json'}));
+                    form.append('file', blob);
+                    
+                    const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token}`
+                        },
+                        body: form
+                    });
+                    
+                    if (response.ok) {
+                        console.log('Profile saved to Google Drive');
+                        return await response.json();
+                    } else {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
                 }
             } catch (error) {
                 console.error('Error saving to Google Drive:', error);
                 throw error;
+            }
+        }
+        
+        // Find existing profile file
+        async function findExistingProfileFile(profileName) {
+            try {
+                const response = await gapi.client.drive.files.list({
+                    q: `name='${profileName}_profile.json'`,
+                    fields: 'files(id, name)'
+                });
+                
+                const files = response.result.files;
+                return files.length > 0 ? files[0] : null;
+            } catch (error) {
+                console.error('Error finding existing file:', error);
+                return null;
             }
         }
         
@@ -1330,18 +1460,26 @@
             try {
                 if (!isSignedIn) return;
                 
+                console.log('Loading profiles from Google Drive...');
                 const response = await gapi.client.drive.files.list({
                     q: "name contains '_profile.json'",
                     fields: 'files(id, name, modifiedTime)'
                 });
                 
                 const files = response.result.files;
+                console.log('Found files:', files);
+                
                 if (files && files.length > 0) {
-                    // Clear existing profiles except first option
+                    // Clear existing Google Drive profiles from dropdown
                     const savedProfilesSelect = document.getElementById('savedProfiles');
-                    while (savedProfilesSelect.options.length > 1) {
-                        savedProfilesSelect.options.remove(1);
-                    }
+                    const options = Array.from(savedProfilesSelect.options);
+                    
+                    // Remove existing Google Drive options
+                    options.forEach(option => {
+                        if (option.value.startsWith('gdrive:')) {
+                            option.remove();
+                        }
+                    });
                     
                     // Add Google Drive profiles
                     files.forEach(file => {
@@ -1351,15 +1489,19 @@
                         option.textContent = `${profileName} (Drive)`;
                         savedProfilesSelect.appendChild(option);
                     });
+                    
+                    console.log(`Loaded ${files.length} profiles from Google Drive`);
                 }
             } catch (error) {
                 console.error('Error loading Google Drive profiles:', error);
+                showSuccess('Error loading Google Drive profiles');
             }
         }
         
         // Retrieve profile from Google Drive
         async function retrieveProfileFromGoogleDrive(fileId) {
             try {
+                console.log('Retrieving profile from Google Drive:', fileId);
                 const response = await gapi.client.drive.files.get({
                     fileId: fileId,
                     alt: 'media'
@@ -1375,11 +1517,12 @@
         // Delete profile from Google Drive
         async function deleteProfileFromGoogleDrive(fileId) {
             try {
+                console.log('Deleting profile from Google Drive:', fileId);
                 await gapi.client.drive.files.delete({
                     fileId: fileId
                 });
                 
-                console.log('Profile deleted from Google Drive');
+                console.log('Profile deleted from Google Drive successfully');
             } catch (error) {
                 console.error('Error deleting profile from Google Drive:', error);
                 throw error;
@@ -1442,7 +1585,6 @@
         // Check authentication on page load
         document.addEventListener('DOMContentLoaded', function() {
             checkAuthentication();
-            initializeGoogleDrive();
         });
         
         // ==========================================
@@ -1688,7 +1830,7 @@
             const printPageBtn = document.getElementById('printPageBtn');
             
             // Google Drive button
-            const googleDriveBtn = document.getElementById('googleDriveBtn');
+            googleDriveBtn = document.getElementById('googleDriveBtn');
             
             // Bank comparison inputs - Tab
             const bank1NameTab = document.getElementById('bank1Name');
@@ -1757,18 +1899,25 @@
             googleDriveBtn.addEventListener('click', async function() {
                 try {
                     if (!isGapiLoaded) {
-                        showSuccess('Google Drive API not loaded. Please refresh the page.');
+                        showSuccess('Google Drive API is loading. Please wait...');
                         return;
                     }
                     
-                    await signInToGoogleDrive();
-                    await loadGoogleDriveProfiles();
-                    showSuccess('Google Drive connected successfully!');
+                    if (!isSignedIn) {
+                        await signInToGoogleDrive();
+                        await loadGoogleDriveProfiles();
+                        await loadSavedProfiles(); // Refresh dropdown
+                    } else {
+                        showSuccess('Google Drive is already connected');
+                    }
                 } catch (error) {
                     console.error('Google Drive error:', error);
-                    showSuccess('Failed to connect to Google Drive');
+                    showSuccess('Failed to connect to Google Drive. Please try again.');
                 }
             });
+            
+            // Initialize Google Drive
+            updateGoogleDriveButtonState();
             
             // ==========================================
             // PROFILE MANAGEMENT (Updated for Google Drive)
@@ -1833,10 +1982,14 @@
                 };
                 
                 try {
-                    // Try to save to Google Drive first
+                    // Try to save to Google Drive first if connected
                     if (isGapiLoaded && isSignedIn) {
+                        showSuccess('Saving to Google Drive...');
                         await saveProfileToGoogleDrive(customerName, profileData);
                         showSuccess('Profile saved to Google Drive successfully!');
+                        
+                        // Refresh Google Drive profiles
+                        await loadGoogleDriveProfiles();
                     } else {
                         // Fallback to localStorage
                         const existingProfiles = JSON.parse(localStorage.getItem('customerProfiles')) || {};
@@ -1927,6 +2080,7 @@
                         // Google Drive profile
                         const parts = selectedProfile.split(':');
                         const fileId = parts[1];
+                        showSuccess('Loading from Google Drive...');
                         profileData = await retrieveProfileFromGoogleDrive(fileId);
                     } else if (selectedProfile.startsWith('local:')) {
                         // Local storage profile
@@ -2065,6 +2219,7 @@
                         // Google Drive profile
                         const parts = selectedProfile.split(':');
                         const fileId = parts[1];
+                        showSuccess('Deleting from Google Drive...');
                         await deleteProfileFromGoogleDrive(fileId);
                         showSuccess('Profile deleted from Google Drive successfully!');
                     } else if (selectedProfile.startsWith('local:')) {
