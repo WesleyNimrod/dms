@@ -814,7 +814,7 @@ body {
                     <div class="space-y-4">
                         <!-- CID -->
                         <div>
-                            <label for="cid" class="block text-gray-700 font-medium">CID</label>
+                            <label for="cid" class="block text-gray-700 font-medium">CID (Optional)</label>
                             <input type="number" id="cid" name="cid" class="w-full border rounded-md p-2 text-base">
                             <p id="cidError" class="text-red-500 text-sm hidden">CID must be unique</p>
                         </div>
@@ -1551,8 +1551,8 @@ body {
             }
         ];
         
-        // Initialize real-time search by customer name
-        document.getElementById('searchName').addEventListener('input', function() {
+        // Initialize real-time search by customer name - search Master sheet
+        document.getElementById('searchName').addEventListener('input', async function() {
             const searchTerm = this.value.toLowerCase().trim();
             
             if (searchTerm.length < 2) {
@@ -1561,14 +1561,20 @@ body {
                 return;
             }
             
-            // Filter records based on customer name
-            const filteredRecords = allRecordsData.filter(record => 
-                record['Customer Name'] && 
-                record['Customer Name'].toLowerCase().includes(searchTerm)
-            );
-            
-            // Display filtered records
-            displayDataInTable(filteredRecords, 'searchResultsBody', true);
+            // Search Master sheet for customer name
+            try {
+                const response = await fetch(`${scriptURL}?action=searchMaster&cid=&name=${encodeURIComponent(searchTerm)}&mobile=`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayDataInTable(data.data, 'searchResultsBody', true);
+                } else {
+                    document.getElementById('searchResultsBody').innerHTML = '<tr><td colspan="7" class="text-center py-4">Error searching Master sheet</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error searching Master sheet:', error);
+                document.getElementById('searchResultsBody').innerHTML = '<tr><td colspan="7" class="text-center py-4">Error connecting to Master sheet</td></tr>';
+            }
         });
 
         // Add Enter key listeners for search inputs
@@ -2812,49 +2818,23 @@ body {
         
         showLoading();
         try {
-            // If we have local data, search locally first
-            if (allRecordsData && allRecordsData.length > 0) {
-                let filteredData = allRecordsData;
-                
-                if (cid) {
-                    filteredData = filteredData.filter(record => 
-                        record.CID && record.CID.toString().toLowerCase().includes(cid.toLowerCase())
-                    );
-                }
-                
-                if (name) {
-                    filteredData = filteredData.filter(record => 
-                        record['Customer Name'] && 
-                        record['Customer Name'].toLowerCase().includes(name.toLowerCase())
-                    );
-                }
-                
-                if (mobile) {
-                    filteredData = filteredData.filter(record => 
-                        record.Mobile && 
-                        record.Mobile.toString().includes(mobile)
-                    );
-                }
-                
-                displayDataInTable(filteredData, 'searchResultsBody', true);
-                hideLoading();
-                return;
-            }
-            
-            // Fallback to server search
+            // Always search from server for Master sheet data
             const response = await fetch(`${scriptURL}?action=searchMaster&cid=${encodeURIComponent(cid)}&name=${encodeURIComponent(name)}&mobile=${encodeURIComponent(mobile)}`);
             const data = await response.json();
             
             if (data.success) {
                 displayDataInTable(data.data, 'searchResultsBody', true);
+                if (data.data.length === 0) {
+                    document.getElementById('searchResultsBody').innerHTML = '<tr><td colspan="7" class="text-center py-4">No matching records found in Master sheet</td></tr>';
+                }
             } else {
                 showSuccess(`Error: ${data.error}`);
-                document.getElementById('searchResultsBody').innerHTML = '<tr><td colspan="7" class="text-center py-4">No matching records found</td></tr>';
+                document.getElementById('searchResultsBody').innerHTML = '<tr><td colspan="7" class="text-center py-4">Error searching Master sheet</td></tr>';
             }
         } catch (error) {
-            console.error('Error searching data:', error);
-            showSuccess('Error searching data');
-            document.getElementById('searchResultsBody').innerHTML = '<tr><td colspan="7" class="text-center py-4">No matching records found</td></tr>';
+            console.error('Error searching Master sheet:', error);
+            showSuccess('Error connecting to Master sheet');
+            document.getElementById('searchResultsBody').innerHTML = '<tr><td colspan="7" class="text-center py-4">Error connecting to Master sheet</td></tr>';
         } finally {
             hideLoading();
         }
@@ -2970,14 +2950,16 @@ body {
                 <td class="copyable" data-value="${mobileNumber}">${mobileNumber}</td>
                 <td>${row.Product || ''}</td>
                 <td>${row.Status || ''}</td>
-                <td>${row.Points || ''}</td>
+                <td class="points-column">${row.Points || ''}</td>
                 ${actionsHtml}
             `;
             
             // Add long press event listeners for edit functionality (only for non-master search)
             if (!isMasterSearch) {
                 tr.addEventListener('mousedown', (e) => {
-                    if (e.button === 0) { // Only for left mouse button
+                    // Don't trigger long press on Points column (6th column) or Actions column (last column)
+                    const cell = e.target.closest('td');
+                    if (e.button === 0 && cell && !cell.classList.contains('points-column') && !cell.classList.contains('action-column')) {
                         startLongPress(tr, cidValue);
                     }
                 });
@@ -2992,7 +2974,11 @@ body {
                 
                 // Touch events for mobile
                 tr.addEventListener('touchstart', (e) => {
-                    startLongPress(tr, cidValue);
+                    // Don't trigger long press on Points column (6th column) or Actions column (last column)
+                    const cell = e.target.closest('td');
+                    if (cell && !cell.classList.contains('points-column') && !cell.classList.contains('action-column')) {
+                        startLongPress(tr, cidValue);
+                    }
                 });
                 
                 tr.addEventListener('touchend', (e) => {
@@ -3417,7 +3403,7 @@ body {
         document.getElementById('mobileError').classList.add('hidden');
         document.getElementById('productsError').classList.add('hidden');
         
-        // CID validation (optional but should be valid if provided)
+        // CID validation (completely optional now)
         if (cidInput.value.trim() && isNaN(cidInput.value.trim())) {
             cidInput.classList.add('error-field');
             showSuccess('CID must be a valid number if provided');
@@ -3472,18 +3458,17 @@ body {
         
         // For update operations, we don't need to check uniqueness for the current record
         if (document.getElementById('updateBtn').classList.contains('hidden')) {
-            // Check uniqueness only if basic validation passes and CID check is needed
-            if (isValid && cidInput.value.trim()) {
+            // Check uniqueness only for customer name and mobile (not CID)
+            if (isValid && (customerNameInput.value.trim() || mobileInput.value.trim())) {
                 showLoading();
                 const uniquenessCheck = await checkUniqueness(
-                    cidInput.value.trim(),
+                    '', // Don't check CID uniqueness
                     customerNameInput.value.trim(),
                     mobileInput.value.trim()
                 );
                 hideLoading();
                 
                 if (uniquenessCheck.success && uniquenessCheck.data) {
-                    // Change 5: Remove CID uniqueness check
                     if (uniquenessCheck.data.nameExists) {
                         document.getElementById('nameError').classList.remove('hidden');
                         customerNameInput.classList.add('error-field');
@@ -3496,8 +3481,8 @@ body {
                         isValid = false;
                     }
                 } else if (!uniquenessCheck.success) {
-                    showSuccess(`Error checking uniqueness: ${uniquenessCheck.error}`);
-                    isValid = false;
+                    console.log('Warning: Could not check uniqueness');
+                    // Don't fail validation if uniqueness check fails
                 }
             }
         }
