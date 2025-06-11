@@ -12,8 +12,9 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#6F2C4F',
-                        secondary: '#262a5a',
+                        primary: '#5492A8',
+                        secondary: '#38386E',
+                        heading: '#13405E',
                         lightblue: '#caf0f8',
                         lightgreen: '#d8f3dc',
                         lightyellow: '#ffedd8',
@@ -157,7 +158,7 @@
         }
         
         input:checked + .toggle-slider {
-            background-color: #2D336B !important;
+            background-color: #38386E !important;
         }
         
         input:checked + .toggle-slider:before {
@@ -201,7 +202,7 @@
         }
         
         .emi-table th {
-            background-color: #0b7285;
+            background-color: #5492A8;
             color: white;
             text-align: center;
             padding: 4px;
@@ -301,7 +302,7 @@
         
         /* Gradient backgrounds */
         .gradient-primary {
-            background: linear-gradient(135deg, #6F2C4F 0%, #262a5a 100%);
+            background: linear-gradient(135deg, #5492A8 0%, #38386E 100%);
         }
         
         .gradient-card {
@@ -318,12 +319,12 @@
         }
         
         input:focus, select:focus, textarea:focus {
-            border-color: #6F2C4F;
-            box-shadow: 0 0 0 2px rgba(111, 44, 79, 0.2);
+            border-color: #5492A8;
+            box-shadow: 0 0 0 2px rgba(84, 146, 168, 0.2);
         }
         
         .custom-btn {
-            background: linear-gradient(135deg, #6F2C4F 0%, #262a5a 100%);
+            background: linear-gradient(135deg, #5492A8 0%, #38386E 100%);
             transition: all 0.3s;
         }
         
@@ -467,7 +468,7 @@
     <!-- Password Modal -->
     <div class="password-modal" id="passwordModal">
         <div class="password-container">
-            <h2 class="text-xl font-bold text-primary dark:text-white mb-4 text-center">Authentication Required</h2>
+            <h2 class="text-xl font-bold text-heading dark:text-white mb-4 text-center">Authentication Required</h2>
             <div class="mb-4">
                 <label class="block text-gray-700 dark:text-gray-300 mb-2">Password</label>
                 <input type="password" id="passwordInput" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" placeholder="Enter password">
@@ -571,7 +572,7 @@
                         
                         <!-- Left Column - DBR Calculator -->
                         <div id="dbrCalculator" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md border-l-4 border-primary compact-form">
-                            <h2 class="text-xl font-bold text-primary dark:text-white mb-4">DBR CALCULATOR</h2>
+                            <h2 class="text-xl font-bold text-heading dark:text-white mb-4">DBR CALCULATOR</h2>
                             
                             <div class="space-y-2">
                                 <div class="grid grid-cols-3 gap-2 items-center">
@@ -661,7 +662,7 @@
                                 
                                 <!-- Moved Credit Card Suggestion above Total CC Limit -->
                                 <div id="ccSuggestionContainer" class="border border-primary p-2 rounded-lg mt-2 hidden">
-                                    <h3 class="text-base font-bold text-primary mb-1">CREDIT CARD SUGGESTION</h3>
+                                    <h3 class="text-base font-bold text-heading mb-1">CREDIT CARD SUGGESTION</h3>
                                     <p id="ccSuggestionText" class="text-gray-700 dark:text-gray-300 text-sm"></p>
                                 </div>
                                 
@@ -671,18 +672,8 @@
                                 </div>
                                 
                                 <div class="grid grid-cols-3 gap-2 items-center">
-                                    <label class="text-gray-700 dark:text-gray-300 font-medium">DBR Of Credit Card:</label>
-                                    <div class="col-span-2 flex items-center">
-                                        <input type="text" id="dbrCC" class="border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600 flex-grow" readonly>
-                                        <div class="ml-2 flex items-center">
-                                            <span class="text-gray-700 dark:text-gray-300 text-sm mr-1">3%</span>
-                                            <label class="toggle-switch mx-1" style="width: 40px; height: 20px;">
-                                                <input type="checkbox" id="dbrRateToggle">
-                                                <span class="toggle-slider" style="border-radius: 20px;"></span>
-                                            </label>
-                                            <span class="text-gray-700 dark:text-gray-300 text-sm ml-1">5%</span>
-                                        </div>
-                                    </div>
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">DBR Of Credit Card (5%):</label>
+                                    <input type="text" id="dbrCC" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                                 </div>
                                 
                                 <div class="grid grid-cols-3 gap-2 items-center">
@@ -709,7 +700,7 @@
                         
                         <!-- Right Column - EMI Calculator -->
                         <div id="emiCalculator" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md border-l-4 border-primary compact-form">
-                            <h2 class="text-xl font-bold text-primary dark:text-white mb-4">EMI CALCULATOR</h2>
+                            <h2 class="text-xl font-bold text-heading dark:text-white mb-4">EMI CALCULATOR</h2>
                             
                             <div class="space-y-2">
                                 <div class="grid grid-cols-3 gap-2 items-center">
@@ -820,7 +811,7 @@
                     
                     <!-- EMI Chart Section -->
                     <div id="emiChartSection" class="mt-4 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md border-l-4 border-primary hidden">
-                        <h2 class="text-xl font-bold text-primary dark:text-white mb-4">EMI PAYMENT SCHEDULE</h2>
+                        <h2 class="text-xl font-bold text-heading dark:text-white mb-4">EMI PAYMENT SCHEDULE</h2>
                         <div class="relative" style="height: 350px;">
                             <canvas id="emiChart"></canvas>
                         </div>
@@ -866,7 +857,7 @@
                 <!-- Share Tab -->
                 <div id="tab-share" class="tab-content">
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
-                        <h2 class="text-xl font-bold text-primary dark:text-white mb-4">SHARE LOAN INFORMATION</h2>
+                        <h2 class="text-xl font-bold text-heading dark:text-white mb-4">SHARE LOAN INFORMATION</h2>
                         
                         <button id="shareTabBtn" class="custom-btn text-white p-2 rounded-md text-sm mb-4">
                             <i class="fas fa-share-alt mr-1"></i> Share Loan Information
@@ -893,7 +884,7 @@
                 <!-- EMI Chart Tab -->
                 <div id="tab-emichart" class="tab-content">
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
-                        <h2 class="text-xl font-bold text-primary dark:text-white mb-4">EMI PAYMENT SCHEDULE</h2>
+                        <h2 class="text-xl font-bold text-heading dark:text-white mb-4">EMI PAYMENT SCHEDULE</h2>
                         
                         <button id="showEmiChartBtnTab" class="custom-btn text-white p-2 rounded-md text-sm mb-4">
                             <i class="fas fa-chart-bar mr-1"></i> Generate EMI Chart
@@ -925,7 +916,7 @@
                 <div id="tab-comparison" class="tab-content">
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                         <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold text-primary dark:text-white">LOAN COMPARISON</h2>
+                            <h2 class="text-xl font-bold text-heading dark:text-white">LOAN COMPARISON</h2>
                             <button id="screenshotComparison" class="screenshot-btn" title="Take Screenshot">
                                 <i class="fas fa-camera"></i>
                             </button>
@@ -1000,7 +991,7 @@
                         </div>
                         
                         <div class="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg" id="comparisonResultSection">
-                            <h3 class="text-xl font-semibold text-primary dark:text-white mb-2">COMPARISON RESULT</h3>
+                            <h3 class="text-xl font-semibold text-heading dark:text-white mb-2">COMPARISON RESULT</h3>
                             <p id="comparisonResultTab" class="text-gray-700 dark:text-gray-300">Enter Details For Both Banks To Compare.</p>
                         </div>
                     </div>
@@ -1038,7 +1029,7 @@
     <div id="shareModal" class="modal hidden">
         <div class="modal-content">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-bold text-primary dark:text-white">Loan Information</h2>
+                <h2 class="text-2xl font-bold text-heading dark:text-white">Loan Information</h2>
                 <button class="close-modal text-gray-700 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 text-2xl">&times;</button>
             </div>
             
@@ -1116,7 +1107,7 @@
                 </div>
                 
                 <!-- EMI Schedule -->
-                <h3 class="text-xl font-bold text-primary dark:text-white mb-3">EMI Payment Schedule</h3>
+                <h3 class="text-xl font-bold text-heading dark:text-white mb-3">EMI Payment Schedule</h3>
                 <div class="overflow-x-auto border rounded-lg">
                     <table class="w-full emi-table">
                         <thead>
@@ -1141,7 +1132,7 @@
     <div id="loanComparisonModal" class="modal hidden">
         <div class="modal-content">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-bold text-primary dark:text-white">LOAN COMPARISON</h2>
+                <h2 class="text-2xl font-bold text-heading dark:text-white">LOAN COMPARISON</h2>
                 <button class="close-modal text-gray-700 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 text-2xl">&times;</button>
             </div>
             
@@ -1214,7 +1205,7 @@
             </div>
             
             <div class="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                <h3 class="text-xl font-semibold text-primary dark:text-white mb-2">COMPARISON RESULT</h3>
+                <h3 class="text-xl font-semibold text-heading dark:text-white mb-2">COMPARISON RESULT</h3>
                 <p id="comparisonResult" class="text-gray-700 dark:text-gray-300">Enter Details For Both Banks To Compare.</p>
             </div>
         </div>
@@ -1739,7 +1730,6 @@
             const creditCardsContainer = document.getElementById('creditCardsContainer');
             const totalCCLimitInput = document.getElementById('totalCCLimit');
             const dbrCCInput = document.getElementById('dbrCC');
-            const dbrRateToggle = document.getElementById('dbrRateToggle');
             const totalOutstandingInput = document.getElementById('totalOutstanding');
             const totalLiabilitiesInput = document.getElementById('totalLiabilities');
             const availableLiabilityInput = document.getElementById('availableLiability');
@@ -1853,9 +1843,6 @@
             let settledCards = new Set();
             let settledLoans = new Set();
             
-            // Set DBR CC rate toggle to default 3%
-            dbrRateToggle.checked = false;
-            
             // ==========================================
             // GOOGLE DRIVE FUNCTIONALITY
             // ==========================================
@@ -1920,7 +1907,6 @@
                     loanAmount: loanAmountInput.value,
                     reducingRate: reducingRateInput.value,
                     specialNote: specialNote.value,
-                    dbrRateToggle: dbrRateToggle.checked,
                     
                     // Credit card data
                     creditCards: Array.from(document.querySelectorAll('.credit-card-entry')).map((entry, index) => {
@@ -2074,7 +2060,6 @@
                     loanAmountInput.value = profileData.loanAmount;
                     reducingRateInput.value = profileData.reducingRate;
                     specialNote.value = profileData.specialNote;
-                    dbrRateToggle.checked = profileData.dbrRateToggle || false;
                     
                     // Handle credit cards
                     if (profileData.creditCards && profileData.creditCards.length > 0) {
@@ -2375,7 +2360,6 @@
                     loanAmount: loanAmountInput.value,
                     reducingRate: reducingRateInput.value,
                     specialNote: specialNote.value,
-                    dbrRateToggle: dbrRateToggle.checked,
                     
                     // Credit card data
                     creditCards: Array.from(document.querySelectorAll('.credit-card-entry')).map((entry, index) => {
@@ -2422,7 +2406,6 @@
                     loanAmountInput.value = tempState.loanAmount || '';
                     reducingRateInput.value = tempState.reducingRate || '10';
                     specialNote.value = tempState.specialNote || '';
-                    dbrRateToggle.checked = tempState.dbrRateToggle || false;
                     
                     // Handle credit cards
                     if (tempState.creditCards && tempState.creditCards.length > 0) {
@@ -2903,9 +2886,6 @@
                 }
             });
             
-            // Handle DBR rate toggle
-            dbrRateToggle.addEventListener('change', updateDBRCalculator);
-            
             // Function to update DBR calculator
             function updateDBRCalculator() {
                 const grossSalary = parseFloat(grossSalaryInput.value.replace(/,/g, '')) || 0;
@@ -2950,8 +2930,8 @@
                 const totalOutstanding = totalCCOutstanding + totalExistingLoansOutstanding;
                 totalOutstandingInput.value = formatNumber(totalOutstanding.toFixed(2));
                 
-                // Calculate DBR for credit cards (3% or 5% of total limit based on toggle)
-                const dbrRate = dbrRateToggle.checked ? 0.05 : 0.03;
+                // Calculate DBR for credit cards (5% fixed)
+                const dbrRate = 0.05; // Fixed at 5%
                 const dbrCC = totalCCLimit * dbrRate;
                 dbrCCInput.value = formatNumber(dbrCC.toFixed(2));
                 
@@ -3065,7 +3045,7 @@
                     }
                 });
                 
-                const dbrRate = dbrRateToggle.checked ? 0.05 : 0.03;
+                const dbrRate = 0.05; // Fixed at 5%
                 const dbrCC = totalCCLimit * dbrRate;
                 const currentLiabilities = totalExistingLoansInstallments + dbrCC;
                 
@@ -3121,8 +3101,8 @@
                 // Get current DBR percentage
                 const dbrPercentage = parseFloat(dbrPercentageInput.value) || 0;
                 
-                // Calculate optimal credit card limit by dividing available liability by 3% or 5%
-                const dbrRate = dbrRateToggle.checked ? 5 : 3;
+                // Calculate optimal credit card limit by dividing available liability by 5%
+                const dbrRate = 5; // Fixed at 5%
                 const optimalCCLimit = availableLiability / (dbrRate/100);
                 
                 if (availableLiability > 0 && dbrPercentage < 49.95) {
@@ -3495,7 +3475,7 @@
                         totalCCLimit += parseFloat(limitInput.value) || 0;
                     }
                 });
-                const dbrRate = dbrRateToggle.checked ? 0.05 : 0.03;
+                const dbrRate = 0.05; // Fixed at 5%
                 const dbrCC = totalCCLimit * dbrRate;
                 
                 // Current liabilities excluding EMI
@@ -3769,7 +3749,7 @@
                     td:first-child { background-color: #f5f5f5; font-weight: bold; width: 50%; }
                     h3 { margin-top: 20px; margin-bottom: 10px; }
                     .emi-table { width: 100%; border-collapse: collapse; }
-                    .emi-table th { background-color: #158078; color: white; text-align: center; padding: 6px; border: 1px solid #ddd; }
+                    .emi-table th { background-color: #5492A8; color: white; text-align: center; padding: 6px; border: 1px solid #ddd; }
                     .emi-table td { text-align: right; padding: 4px 6px; border: 1px solid #ddd; }
                     .emi-table td:first-child { text-align: center; }
                     @media print { body { margin: 0; } }
@@ -4027,7 +4007,6 @@
                 loanMultiplesInput.value = '';
                 reducingRateInput.value = '10';
                 specialNote.value = '';
-                dbrRateToggle.checked = false;
                 
                 // Clear settled cards and loans set
                 settledCards.clear();
