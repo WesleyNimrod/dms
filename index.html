@@ -549,6 +549,15 @@
                         <button id="retrieveProfileBtn" class="custom-btn text-white p-2 rounded-md flex items-center justify-center" title="Retrieve Profile">
                             <i class="fas fa-download"></i>
                         </button>
+                        <button id="shareTabBtn" class="custom-btn text-white p-2 rounded-md flex items-center justify-center" title="Share Loan Information">
+                            <i class="fas fa-share-alt"></i>
+                        </button>
+                        <button id="showEmiChartBtnTab" class="custom-btn text-white p-2 rounded-md flex items-center justify-center" title="EMI Payment Schedule">
+                            <i class="fas fa-chart-bar"></i>
+                        </button>
+                        <button id="loanComparisonBtn" class="custom-btn text-white p-2 rounded-md flex items-center justify-center" title="Loan Comparison">
+                            <i class="fas fa-balance-scale"></i>
+                        </button>
                         <button id="deleteProfileBtn" class="bg-gradient-to-r from-red-500 to-red-600 text-white p-2 rounded-md hover:opacity-90 flex items-center justify-center" title="Delete Profile">
                             <i class="fas fa-trash-alt"></i>
                         </button>
@@ -859,12 +868,8 @@
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                         <h2 class="text-xl font-bold text-heading dark:text-white mb-4">SHARE LOAN INFORMATION</h2>
                         
-                        <button id="shareTabBtn" class="custom-btn text-white p-2 rounded-md text-sm mb-4">
-                            <i class="fas fa-share-alt mr-1"></i> Share Loan Information
-                        </button>
-                        
                         <div class="text-gray-700 dark:text-gray-300 mt-4">
-                            <p class="mb-2">Click the Share button above to view and share the full loan information, including:</p>
+                            <p class="mb-2">Use the Share button in the main tab to view and share the full loan information, including:</p>
                             <ul class="list-disc ml-5 space-y-1">
                                 <li>Loan details (amount, type, tenure)</li>
                                 <li>Interest rates (reducing and flat)</li>
@@ -886,9 +891,14 @@
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                         <h2 class="text-xl font-bold text-heading dark:text-white mb-4">EMI PAYMENT SCHEDULE</h2>
                         
-                        <button id="showEmiChartBtnTab" class="custom-btn text-white p-2 rounded-md text-sm mb-4">
-                            <i class="fas fa-chart-bar mr-1"></i> Generate EMI Chart
-                        </button>
+                        <div class="text-gray-700 dark:text-gray-300 mt-4">
+                            <p class="mb-2">Use the EMI Chart button in the main tab to generate the EMI payment schedule and chart.</p>
+                            
+                            <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800">
+                                <p class="text-blue-800 dark:text-blue-300 font-medium">Chart Features:</p>
+                                <p class="text-sm mt-1">The chart shows the breakdown of principal and interest for each month of the loan tenure.</p>
+                            </div>
+                        </div>
                         
                         <div class="relative" style="height: 400px;">
                             <canvas id="emiChartStandalone"></canvas>
@@ -920,6 +930,15 @@
                             <button id="screenshotComparison" class="screenshot-btn" title="Take Screenshot">
                                 <i class="fas fa-camera"></i>
                             </button>
+                        </div>
+                        
+                        <div class="text-gray-700 dark:text-gray-300 mt-4 mb-4">
+                            <p class="mb-2">Use the Loan Comparison button in the main tab to compare loan offers from different banks.</p>
+                            
+                            <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800">
+                                <p class="text-blue-800 dark:text-blue-300 font-medium">Comparison Features:</p>
+                                <p class="text-sm mt-1">Compare EMI amounts, total interest, and determine which bank offers the better deal.</p>
+                            </div>
                         </div>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1781,6 +1800,7 @@
             const shareBtn = document.getElementById('shareTabBtn');
             const shareModal = document.getElementById('shareModal');
             const loanComparisonModal = document.getElementById('loanComparisonModal');
+            const loanComparisonBtn = document.getElementById('loanComparisonBtn');
             const exportPdfBtn = document.getElementById('exportPdfBtn');
             const printPageBtn = document.getElementById('printPageBtn');
             
@@ -3690,6 +3710,15 @@
                 shareModal.classList.remove('hidden');
             });
             
+            // Loan Comparison button opens modal with loan comparison
+            loanComparisonBtn.addEventListener('click', function() {
+                // Sync current form data to modal
+                syncTabToModalComparison();
+                
+                // Show the modal
+                loanComparisonModal.classList.remove('hidden');
+            });
+            
             // Export PDF functionality
             exportPdfBtn.addEventListener('click', function() {
                 // Initialize jsPDF
@@ -4166,7 +4195,7 @@
             findOptimalLoanBtn.addEventListener('click', findOptimalLoanAmount);
             
             // EMI Chart buttons
-            showEmiChartBtnTab.addEventListener('click', displayEMIChartStandalone);
+            showEmiChartBtnTab.addEventListener('click', displayEMIChart);
             
             // Send to WhatsApp button
             sendWhatsAppBtn.addEventListener('click', function() {
