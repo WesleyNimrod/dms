@@ -721,12 +721,12 @@
                     directCallBtn.innerHTML = '<i class="fas fa-phone"></i><span class="tooltip-text">Call</span>';
                     
                     // Teams call button
-                    const teamsBtn = document.createElement('a');
-                    teamsBtn.href = `https://teams.microsoft.com/l/call/0/0?users=4:+971${formattedMobile}`;
-                    teamsBtn.target = "_blank";
-                    teamsBtn.classList.add('call-btn', 'teams-call', 'tooltip');
-                    teamsBtn.title = `Teams Call ${record.Name || 'Unknown'}`;
-                    teamsBtn.innerHTML = '<i class="fas fa-users"></i><span class="tooltip-text">Teams</span>';
+                   const teamsBtn = document.createElement('a');
+teamsBtn.href = `https://teams.microsoft.com/l/call/0/0?users=4:${formattedMobile}`;
+teamsBtn.target = "_blank";
+teamsBtn.classList.add('call-btn', 'teams-call', 'tooltip');
+teamsBtn.title = `Teams Call ${record.Name || 'Unknown'}`;
+teamsBtn.innerHTML = '<i class="fas fa-users"></i><span class="tooltip-text">Teams</span>';
                     
                     // WhatsApp button
                     const whatsappBtn = document.createElement('a');
