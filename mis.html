@@ -22,7 +22,7 @@ body {
     }
     
     .custom-btn {
-        background: linear-gradient(135deg, #6F2C4F 0%, #262a5a 100%);
+        background: linear-gradient(135deg, #00FBFF 0%, #2E5D70 100%);
         transition: all 0.3s;
     }
     
@@ -32,7 +32,7 @@ body {
     }
     
     .gradient-primary {
-        background: linear-gradient(135deg, #6F2C4F 0%, #262a5a 100%);
+        background: linear-gradient(135deg, #00FBFF 0%, #2E5D70 100%);
     }
     
     .success-indicator {
@@ -71,7 +71,7 @@ body {
         width: 50px;
         height: 50px;
         border: 5px solid #f3f3f3;
-        border-top: 5px solid #6F2C4F;
+        border-top: 5px solid #00FBFF;
         border-radius: 50%;
         animation: spin 1s linear infinite;
     }
@@ -91,7 +91,7 @@ body {
     }
 
     .data-table th {
-        background-color: #6F2C4F;
+        background: linear-gradient(135deg, #00FBFF 0%, #2E5D70 100%);
         color: white;
         text-align: left;
         padding: 8px;
@@ -203,7 +203,7 @@ body {
     }
     
     .summary-card h3 {
-        color: #6F2C4F;
+        color: #00D4FF;
         margin-bottom: 8px;
         font-weight: bold;
         font-size: 1.1rem;
@@ -263,7 +263,7 @@ body {
     
     /* Visualizations */
     .visualizations-header {
-        background-color: #6F2C4F;
+        background: linear-gradient(135deg, #00FBFF 0%, #2E5D70 100%);
         color: white;
         padding: 8px 12px;
         font-weight: bold;
@@ -302,7 +302,7 @@ body {
     
     .chart-title {
         font-weight: bold;
-        color: #6F2C4F;
+        color: #00D4FF;
         text-align: center;
         margin-bottom: 10px;
         font-size: 0.95rem;
@@ -462,7 +462,7 @@ body {
     }
     
     .export-table th {
-        background-color: #6F2C4F;
+        background: linear-gradient(135deg, #00FBFF 0%, #2E5D70 100%);
         color: white;
         text-align: left;
         padding: 8px;
@@ -500,7 +500,7 @@ body {
     }
 
     .total-row td {
-        border-top: 2px solid #6F2C4F;
+        border-top: 2px solid #00FBFF;
     }
     
     /* Export Profile Styles */
@@ -546,7 +546,7 @@ body {
     }
     
     .btn-save {
-        background-color: #6F2C4F;
+        background: linear-gradient(135deg, #00FBFF 0%, #2E5D70 100%);
         color: white;
     }
     
@@ -576,6 +576,37 @@ body {
     .longpress-active {
         background-color: #bbdefb !important;
     }
+
+    /* Points column immediate click style */
+    .points-column {
+        cursor: pointer;
+        background-color: rgba(0, 251, 255, 0.1);
+        transition: background-color 0.2s;
+    }
+
+    .points-column:hover {
+        background-color: rgba(0, 251, 255, 0.2);
+    }
+
+    /* Banking section enhancement */
+    .banking-container {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .banking-select {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .adcb-checkbox-container {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        min-width: 120px;
+    }
 </style>
 </head>
 
@@ -604,7 +635,7 @@ body {
     <div id="summarySection" class="section active">
         <div class="bg-white p-3 rounded-lg shadow-md">
             <div class="flex justify-between items-center mb-3">
-                <h2 class="text-xl font-bold text-[#6F2C4F]">Summary Dashboard</h2>
+                <h2 class="text-xl font-bold" style="color: #00D4FF;">Summary Dashboard</h2>
                 <button id="copySummaryBtn" class="bg-gray-600 text-white p-2 rounded-md hover:bg-gray-700 no-print">
                     <i class="fas fa-copy"></i>
                 </button>
@@ -643,6 +674,14 @@ body {
                             <p class="font-medium text-gray-600 text-sm">Personal Loans:</p>
                             <p class="text-base font-bold text-purple-600" id="summaryInProgressPL">AED 0</p>
                         </div>
+                        <div class="flex justify-between items-center">
+                            <p class="font-medium text-gray-600 text-sm">MDSA:</p>
+                            <p class="text-base font-bold text-purple-600" id="summaryInProgressMDSA">0</p>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <p class="font-medium text-gray-600 text-sm">Privilege:</p>
+                            <p class="text-base font-bold text-purple-600" id="summaryInProgressPrivilege">0</p>
+                        </div>
                     </div>
                 </div>
                 
@@ -658,15 +697,23 @@ body {
                             <p class="font-medium text-gray-600 text-sm">Personal Loans:</p>
                             <p class="text-base font-bold text-green-600" id="summaryCompletedPL">AED 0</p>
                         </div>
+                        <div class="flex justify-between items-center">
+                            <p class="font-medium text-gray-600 text-sm">MDSA:</p>
+                            <p class="text-base font-bold text-green-600" id="summaryCompletedMDSA">0</p>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <p class="font-medium text-gray-600 text-sm">Privilege:</p>
+                            <p class="text-base font-bold text-green-600" id="summaryCompletedPrivilege">0</p>
+                        </div>
                     </div>
                 </div>
             </div>
             
             <!-- Effort & Target Cards - 2-column layout -->
             <div class="grid grid-cols-2 gap-2 mb-2">
-                <!-- Effort Card -->
+                <!-- Total Submissions Card -->
                 <div class="summary-card mb-0">
-                    <h3 class="mb-1">Effort</h3>
+                    <h3 class="mb-1">Total Submissions</h3>
                     <div class="space-y-1">
                         <div class="flex justify-between items-center">
                             <p class="font-medium text-gray-600 text-sm">Credit Cards:</p>
@@ -675,6 +722,10 @@ body {
                         <div class="flex justify-between items-center">
                             <p class="font-medium text-gray-600 text-sm">Personal Loans:</p>
                             <p class="text-base font-bold text-blue-600" id="summaryTotalPL">AED 170,000</p>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <p class="font-medium text-gray-600 text-sm">Accounts:</p>
+                            <p class="text-base font-bold text-blue-600" id="summaryTotalAccounts">0</p>
                         </div>
                     </div>
                 </div>
@@ -816,7 +867,6 @@ body {
                         <div>
                             <label for="cid" class="block text-gray-700 font-medium">CID (Optional)</label>
                             <input type="number" id="cid" name="cid" class="w-full border rounded-md p-2 text-base">
-                            <p id="cidError" class="text-red-500 text-sm hidden">CID must be unique</p>
                         </div>
                         
                         <!-- App ID -->
@@ -932,24 +982,30 @@ body {
                             <input type="number" id="otherPoints" name="otherPoints" class="w-full border rounded-md p-2 text-base" placeholder="Enter other points">
                         </div>
                         
-                        <!-- Banking -->
+                        <!-- Banking with ADCB checkbox -->
                         <div>
-                            <label for="banking" class="block text-gray-700 font-medium">Banking</label>
-                            <select id="banking" name="banking" class="w-full border rounded-md p-2 text-base">
-                                <option value="SELECT">SELECT</option>
-                                <option value="ADCB">ADCB</option>
-                                <option value="ENBD">ENBD</option>
-                                <option value="EIB">EIB</option>
-                                <option value="FAB">FAB</option>
-                                <option value="DIB">DIB</option>
-                                <option value="MASHREQ">MASHREQ</option>
-                                <option value="ADIB">ADIB</option>
-                                <option value="RAK">RAK</option>
-                                <option value="CBD">CBD</option>
-                                <option value="HSBC">HSBC</option>
-                                <option value="CITI">CITI</option>
-                                <option value="Other">Other</option>
-                            </select>
+                            <label class="block text-gray-700 font-medium">Banking</label>
+                            <div class="banking-container mt-2">
+                                <select id="banking" name="banking" class="banking-select border rounded-md p-2 text-base">
+                                    <option value="SELECT">SELECT</option>
+                                    <option value="ADCB">ADCB</option>
+                                    <option value="ENBD">ENBD</option>
+                                    <option value="EIB">EIB</option>
+                                    <option value="FAB">FAB</option>
+                                    <option value="DIB">DIB</option>
+                                    <option value="MASHREQ">MASHREQ</option>
+                                    <option value="ADIB">ADIB</option>
+                                    <option value="RAK">RAK</option>
+                                    <option value="CBD">CBD</option>
+                                    <option value="HSBC">HSBC</option>
+                                    <option value="CITI">CITI</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <div class="adcb-checkbox-container">
+                                    <input type="checkbox" id="adcbOverride" name="adcbOverride" class="form-checkbox">
+                                    <label for="adcbOverride" class="text-gray-700 text-sm">ADCB</label>
+                                </div>
+                            </div>
                             <div id="otherBankingSection" class="mt-2 hidden">
                                 <input type="text" id="otherBanking" name="otherBanking" placeholder="Specify bank" class="w-full border rounded-md p-2 text-base">
                             </div>
@@ -1150,7 +1206,7 @@ body {
 <div id="exportModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2 class="text-lg font-bold text-[#6F2C4F]">Export Data</h2>
+            <h2 class="text-lg font-bold" style="color: #00D4FF;">Export Data</h2>
             <span class="close-modal" id="closeExportModal">&times;</span>
         </div>
         <div class="modal-body">
@@ -1338,6 +1394,7 @@ body {
     const bankingSelect = document.getElementById('banking');
     const otherBankingSection = document.getElementById('otherBankingSection');
     const otherBankingInput = document.getElementById('otherBanking');
+    const adcbOverrideCheckbox = document.getElementById('adcbOverride');
     const companyNameInput = document.getElementById('companyName');
     const statusSelect = document.getElementById('status');
     const otherStatusSection = document.getElementById('otherStatusSection');
@@ -1371,7 +1428,6 @@ body {
         otherStatusSection.classList.add('hidden');
         
         // Reset validation error messages
-        document.getElementById('cidError').classList.add('hidden');
         document.getElementById('nameError').classList.add('hidden');
         document.getElementById('mobileError').classList.add('hidden');
         document.getElementById('productsError').classList.add('hidden');
@@ -1413,6 +1469,9 @@ body {
         
         // Clear raw product string
         editingProductString = "";
+        
+        // Reset ADCB override checkbox
+        adcbOverrideCheckbox.checked = false;
     }
 
     // Banking select change event
@@ -1423,6 +1482,11 @@ body {
             otherBankingSection.classList.add('hidden');
         }
         // Recalculate points when banking changes (for CC point reduction)
+        calculateTotalPoints();
+    });
+
+    // ADCB override checkbox change event
+    adcbOverrideCheckbox.addEventListener('change', function() {
         calculateTotalPoints();
     });
 
@@ -1636,18 +1700,7 @@ body {
                 if (accSelect) {
                     console.log("Setting ACC select change event");
                     accSelect.addEventListener('change', function() {
-                        // Check if selected option disables STL
-                        const selectedOption = this.options[this.selectedIndex];
-                        const disableSTL = selectedOption.dataset.disablestl === "true";
-                        
-                        // Enable/disable STL based on selected option
-                        if (disableSTL) {
-                            productSTL.disabled = true;
-                            productSTL.checked = false;
-                        } else {
-                            productSTL.disabled = false;
-                        }
-                        
+                        // No STL disabling for Privilege options anymore (Fixed requirement 2B)
                         calculateTotalPoints();
                     });
                     
@@ -1965,31 +2018,13 @@ body {
                 // Add change event to ACC select
                 const newAccSelect = accDiv.querySelector('select');
                 newAccSelect.addEventListener('change', function() {
-                    // Check if selected option disables STL
-                    const selectedOption = newAccSelect.options[newAccSelect.selectedIndex];
-                    const disableSTL = selectedOption.dataset.disablestl === "true";
-                    
-                    // Enable/disable STL based on selected option
-                    if (disableSTL) {
-                        productSTL.disabled = true;
-                        productSTL.checked = false;
-                    } else {
-                        productSTL.disabled = false;
-                    }
-                    
+                    // Fixed: Remove STL disabling logic for Privilege options
                     calculateTotalPoints();
                 });
                 
                 // Restore previous selection if it exists
                 if (currentSelections.ACC && newAccSelect.querySelector(`option[value="${currentSelections.ACC}"]`)) {
                     newAccSelect.value = currentSelections.ACC;
-                    
-                    // Check if selected option disables STL
-                    const selectedOption = newAccSelect.options[newAccSelect.selectedIndex];
-                    if (selectedOption.dataset.disablestl === "true") {
-                        productSTL.disabled = true;
-                        productSTL.checked = false;
-                    }
                 }
             }
         }
@@ -2105,8 +2140,9 @@ body {
         // Add all options regardless of salary, but annotate with requirements
         options.push({ value: "Aspire5K-10K", text: "Aspire 5K-10K (Salary: 5000-9999)", points: 150, minSalary: 5000, maxSalary: 9999, disableSTL: false });
         options.push({ value: "Aspire10K-20K", text: "Aspire 10K-20K (Salary: 10000-19999)", points: 400, minSalary: 10000, maxSalary: 19999, disableSTL: false });
-        options.push({ value: "Privilege20K-40K", text: "Privilege 20K-40K (Salary: 20000-39999)", points: 550, minSalary: 20000, maxSalary: 39999, disableSTL: true });
-        options.push({ value: "Privilege40K+", text: "Privilege 40K & Above (Salary: 40000+)", points: 800, minSalary: 40000, maxSalary: Infinity, disableSTL: true });
+        // Fixed: Remove STL disabling for Privilege options (requirement 2B)
+        options.push({ value: "Privilege20K-40K", text: "Privilege 20K-40K (Salary: 20000-39999)", points: 550, minSalary: 20000, maxSalary: 39999, disableSTL: false });
+        options.push({ value: "Privilege40K+", text: "Privilege 40K & Above (Salary: 40000+)", points: 800, minSalary: 40000, maxSalary: Infinity, disableSTL: false });
         
         // Add Islamic-specific option
         if (proposition === "Islamic" || proposition === "Both") {
@@ -2116,7 +2152,7 @@ body {
                 points: 175,
                 minSalary: 5000,
                 maxSalary: Infinity,
-                disableSTL: salary >= 20000 // Disable STL for salary >= 20000
+                disableSTL: false
             });
         }
         
@@ -2221,8 +2257,8 @@ body {
                 const selectedOption = ccSelect.options[ccSelect.selectedIndex];
                 let ccPoints = parseInt(selectedOption.dataset.points) || 0;
                 
-                // Change 3: Reduce CC points by 30% if banking is not ADCB
-                if (bankingSelect.value !== 'ADCB') {
+                // Fixed: Check for ADCB override checkbox first (requirement 2A)
+                if (!adcbOverrideCheckbox.checked && bankingSelect.value !== 'ADCB') {
                     ccPoints = Math.round(ccPoints * 0.7); // 30% reduction
                 }
                 
@@ -2499,12 +2535,17 @@ body {
             
             document.getElementById('summaryInProgressCC').textContent = "0";
             document.getElementById('summaryInProgressPL').textContent = "AED 0";
+            document.getElementById('summaryInProgressMDSA').textContent = "0";
+            document.getElementById('summaryInProgressPrivilege').textContent = "0";
             
             document.getElementById('summaryCompletedCC').textContent = "0";
             document.getElementById('summaryCompletedPL').textContent = "AED 0";
+            document.getElementById('summaryCompletedMDSA').textContent = "0";
+            document.getElementById('summaryCompletedPrivilege').textContent = "0";
             
             document.getElementById('summaryTotalCC').textContent = "0";
             document.getElementById('summaryTotalPL').textContent = "AED 0";
+            document.getElementById('summaryTotalAccounts').textContent = "0";
             return;
         }
         
@@ -2517,6 +2558,12 @@ body {
         
         let inProgressLoanAmount = 0;
         let completedLoanAmount = 0;
+        
+        let inProgressMDSA = 0;
+        let completedMDSA = 0;
+        
+        let inProgressPrivilege = 0;
+        let completedPrivilege = 0;
         
         let conventionalCount = 0;
         let islamicCount = 0;
@@ -2578,6 +2625,10 @@ body {
                 });
             }
 
+            // Check for MDSA and Privilege accounts
+            const hasMDSA = productString.includes('MDSA');
+            const hasPrivilege = productString.includes('Privilege');
+
             // Categorize based on status
             if (isCompleted) {
                 // Completed stats
@@ -2585,12 +2636,16 @@ body {
                 if (loanAmount > 0) {
                     completedLoanAmount += loanAmount;
                 }
+                if (hasMDSA) completedMDSA++;
+                if (hasPrivilege) completedPrivilege++;
             } else if (!isRejected) { // Fix 3: Skip rejected records in the In Progress count
                 // In Progress stats
                 inProgressCC += ccCount;
                 if (loanAmount > 0) {
                     inProgressLoanAmount += loanAmount;
                 }
+                if (hasMDSA) inProgressMDSA++;
+                if (hasPrivilege) inProgressPrivilege++;
             }
             
             // Fix 3: Don't skip rejected records for overall proposition and account stats
@@ -2630,9 +2685,10 @@ body {
         // Calculate total points (earnedPoints + pendingPoints)
         const totalPoints = earnedPoints + pendingPoints;
         
-        // Calculate total credit cards and loan amounts (Fix 4: Effort)
+        // Calculate total credit cards and loan amounts (Fix 4: Total Submissions)
         const totalCC = inProgressCC + completedCC;
         const totalLoanAmount = inProgressLoanAmount + completedLoanAmount;
+        const totalAccounts = aspireCount + privilegeCount + mdsaCount;
         
         // Format loan amounts
         function formatCurrency(amount) {
@@ -2646,17 +2702,22 @@ body {
         
         document.getElementById('summaryInProgressCC').textContent = inProgressCC;
         document.getElementById('summaryInProgressPL').textContent = formatCurrency(inProgressLoanAmount);
+        document.getElementById('summaryInProgressMDSA').textContent = inProgressMDSA;
+        document.getElementById('summaryInProgressPrivilege').textContent = inProgressPrivilege;
         
         document.getElementById('summaryCompletedCC').textContent = completedCC;
         document.getElementById('summaryCompletedPL').textContent = formatCurrency(completedLoanAmount);
+        document.getElementById('summaryCompletedMDSA').textContent = completedMDSA;
+        document.getElementById('summaryCompletedPrivilege').textContent = completedPrivilege;
         
         document.getElementById('summaryTotalCC').textContent = totalCC > 0 ? totalCC : "0";
         document.getElementById('summaryTotalPL').textContent = formatCurrency(totalLoanAmount > 0 ? totalLoanAmount : 0);
+        document.getElementById('summaryTotalAccounts').textContent = totalAccounts > 0 ? totalAccounts : "0";
         
         // Update target progress bars
         updateTargetProgress('CC', completedCC);
         updateTargetProgress('PL', completedLoanAmount);
-        updateTargetProgress('ACC', aspireCount + privilegeCount + mdsaCount);
+        updateTargetProgress('ACC', totalAccounts);
         
         // Update visualizations
         updateVisualizations(conventionalCount, islamicCount, bothCount, aspireCount, privilegeCount, mdsaCount, tmlAllCount, tmlCCCount, tmSelectCount, ntmlCount);
@@ -2738,20 +2799,21 @@ body {
         }
     });
     
-    // Generate summary text with proper formatting like the second image
+    // Generate summary text with the new required format (requirement 1)
     function generateSummaryText() {
-        const earnedPoints = document.getElementById('summaryEarnedPoints').textContent;
-        const pendingPoints = document.getElementById('summaryPendingPoints').textContent;
-        const totalPoints = document.getElementById('summaryTotalPoints').textContent;
-        
         const inProgressCC = document.getElementById('summaryInProgressCC').textContent;
         const inProgressPL = document.getElementById('summaryInProgressPL').textContent;
+        const inProgressMDSA = document.getElementById('summaryInProgressMDSA').textContent;
+        const inProgressPrivilege = document.getElementById('summaryInProgressPrivilege').textContent;
         
         const completedCC = document.getElementById('summaryCompletedCC').textContent;
         const completedPL = document.getElementById('summaryCompletedPL').textContent;
+        const completedMDSA = document.getElementById('summaryCompletedMDSA').textContent;
+        const completedPrivilege = document.getElementById('summaryCompletedPrivilege').textContent;
         
         const totalCC = document.getElementById('summaryTotalCC').textContent;
         const totalPL = document.getElementById('summaryTotalPL').textContent;
+        const totalAccounts = document.getElementById('summaryTotalAccounts').textContent;
         
         // Get progress percentages
         const progressCC = document.getElementById('progressCC').textContent;
@@ -2762,7 +2824,29 @@ body {
         const dateStr = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
         const timeStr = now.toLocaleTimeString();
         
-        const summaryText = `SUMMARY REPORT [Generated on: ${dateStr} at ${timeStr}]\n\nPOINTS SUMMARY\nEarned Points: ${earnedPoints}\nPending Points: ${pendingPoints}\nTotal Points: ${totalPoints}\n\nIN PROGRESS\nCredit Cards: ${inProgressCC}\nPersonal Loans: ${inProgressPL}\n\nCOMPLETED\nCredit Cards: ${completedCC}\nPersonal Loans: ${completedPL}\n\nEFFORT\nCredit Cards: ${totalCC}\nPersonal Loans: ${totalPL}\n\nTARGET PROGRESS\nCredit Cards Progress: ${progressCC}\nPersonal Loans Progress: ${progressPL}\nAccounts Progress: ${progressACC}`;
+        const summaryText = `SUMMARY REPORT [Generated on: ${dateStr} at ${timeStr}]
+
+IN PROGRESS
+Credit Cards: ${inProgressCC}
+Personal Loans: ${inProgressPL}
+MDSA: ${inProgressMDSA}
+Privilege: ${inProgressPrivilege}
+
+COMPLETED
+Credit Cards: ${completedCC}
+Personal Loans: ${completedPL}
+MDSA: ${completedMDSA}
+Privilege: ${completedPrivilege}
+
+TOTAL SUBMISSIONS
+Credit Cards: ${totalCC}
+Personal Loans: ${totalPL}
+Accounts: ${totalAccounts}
+
+TARGET PROGRESS
+Credit Cards: ${progressCC}
+Personal Loans: ${progressPL}
+Accounts: ${progressACC}`;
         
         return summaryText;
     }
@@ -2910,7 +2994,7 @@ body {
         element.classList.remove('longpress-active');
     }
 
-    // Fix 1 & 2: Updated function with improved action button layout, copy functionality, and long press edit
+    // Fixed: Updated function with improved action button layout, copy functionality, and points column immediate edit (requirement 3A)
     function displayDataInTable(data, targetTableId, isMasterSearch = false) {
         const tableBody = document.getElementById(targetTableId);
         tableBody.innerHTML = '';
@@ -2950,7 +3034,7 @@ body {
                 <td class="copyable" data-value="${mobileNumber}">${mobileNumber}</td>
                 <td>${row.Product || ''}</td>
                 <td>${row.Status || ''}</td>
-                <td class="points-column">${row.Points || ''}</td>
+                <td class="points-column" data-cid="${cidValue}">${row.Points || ''}</td>
                 ${actionsHtml}
             `;
             
@@ -3004,6 +3088,19 @@ body {
                     const cid = this.getAttribute('data-cid');
                     if (confirm('Are you sure you want to delete this record?')) {
                         deleteRecord(cid);
+                    }
+                });
+            });
+        }
+        
+        // Fixed: Add immediate click listeners for points column (requirement 3A)
+        if (!isMasterSearch) {
+            document.querySelectorAll('.points-column').forEach(pointsCell => {
+                pointsCell.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent row long press
+                    const cid = this.getAttribute('data-cid');
+                    if (cid) {
+                        editRecord(cid);
                     }
                 });
             });
@@ -3343,7 +3440,7 @@ body {
             }
         }
         
-        // Set banking
+        // Set banking and ADCB override
         if (data.Banking) {
             if (['SELECT', 'ADCB', 'ENBD', 'EIB', 'FAB', 'DIB', 'MASHREQ', 'ADIB', 'RAK', 'CBD', 'HSBC', 'CITI'].includes(data.Banking)) {
                 bankingSelect.value = data.Banking;
@@ -3353,6 +3450,9 @@ body {
                 otherBankingInput.value = data.Banking;
             }
         }
+        
+        // Set ADCB override checkbox if applicable
+        adcbOverrideCheckbox.checked = data.adcbOverride === 'true' || data.adcbOverride === true;
         
         // Set status
         if (data.Status) {
@@ -3398,19 +3498,12 @@ body {
         let isValid = true;
         
         // Clear previous validation errors
-        document.getElementById('cidError').classList.add('hidden');
         document.getElementById('nameError').classList.add('hidden');
         document.getElementById('mobileError').classList.add('hidden');
         document.getElementById('productsError').classList.add('hidden');
         
-        // CID validation (completely optional now)
-        if (cidInput.value.trim() && isNaN(cidInput.value.trim())) {
-            cidInput.classList.add('error-field');
-            showSuccess('CID must be a valid number if provided');
-            isValid = false;
-        } else {
-            cidInput.classList.remove('error-field');
-        }
+        // Fixed: Remove CID validation completely (requirement 3B)
+        cidInput.classList.remove('error-field');
         
         if (!dateInput.value) {
             dateInput.classList.add('error-field');
@@ -3462,7 +3555,7 @@ body {
             if (isValid && (customerNameInput.value.trim() || mobileInput.value.trim())) {
                 showLoading();
                 const uniquenessCheck = await checkUniqueness(
-                    '', // Don't check CID uniqueness
+                    '', // Don't check CID uniqueness (fixed requirement 3B)
                     customerNameInput.value.trim(),
                     mobileInput.value.trim()
                 );
@@ -3513,6 +3606,9 @@ body {
             bankingValue = otherBankingInput.value || 'Other';
         }
         formData.append('banking', bankingValue);
+        
+        // ADCB override checkbox
+        formData.append('adcbOverride', adcbOverrideCheckbox.checked);
         
         // Company Name
         formData.append('companyName', companyNameInput.value);
@@ -3881,7 +3977,7 @@ body {
             
             // Add title with better styling
             doc.setFontSize(18);
-            doc.setTextColor(111, 44, 79); // Purple color matching the UI
+            doc.setTextColor(0, 251, 255); // New primary color
             doc.text('Sales Report', 15, 15);
             
             // Add date with better styling
@@ -3932,7 +4028,7 @@ body {
             }
             
             // Add header with colored background
-            doc.setFillColor(111, 44, 79); // Purple header
+            doc.setFillColor(0, 251, 255); // New primary color
             doc.rect(15, 30, 180, 8, 'F');
             
             // Add header text
@@ -3963,7 +4059,7 @@ body {
                     y = 20;
                     
                     // Add header to new page
-                    doc.setFillColor(111, 44, 79); // Purple header
+                    doc.setFillColor(0, 251, 255); // New primary color
                     doc.rect(15, y-5, 180, 8, 'F');
                     
                     // Add header text
@@ -4015,7 +4111,7 @@ body {
                 doc.setFillColor(240, 240, 240);
                 doc.rect(15, y-5, 180, 8, 'F');
                 
-                doc.setDrawColor(111, 44, 79);
+                doc.setDrawColor(0, 251, 255);
                 doc.setLineWidth(0.5);
                 doc.line(15, y-5, 195, y-5);
                 
@@ -4029,7 +4125,7 @@ body {
             }
             
             // Draw border around the table
-            doc.setDrawColor(111, 44, 79);
+            doc.setDrawColor(0, 251, 255);
             doc.setLineWidth(0.5);
             for (let i = 1; i <= doc.internal.getNumberOfPages(); i++) {
                 doc.setPage(i);
@@ -4046,7 +4142,7 @@ body {
             for (let i = 1; i <= pageCount; i++) {
                 doc.setPage(i);
                 doc.setFontSize(10);
-                doc.setTextColor(111, 44, 79);
+                doc.setTextColor(0, 251, 255);
                 doc.text(`Page ${i} of ${pageCount}`, 100, 290, { align: 'center' });
             }
             
