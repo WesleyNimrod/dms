@@ -22,7 +22,7 @@ body {
     }
     
     .custom-btn {
-        background: linear-gradient(135deg, #00FBFF 0%, #2E5D70 100%);
+        background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
         transition: all 0.3s;
     }
     
@@ -32,7 +32,7 @@ body {
     }
     
     .gradient-primary {
-        background: linear-gradient(135deg, #00FBFF 0%, #00D4FF 100%);
+        background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
     }
     
     .success-indicator {
@@ -71,7 +71,7 @@ body {
         width: 50px;
         height: 50px;
         border: 5px solid #f3f3f3;
-        border-top: 5px solid #00FBFF;
+        border-top: 5px solid #1A3A4A;
         border-radius: 50%;
         animation: spin 1s linear infinite;
     }
@@ -91,7 +91,7 @@ body {
     }
 
     .data-table th {
-        background: linear-gradient(135deg, #00FBFF 0%, #00D4FF 100%);
+        background: #1A3A4A;
         color: white;
         text-align: left;
         padding: 8px;
@@ -203,7 +203,7 @@ body {
     }
     
     .summary-card h3 {
-        color: #00D4FF;
+        color: #1A3A4A;
         margin-bottom: 8px;
         font-weight: bold;
         font-size: 1.1rem;
@@ -263,7 +263,7 @@ body {
     
     /* Visualizations */
     .visualizations-header {
-        background: linear-gradient(135deg, #00FBFF 0%, #2E5D70 100%);
+        background: #1A3A4A;
         color: white;
         padding: 8px 12px;
         font-weight: bold;
@@ -302,7 +302,7 @@ body {
     
     .chart-title {
         font-weight: bold;
-        color: #00D4FF;
+        color: #1A3A4A;
         text-align: center;
         margin-bottom: 10px;
         font-size: 0.95rem;
@@ -462,7 +462,7 @@ body {
     }
     
     .export-table th {
-        background: linear-gradient(135deg, #00FBFF 0%, #2E5D70 100%);
+        background: #1A3A4A;
         color: white;
         text-align: left;
         padding: 8px;
@@ -500,7 +500,7 @@ body {
     }
 
     .total-row td {
-        border-top: 2px solid #00FBFF;
+        border-top: 2px solid #1A3A4A;
     }
     
     /* Export Profile Styles */
@@ -546,12 +546,12 @@ body {
     }
     
     .btn-save {
-        background: linear-gradient(135deg, #00FBFF 0%, #2E5D70 100%);
+        background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
         color: white;
     }
     
     .btn-load {
-        background-color: #2197b2;
+        background-color: #1A3A4A;
         color: white;
     }
     
@@ -577,17 +577,6 @@ body {
         background-color: #bbdefb !important;
     }
 
-    /* Points column immediate click style */
-    .points-column {
-        cursor: pointer;
-        background-color: rgba(0, 251, 255, 0.1);
-        transition: background-color 0.2s;
-    }
-
-    .points-column:hover {
-        background-color: rgba(0, 251, 255, 0.2);
-    }
-
     /* Banking section enhancement */
     .banking-container {
         display: flex;
@@ -606,6 +595,31 @@ body {
         align-items: center;
         gap: 5px;
         min-width: 120px;
+    }
+
+    /* Status and 40% deduction container */
+    .status-container {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .status-select {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .deduction-checkbox-container {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        min-width: 80px;
+    }
+
+    /* Primary color for headings */
+    .text-primary {
+        color: #1A3A4A !important;
     }
 </style>
 </head>
@@ -635,7 +649,7 @@ body {
     <div id="summarySection" class="section active">
         <div class="bg-white p-3 rounded-lg shadow-md">
             <div class="flex justify-between items-center mb-3">
-                <h2 class="text-xl font-bold" style="color: #00D4FF;">Summary Dashboard</h2>
+                <h2 class="text-xl font-bold text-primary">Summary Dashboard</h2>
                 <button id="copySummaryBtn" class="bg-gray-600 text-white p-2 rounded-md hover:bg-gray-700 no-print">
                     <i class="fas fa-copy"></i>
                 </button>
@@ -1034,19 +1048,25 @@ body {
                             </div>
                         </div>
                         
-                        <!-- Status -->
+                        <!-- Status with 40% Deduction checkbox -->
                         <div>
                             <label for="status" class="block text-gray-700 font-medium required">Status</label>
-                            <select id="status" name="status" class="w-full border rounded-md p-2 text-base" required>
-                                <option value="">Select Status</option>
-                                <option value="Draft">Draft</option>
-                                <option value="Under Review">Under Review</option>
-                                <option value="Completed">Completed</option>
-                                <option value="HR CPV">HR CPV</option>
-                                <option value="Compliance">Compliance</option>
-                                <option value="Rejected">Rejected</option>
-                                <option value="Other">Other</option>
-                            </select>
+                            <div class="status-container mt-2">
+                                <select id="status" name="status" class="status-select border rounded-md p-2 text-base" required>
+                                    <option value="">Select Status</option>
+                                    <option value="Draft">Draft</option>
+                                    <option value="Under Review">Under Review</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="HR CPV">HR CPV</option>
+                                    <option value="Compliance">Compliance</option>
+                                    <option value="Rejected">Rejected</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <div class="deduction-checkbox-container">
+                                    <input type="checkbox" id="ccDeductionOverride" name="ccDeductionOverride" class="form-checkbox">
+                                    <label for="ccDeductionOverride" class="text-gray-700 text-sm">40%</label>
+                                </div>
+                            </div>
                             <div id="otherStatusSection" class="mt-2 hidden">
                                 <input type="text" id="otherStatus" name="otherStatus" placeholder="Specify status" class="w-full border rounded-md p-2 text-base">
                             </div>
@@ -1206,7 +1226,7 @@ body {
 <div id="exportModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2 class="text-lg font-bold" style="color: #00D4FF;">Export Data</h2>
+            <h2 class="text-lg font-bold text-primary">Export Data</h2>
             <span class="close-modal" id="closeExportModal">&times;</span>
         </div>
         <div class="modal-body">
@@ -1395,6 +1415,7 @@ body {
     const otherBankingSection = document.getElementById('otherBankingSection');
     const otherBankingInput = document.getElementById('otherBanking');
     const adcbOverrideCheckbox = document.getElementById('adcbOverride');
+    const ccDeductionOverrideCheckbox = document.getElementById('ccDeductionOverride');
     const companyNameInput = document.getElementById('companyName');
     const statusSelect = document.getElementById('status');
     const otherStatusSection = document.getElementById('otherStatusSection');
@@ -1472,6 +1493,9 @@ body {
         
         // Reset ADCB override checkbox
         adcbOverrideCheckbox.checked = false;
+        
+        // Reset CC deduction override checkbox
+        ccDeductionOverrideCheckbox.checked = false;
     }
 
     // Banking select change event
@@ -1487,6 +1511,11 @@ body {
 
     // ADCB override checkbox change event
     adcbOverrideCheckbox.addEventListener('change', function() {
+        calculateTotalPoints();
+    });
+
+    // CC Deduction override checkbox change event
+    ccDeductionOverrideCheckbox.addEventListener('change', function() {
         calculateTotalPoints();
     });
 
@@ -2241,9 +2270,9 @@ body {
                 const selectedOption = accSelect.options[accSelect.selectedIndex];
                 const accPoints = parseInt(selectedOption.dataset.points) || 0;
                 
-                // Only add ACC points if STL is checked and not disabled
+                // Requirement 3B: If ACC is checked, ignore Banking and count 100%
                 if (productSTL.checked && !productSTL.disabled) {
-                    totalPoints += accPoints;
+                    totalPoints += accPoints; // Always 100% for ACC when STL is checked
                 }
                 
                 // No extra points for STL itself - STL checkbox only enables points calculation
@@ -2257,14 +2286,22 @@ body {
                 const selectedOption = ccSelect.options[ccSelect.selectedIndex];
                 let ccPoints = parseInt(selectedOption.dataset.points) || 0;
                 
-                // Fixed: Check for ADCB override checkbox first (requirement 2A)
-                if (!adcbOverrideCheckbox.checked && bankingSelect.value !== 'ADCB') {
-                    ccPoints = Math.round(ccPoints * 0.7); // 30% reduction
+                // Requirement 3B: If ACC is checked, ignore Banking selection
+                if (!productACC.checked) {
+                    // Check for ADCB override checkbox first (requirement 2A)
+                    if (!adcbOverrideCheckbox.checked && bankingSelect.value !== 'ADCB') {
+                        ccPoints = Math.round(ccPoints * 0.7); // 30% reduction
+                    }
+                }
+                
+                // Requirement 3A: Check for 40% deduction override
+                if (ccDeductionOverrideCheckbox.checked) {
+                    ccPoints = Math.round(ccPoints * 0.6); // 40% deduction (60% remaining)
                 }
                 
                 totalPoints += ccPoints;
                 
-                // Check for 2nd CC
+                // Check for 2nd CC (do not apply 40% deduction to 2nd CC as per requirement 3A)
                 if (product2ndCC.checked) {
                     const cc2Select = document.getElementById('CCSelect2');
                     if (cc2Select && cc2Select.value) {
@@ -2994,7 +3031,7 @@ Accounts: ${progressACC}`;
         element.classList.remove('longpress-active');
     }
 
-    // Fixed: Updated function with improved action button layout, copy functionality, and points column immediate edit (requirement 3A)
+    // Fixed: Updated function with improved action button layout, copy functionality, and removed points column highlighting
     function displayDataInTable(data, targetTableId, isMasterSearch = false) {
         const tableBody = document.getElementById(targetTableId);
         tableBody.innerHTML = '';
@@ -3034,17 +3071,24 @@ Accounts: ${progressACC}`;
                 <td class="copyable" data-value="${mobileNumber}">${mobileNumber}</td>
                 <td>${row.Product || ''}</td>
                 <td>${row.Status || ''}</td>
-                <td class="points-column" data-cid="${cidValue}">${row.Points || ''}</td>
+                <td data-cid="${cidValue}">${row.Points || ''}</td>
                 ${actionsHtml}
             `;
             
             // Add long press event listeners for edit functionality (only for non-master search)
             if (!isMasterSearch) {
                 tr.addEventListener('mousedown', (e) => {
-                    // Don't trigger long press on Points column (6th column) or Actions column (last column)
+                    // Don't trigger long press on Points column (7th column) or Actions column (last column)
                     const cell = e.target.closest('td');
-                    if (e.button === 0 && cell && !cell.classList.contains('points-column') && !cell.classList.contains('action-column')) {
-                        startLongPress(tr, cidValue);
+                    if (e.button === 0 && cell && !cell.classList.contains('action-column')) {
+                        // Check if it's the points column (7th column, index 6)
+                        const cellIndex = Array.from(cell.parentElement.children).indexOf(cell);
+                        if (cellIndex !== 6) { // Not the points column
+                            startLongPress(tr, cidValue);
+                        } else {
+                            // Points column immediate edit
+                            editRecord(cidValue);
+                        }
                     }
                 });
                 
@@ -3058,10 +3102,17 @@ Accounts: ${progressACC}`;
                 
                 // Touch events for mobile
                 tr.addEventListener('touchstart', (e) => {
-                    // Don't trigger long press on Points column (6th column) or Actions column (last column)
+                    // Don't trigger long press on Points column (7th column) or Actions column (last column)
                     const cell = e.target.closest('td');
-                    if (cell && !cell.classList.contains('points-column') && !cell.classList.contains('action-column')) {
-                        startLongPress(tr, cidValue);
+                    if (cell && !cell.classList.contains('action-column')) {
+                        // Check if it's the points column (7th column, index 6)
+                        const cellIndex = Array.from(cell.parentElement.children).indexOf(cell);
+                        if (cellIndex !== 6) { // Not the points column
+                            startLongPress(tr, cidValue);
+                        } else {
+                            // Points column immediate edit
+                            editRecord(cidValue);
+                        }
                     }
                 });
                 
@@ -3088,19 +3139,6 @@ Accounts: ${progressACC}`;
                     const cid = this.getAttribute('data-cid');
                     if (confirm('Are you sure you want to delete this record?')) {
                         deleteRecord(cid);
-                    }
-                });
-            });
-        }
-        
-        // Fixed: Add immediate click listeners for points column (requirement 3A)
-        if (!isMasterSearch) {
-            document.querySelectorAll('.points-column').forEach(pointsCell => {
-                pointsCell.addEventListener('click', function(e) {
-                    e.stopPropagation(); // Prevent row long press
-                    const cid = this.getAttribute('data-cid');
-                    if (cid) {
-                        editRecord(cid);
                     }
                 });
             });
@@ -3454,6 +3492,9 @@ Accounts: ${progressACC}`;
         // Set ADCB override checkbox if applicable
         adcbOverrideCheckbox.checked = data.adcbOverride === 'true' || data.adcbOverride === true;
         
+        // Set CC deduction override checkbox if applicable
+        ccDeductionOverrideCheckbox.checked = data.ccDeductionOverride === 'true' || data.ccDeductionOverride === true;
+        
         // Set status
         if (data.Status) {
             if (['Draft', 'Under Review', 'Completed', 'HR CPV', 'Compliance', 'Rejected'].includes(data.Status)) {
@@ -3609,6 +3650,9 @@ Accounts: ${progressACC}`;
         
         // ADCB override checkbox
         formData.append('adcbOverride', adcbOverrideCheckbox.checked);
+        
+        // CC deduction override checkbox
+        formData.append('ccDeductionOverride', ccDeductionOverrideCheckbox.checked);
         
         // Company Name
         formData.append('companyName', companyNameInput.value);
@@ -3966,7 +4010,7 @@ Accounts: ${progressACC}`;
         showSuccess(`Exported ${selectedData.length} records as PDF successfully`);
     });
     
-    // Updated PDF generation function to handle optional Amount column
+    // Updated PDF generation function to handle optional Amount column with updated colors
     function createPDF(data, totalAmount, includeAmount) {
         try {
             console.log("Creating PDF with data:", JSON.stringify(data));
@@ -3975,9 +4019,9 @@ Accounts: ${progressACC}`;
             // Create a new jsPDF instance
             const doc = new jsPDF();
             
-            // Add title with better styling
+            // Add title with new primary color
             doc.setFontSize(18);
-            doc.setTextColor(0, 251, 255); // New primary color
+            doc.setTextColor(26, 58, 74); // Primary color #1A3A4A
             doc.text('Sales Report', 15, 15);
             
             // Add date with better styling
@@ -4027,8 +4071,8 @@ Accounts: ${progressACC}`;
                 col5X = col4X + colWidthProduct;
             }
             
-            // Add header with colored background
-            doc.setFillColor(0, 251, 255); // New primary color
+            // Add header with primary color background
+            doc.setFillColor(26, 58, 74); // Primary color #1A3A4A
             doc.rect(15, 30, 180, 8, 'F');
             
             // Add header text
@@ -4059,7 +4103,7 @@ Accounts: ${progressACC}`;
                     y = 20;
                     
                     // Add header to new page
-                    doc.setFillColor(0, 251, 255); // New primary color
+                    doc.setFillColor(26, 58, 74); // Primary color #1A3A4A
                     doc.rect(15, y-5, 180, 8, 'F');
                     
                     // Add header text
@@ -4111,7 +4155,7 @@ Accounts: ${progressACC}`;
                 doc.setFillColor(240, 240, 240);
                 doc.rect(15, y-5, 180, 8, 'F');
                 
-                doc.setDrawColor(0, 251, 255);
+                doc.setDrawColor(26, 58, 74); // Primary color for border
                 doc.setLineWidth(0.5);
                 doc.line(15, y-5, 195, y-5);
                 
@@ -4125,7 +4169,7 @@ Accounts: ${progressACC}`;
             }
             
             // Draw border around the table
-            doc.setDrawColor(0, 251, 255);
+            doc.setDrawColor(26, 58, 74); // Primary color for border
             doc.setLineWidth(0.5);
             for (let i = 1; i <= doc.internal.getNumberOfPages(); i++) {
                 doc.setPage(i);
@@ -4142,7 +4186,7 @@ Accounts: ${progressACC}`;
             for (let i = 1; i <= pageCount; i++) {
                 doc.setPage(i);
                 doc.setFontSize(10);
-                doc.setTextColor(0, 251, 255);
+                doc.setTextColor(26, 58, 74); // Primary color
                 doc.text(`Page ${i} of ${pageCount}`, 100, 290, { align: 'center' });
             }
             
