@@ -538,7 +538,7 @@
                 <div class="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg border border-blue-200 dark:border-blue-800 mb-4">
                     <p class="text-blue-800 dark:text-blue-300 text-sm">
                         <i class="fas fa-info-circle mr-2"></i>
-                        Guest Mode provides access to Main, Share, EMI Chart, Comparison, Advance, and Rate Grid tabs with limited functionality.
+                        Guest Mode provides access to Main, Advance, and Rate Grid tabs with limited functionality.
                     </p>
                 </div>
                 <button id="enterGuestMode" class="custom-btn text-white py-2 px-4 rounded-md w-full">Enter as Guest</button>
@@ -609,15 +609,6 @@
                 <button class="tab-btn text-white/80 font-medium" data-tab="pldata" title="PL Data">
                     <i class="fas fa-database"></i>
                 </button>
-                <button class="tab-btn text-white/80 font-medium" data-tab="share" title="Share">
-                    <i class="fas fa-share-alt"></i>
-                </button>
-                <button class="tab-btn text-white/80 font-medium" data-tab="emichart" title="EMI Chart">
-                    <i class="fas fa-chart-bar"></i>
-                </button>
-                <button class="tab-btn text-white/80 font-medium" data-tab="comparison" title="Comparison">
-                    <i class="fas fa-balance-scale"></i>
-                </button>
                 <button class="tab-btn text-white/80 font-medium" data-tab="advcalc" title="Advance">
                     <i class="fas fa-calculator"></i>
                 </button>
@@ -659,6 +650,15 @@
                         </button>
                         <button id="quickEmiBtn" class="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-2 rounded-md hover:opacity-90" title="Quick EMI Calculator">
                             <i class="fas fa-calculator"></i>
+                        </button>
+                        <button id="shareLoanBtn" class="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-2 rounded-md hover:opacity-90" title="Share Loan Information">
+                            <i class="fas fa-share-alt"></i>
+                        </button>
+                        <button id="generateEmiChartBtn" class="bg-gradient-to-r from-teal-500 to-teal-600 text-white p-2 rounded-md hover:opacity-90" title="Generate EMI Chart">
+                            <i class="fas fa-chart-bar"></i>
+                        </button>
+                        <button id="loanComparisonBtn" class="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white p-2 rounded-md hover:opacity-90" title="Loan Comparison">
+                            <i class="fas fa-balance-scale"></i>
                         </button>
                     </div>
                 </div>
@@ -748,7 +748,8 @@
                                                 <option value="OTHER">OTHER</option>
                                             </select>
                                             <input type="number" placeholder="Credit Limit" class="credit-card-amount border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600 col-span-1">
-                                            <input type="number" placeholder="Outstanding" class="credit-card-outstanding border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600 col-span-2">
+                                            <input type="number" placeholder="New Limit" class="credit-card-new-limit border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600 col-span-1">
+                                            <input type="number" placeholder="Outstanding" class="credit-card-outstanding border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600 col-span-1">
                                         </div>
                                     </div>
                                 </div>
@@ -834,7 +835,7 @@
                                 </div>
                                 
                                 <div class="grid grid-cols-3 gap-2 items-center">
-                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Max Loan Eligibility (AED):</label>
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Max Eligibility (AED):</label>
                                     <input type="text" id="maxLoanEligibility" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                                 </div>
                                 
@@ -958,149 +959,6 @@
                     <iframe src="pl.html" title="PL Data" id="plDataIframe"></iframe>
                 </div>
                 
-                <!-- Share Tab -->
-                <div id="tab-share" class="tab-content">
-                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
-                        <h2 class="text-xl font-bold text-heading dark:text-white mb-4">SHARE LOAN INFORMATION</h2>
-                        
-                        <button id="shareTabBtn" class="custom-btn text-white p-2 rounded-md text-sm mb-4">
-                            <i class="fas fa-share-alt mr-1"></i> Share Loan Information
-                        </button>
-                        
-                        <div class="text-gray-700 dark:text-gray-300 mt-4">
-                            <p class="mb-2">Click the Share button above to view and share the full loan information, including:</p>
-                            <ul class="list-disc ml-5 space-y-1">
-                                <li>Loan details (amount, type, tenure)</li>
-                                <li>Interest rates (reducing and flat)</li>
-                                <li>EMI and payment details</li>
-                                <li>Processing fees and charges</li>
-                                <li>Complete EMI schedule</li>
-                            </ul>
-                            
-                            <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800">
-                                <p class="text-blue-800 dark:text-blue-300 font-medium">Share Options:</p>
-                                <p class="text-sm mt-1">You can export as PDF, print directly, or send information via WhatsApp using the number field at the top of the page.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- EMI Chart Tab -->
-                <div id="tab-emichart" class="tab-content">
-                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
-                        <h2 class="text-xl font-bold text-heading dark:text-white mb-4">EMI PAYMENT SCHEDULE</h2>
-                        
-                        <button id="showEmiChartBtnTab" class="custom-btn text-white p-2 rounded-md text-sm mb-4">
-                            <i class="fas fa-chart-bar mr-1"></i> Generate EMI Chart
-                        </button>
-                        
-                        <div class="relative" style="height: 400px;">
-                            <canvas id="emiChartStandalone"></canvas>
-                        </div>
-                        <div class="mt-4 overflow-x-auto">
-                            <table class="w-full border-collapse text-sm">
-                                <thead>
-                                    <tr class="bg-primary text-white">
-                                        <th class="border border-gray-300 p-2">Month</th>
-                                        <th class="border border-gray-300 p-2">EMI (AED)</th>
-                                        <th class="border border-gray-300 p-2">Principal (AED)</th>
-                                        <th class="border border-gray-300 p-2">Interest (AED)</th>
-                                        <th class="border border-gray-300 p-2">Balance (AED)</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="emiScheduleBodyStandalone">
-                                    <!-- Will be populated by JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Comparison Tab -->
-                <div id="tab-comparison" class="tab-content">
-                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold text-heading dark:text-white">LOAN COMPARISON</h2>
-                            <button id="screenshotComparison" class="screenshot-btn" title="Take Screenshot">
-                                <i class="fas fa-camera"></i>
-                            </button>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- First Bank -->
-                            <div class="space-y-2">
-                                <div class="grid grid-cols-3 gap-2 items-center">
-                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Bank Name:</label>
-                                    <input type="text" id="bank1Name" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
-                                </div>
-                                
-                                <div class="grid grid-cols-3 gap-2 items-center">
-                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Loan Amount (AED):</label>
-                                    <input type="number" id="bank1LoanAmount" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
-                                </div>
-                                
-                                <div class="grid grid-cols-3 gap-2 items-center">
-                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Tenure (Months):</label>
-                                    <input type="number" id="bank1Tenure" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
-                                </div>
-                                
-                                <div class="grid grid-cols-3 gap-2 items-center">
-                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Reducing Rate (%):</label>
-                                    <input type="number" id="bank1Rate" step="0.01" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
-                                </div>
-                                
-                                <div class="grid grid-cols-3 gap-2 items-center">
-                                    <label class="text-gray-700 dark:text-gray-300 font-medium">EMI (AED):</label>
-                                    <input type="text" id="bank1EMI" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
-                                </div>
-                                
-                                <div class="grid grid-cols-3 gap-2 items-center">
-                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Total Interest (AED):</label>
-                                    <input type="text" id="bank1TotalInterest" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
-                                </div>
-                            </div>
-                            
-                            <!-- Second Bank -->
-                            <div class="space-y-2">
-                                <div class="grid grid-cols-3 gap-2 items-center">
-                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Bank Name:</label>
-                                    <input type="text" id="bank2Name" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
-                                </div>
-                                
-                                <div class="grid grid-cols-3 gap-2 items-center">
-                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Loan Amount (AED):</label>
-                                    <input type="number" id="bank2LoanAmount" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
-                                </div>
-                                
-                                <div class="grid grid-cols-3 gap-2 items-center">
-                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Tenure (Months):</label>
-                                    <input type="number" id="bank2Tenure" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
-                                </div>
-                                
-                                <div class="grid grid-cols-3 gap-2 items-center">
-                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Reducing Rate (%):</label>
-                                    <input type="number" id="bank2Rate" step="0.01" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
-                                </div>
-                                
-                                <div class="grid grid-cols-3 gap-2 items-center">
-                                    <label class="text-gray-700 dark:text-gray-300 font-medium">EMI (AED):</label>
-                                    <input type="text" id="bank2EMI" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
-                                </div>
-                                
-                                <div class="grid grid-cols-3 gap-2 items-center">
-                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Total Interest (AED):</label>
-                                    <input type="text" id="bank2TotalInterest" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg" id="comparisonResultSection">
-                            <h3 class="text-xl font-semibold text-heading dark:text-white mb-2">COMPARISON RESULT</h3>
-                            <p id="comparisonResultTab" class="text-gray-700 dark:text-gray-300">Enter Details For Both Banks To Compare.</p>
-                        </div>
-                    </div>
-                </div>
-                
                 <!-- Advance Tab (previously Adv Calc) -->
                 <div id="tab-advcalc" class="tab-content">
                     <iframe src="advcalc.html" title="Advanced Calculator" id="advcalcIframe"></iframe>
@@ -1155,7 +1013,6 @@
                                 <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700 w-1/2">Loan Nature/FPD:</td>
                                 <td id="shareLoanType" class="p-2"></td>
                             </tr>
-
                             <tr class="border-b">
                                 <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700">Tenure:</td>
                                 <td id="shareTenure" class="p-2"></td>
@@ -1168,13 +1025,17 @@
                                 <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700">Reducing Rate:</td>
                                 <td id="shareReducingRate" class="p-2"></td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700">Flat Rate:</td>
                                 <td id="shareFlatRate" class="p-2"></td>
                             </tr>
                             <tr class="border-b">
                                 <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700">Max Eligibility (AED):</td>
                                 <td id="shareMaxLoanEligibility" class="p-2"></td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700">Days Between:</td>
+                                <td id="shareDaysBetween" class="p-2"></td>
                             </tr>
                         </table>
                     </div>
@@ -1228,6 +1089,36 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- EMI Chart Modal -->
+    <div id="emiChartModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-heading dark:text-white">EMI Payment Schedule</h2>
+                <button class="close-modal text-gray-700 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 text-2xl">&times;</button>
+            </div>
+            
+            <div class="relative mb-4" style="height: 400px;">
+                <canvas id="emiChartStandalone"></canvas>
+            </div>
+            <div class="mt-4 overflow-x-auto">
+                <table class="w-full border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-primary text-white">
+                            <th class="border border-gray-300 p-2">Month</th>
+                            <th class="border border-gray-300 p-2">EMI (AED)</th>
+                            <th class="border border-gray-300 p-2">Principal (AED)</th>
+                            <th class="border border-gray-300 p-2">Interest (AED)</th>
+                            <th class="border border-gray-300 p-2">Balance (AED)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="emiScheduleBodyStandalone">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -1649,7 +1540,7 @@
             document.body.classList.add('guest-mode');
             
             // Restrict certain tabs
-            const allowedTabs = ['main', 'share', 'emichart', 'comparison', 'advcalc', 'rategrid'];
+            const allowedTabs = ['main', 'advcalc', 'rategrid'];
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 const tabName = btn.getAttribute('data-tab');
                 if (!allowedTabs.includes(tabName)) {
@@ -1836,32 +1727,6 @@
             input.addEventListener('input', calculateQuickEMI);
         });
         
-        // Screenshot functionality for Loan Comparison
-        document.getElementById('screenshotComparison').addEventListener('click', function() {
-            const comparisonSection = document.getElementById('tab-comparison').querySelector('.bg-white.dark\\:bg-gray-800');
-            
-            // Show loading indicator
-            showSuccess('Capturing screenshot...');
-            
-            // Increase scale for better quality
-            html2canvas(comparisonSection, {
-                scale: 2,
-                useCORS: true,
-                allowTaint: true,
-                backgroundColor: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff'
-            }).then(canvas => {
-                const imageData = canvas.toDataURL('image/png');
-                const link = document.createElement('a');
-                link.href = imageData;
-                link.download = 'loan_comparison.png';
-                link.click();
-                showSuccess('Comparison screenshot saved!');
-            }).catch(err => {
-                console.error('Screenshot error:', err);
-                showSuccess('Error creating screenshot: ' + err.message);
-            });
-        });
-        
         // ==========================================
         // TABBED INTERFACE
         // ==========================================
@@ -1903,33 +1768,8 @@
                 } else {
                     headerControls.classList.add('hidden');
                 }
-                
-                // Handle specific tab actions
-                if (tabId === 'emichart') {
-                    displayEMIChartStandalone();
-                } else if (tabId === 'comparison') {
-                    // Sync any data from main tab comparison
-                    syncComparisonTabs();
-                }
             });
         });
-        
-        function syncComparisonTabs() {
-            // Sync data between comparison tab and main form
-            const loanAmount = document.getElementById('loanAmount').value;
-            const tenureMonths = document.getElementById('tenureMonths').value;
-            const reducingRate = document.getElementById('reducingRate').value;
-            
-            if (loanAmount && tenureMonths && reducingRate) {
-                document.getElementById('bank1Name').value = "ADCB";
-                document.getElementById('bank1LoanAmount').value = loanAmount;
-                document.getElementById('bank1Tenure').value = tenureMonths;
-                document.getElementById('bank1Rate').value = reducingRate;
-                
-                // Trigger calculation for the bank comparison
-                updateBankComparisonTab();
-            }
-        }
         
         // ==========================================
         // MODAL MANAGEMENT
@@ -2002,7 +1842,6 @@
             
             // Chart & Other Elements
             const emiChartSection = document.getElementById('emiChartSection');
-            const showEmiChartBtnTab = document.getElementById('showEmiChartBtnTab');
             const sendWhatsAppBtn = document.getElementById('sendWhatsAppBtn');
             const whatsappNumberInput = document.getElementById('whatsappNumber');
             const addbacksContainer = document.getElementById('addbacks-container');
@@ -2011,29 +1850,17 @@
             const removeAddbackBtn = document.getElementById('removeAddbackBtn');
             
             // Modal related elements
-            const shareBtn = document.getElementById('shareTabBtn');
+            const shareLoanBtn = document.getElementById('shareLoanBtn');
+            const generateEmiChartBtn = document.getElementById('generateEmiChartBtn');
+            const loanComparisonBtn = document.getElementById('loanComparisonBtn');
             const shareModal = document.getElementById('shareModal');
+            const emiChartModal = document.getElementById('emiChartModal');
             const loanComparisonModal = document.getElementById('loanComparisonModal');
             const exportPdfBtn = document.getElementById('exportPdfBtn');
             const printPageBtn = document.getElementById('printPageBtn');
             
             // Google Drive button
             googleDriveBtn = document.getElementById('googleDriveBtn');
-            
-            // Bank comparison inputs - Tab
-            const bank1NameTab = document.getElementById('bank1Name');
-            const bank1LoanAmountTab = document.getElementById('bank1LoanAmount');
-            const bank1TenureTab = document.getElementById('bank1Tenure');
-            const bank1RateTab = document.getElementById('bank1Rate');
-            const bank1EMITab = document.getElementById('bank1EMI');
-            const bank1TotalInterestTab = document.getElementById('bank1TotalInterest');
-            const bank2NameTab = document.getElementById('bank2Name');
-            const bank2LoanAmountTab = document.getElementById('bank2LoanAmount');
-            const bank2TenureTab = document.getElementById('bank2Tenure');
-            const bank2RateTab = document.getElementById('bank2Rate');
-            const bank2EMITab = document.getElementById('bank2EMI');
-            const bank2TotalInterestTab = document.getElementById('bank2TotalInterest');
-            const comparisonResultTab = document.getElementById('comparisonResultTab');
             
             // Bank comparison inputs - Modal
             const bank1NameModal = document.getElementById('bank1NameModal');
@@ -2170,6 +1997,7 @@
                         return {
                             bank: entry.querySelector('.card-bank-select').value,
                             limit: entry.querySelector('.credit-card-amount').value,
+                            newLimit: entry.querySelector('.credit-card-new-limit').value,
                             outstanding: entry.querySelector('.credit-card-outstanding').value,
                             settled: settledCards.has(index)
                         };
@@ -2178,6 +2006,7 @@
                     // Existing loans data
                     existingLoans: Array.from(document.querySelectorAll('.existing-loan-entry')).map((entry, index) => {
                         return {
+                            bank: entry.querySelector('.loan-bank').value,
                             type: entry.querySelector('.loan-type').value,
                             installment: entry.querySelector('.loan-installment').value,
                             outstanding: entry.querySelector('.loan-outstanding').value,
@@ -2325,6 +2154,7 @@
                         const firstCardElement = document.querySelector('.credit-card-entry');
                         firstCardElement.querySelector('.card-bank-select').value = profileData.creditCards[0].bank;
                         firstCardElement.querySelector('.credit-card-amount').value = profileData.creditCards[0].limit;
+                        firstCardElement.querySelector('.credit-card-new-limit').value = profileData.creditCards[0].newLimit || '';
                         firstCardElement.querySelector('.credit-card-outstanding').value = profileData.creditCards[0].outstanding;
                         
                         // Handle settled state
@@ -2346,6 +2176,7 @@
                             
                             newCard.querySelector('.card-bank-select').value = profileData.creditCards[i].bank;
                             newCard.querySelector('.credit-card-amount').value = profileData.creditCards[i].limit;
+                            newCard.querySelector('.credit-card-new-limit').value = profileData.creditCards[i].newLimit || '';
                             newCard.querySelector('.credit-card-outstanding').value = profileData.creditCards[i].outstanding;
                             
                             // Handle settled state
@@ -2368,6 +2199,7 @@
                             const loanElements = document.querySelectorAll('.existing-loan-entry');
                             const loan = loanElements[i];
                             
+                            loan.querySelector('.loan-bank').value = profileData.existingLoans[i].bank || 'ADCB';
                             loan.querySelector('.loan-type').value = profileData.existingLoans[i].type;
                             loan.querySelector('.loan-installment').value = profileData.existingLoans[i].installment;
                             loan.querySelector('.loan-outstanding').value = profileData.existingLoans[i].outstanding;
@@ -2625,6 +2457,7 @@
                         return {
                             bank: entry.querySelector('.card-bank-select').value,
                             limit: entry.querySelector('.credit-card-amount').value,
+                            newLimit: entry.querySelector('.credit-card-new-limit').value,
                             outstanding: entry.querySelector('.credit-card-outstanding').value,
                             settled: settledCards.has(index)
                         };
@@ -2633,6 +2466,7 @@
                     // Existing loans data
                     existingLoans: Array.from(document.querySelectorAll('.existing-loan-entry')).map((entry, index) => {
                         return {
+                            bank: entry.querySelector('.loan-bank').value,
                             type: entry.querySelector('.loan-type').value,
                             installment: entry.querySelector('.loan-installment').value,
                             outstanding: entry.querySelector('.loan-outstanding').value,
@@ -2673,6 +2507,7 @@
                         const firstCardElement = document.querySelector('.credit-card-entry');
                         firstCardElement.querySelector('.card-bank-select').value = tempState.creditCards[0].bank || 'ADCB';
                         firstCardElement.querySelector('.credit-card-amount').value = tempState.creditCards[0].limit || '';
+                        firstCardElement.querySelector('.credit-card-new-limit').value = tempState.creditCards[0].newLimit || '';
                         firstCardElement.querySelector('.credit-card-outstanding').value = tempState.creditCards[0].outstanding || '';
                         
                         // Handle settled state
@@ -2694,6 +2529,7 @@
                             
                             newCard.querySelector('.card-bank-select').value = tempState.creditCards[i].bank || 'ADCB';
                             newCard.querySelector('.credit-card-amount').value = tempState.creditCards[i].limit || '';
+                            newCard.querySelector('.credit-card-new-limit').value = tempState.creditCards[i].newLimit || '';
                             newCard.querySelector('.credit-card-outstanding').value = tempState.creditCards[i].outstanding || '';
                             
                             // Handle settled state
@@ -2716,6 +2552,7 @@
                             const loanElements = document.querySelectorAll('.existing-loan-entry');
                             const loan = loanElements[i];
                             
+                            loan.querySelector('.loan-bank').value = tempState.existingLoans[i].bank || 'ADCB';
                             loan.querySelector('.loan-type').value = tempState.existingLoans[i].type || 'Personal Loan';
                             loan.querySelector('.loan-installment').value = tempState.existingLoans[i].installment || '';
                             loan.querySelector('.loan-outstanding').value = tempState.existingLoans[i].outstanding || '';
@@ -2766,18 +2603,30 @@
                 loanDiv.classList.add('grid', 'grid-cols-3', 'gap-2', 'items-center', 'existing-loan-entry');
                 
                 loanDiv.innerHTML = `
-                    <div class="flex justify-between items-center">
-                        <select class="loan-type border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600 w-full">
+                    <div class="flex gap-2 items-center">
+                        <select class="loan-bank border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600 col-span-1" style="width: 120px;">
+                            <option value="ADCB">ADCB</option>
+                            <option value="ENBD">ENBD</option>
+                            <option value="EIB">EIB</option>
+                            <option value="FAB">FAB</option>
+                            <option value="ADIB">ADIB</option>
+                            <option value="CBD">CBD</option>
+                            <option value="HSBC">HSBC</option>
+                            <option value="CITI">CITI</option>
+                            <option value="SCB">SCB</option>
+                            <option value="MASHREQ">MASHREQ</option>
+                            <option value="DIB">DIB</option>
+                            <option value="OTHER">OTHER</option>
+                        </select>
+                        <select class="loan-type border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600 col-span-1" style="width: 200px;">
                             <option value="Personal Loan">Personal Loan</option>
                             <option value="Auto Loan">Auto Loan</option>
                             <option value="Mortgage Loan">Mortgage Loan</option>
                         </select>
-                    </div>
-                    <div class="col-span-2 flex">
-                        <input type="number" placeholder="Installment" class="loan-installment border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600 w-1/2 mr-1">
-                        <input type="number" placeholder="Outstanding" class="loan-outstanding border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600 w-1/2 mr-1">
-                        <button class="settle-loan-btn ml-1 custom-btn text-white px-2 py-1 rounded text-xs">Settle</button>
-                        <button class="remove-loan ml-1 custom-btn text-white p-1 rounded-md text-xs">×</button>
+                        <input type="number" placeholder="Installment" class="loan-installment border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600 col-span-1" style="width: 120px;">
+                        <input type="number" placeholder="Outstanding" class="loan-outstanding border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600 col-span-1" style="width: 120px;">
+                        <button class="settle-loan-btn custom-btn text-white px-3 py-2 rounded text-sm whitespace-nowrap col-span-1">Settle</button>
+                        <button class="remove-loan custom-btn text-white px-2 py-2 rounded-md text-sm col-span-1">×</button>
                     </div>
                 `;
                 
@@ -3166,18 +3015,25 @@
                 });
                 
                 // Calculate total credit card limit and outstanding
+                // Use New Limit if provided, otherwise use Credit Limit
                 let totalCCLimit = 0;
                 let totalCCOutstanding = 0;
                 
                 document.querySelectorAll('.credit-card-entry').forEach((entry, index) => {
                     const limitInput = entry.querySelector('.credit-card-amount');
+                    const newLimitInput = entry.querySelector('.credit-card-new-limit');
                     const outstandingInput = entry.querySelector('.credit-card-outstanding');
-                    const limit = parseFloat(limitInput.value) || 0;
+                    
+                    const originalLimit = parseFloat(limitInput.value) || 0;
+                    const newLimit = parseFloat(newLimitInput.value) || 0;
                     const outstanding = parseFloat(outstandingInput.value) || 0;
+                    
+                    // Use New Limit if provided, otherwise use original Credit Limit
+                    const effectiveLimit = newLimit > 0 ? newLimit : originalLimit;
                     
                     // Only include in Total CC Limit if not settled
                     if (!settledCards.has(index)) {
-                        totalCCLimit += limit;
+                        totalCCLimit += effectiveLimit;
                     }
                     
                     // Always include in outstanding
@@ -3288,12 +3144,19 @@
                     }
                 });
                 
-                // Calculate credit card DBR
+                // Calculate credit card DBR (use new limit if provided)
                 let totalCCLimit = 0;
                 document.querySelectorAll('.credit-card-entry').forEach((entry, index) => {
                     if (!settledCards.has(index)) {
                         const limitInput = entry.querySelector('.credit-card-amount');
-                        totalCCLimit += parseFloat(limitInput.value) || 0;
+                        const newLimitInput = entry.querySelector('.credit-card-new-limit');
+                        
+                        const originalLimit = parseFloat(limitInput.value) || 0;
+                        const newLimit = parseFloat(newLimitInput.value) || 0;
+                        
+                        // Use New Limit if provided, otherwise use original Credit Limit
+                        const effectiveLimit = newLimit > 0 ? newLimit : originalLimit;
+                        totalCCLimit += effectiveLimit;
                     }
                 });
                 
@@ -3307,8 +3170,8 @@
                 // Calculate DBR percentage
                 const dbrPercentage = (totalLiabilitiesWithEMI / grossSalary) * 100;
                 
-                // Calculate the ideal loan amount for 49.95% DBR
-                const allowedDBRPercentage = 49.95;
+                // Calculate the ideal loan amount for 49.99% DBR
+                const allowedDBRPercentage = 49.99;
                 const allowedLiability = grossSalary * (allowedDBRPercentage / 100);
                 const availableForEMI = allowedLiability - currentLiabilities;
                 
@@ -3357,12 +3220,12 @@
                 const dbrRate = 5; // Fixed at 5%
                 const optimalCCLimit = availableLiability / (dbrRate/100);
                 
-                if (availableLiability > 0 && dbrPercentage < 49.95) {
+                if (availableLiability > 0 && dbrPercentage < 49.99) {
                     ccSuggestionContainer.classList.remove('hidden');
-                    ccSuggestionText.textContent = (`Based on your available liability of AED ${formatNumber(availableLiability.toFixed(2))} and current DBR of ${dbrPercentage.toFixed(2)}%, the optimal credit card limit for you would be AED ${formatNumber(optimalCCLimit.toFixed(2))}. This would keep your DBR within the 49.95% limit.`);
+                    ccSuggestionText.textContent = (`Based on your available liability of AED ${formatNumber(availableLiability.toFixed(2))} and current DBR of ${dbrPercentage.toFixed(2)}%, the optimal credit card limit for you would be AED ${formatNumber(optimalCCLimit.toFixed(2))}. This would keep your DBR within the 49.99% limit.`);
                 } else {
                     ccSuggestionContainer.classList.remove('hidden');
-                    ccSuggestionText.textContent = (`Your current liabilities exceed or are close to the 49.95% DBR limit. It is not recommended to apply for any credit cards at this time.`);
+                    ccSuggestionText.textContent = (`Your current liabilities exceed or are close to the 49.99% DBR limit. It is not recommended to apply for any credit cards at this time.`);
                 }
             }
             
@@ -3606,13 +3469,16 @@
                 }
             }
             
-            // Function to display EMI chart in standalone tab
+            // Function to display EMI chart in standalone modal
             function displayEMIChartStandalone() {
                 const schedule = generateEMISchedule();
                 if (schedule.length === 0) {
                     showSuccess('Please enter valid loan amount, rate and tenure in the main tab first.');
                     return;
                 }
+                
+                // Show the modal
+                emiChartModal.classList.remove('hidden');
                 
                 // Create data for chart
                 const months = schedule.map(entry => entry.month);
@@ -3697,7 +3563,7 @@
                 }
             }
             
-            // Function to find optimal loan amount for 49.95% DBR
+            // Function to find optimal loan amount for 49.99% DBR
             function findOptimalLoanAmount() {
                 const grossSalary = parseFloat(grossSalaryInput.value.replace(/,/g, '')) || 0;
                 if (grossSalary <= 0) {
@@ -3708,7 +3574,7 @@
                 const reducingRate = parseFloat(reducingRateInput.value) || 0;
                 const tenureMonths = parseInt(tenureMonthsInput.value) || 0;
                 const loanType = loanTypeSelect.value;
-                const allowedLiability = grossSalary * 0.4995; // 49.95% of gross salary
+                const allowedLiability = grossSalary * 0.4999; // 49.99% of gross salary
                 
                 // Get existing loans installments (only for non-settled loans)
                 let totalExistingLoansInstallments = 0;
@@ -3719,12 +3585,19 @@
                     }
                 });
                 
-                // Calculate credit card DBR
+                // Calculate credit card DBR (use new limit if provided)
                 let totalCCLimit = 0;
                 document.querySelectorAll('.credit-card-entry').forEach((entry, index) => {
                     if (!settledCards.has(index)) {
                         const limitInput = entry.querySelector('.credit-card-amount');
-                        totalCCLimit += parseFloat(limitInput.value) || 0;
+                        const newLimitInput = entry.querySelector('.credit-card-new-limit');
+                        
+                        const originalLimit = parseFloat(limitInput.value) || 0;
+                        const newLimit = parseFloat(newLimitInput.value) || 0;
+                        
+                        // Use New Limit if provided, otherwise use original Credit Limit
+                        const effectiveLimit = newLimit > 0 ? newLimit : originalLimit;
+                        totalCCLimit += effectiveLimit;
                     }
                 });
                 const dbrRate = 0.05; // Fixed at 5%
@@ -3737,7 +3610,7 @@
                 const availableForEMI = allowedLiability - currentLiabilities;
                 
                 if (availableForEMI <= 0) {
-                    showSuccess('Your Current Liabilities Already Exceed The 49.95% DBR Limit. Cannot Calculate Optimal Loan Amount.');
+                    showSuccess('Your Current Liabilities Already Exceed The 49.99% DBR Limit. Cannot Calculate Optimal Loan Amount.');
                     return;
                 }
                 
@@ -3769,51 +3642,6 @@
             // ==========================================
             // BANKING COMPARISON
             // ==========================================
-            
-            // Function to calculate and update bank comparison in tab
-            function updateBankComparisonTab() {
-                // Bank 1
-                const bank1LoanAmount = parseFloat(bank1LoanAmountTab.value) || 0;
-                const bank1Tenure = parseInt(bank1TenureTab.value) || 0;
-                const bank1Rate = parseFloat(bank1RateTab.value) || 0;
-                
-                if (bank1LoanAmount > 0 && bank1Tenure > 0 && bank1Rate > 0) {
-                    const bank1EMI = calculateStandardEMI(bank1LoanAmount, bank1Rate, bank1Tenure);
-                    bank1EMITab.value = formatNumber(bank1EMI.toFixed(2));
-                    
-                    const bank1TotalInterest = (bank1EMI * bank1Tenure) - bank1LoanAmount;
-                    bank1TotalInterestTab.value = formatNumber(bank1TotalInterest.toFixed(2));
-                }
-                
-                // Bank 2
-                const bank2LoanAmount = parseFloat(bank2LoanAmountTab.value) || 0;
-                const bank2Tenure = parseInt(bank2TenureTab.value) || 0;
-                const bank2Rate = parseFloat(bank2RateTab.value) || 0;
-                
-                if (bank2LoanAmount > 0 && bank2Tenure > 0 && bank2Rate > 0) {
-                    const bank2EMI = calculateStandardEMI(bank2LoanAmount, bank2Rate, bank2Tenure);
-                    bank2EMITab.value = formatNumber(bank2EMI.toFixed(2));
-                    
-                    const bank2TotalInterest = (bank2EMI * bank2Tenure) - bank2LoanAmount;
-                    bank2TotalInterestTab.value = formatNumber(bank2TotalInterest.toFixed(2));
-                }
-                
-                // Compare banks if both have data
-                if (bank1LoanAmount > 0 && bank2LoanAmount > 0) {
-                    const bank1Name = bank1NameTab.value || 'Bank 1';
-                    const bank2Name = bank2NameTab.value || 'Bank 2';
-                    const bank1TotalInterest = parseFloat(bank1TotalInterestTab.value.replace(/,/g, '')) || 0;
-                    const bank2TotalInterest = parseFloat(bank2TotalInterestTab.value.replace(/,/g, '')) || 0;
-                    
-                    if (bank1TotalInterest < bank2TotalInterest) {
-                        comparisonResultTab.innerHTML = `<span class="font-bold">${bank1Name}</span> Offers The Better Deal With <span class="font-bold">AED ${formatNumber(bank1TotalInterest.toFixed(2))}</span> In Total Interest Compared To <span class="font-bold">AED ${formatNumber(bank2TotalInterest.toFixed(2))}</span> From ${bank2Name}. <span class="font-bold">You Save AED ${formatNumber((bank2TotalInterest - bank1TotalInterest).toFixed(2))}</span> With ${bank1Name}.`;
-                    } else if (bank2TotalInterest < bank1TotalInterest) {
-                        comparisonResultTab.innerHTML = `<span class="font-bold">${bank2Name}</span> Offers The Better Deal With <span class="font-bold">AED ${formatNumber(bank2TotalInterest.toFixed(2))}</span> In Total Interest Compared To <span class="font-bold">AED ${formatNumber(bank1TotalInterest.toFixed(2))}</span> From ${bank1Name}. <span class="font-bold">You Save AED ${formatNumber((bank1TotalInterest - bank2TotalInterest).toFixed(2))}</span> With ${bank2Name}.`;
-                    } else {
-                        comparisonResultTab.innerHTML = `Both Banks Offer The Same Total Interest Of <span class="font-bold">AED ${formatNumber(bank1TotalInterest.toFixed(2))}</span>.`;
-                    }
-                }
-            }
             
             // Function to calculate and update bank comparison in modal
             function updateBankComparisonModal() {
@@ -3860,39 +3688,12 @@
                 }
             }
             
-            // Sync data between tab and modal comparison tools
-            function syncModalToTabComparison() {
-                bank1NameTab.value = bank1NameModal.value;
-                bank1LoanAmountTab.value = bank1LoanAmountModal.value;
-                bank1TenureTab.value = bank1TenureModal.value;
-                bank1RateTab.value = bank1RateModal.value;
-                bank2NameTab.value = bank2NameModal.value;
-                bank2LoanAmountTab.value = bank2LoanAmountModal.value;
-                bank2TenureTab.value = bank2TenureModal.value;
-                bank2RateTab.value = bank2RateModal.value;
-                
-                updateBankComparisonTab();
-            }
-            
-            function syncTabToModalComparison() {
-                bank1NameModal.value = bank1NameTab.value;
-                bank1LoanAmountModal.value = bank1LoanAmountTab.value;
-                bank1TenureModal.value = bank1TenureTab.value;
-                bank1RateModal.value = bank1RateTab.value;
-                bank2NameModal.value = bank2NameTab.value;
-                bank2LoanAmountModal.value = bank2LoanAmountTab.value;
-                bank2TenureModal.value = bank2TenureTab.value;
-                bank2RateModal.value = bank2RateTab.value;
-                
-                updateBankComparisonModal();
-            }
-            
             // ==========================================
             // SHARE AND EXPORT FUNCTIONALITY
             // ==========================================
             
             // Share button opens modal with loan information
-            shareBtn.addEventListener('click', function() {
+            shareLoanBtn.addEventListener('click', function() {
                 // Format loan type for display
                 let loanTypeDisplay = loanTypeSelect.value || '';
                 if (loanTypeDisplay) {
@@ -3914,6 +3715,7 @@
                 document.getElementById('shareProcessingFees').textContent = processingFeesInput.value;
                 document.getElementById('shareTotalOutstanding').textContent = totalOutstandingInput.value;
                 document.getElementById('shareCashInHand').textContent = cashInHandInput.value;
+                document.getElementById('shareDaysBetween').textContent = daysBetweenInput.value;
                 
                 // Generate EMI schedule
                 const schedule = generateEMISchedule();
@@ -3940,6 +3742,23 @@
                 
                 // Show the modal
                 shareModal.classList.remove('hidden');
+            });
+            
+            // Generate EMI Chart button
+            generateEmiChartBtn.addEventListener('click', function() {
+                displayEMIChartStandalone();
+            });
+            
+            // Loan Comparison button
+            loanComparisonBtn.addEventListener('click', function() {
+                // Pre-fill with current loan data
+                bank1NameModal.value = "ADCB";
+                bank1LoanAmountModal.value = loanAmountInput.value;
+                bank1TenureModal.value = tenureMonthsInput.value;
+                bank1RateModal.value = reducingRateInput.value;
+                
+                updateBankComparisonModal();
+                loanComparisonModal.classList.remove('hidden');
             });
             
             // Export PDF functionality
@@ -4136,7 +3955,8 @@
                             <option value="OTHER">OTHER</option>
                         </select>
                         <input type="number" placeholder="Credit Limit" class="credit-card-amount border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600 col-span-1">
-                        <input type="number" placeholder="Outstanding" class="credit-card-outstanding border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600 col-span-2">
+                        <input type="number" placeholder="New Limit" class="credit-card-new-limit border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600 col-span-1">
+                        <input type="number" placeholder="Outstanding" class="credit-card-outstanding border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600 col-span-1">
                     </div>
                 `;
                 creditCardsContainer.appendChild(creditCardDiv);
@@ -4147,6 +3967,9 @@
                 // Add event listener to new credit card inputs
                 const newCreditCardInput = creditCardDiv.querySelector('.credit-card-amount');
                 newCreditCardInput.addEventListener('input', updateDBRCalculator);
+                
+                const newCreditCardNewLimitInput = creditCardDiv.querySelector('.credit-card-new-limit');
+                newCreditCardNewLimitInput.addEventListener('input', updateDBRCalculator);
                 
                 const newOutstandingInput = creditCardDiv.querySelector('.credit-card-outstanding');
                 newOutstandingInput.addEventListener('input', updateDBRCalculator);
@@ -4251,6 +4074,7 @@
                 salaryInput.value = '';
                 grossSalaryInput.value = '';
                 document.querySelector('.credit-card-amount').value = '';
+                document.querySelector('.credit-card-new-limit').value = '';
                 document.querySelector('.credit-card-outstanding').value = '';
                 loanTypeSelect.value = 'fresh-0-30';
                 multiplesOfSalaryInput.value = '15';
@@ -4322,6 +4146,7 @@
                 emiChartSection.classList.add('hidden');
                 loanComparisonModal.classList.add('hidden');
                 shareModal.classList.add('hidden');
+                emiChartModal.classList.add('hidden');
                 
                 // Remove any warning flashes
                 dbrCalculatorSection.classList.remove('dbr-warning-flash');
@@ -4340,6 +4165,7 @@
             
             // Add event listeners to initial credit card inputs
             document.querySelector('.credit-card-amount').addEventListener('input', updateDBRCalculator);
+            document.querySelector('.credit-card-new-limit').addEventListener('input', updateDBRCalculator);
             document.querySelector('.credit-card-outstanding').addEventListener('input', updateDBRCalculator);
             
             loanTypeSelect.addEventListener('change', function() {
@@ -4372,55 +4198,18 @@
                 updateEMICalculator();
             });
             
-            // Bank comparison inputs - Tab
-            bank1NameTab.addEventListener('input', updateBankComparisonTab);
-            bank1LoanAmountTab.addEventListener('input', updateBankComparisonTab);
-            bank1TenureTab.addEventListener('input', updateBankComparisonTab);
-            bank1RateTab.addEventListener('input', updateBankComparisonTab);
-            bank2NameTab.addEventListener('input', updateBankComparisonTab);
-            bank2LoanAmountTab.addEventListener('input', updateBankComparisonTab);
-            bank2TenureTab.addEventListener('input', updateBankComparisonTab);
-            bank2RateTab.addEventListener('input', updateBankComparisonTab);
-            
             // Bank comparison inputs - Modal
-            bank1NameModal.addEventListener('input', function() {
-                updateBankComparisonModal();
-                syncModalToTabComparison();
-            });
-            bank1LoanAmountModal.addEventListener('input', function() {
-                updateBankComparisonModal();
-                syncModalToTabComparison();
-            });
-            bank1TenureModal.addEventListener('input', function() {
-                updateBankComparisonModal();
-                syncModalToTabComparison();
-            });
-            bank1RateModal.addEventListener('input', function() {
-                updateBankComparisonModal();
-                syncModalToTabComparison();
-            });
-            bank2NameModal.addEventListener('input', function() {
-                updateBankComparisonModal();
-                syncModalToTabComparison();
-            });
-            bank2LoanAmountModal.addEventListener('input', function() {
-                updateBankComparisonModal();
-                syncModalToTabComparison();
-            });
-            bank2TenureModal.addEventListener('input', function() {
-                updateBankComparisonModal();
-                syncModalToTabComparison();
-            });
-            bank2RateModal.addEventListener('input', function() {
-                updateBankComparisonModal();
-                syncModalToTabComparison();
-            });
+            bank1NameModal.addEventListener('input', updateBankComparisonModal);
+            bank1LoanAmountModal.addEventListener('input', updateBankComparisonModal);
+            bank1TenureModal.addEventListener('input', updateBankComparisonModal);
+            bank1RateModal.addEventListener('input', updateBankComparisonModal);
+            bank2NameModal.addEventListener('input', updateBankComparisonModal);
+            bank2LoanAmountModal.addEventListener('input', updateBankComparisonModal);
+            bank2TenureModal.addEventListener('input', updateBankComparisonModal);
+            bank2RateModal.addEventListener('input', updateBankComparisonModal);
             
             // Find Optimal Loan button
             findOptimalLoanBtn.addEventListener('click', findOptimalLoanAmount);
-            
-            // EMI Chart buttons
-            showEmiChartBtnTab.addEventListener('click', displayEMIChartStandalone);
             
             // Send to WhatsApp button
             sendWhatsAppBtn.addEventListener('click', function() {
