@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking Sales Performance Management Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-shadow {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        
+        .progress-ring circle {
+            transition: stroke-dasharray 0.3s ease-in-out;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .dark\:bg-gray-900 { background-color: #111827; }
+            .dark\:bg-gray-800 { background-color: #1f2937; }
+            .dark\:text-white { color: #ffffff; }
+            .dark\:text-gray-300 { color: #d1d5db; }
+            .dark\:border-gray-700 { border-color: #374151; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold">Banking Sales Performance Dashboard</h1>
+                    <p class="text-blue-100 mt-2">Track your monthly progress towards annual targets</p>
+                </div>
+                <div class="mt-4 md:mt-0">
+                    <select id="monthSelector" class="bg-white text-gray-800 px-4 py-2 rounded-lg shadow-md text-base">
+                        <option value="0">January</option>
+                        <option value="1">February</option>
+                        <option value="2">March</option>
+                        <option value="3">April</option>
+                        <option value="4">May</option>
+                        <option value="5">June</option>
+                        <option value="6">July</option>
+                        <option value="7">August</option>
+                        <option value="8">September</option>
+                        <option value="9">October</option>
+                        <option value="10">November</option>
+                        <option value="11">December</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- KPI Overview Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Accounts Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl card-shadow p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white">New Accounts</h3>
+                    <div class="bg-blue-100 dark:bg-blue-900 p-2 rounded-lg">
+                        <i class="fas fa-user-plus text-blue-600 dark:text-blue-300"></i>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-2xl font-bold text-gray-800 dark:text-white" id="accountsActual">0</div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">of <span id="accountsTarget">5</span> monthly target</div>
+                    </div>
+                    <div class="relative w-16 h-16">
+                        <svg class="progress-ring w-16 h-16" viewBox="0 0 36 36">
+                            <circle cx="18" cy="18" r="16" fill="none" stroke="#e2e8f0" stroke-width="2"/>
+                            <circle id="accountsProgress" cx="18" cy="18" r="16" fill="none" stroke="#3b82f6" 
+                                    stroke-width="2" stroke-dasharray="0 100"/>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-xs font-semibold text-gray-800 dark:text-white" id="accountsPercent">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personal Loans Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl card-shadow p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Personal Loans</h3>
+                    <div class="bg-green-100 dark:bg-green-900 p-2 rounded-lg">
+                        <i class="fas fa-money-bill-wave text-green-600 dark:text-green-300"></i>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-2xl font-bold text-gray-800 dark:text-white" id="loansActual">AED 0</div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">of <span id="loansTarget">AED 350K</span> monthly target</div>
+                    </div>
+                    <div class="relative w-16 h-16">
+                        <svg class="progress-ring w-16 h-16" viewBox="0 0 36 36">
+                            <circle cx="18" cy="18" r="16" fill="none" stroke="#e2e8f0" stroke-width="2"/>
+                            <circle id="loansProgress" cx="18" cy="18" r="16" fill="none" stroke="#10b981" 
+                                    stroke-width="2" stroke-dasharray="0 100"/>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-xs font-semibold text-gray-800 dark:text-white" id="loansPercent">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Credit Cards Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl card-shadow p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Credit Cards</h3>
+                    <div class="bg-purple-100 dark:bg-purple-900 p-2 rounded-lg">
+                        <i class="fas fa-credit-card text-purple-600 dark:text-purple-300"></i>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-2xl font-bold text-gray-800 dark:text-white" id="cardsActual">0</div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">of <span id="cardsTarget">18</span> monthly target</div>
+                    </div>
+                    <div class="relative w-16 h-16">
+                        <svg class="progress-ring w-16 h-16" viewBox="0 0 36 36">
+                            <circle cx="18" cy="18" r="16" fill="none" stroke="#e2e8f0" stroke-width="2"/>
+                            <circle id="cardsProgress" cx="18" cy="18" r="16" fill="none" stroke="#8b5cf6" 
+                                    stroke-width="2" stroke-dasharray="0 100"/>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-xs font-semibold text-gray-800 dark:text-white" id="cardsPercent">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Entry Form -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl card-shadow p-6 mb-8">
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Update Monthly Performance</h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">New Accounts</label>
+                    <input type="number" id="accountsInput" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-base" placeholder="0">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Personal Loans (AED)</label>
+                    <input type="number" id="loansInput" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-base" placeholder="0">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Credit Cards</label>
+                    <input type="number" id="cardsInput" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-base" placeholder="0">
+                </div>
+                <div class="flex items-end">
+                    <button onclick="updatePerformance()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">
+                        Update Performance
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Monthly Progress Chart -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl card-shadow p-6">
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Monthly Progress Overview</h3>
+                <canvas id="progressChart" height="300"></canvas>
+            </div>
+
+            <!-- YTD Performance Chart -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl card-shadow p-6">
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Year-to-Date Performance</h3>
+                <canvas id="ytdChart" height="300"></canvas>
+            </div>
+        </div>
+
+        <!-- Detailed Monthly Tracking Table -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl card-shadow p-6">
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Detailed Monthly Tracking</h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Month</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Accounts (Target: 5)</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Personal Loans (Target: AED 350K)</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Credit Cards (Target: 18)</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Overall Achievement</th>
+                        </tr>
+                    </thead>
+                    <tbody id="performanceTable" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                        <!-- Table rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Annual Summary -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl card-shadow p-6 mt-8">
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Annual Summary & Projections</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-blue-600 dark:text-blue-400" id="ytdAccounts">0</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">YTD Accounts</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-500">Remaining: <span id="remainingAccounts">60</span></div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-green-600 dark:text-green-400" id="ytdLoans">AED 0</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">YTD Personal Loans</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-500">Remaining: <span id="remainingLoans">AED 4.2M</span></div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-purple-600 dark:text-purple-400" id="ytdCards">0</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">YTD Credit Cards</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-500">Remaining: <span id="remainingCards">216</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Annual targets
+        const ANNUAL_TARGETS = {
+            accounts: 60,
+            loans: 4200000,
+            cards: 216
+        };
+
+        // Monthly targets
+        const MONTHLY_TARGETS = {
+            accounts: 5,
+            loans: 350000,
+            cards: 18
+        };
+
+        // Performance data storage
+        let performanceData = {
+            accounts: Array(12).fill(0),
+            loans: Array(12).fill(0),
+            cards: Array(12).fill(0)
+        };
+
+        // Initialize dark mode
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
+        // Initialize month selector to current month
+        const currentMonth = new Date().getMonth();
+        document.getElementById('monthSelector').value = currentMonth;
+
+        // Chart instances
+        let progressChart, ytdChart;
+
+        // Initialize charts
+        function initializeCharts() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const textColor = isDark ? '#ffffff' : '#374151';
+            const gridColor = isDark ? '#374151' : '#e5e7eb';
+
+            // Progress Chart
+            const progressCtx = document.getElementById('progressChart').getContext('2d');
+            progressChart = new Chart(progressCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['Accounts', 'Personal Loans', 'Credit Cards'],
+                    datasets: [{
+                        label: 'Current Month',
+                        data: [0, 0, 0],
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 2
+                    }, {
+                        label: 'Target',
+                        data: [100, 100, 100],
+                        backgroundColor: 'rgba(229, 231, 235, 0.2)',
+                        borderColor: 'rgba(156, 163, 175, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                color: textColor
+                            },
+                            grid: {
+                                color: gridColor
+                            },
+                            pointLabels: {
+                                color: textColor
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: textColor
+                            }
+                        }
+                    }
+                }
+            });
+
+            // YTD Chart
+            const ytdCtx = document.getElementById('ytdChart').getContext('2d');
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            ytdChart = new Chart(ytdCtx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Accounts',
+                        data: performanceData.accounts,
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Personal Loans (÷10K)',
+                        data: performanceData.loans.map(v => v / 10000),
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Credit Cards',
+                        data: performanceData.cards,
+                        borderColor: 'rgba(139, 92, 246, 1)',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: textColor
+                            },
+                            grid: {
+                                color: gridColor
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: textColor
+                            },
+                            grid: {
+                                color: gridColor
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: textColor
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update progress circle
+        function updateProgressCircle(circleId, percentage) {
+            const circle = document.getElementById(circleId);
+            const circumference = 2 * Math.PI * 16;
+            const strokeDasharray = (percentage / 100) * circumference;
+            circle.style.strokeDasharray = `${strokeDasharray} ${circumference}`;
+        }
+
+        // Format currency
+        function formatCurrency(amount) {
+            if (amount >= 1000000) {
+                return `AED ${(amount / 1000000).toFixed(1)}M`;
+            } else if (amount >= 1000) {
+                return `AED ${(amount / 1000).toFixed(0)}K`;
+            } else {
+                return `AED ${amount.toLocaleString()}`;
+            }
+        }
+
+        // Update performance
+        function updatePerformance() {
+            const selectedMonth = parseInt(document.getElementById('monthSelector').value);
+            const accounts = parseInt(document.getElementById('accountsInput').value) || 0;
+            const loans = parseInt(document.getElementById('loansInput').value) || 0;
+            const cards = parseInt(document.getElementById('cardsInput').value) || 0;
+
+            // Update data
+            performanceData.accounts[selectedMonth] = accounts;
+            performanceData.loans[selectedMonth] = loans;
+            performanceData.cards[selectedMonth] = cards;
+
+            // Update UI
+            updateCurrentMonthDisplay(selectedMonth);
+            updateCharts();
+            updateTable();
+            updateAnnualSummary();
+
+            // Clear inputs
+            document.getElementById('accountsInput').value = '';
+            document.getElementById('loansInput').value = '';
+            document.getElementById('cardsInput').value = '';
+        }
+
+        // Update current month display
+        function updateCurrentMonthDisplay(month) {
+            const accounts = performanceData.accounts[month];
+            const loans = performanceData.loans[month];
+            const cards = performanceData.cards[month];
+
+            // Update values
+            document.getElementById('accountsActual').textContent = accounts;
+            document.getElementById('loansActual').textContent = formatCurrency(loans);
+            document.getElementById('cardsActual').textContent = cards;
+
+            // Update percentages and progress circles
+            const accountsPercent = Math.min((accounts / MONTHLY_TARGETS.accounts) * 100, 100);
+            const loansPercent = Math.min((loans / MONTHLY_TARGETS.loans) * 100, 100);
+            const cardsPercent = Math.min((cards / MONTHLY_TARGETS.cards) * 100, 100);
+
+            document.getElementById('accountsPercent').textContent = `${accountsPercent.toFixed(0)}%`;
+            document.getElementById('loansPercent').textContent = `${loansPercent.toFixed(0)}%`;
+            document.getElementById('cardsPercent').textContent = `${cardsPercent.toFixed(0)}%`;
+
+            updateProgressCircle('accountsProgress', accountsPercent);
+            updateProgressCircle('loansProgress', loansPercent);
+            updateProgressCircle('cardsProgress', cardsPercent);
+
+            // Update radar chart
+            progressChart.data.datasets[0].data = [accountsPercent, loansPercent, cardsPercent];
+            progressChart.update();
+        }
+
+        // Update charts
+        function updateCharts() {
+            ytdChart.data.datasets[0].data = performanceData.accounts;
+            ytdChart.data.datasets[1].data = performanceData.loans.map(v => v / 10000);
+            ytdChart.data.datasets[2].data = performanceData.cards;
+            ytdChart.update();
+        }
+
+        // Update table
+        function updateTable() {
+            const tbody = document.getElementById('performanceTable');
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            tbody.innerHTML = '';
+            
+            months.forEach((month, index) => {
+                const accounts = performanceData.accounts[index];
+                const loans = performanceData.loans[index];
+                const cards = performanceData.cards[index];
+                
+                const accountsPercent = (accounts / MONTHLY_TARGETS.accounts) * 100;
+                const loansPercent = (loans / MONTHLY_TARGETS.loans) * 100;
+                const cardsPercent = (cards / MONTHLY_TARGETS.cards) * 100;
+                const overallPercent = (accountsPercent + loansPercent + cardsPercent) / 3;
+                
+                const getStatusColor = (percent) => {
+                    if (percent >= 100) return 'text-green-600 dark:text-green-400';
+                    if (percent >= 75) return 'text-yellow-600 dark:text-yellow-400';
+                    return 'text-red-600 dark:text-red-400';
+                };
+                
+                const row = `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">${month}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                            ${accounts} <span class="${getStatusColor(accountsPercent)}">(${accountsPercent.toFixed(0)}%)</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                            ${formatCurrency(loans)} <span class="${getStatusColor(loansPercent)}">(${loansPercent.toFixed(0)}%)</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                            ${cards} <span class="${getStatusColor(cardsPercent)}">(${cardsPercent.toFixed(0)}%)</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold ${getStatusColor(overallPercent)}">
+                            ${overallPercent.toFixed(0)}%
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Update annual summary
+        function updateAnnualSummary() {
+            const ytdAccounts = performanceData.accounts.reduce((sum, val) => sum + val, 0);
+            const ytdLoans = performanceData.loans.reduce((sum, val) => sum + val, 0);
+            const ytdCards = performanceData.cards.reduce((sum, val) => sum + val, 0);
+            
+            document.getElementById('ytdAccounts').textContent = ytdAccounts;
+            document.getElementById('ytdLoans').textContent = formatCurrency(ytdLoans);
+            document.getElementById('ytdCards').textContent = ytdCards;
+            
+            document.getElementById('remainingAccounts').textContent = ANNUAL_TARGETS.accounts - ytdAccounts;
+            document.getElementById('remainingLoans').textContent = formatCurrency(ANNUAL_TARGETS.loans - ytdLoans);
+            document.getElementById('remainingCards').textContent = ANNUAL_TARGETS.cards - ytdCards;
+        }
+
+        // Month selector change event
+        document.getElementById('monthSelector').addEventListener('change', function() {
+            const selectedMonth = parseInt(this.value);
+            updateCurrentMonthDisplay(selectedMonth);
+        });
+
+        // Initialize everything
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                initializeCharts();
+                updateCurrentMonthDisplay(currentMonth);
+                updateTable();
+                updateAnnualSummary();
+            }, 100);
+        });
+    </script>
+</body>
+</html>
