@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Banking Sales Performance Management Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -22,13 +20,7 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
         
-        .progress-ring {
-            transform: rotate(-90deg);
-        }
-        
-        .progress-ring circle {
-            transition: stroke-dasharray 0.3s ease-in-out;
-        }
+
         
         @media (prefers-color-scheme: dark) {
             .dark\:bg-gray-900 { background-color: #111827; }
@@ -79,21 +71,10 @@
                         <i class="fas fa-user-plus text-blue-600 dark:text-blue-300"></i>
                     </div>
                 </div>
-                <div class="flex items-center justify-between">
-                    <div>
-                        <div class="text-2xl font-bold text-gray-800 dark:text-white" id="accountsActual">0</div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400">of <span id="accountsTarget">5</span> monthly target</div>
-                    </div>
-                    <div class="relative w-16 h-16">
-                        <svg class="progress-ring w-16 h-16" viewBox="0 0 36 36">
-                            <circle cx="18" cy="18" r="16" fill="none" stroke="#e2e8f0" stroke-width="2"/>
-                            <circle id="accountsProgress" cx="18" cy="18" r="16" fill="none" stroke="#3b82f6" 
-                                    stroke-width="2" stroke-dasharray="0 100"/>
-                        </svg>
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <span class="text-xs font-semibold text-gray-800 dark:text-white" id="accountsPercent">0%</span>
-                        </div>
-                    </div>
+                <div>
+                    <div class="text-3xl font-bold text-gray-800 dark:text-white" id="accountsActual">0</div>
+                    <div class="text-sm text-gray-500 dark:text-gray-400">of <span id="accountsTarget">5</span> monthly target</div>
+                    <div class="text-lg font-semibold text-blue-600 dark:text-blue-400 mt-2" id="accountsPercent">0%</div>
                 </div>
             </div>
 
@@ -105,21 +86,10 @@
                         <i class="fas fa-money-bill-wave text-green-600 dark:text-green-300"></i>
                     </div>
                 </div>
-                <div class="flex items-center justify-between">
-                    <div>
-                        <div class="text-2xl font-bold text-gray-800 dark:text-white" id="loansActual">AED 0</div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400">of <span id="loansTarget">AED 350K</span> monthly target</div>
-                    </div>
-                    <div class="relative w-16 h-16">
-                        <svg class="progress-ring w-16 h-16" viewBox="0 0 36 36">
-                            <circle cx="18" cy="18" r="16" fill="none" stroke="#e2e8f0" stroke-width="2"/>
-                            <circle id="loansProgress" cx="18" cy="18" r="16" fill="none" stroke="#10b981" 
-                                    stroke-width="2" stroke-dasharray="0 100"/>
-                        </svg>
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <span class="text-xs font-semibold text-gray-800 dark:text-white" id="loansPercent">0%</span>
-                        </div>
-                    </div>
+                <div>
+                    <div class="text-3xl font-bold text-gray-800 dark:text-white" id="loansActual">AED 0</div>
+                    <div class="text-sm text-gray-500 dark:text-gray-400">of <span id="loansTarget">AED 350K</span> monthly target</div>
+                    <div class="text-lg font-semibold text-green-600 dark:text-green-400 mt-2" id="loansPercent">0%</div>
                 </div>
             </div>
 
@@ -131,21 +101,10 @@
                         <i class="fas fa-credit-card text-purple-600 dark:text-purple-300"></i>
                     </div>
                 </div>
-                <div class="flex items-center justify-between">
-                    <div>
-                        <div class="text-2xl font-bold text-gray-800 dark:text-white" id="cardsActual">0</div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400">of <span id="cardsTarget">18</span> monthly target</div>
-                    </div>
-                    <div class="relative w-16 h-16">
-                        <svg class="progress-ring w-16 h-16" viewBox="0 0 36 36">
-                            <circle cx="18" cy="18" r="16" fill="none" stroke="#e2e8f0" stroke-width="2"/>
-                            <circle id="cardsProgress" cx="18" cy="18" r="16" fill="none" stroke="#8b5cf6" 
-                                    stroke-width="2" stroke-dasharray="0 100"/>
-                        </svg>
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <span class="text-xs font-semibold text-gray-800 dark:text-white" id="cardsPercent">0%</span>
-                        </div>
-                    </div>
+                <div>
+                    <div class="text-3xl font-bold text-gray-800 dark:text-white" id="cardsActual">0</div>
+                    <div class="text-sm text-gray-500 dark:text-gray-400">of <span id="cardsTarget">18</span> monthly target</div>
+                    <div class="text-lg font-semibold text-purple-600 dark:text-purple-400 mt-2" id="cardsPercent">0%</div>
                 </div>
             </div>
         </div>
@@ -174,20 +133,7 @@
             </div>
         </div>
 
-        <!-- Charts Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <!-- Monthly Progress Chart -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl card-shadow p-6">
-                <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Monthly Progress Overview</h3>
-                <canvas id="progressChart" height="300"></canvas>
-            </div>
 
-            <!-- YTD Performance Chart -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl card-shadow p-6">
-                <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Year-to-Date Performance</h3>
-                <canvas id="ytdChart" height="300"></canvas>
-            </div>
-        </div>
 
         <!-- Detailed Monthly Tracking Table -->
         <div class="bg-white dark:bg-gray-800 rounded-xl card-shadow p-6">
@@ -271,129 +217,28 @@
         const currentMonth = new Date().getMonth();
         document.getElementById('monthSelector').value = currentMonth;
 
-        // Chart instances
-        let progressChart, ytdChart;
-
-        // Initialize charts
-        function initializeCharts() {
-            const isDark = document.documentElement.classList.contains('dark');
-            const textColor = isDark ? '#ffffff' : '#374151';
-            const gridColor = isDark ? '#374151' : '#e5e7eb';
-
-            // Progress Chart
-            const progressCtx = document.getElementById('progressChart').getContext('2d');
-            progressChart = new Chart(progressCtx, {
-                type: 'radar',
-                data: {
-                    labels: ['Accounts', 'Personal Loans', 'Credit Cards'],
-                    datasets: [{
-                        label: 'Current Month',
-                        data: [0, 0, 0],
-                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                        borderColor: 'rgba(59, 130, 246, 1)',
-                        borderWidth: 2
-                    }, {
-                        label: 'Target',
-                        data: [100, 100, 100],
-                        backgroundColor: 'rgba(229, 231, 235, 0.2)',
-                        borderColor: 'rgba(156, 163, 175, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: {
-                                color: textColor
-                            },
-                            grid: {
-                                color: gridColor
-                            },
-                            pointLabels: {
-                                color: textColor
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: textColor
-                            }
-                        }
-                    }
-                }
-            });
-
-            // YTD Chart
-            const ytdCtx = document.getElementById('ytdChart').getContext('2d');
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            ytdChart = new Chart(ytdCtx, {
-                type: 'line',
-                data: {
-                    labels: months,
-                    datasets: [{
-                        label: 'Accounts',
-                        data: performanceData.accounts,
-                        borderColor: 'rgba(59, 130, 246, 1)',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        tension: 0.4
-                    }, {
-                        label: 'Personal Loans (÷10K)',
-                        data: performanceData.loans.map(v => v / 10000),
-                        borderColor: 'rgba(16, 185, 129, 1)',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        tension: 0.4
-                    }, {
-                        label: 'Credit Cards',
-                        data: performanceData.cards,
-                        borderColor: 'rgba(139, 92, 246, 1)',
-                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                color: textColor
-                            },
-                            grid: {
-                                color: gridColor
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                color: textColor
-                            },
-                            grid: {
-                                color: gridColor
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: textColor
-                            }
-                        }
-                    }
-                }
-            });
+        // Data persistence functions
+        function saveDataToCookies() {
+            const dataString = JSON.stringify(performanceData);
+            document.cookie = `bankingPerformanceData=${encodeURIComponent(dataString)}; expires=Fri, 31 Dec 2024 23:59:59 GMT; path=/`;
         }
 
-        // Update progress circle
-        function updateProgressCircle(circleId, percentage) {
-            const circle = document.getElementById(circleId);
-            const circumference = 2 * Math.PI * 16;
-            const strokeDasharray = (percentage / 100) * circumference;
-            circle.style.strokeDasharray = `${strokeDasharray} ${circumference}`;
+        function loadDataFromCookies() {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'bankingPerformanceData') {
+                    try {
+                        const decodedValue = decodeURIComponent(value);
+                        const savedData = JSON.parse(decodedValue);
+                        performanceData = savedData;
+                        return true;
+                    } catch (e) {
+                        console.log('Error loading saved data:', e);
+                    }
+                }
+            }
+            return false;
         }
 
         // Format currency
@@ -419,9 +264,11 @@
             performanceData.loans[selectedMonth] = loans;
             performanceData.cards[selectedMonth] = cards;
 
+            // Save data automatically
+            saveDataToCookies();
+
             // Update UI
             updateCurrentMonthDisplay(selectedMonth);
-            updateCharts();
             updateTable();
             updateAnnualSummary();
 
@@ -451,22 +298,10 @@
             document.getElementById('loansPercent').textContent = `${loansPercent.toFixed(0)}%`;
             document.getElementById('cardsPercent').textContent = `${cardsPercent.toFixed(0)}%`;
 
-            updateProgressCircle('accountsProgress', accountsPercent);
-            updateProgressCircle('loansProgress', loansPercent);
-            updateProgressCircle('cardsProgress', cardsPercent);
 
-            // Update radar chart
-            progressChart.data.datasets[0].data = [accountsPercent, loansPercent, cardsPercent];
-            progressChart.update();
         }
 
-        // Update charts
-        function updateCharts() {
-            ytdChart.data.datasets[0].data = performanceData.accounts;
-            ytdChart.data.datasets[1].data = performanceData.loans.map(v => v / 10000);
-            ytdChart.data.datasets[2].data = performanceData.cards;
-            ytdChart.update();
-        }
+
 
         // Update table
         function updateTable() {
@@ -536,12 +371,13 @@
 
         // Initialize everything
         window.addEventListener('load', function() {
-            setTimeout(() => {
-                initializeCharts();
-                updateCurrentMonthDisplay(currentMonth);
-                updateTable();
-                updateAnnualSummary();
-            }, 100);
+            // Load saved data first
+            loadDataFromCookies();
+            
+            // Then update the UI
+            updateCurrentMonthDisplay(currentMonth);
+            updateTable();
+            updateAnnualSummary();
         });
     </script>
 </body>
