@@ -6,622 +6,693 @@
     <title>Management Information System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Add jsPDF library for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tahoma:wght@400;700&display=swap');
     
-body {
-        font-family: 'Tahoma', Geneva, sans-serif;
-        margin: 0;
-        padding: 0;
-        width: 100vw;
-        height: 100vh;
-        overflow-x: hidden;
-    }
-    
-    .custom-btn {
-        background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
-        transition: all 0.3s;
-    }
-    
-    .custom-btn:hover {
-        opacity: 0.9;
-        transform: translateY(-1px);
-    }
-    
-    .gradient-primary {
-        background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
-    }
-    
-    .success-indicator {
-        background: linear-gradient(135deg, #FFD1D1 0%, #59E3FF 100%);
-        color: #333;
-        padding: 8px 12px;
-        border-radius: 4px;
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        animation: fadeOut 2s forwards;
-        animation-delay: 1s;
-        z-index: 100;
-        font-weight: 500;
-    }
-    
-    @keyframes fadeOut {
-        from { opacity: 1; }
-        to { opacity: 0; }
-    }
-
-    .loading-indicator {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0,0,0,0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-    }
-
-    .spinner {
-        width: 50px;
-        height: 50px;
-        border: 5px solid #f3f3f3;
-        border-top: 5px solid #1A3A4A;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    .error-field {
-        border-color: #ef4444 !important;
-    }
-
-    .data-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .data-table th {
-        background: #1A3A4A;
-        color: white;
-        text-align: left;
-        padding: 8px;
-    }
-
-    .data-table tr:nth-child(even) {
-        background-color: #DEBFCF;
-    }
-
-    .data-table tr:hover {
-        background-color: #ddd;
-    }
-
-    .data-table td {
-        border: 1px solid #ddd;
-        padding: 8px;
-    }
-
-    .required::after {
-        content: " *";
-        color: #ef4444;
-    }
-    
-    .section {
-        display: none;
-    }
-    
-    .section.active {
-        display: block;
-    }
-    
-    .points-btn {
-        font-weight: bold;
-        padding: 0.5rem 1rem;
-        border-radius: 0.375rem;
-        display: inline-flex;
-        align-items: center;
-        margin-right: 0.5rem;
-    }
-    
-    .points-btn.earned {
-        background-color: #10b981;
-        color: white;
-    }
-    
-    .points-btn.pending {
-        background-color: #f59e0b;
-        color: white;
-    }
-    
-    /* Print styles */
-    @media print {
-        body * {
-            visibility: hidden;
+        body {
+            font-family: 'Tahoma', Geneva, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow-x: hidden;
         }
         
-        #summarySection, #summarySection * {
-            visibility: visible;
+        .custom-btn {
+            background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
+            transition: all 0.3s;
         }
         
-        #summarySection {
+        .custom-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        
+        .gradient-primary {
+            background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
+        }
+        
+        .success-indicator {
+            background: linear-gradient(135deg, #FFD1D1 0%, #59E3FF 100%);
+            color: #333;
+            padding: 8px 12px;
+            border-radius: 4px;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            animation: fadeOut 2s forwards;
+            animation-delay: 1s;
+            z-index: 100;
+            font-weight: 500;
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        .loading-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #1A3A4A;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-field {
+            border-color: #ef4444 !important;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: #1A3A4A;
+            color: white;
+            text-align: left;
+            padding: 8px;
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: #DEBFCF;
+        }
+
+        .data-table tr:hover {
+            background-color: #ddd;
+        }
+
+        .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .required::after {
+            content: " *";
+            color: #ef4444;
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .points-btn {
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            display: inline-flex;
+            align-items: center;
+            margin-right: 0.5rem;
+        }
+        
+        .points-btn.earned {
+            background-color: #10b981;
+            color: white;
+        }
+        
+        .points-btn.pending {
+            background-color: #f59e0b;
+            color: white;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 24px;
+            background-color: #f3f3f3;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: width 0.5s ease;
+        }
+        
+        .target-input {
+            width: 100px;
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .summary-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 12px;
+        }
+        
+        .summary-card h3 {
+            color: #1A3A4A;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #f3f3f3;
+        }
+
+        .copyable {
+            cursor: pointer;
+            position: relative;
+            user-select: all;
+        }
+
+        .copyable::after {
+            content: "Copied!";
             position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+
+        .copyable.copied::after {
+            opacity: 1;
+            animation: fadeAfterCopy 1.5s forwards;
+        }
+
+        @keyframes fadeAfterCopy {
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .action-column {
+            min-width: 80px;
+            white-space: nowrap;
+            width: 80px;
+        }
+
+        .action-btn {
+            margin-right: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+        }
+        
+        .visualizations-header {
+            background: #1A3A4A;
+            color: white;
+            padding: 8px 12px;
+            font-weight: bold;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+        
+        .visualization-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .chart-box {
+            width: 32%;
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .chart-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .chart-box {
+                width: 100%;
+            }
+        }
+        
+        .chart-title {
+            font-weight: bold;
+            color: #1A3A4A;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+        
+        .pie-chart {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto;
+            background: conic-gradient(
+                #FF5349 0% 60%, 
+                #2197b2 60% 90%, 
+                #d8dee9 90% 100%
+            );
+            position: relative;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        
+        .acc-chart {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto;
+            background: conic-gradient(
+                #FEFE22 0% 40%, 
+                #F96714 40% 75%, 
+                #2197b2 75% 100%
+            );
+            position: relative;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        
+        .scheme-chart {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto;
+            background: conic-gradient(
+                #77DDE7 0% 45%, 
+                #FF1DCE 45% 70%, 
+                #B2EC5D 70% 90%, 
+                #A2ADD0 90% 100%
+            );
+            position: relative;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        
+        .donut-hole {
+            position: absolute;
+            width: 72px;
+            height: 72px;
+            background: white;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.1);
+        }
+        
+        .chart-legend {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 4px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-right: 6px;
+            margin-bottom: 6px;
+            font-size: 10px;
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            transition: transform 0.15s;
+        }
+        
+        .legend-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .legend-color {
+            width: 10px;
+            height: 10px;
+            margin-right: 4px;
+            border-radius: 2px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1050;
             left: 0;
             top: 0;
             width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
         }
         
-        .no-print {
-            display: none !important;
+        .modal-content {
+            background-color: #fefefe;
+            margin: 50px auto;
+            max-width: 900px;
+            width: 90%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
         }
-    }
-    
-    /* Progress bar styles */
-    .progress-bar {
-        width: 100%;
-        height: 24px;
-        background-color: #f3f3f3;
-        border-radius: 12px;
-        overflow: hidden;
-        margin-bottom: 10px;
-        position: relative;
-    }
-    
-    .progress-fill {
-        height: 100%;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
-        transition: width 0.5s ease;
-    }
-    
-    .target-input {
-        width: 100px;
-        padding: 6px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        text-align: center;
-    }
-    
-    .summary-card {
-        background-color: white;
-        border-radius: 8px;
-        padding: 12px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        margin-bottom: 12px;
-    }
-    
-    .summary-card h3 {
-        color: #1A3A4A;
-        margin-bottom: 8px;
-        font-weight: bold;
-        font-size: 1.1rem;
-        padding-bottom: 6px;
-        border-bottom: 1px solid #f3f3f3;
-    }
-
-    /* Fix 2: Make CID and Mobile fields copyable */
-    .copyable {
-        cursor: pointer;
-        position: relative;
-        user-select: all;
-    }
-
-    .copyable::after {
-        content: "Copied!";
-        position: absolute;
-        top: -20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: #333;
-        color: white;
-        padding: 2px 6px;
-        border-radius: 3px;
-        font-size: 12px;
-        opacity: 0;
-        transition: opacity 0.2s;
-        pointer-events: none;
-    }
-
-    .copyable.copied::after {
-        opacity: 1;
-        animation: fadeAfterCopy 1.5s forwards;
-    }
-
-    @keyframes fadeAfterCopy {
-        0% { opacity: 1; }
-        70% { opacity: 1; }
-        100% { opacity: 0; }
-    }
-
-    /* Fix 1: Increase action buttons spacing */
-    .action-column {
-        min-width: 80px;
-        white-space: nowrap;
-        width: 80px;
-    }
-
-    .action-btn {
-        margin-right: 6px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-    }
-    
-    /* Visualizations */
-    .visualizations-header {
-        background: #1A3A4A;
-        color: white;
-        padding: 8px 12px;
-        font-weight: bold;
-        border-radius: 4px;
-        font-size: 0.95rem;
-    }
-    
-    .visualization-container {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 10px;
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-    
-    .chart-box {
-        width: 32%;
-        background: white;
-        border-radius: 8px;
-        padding: 12px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        margin-bottom: 10px;
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    
-    .chart-box:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-    }
-    
-    @media (max-width: 768px) {
-        .chart-box {
+        
+        .modal-header {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-body {
+            padding: 15px;
+            overflow-y: auto;
+            max-height: calc(80vh - 130px);
+        }
+        
+        .modal-footer {
+            padding: 15px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .close-modal {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close-modal:hover {
+            color: black;
+        }
+        
+        .export-table {
             width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
         }
-    }
-    
-    .chart-title {
-        font-weight: bold;
-        color: #1A3A4A;
-        text-align: center;
-        margin-bottom: 10px;
-        font-size: 0.95rem;
-    }
-    
-    /* Simple pie charts with CSS - Updated colors */
-    .pie-chart {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        margin: 0 auto;
-        background: conic-gradient(
-            #FF5349 0% 60%, 
-            #2197b2 60% 90%, 
-            #d8dee9 90% 100%
-        );
-        position: relative;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    
-    .acc-chart {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        margin: 0 auto;
-        background: conic-gradient(
-            #FEFE22 0% 40%, 
-            #F96714 40% 75%, 
-            #2197b2 75% 100%
-        );
-        position: relative;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    
-    .scheme-chart {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        margin: 0 auto;
-        background: conic-gradient(
-            #77DDE7 0% 45%, 
-            #FF1DCE 45% 70%, 
-            #B2EC5D 70% 90%, 
-            #A2ADD0 90% 100%
-        );
-        position: relative;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    
-    .donut-hole {
-        position: absolute;
-        width: 72px;
-        height: 72px;
-        background: white;
-        border-radius: 50%;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        box-shadow: inset 0 1px 4px rgba(0,0,0,0.1);
-    }
-    
-    .chart-legend {
-        margin-top: 10px;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 4px;
-    }
-    
-    .legend-item {
-        display: flex;
-        align-items: center;
-        margin-right: 6px;
-        margin-bottom: 6px;
-        font-size: 10px;
-        background-color: #f8f9fa;
-        padding: 2px 6px;
-        border-radius: 3px;
-        transition: transform 0.15s;
-    }
-    
-    .legend-item:hover {
-        transform: scale(1.05);
-    }
-    
-    .legend-color {
-        width: 10px;
-        height: 10px;
-        margin-right: 4px;
-        border-radius: 2px;
-    }
-    
-    /* Export Modal Styles */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1050;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0,0,0,0.4);
-    }
-    
-    .modal-content {
-        background-color: #fefefe;
-        margin: 50px auto;
-        max-width: 900px;
-        width: 90%;
-        border-radius: 8px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        position: relative;
-        max-height: 80vh;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .modal-header {
-        padding: 15px;
-        border-bottom: 1px solid #e9ecef;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    .modal-body {
-        padding: 15px;
-        overflow-y: auto;
-        max-height: calc(80vh - 130px);
-    }
-    
-    .modal-footer {
-        padding: 15px;
-        border-top: 1px solid #e9ecef;
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-    }
-    
-    .close-modal {
-        color: #aaa;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-    
-    .close-modal:hover {
-        color: black;
-    }
-    
-    /* Export Table Styles */
-    .export-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 10px;
-    }
-    
-    .export-table th {
-        background: #1A3A4A;
-        color: white;
-        text-align: left;
-        padding: 8px;
-        position: sticky;
-        top: 0;
-        z-index: 10;
-    }
-    
-    .export-table tr:nth-child(even) {
-        background-color: #DEBFCF;
-    }
-    
-    .export-table tr:hover {
-        background-color: #ddd;
-    }
-    
-    .export-table td {
-        border: 1px solid #ddd;
-        padding: 8px;
-    }
+        
+        .export-table th {
+            background: #1A3A4A;
+            color: white;
+            text-align: left;
+            padding: 8px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .export-table tr:nth-child(even) {
+            background-color: #DEBFCF;
+        }
+        
+        .export-table tr:hover {
+            background-color: #ddd;
+        }
+        
+        .export-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
 
-    /* Amount input style */
-    .amount-input {
-        width: 100px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 5px;
-        text-align: right;
-    }
+        .amount-input {
+            width: 100px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+            text-align: right;
+        }
 
-    /* Total row style */
-    .total-row {
-        background-color: #f8f9fa;
-        font-weight: bold;
-    }
+        .total-row {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
 
-    .total-row td {
-        border-top: 2px solid #1A3A4A;
-    }
-    
-    /* Export Profile Styles */
-    .profile-container {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 15px;
-        flex-wrap: wrap;
-        align-items: center;
-    }
-    
-    .profile-input {
-        flex: 1;
-        min-width: 150px;
-        padding: 8px 12px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-    }
-    
-    .profile-select {
-        flex: 1;
-        min-width: 150px;
-        padding: 8px 12px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        background-color: white;
-    }
-    
-    .profile-btn {
-        padding: 8px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 4px;
-        font-size: 0.85rem;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    
-    .profile-btn:hover {
-        opacity: 0.9;
-        transform: translateY(-1px);
-    }
-    
-    .btn-save {
-        background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
-        color: white;
-    }
-    
-    .btn-load {
-        background-color: #1A3A4A;
-        color: white;
-    }
-    
-    .btn-delete {
-        background-color: #FF5349;
-        color: white;
-    }
+        .total-row td {
+            border-top: 2px solid #1A3A4A;
+        }
+        
+        .profile-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .profile-input {
+            flex: 1;
+            min-width: 150px;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .profile-select {
+            flex: 1;
+            min-width: 150px;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+        }
+        
+        .profile-btn {
+            padding: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .profile-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        
+        .btn-save {
+            background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
+            color: white;
+        }
+        
+        .btn-load {
+            background-color: #1A3A4A;
+            color: white;
+        }
+        
+        .btn-delete {
+            background-color: #FF5349;
+            color: white;
+        }
 
-    /* Search section style */
-    .search-container {
-        border-top: 1px solid #e9ecef;
-        padding-top: 16px;
-        margin-top: 16px;
-    }
+        .search-container {
+            border-top: 1px solid #e9ecef;
+            padding-top: 16px;
+            margin-top: 16px;
+        }
 
-    /* Long press styles */
-    .table-row-longpress {
-        background-color: #eceff4 !important;
-        cursor: pointer;
-    }
+        .table-row-longpress {
+            background-color: #eceff4 !important;
+            cursor: pointer;
+        }
 
-    .longpress-active {
-        background-color: #bbdefb !important;
-    }
+        .longpress-active {
+            background-color: #bbdefb !important;
+        }
 
-    /* Banking section enhancement */
-    .banking-container {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        flex-wrap: wrap;
-    }
+        .banking-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
 
-    .banking-select {
-        flex: 1;
-        min-width: 200px;
-    }
+        .banking-select {
+            flex: 1;
+            min-width: 200px;
+        }
 
-    .adcb-checkbox-container {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        min-width: 120px;
-    }
+        .adcb-checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            min-width: 120px;
+        }
 
-    /* Status and 40% deduction container */
-    .status-container {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        flex-wrap: wrap;
-    }
+        .status-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
 
-    .status-select {
-        flex: 1;
-        min-width: 200px;
-    }
+        .status-select {
+            flex: 1;
+            min-width: 200px;
+        }
 
-    .deduction-checkbox-container {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        min-width: 80px;
-    }
+        .deduction-checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            min-width: 80px;
+        }
 
-    /* Primary color for headings */
-    .text-primary {
-        color: #1A3A4A !important;
-    }
-</style>
+        .text-primary {
+            color: #1A3A4A !important;
+        }
+
+        /* KPI Styles */
+        .kpi-select {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            font-weight: 500;
+            color: #1A3A4A;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .kpi-select:focus {
+            outline: none;
+            border-color: #1A3A4A;
+            box-shadow: 0 0 0 3px rgba(26, 58, 74, 0.1);
+        }
+
+        .kpi-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .kpi-btn-primary {
+            background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
+            color: white;
+        }
+
+        .kpi-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 58, 74, 0.3);
+        }
+
+        .kpi-btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            color: white;
+        }
+
+        .kpi-btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .kpi-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .kpi-table th {
+            background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
+            color: white;
+            text-align: center;
+            padding: 12px 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .kpi-table td {
+            border: 1px solid #e2e8f0;
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: 500;
+            background: #f8fafc;
+        }
+
+        .kpi-chart-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .kpi-info-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .kpi-info-card h6 {
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        /* Responsive KPI adjustments */
+        @media (max-width: 768px) {
+            .kpi-table {
+                font-size: 0.8rem;
+            }
+            
+            .kpi-table th,
+            .kpi-table td {
+                padding: 8px 4px;
+            }
+        }
+    </style>
 </head>
 
 <body class="bg-gray-50 font-tahoma">
@@ -866,9 +937,128 @@ body {
                     </div>
                 </div>
             </div>
+            
+            <!-- KPI Section -->
+            <div class="border rounded-lg mb-2">
+                <div class="visualizations-header">
+                    Key Performance Indicator
+                </div>
+                
+                <div class="p-3">
+                    <!-- KPI Controls -->
+                    <div class="flex flex-wrap gap-3 mb-4 items-center">
+                        <div class="flex items-center gap-2">
+                            <label for="kpiMonth" class="text-sm font-medium text-gray-700">Month:</label>
+                            <select id="kpiMonth" class="kpi-select">
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        
+                        <button id="generateKpiReportBtn" class="kpi-btn kpi-btn-primary">
+                            <i class="fas fa-chart-line mr-2"></i> Generate Report
+                        </button>
+                        
+                        <button id="saveKpiDataBtn" class="kpi-btn kpi-btn-success">
+                            <i class="fas fa-save mr-2"></i> Save KPI
+                        </button>
+                    </div>
+                    
+                    <!-- KPI Report Table -->
+                    <div id="kpiReportContainer" class="mb-4 hidden">
+                        <h4 class="text-lg font-semibold text-primary mb-2">Monthly KPI Report</h4>
+                        <div class="overflow-x-auto">
+                            <table class="kpi-table">
+                                <thead>
+                                    <tr>
+                                        <th>CC Conventional</th>
+                                        <th>CC Islamic</th>
+                                        <th>CC Achieved %</th>
+                                        <th>PIL Conventional</th>
+                                        <th>PIL Islamic</th>
+                                        <th>PIL Achieved %</th>
+                                        <th>MDSA</th>
+                                        <th>Aspire</th>
+                                        <th>Privilege</th>
+                                        <th>Accounts Achieved %</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="kpiReportRow">
+                                        <td id="kpiCCConventional">0</td>
+                                        <td id="kpiCCIslamic">0</td>
+                                        <td id="kpiCCAchieved">0%</td>
+                                        <td id="kpiPILConventional">AED 0</td>
+                                        <td id="kpiPILIslamic">AED 0</td>
+                                        <td id="kpiPILAchieved">0%</td>
+                                        <td id="kpiMDSA">0</td>
+                                        <td id="kpiAspire">0</td>
+                                        <td id="kpiPrivilege">0</td>
+                                        <td id="kpiAccountsAchieved">0%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- KPI Charts -->
+                    <div id="kpiChartsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 hidden">
+                        <!-- Monthly Trends Chart -->
+                        <div class="kpi-chart-card">
+                            <h5 class="text-md font-semibold text-primary mb-2">Monthly Achievement Trends</h5>
+                            <canvas id="monthlyTrendsChart" width="400" height="200"></canvas>
+                        </div>
+                        
+                        <!-- Annual Progress Chart -->
+                        <div class="kpi-chart-card">
+                            <h5 class="text-md font-semibold text-primary mb-2">Annual KPI Progress</h5>
+                            <canvas id="annualProgressChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- KPI Target Information -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="kpi-info-card">
+                            <h6 class="font-semibold text-primary">Monthly Targets</h6>
+                            <ul class="text-sm text-gray-600 mt-2">
+                                <li>Credit Cards: 20</li>
+                                <li>Personal Loans: AED 350,000</li>
+                                <li>Accounts: 10</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="kpi-info-card">
+                            <h6 class="font-semibold text-primary">Annual Targets</h6>
+                            <ul class="text-sm text-gray-600 mt-2">
+                                <li>Credit Cards: 240</li>
+                                <li>Personal Loans: AED 4,200,000</li>
+                                <li>Accounts: 120</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="kpi-info-card">
+                            <h6 class="font-semibold text-primary">Predictive Insights</h6>
+                            <div id="kpiPredictions" class="text-sm text-gray-600 mt-2">
+                                <div>Loading trends...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     
+    <!-- Entry Form Section -->
     <div id="entrySection" class="section">
         <div class="bg-white p-4 rounded-lg shadow-md">
             <h2 class="text-xl font-bold text-primary mb-4">Customer Data Entry</h2>
@@ -934,7 +1124,7 @@ body {
                             <p id="mobileError" class="text-red-500 text-sm hidden">Mobile number must be unique</p>
                         </div>
                         
-                        <!-- Company Name (Moved here as requested in Fix 5) -->
+                        <!-- Company Name -->
                         <div>
                             <label for="companyName" class="block text-gray-700 font-medium">Company Name</label>
                             <input type="text" id="companyName" name="companyName" class="w-full border rounded-md p-2 text-base">
@@ -1153,7 +1343,6 @@ body {
                         <!-- Data will be populated here -->
                     </tbody>
                 </table>
-                <!-- Fix 3: Show All button -->
                 <div id="showMoreContainer" class="mt-4 text-center hidden">
                     <button id="showAllRecordsBtn" class="custom-btn text-white py-2 px-6 rounded-md">
                         <i class="fas fa-list mr-2"></i> Show All Records
@@ -1161,7 +1350,7 @@ body {
                 </div>
             </div>
             
-            <!-- Search Container (Moved from separate section) -->
+            <!-- Search Container -->
             <div class="search-container">
                 <h3 class="text-lg font-semibold text-primary mb-3">Find Records (Master Sheet)</h3>
                 
@@ -1299,23 +1488,32 @@ body {
     // Initialize jsPDF
     window.jsPDF = window.jspdf.jsPDF;
 
-    // Force create some test data to debug PDF generation
-    const testData = [
-        {
-            CID: "12345",
-            Date: "2023-05-22",
-            "Customer Name": "John Doe",
-            Product: "CC",
-            Status: "Completed"
+    // KPI Constants
+    const KPI_TARGETS = {
+        monthly: {
+            CC: 20,
+            PIL: 350000,
+            Accounts: 10
         },
-        {
-            CID: "67890",
-            Date: "2023-05-23",
-            "Customer Name": "Jane Smith",
-            Product: "PL (AED 50,000)",
-            Status: "Under Review"
+        annual: {
+            CC: 240,
+            PIL: 4200000,
+            Accounts: 120
         }
-    ];
+    };
+
+    // Google Apps Script Web App URL
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwBKFBLV1ayE1-RIsdbr11-dZ0yGcFxnwkyoOJXnQrH-vbtSH1sjTCQzBlJTdyufOeOXA/exec';
+
+    // Global variables
+    let allRecordsData = [];
+    let isShowingAllRecords = false;
+    const maxInitialRecords = 10;
+    let longPressTimer = null;
+    let isLongPressing = false;
+    let currentSelections = { ACC: '', CC: '', CCOption2: '', PL: '' };
+    let editingData = null;
+    let editingProductString = "";
 
     // ==========================================
     // THEME AND UI FUNCTIONALITY
@@ -1329,15 +1527,6 @@ body {
     const entrySection = document.getElementById('entrySection');
     const viewSection = document.getElementById('viewSection');
     const summarySection = document.getElementById('summarySection');
-    
-    // Fix 3: Track displayed records
-    let allRecordsData = [];
-    let isShowingAllRecords = false;
-    const maxInitialRecords = 10;
-
-    // Long press variables
-    let longPressTimer = null;
-    let isLongPressing = false;
     
     function showSection(section) {
         // Hide all sections
@@ -1400,9 +1589,442 @@ body {
     }
 
     // ==========================================
-    // FORM HANDLING AND VALIDATION
+    // KPI FUNCTIONALITY
     // ==========================================
 
+    // Set current month by default
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentMonth = new Date().getMonth() + 1;
+        document.getElementById('kpiMonth').value = currentMonth;
+        
+        // Initialize other functionality
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').value = today;
+        
+        document.getElementById('product2ndCC').disabled = true;
+        document.getElementById('productSTL').disabled = true;
+        
+        showSection('summary');
+        loadProfiles();
+        
+        // Load KPI data on initialization
+        loadKpiTrends();
+    });
+
+    // Generate KPI Report
+    document.getElementById('generateKpiReportBtn').addEventListener('click', async function() {
+        const selectedMonth = parseInt(document.getElementById('kpiMonth').value);
+        const monthName = document.getElementById('kpiMonth').options[selectedMonth - 1].text;
+        
+        showLoading();
+        
+        try {
+            // Get data from Data sheet for the selected month
+            const response = await fetch(`${scriptURL}?action=getAll`);
+            const data = await response.json();
+            
+            if (data.success) {
+                const kpiData = calculateKpiMetrics(data.data, selectedMonth);
+                displayKpiReport(kpiData, monthName);
+                loadKpiCharts();
+                generatePredictiveInsights(selectedMonth);
+            } else {
+                showSuccess('Error fetching data for KPI report');
+            }
+        } catch (error) {
+            console.error('Error generating KPI report:', error);
+            showSuccess('Error generating KPI report');
+        } finally {
+            hideLoading();
+        }
+    });
+
+    // Save KPI Data
+    document.getElementById('saveKpiDataBtn').addEventListener('click', async function() {
+        const selectedMonth = parseInt(document.getElementById('kpiMonth').value);
+        const monthName = document.getElementById('kpiMonth').options[selectedMonth - 1].text;
+        
+        // Get current KPI values from the report
+        const kpiRow = document.getElementById('kpiReportRow');
+        if (!kpiRow || kpiRow.style.display === 'none') {
+            showSuccess('Please generate a report first before saving');
+            return;
+        }
+        
+        const kpiData = {
+            month: monthName,
+            ccConventional: document.getElementById('kpiCCConventional').textContent,
+            ccIslamic: document.getElementById('kpiCCIslamic').textContent,
+            ccAchieved: document.getElementById('kpiCCAchieved').textContent,
+            pilConventional: document.getElementById('kpiPILConventional').textContent.replace('AED ', '').replace(/,/g, ''),
+            pilIslamic: document.getElementById('kpiPILIslamic').textContent.replace('AED ', '').replace(/,/g, ''),
+            pilAchieved: document.getElementById('kpiPILAchieved').textContent,
+            mdsa: document.getElementById('kpiMDSA').textContent,
+            aspire: document.getElementById('kpiAspire').textContent,
+            privilege: document.getElementById('kpiPrivilege').textContent,
+            accountsAchieved: document.getElementById('kpiAccountsAchieved').textContent
+        };
+        
+        showLoading();
+        
+        try {
+            const formData = new FormData();
+            formData.append('action', 'saveKpiData');
+            Object.keys(kpiData).forEach(key => {
+                formData.append(key, kpiData[key]);
+            });
+            
+            const response = await fetch(scriptURL, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showSuccess(`KPI data for ${monthName} saved successfully!`);
+                loadKpiTrends(); // Refresh the trends
+            } else {
+                showSuccess('Error saving KPI data: ' + result.error);
+            }
+        } catch (error) {
+            console.error('Error saving KPI data:', error);
+            showSuccess('Error saving KPI data');
+        } finally {
+            hideLoading();
+        }
+    });
+
+    // Calculate KPI Metrics from Data
+    function calculateKpiMetrics(data, selectedMonth) {
+        const currentYear = new Date().getFullYear();
+        
+        // Filter data for the selected month and current year
+        const monthlyData = data.filter(record => {
+            if (!record.Date) return false;
+            const recordDate = new Date(record.Date);
+            return recordDate.getMonth() + 1 === selectedMonth && recordDate.getFullYear() === currentYear;
+        });
+        
+        let ccConventional = 0, ccIslamic = 0;
+        let pilConventional = 0, pilIslamic = 0;
+        let mdsa = 0, aspire = 0, privilege = 0;
+        
+        monthlyData.forEach(record => {
+            const proposition = record.Proposition || '';
+            const productString = record.Product || '';
+            const loanAmount = parseFloat(record['Loan Amount']) || 0;
+            
+            // Count Credit Cards
+            const ccCount = countCreditCards(productString);
+            if (proposition === 'Conventional') {
+                ccConventional += ccCount;
+            } else if (proposition === 'Islamic') {
+                ccIslamic += ccCount;
+            } else if (proposition === 'Both') {
+                // For 'Both', split evenly or add to both (based on your business logic)
+                ccConventional += Math.ceil(ccCount / 2);
+                ccIslamic += Math.floor(ccCount / 2);
+            }
+            
+            // Count Personal Loans
+            if (loanAmount > 0) {
+                if (proposition === 'Conventional') {
+                    pilConventional += loanAmount;
+                } else if (proposition === 'Islamic') {
+                    pilIslamic += loanAmount;
+                } else if (proposition === 'Both') {
+                    pilConventional += loanAmount / 2;
+                    pilIslamic += loanAmount / 2;
+                }
+            }
+            
+            // Count Accounts
+            if (productString.includes('MDSA')) mdsa++;
+            if (productString.includes('Aspire')) aspire++;
+            if (productString.includes('Privilege')) privilege++;
+        });
+        
+        // Calculate achievement percentages
+        const totalCC = ccConventional + ccIslamic;
+        const totalPIL = pilConventional + pilIslamic;
+        const totalAccounts = mdsa + aspire + privilege;
+        
+        const ccAchievedPercent = Math.round((totalCC / KPI_TARGETS.monthly.CC) * 100);
+        const pilAchievedPercent = Math.round((totalPIL / KPI_TARGETS.monthly.PIL) * 100);
+        const accountsAchievedPercent = Math.round((totalAccounts / KPI_TARGETS.monthly.Accounts) * 100);
+        
+        return {
+            ccConventional,
+            ccIslamic,
+            ccAchievedPercent,
+            pilConventional,
+            pilIslamic,
+            pilAchievedPercent,
+            mdsa,
+            aspire,
+            privilege,
+            accountsAchievedPercent
+        };
+    }
+
+    // Count Credit Cards in product string
+    function countCreditCards(productString) {
+        if (!productString) return 0;
+        
+        const ccKeywords = ['Touchpoints', 'Cashback', 'Talabat', 'Lulu', 'Etihad', 'Shukran', 'All ', 'Traveller', 'Betaqti', 'Emirati'];
+        const products = productString.split(',').map(p => p.trim());
+        
+        let count = 0;
+        products.forEach(product => {
+            if (ccKeywords.some(keyword => product.includes(keyword)) || product === 'CC' || product === '2ndCC') {
+                count++;
+            }
+        });
+        
+        return count;
+    }
+
+    // Display KPI Report
+    function displayKpiReport(kpiData, monthName) {
+        document.getElementById('kpiCCConventional').textContent = kpiData.ccConventional;
+        document.getElementById('kpiCCIslamic').textContent = kpiData.ccIslamic;
+        document.getElementById('kpiCCAchieved').textContent = kpiData.ccAchievedPercent + '%';
+        
+        document.getElementById('kpiPILConventional').textContent = 'AED ' + kpiData.pilConventional.toLocaleString();
+        document.getElementById('kpiPILIslamic').textContent = 'AED ' + kpiData.pilIslamic.toLocaleString();
+        document.getElementById('kpiPILAchieved').textContent = kpiData.pilAchievedPercent + '%';
+        
+        document.getElementById('kpiMDSA').textContent = kpiData.mdsa;
+        document.getElementById('kpiAspire').textContent = kpiData.aspire;
+        document.getElementById('kpiPrivilege').textContent = kpiData.privilege;
+        document.getElementById('kpiAccountsAchieved').textContent = kpiData.accountsAchievedPercent + '%';
+        
+        // Show the report container
+        document.getElementById('kpiReportContainer').classList.remove('hidden');
+        document.getElementById('kpiChartsContainer').classList.remove('hidden');
+    }
+
+    // Load KPI Charts
+    async function loadKpiCharts() {
+        try {
+            const response = await fetch(`${scriptURL}?action=getKpiData`);
+            const data = await response.json();
+            
+            if (data.success && data.data.length > 0) {
+                createMonthlyTrendsChart(data.data);
+                createAnnualProgressChart(data.data);
+            }
+        } catch (error) {
+            console.error('Error loading KPI charts:', error);
+        }
+    }
+
+    // Create Monthly Trends Chart
+    function createMonthlyTrendsChart(kpiData) {
+        const ctx = document.getElementById('monthlyTrendsChart').getContext('2d');
+        
+        // Destroy existing chart if it exists
+        if (window.monthlyTrendsChart) {
+            window.monthlyTrendsChart.destroy();
+        }
+        
+        const months = kpiData.map(item => item.Month);
+        const ccAchieved = kpiData.map(item => parseFloat(item['CC Achieved %']) || 0);
+        const pilAchieved = kpiData.map(item => parseFloat(item['PIL Achieved %']) || 0);
+        const accountsAchieved = kpiData.map(item => parseFloat(item['Accounts Achieved %']) || 0);
+        
+        window.monthlyTrendsChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [
+                    {
+                        label: 'CC Achievement %',
+                        data: ccAchieved,
+                        borderColor: '#1A3A4A',
+                        backgroundColor: 'rgba(26, 58, 74, 0.1)',
+                        tension: 0.4
+                    },
+                    {
+                        label: 'PIL Achievement %',
+                        data: pilAchieved,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Accounts Achievement %',
+                        data: accountsAchieved,
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 150,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+
+    // Create Annual Progress Chart
+    function createAnnualProgressChart(kpiData) {
+        const ctx = document.getElementById('annualProgressChart').getContext('2d');
+        
+        // Destroy existing chart if it exists
+        if (window.annualProgressChart) {
+            window.annualProgressChart.destroy();
+        }
+        
+        // Calculate annual totals
+        const currentYear = new Date().getFullYear();
+        const currentYearData = kpiData.filter(item => item.Year == currentYear || !item.Year);
+        
+        let totalCC = 0, totalPIL = 0, totalAccounts = 0;
+        
+        currentYearData.forEach(item => {
+            totalCC += (parseInt(item['CC Conventional']) || 0) + (parseInt(item['CC Islamic']) || 0);
+            totalPIL += (parseFloat(item['PIL Conventional']) || 0) + (parseFloat(item['PIL Islamic']) || 0);
+            totalAccounts += (parseInt(item.MDSA) || 0) + (parseInt(item.Aspire) || 0) + (parseInt(item.Privilege) || 0);
+        });
+        
+        const ccProgress = Math.min((totalCC / KPI_TARGETS.annual.CC) * 100, 100);
+        const pilProgress = Math.min((totalPIL / KPI_TARGETS.annual.PIL) * 100, 100);
+        const accountsProgress = Math.min((totalAccounts / KPI_TARGETS.annual.Accounts) * 100, 100);
+        
+        window.annualProgressChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Credit Cards', 'Personal Loans', 'Accounts'],
+                datasets: [{
+                    data: [ccProgress, pilProgress, accountsProgress],
+                    backgroundColor: ['#1A3A4A', '#10b981', '#f59e0b'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.parsed.toFixed(1) + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Load KPI Trends for Predictive Analysis
+    async function loadKpiTrends() {
+        try {
+            const response = await fetch(`${scriptURL}?action=getKpiData`);
+            const data = await response.json();
+            
+            if (data.success) {
+                generatePredictiveInsights(null, data.data);
+            }
+        } catch (error) {
+            console.error('Error loading KPI trends:', error);
+            document.getElementById('kpiPredictions').innerHTML = '<div class="text-red-500">Error loading predictions</div>';
+        }
+    }
+
+    // Generate Predictive Insights
+    function generatePredictiveInsights(currentMonth, allKpiData = null) {
+        const predictionsEl = document.getElementById('kpiPredictions');
+        
+        if (!allKpiData || allKpiData.length < 2) {
+            predictionsEl.innerHTML = `
+                <div>• Need more data for predictions</div>
+                <div>• Save monthly KPI data to get insights</div>
+                <div>• Track trends for better forecasting</div>
+            `;
+            return;
+        }
+        
+        // Calculate trends and predictions
+        const recentData = allKpiData.slice(-3); // Last 3 months
+        
+        // Calculate average growth rates
+        let ccTrend = 0, pilTrend = 0, accountsTrend = 0;
+        
+        if (recentData.length >= 2) {
+            const latest = recentData[recentData.length - 1];
+            const previous = recentData[recentData.length - 2];
+            
+            const latestCC = (parseInt(latest['CC Conventional']) || 0) + (parseInt(latest['CC Islamic']) || 0);
+            const previousCC = (parseInt(previous['CC Conventional']) || 0) + (parseInt(previous['CC Islamic']) || 0);
+            
+            const latestPIL = (parseFloat(latest['PIL Conventional']) || 0) + (parseFloat(latest['PIL Islamic']) || 0);
+            const previousPIL = (parseFloat(previous['PIL Conventional']) || 0) + (parseFloat(previous['PIL Islamic']) || 0);
+            
+            const latestAccounts = (parseInt(latest.MDSA) || 0) + (parseInt(latest.Aspire) || 0) + (parseInt(latest.Privilege) || 0);
+            const previousAccounts = (parseInt(previous.MDSA) || 0) + (parseInt(previous.Aspire) || 0) + (parseInt(previous.Privilege) || 0);
+            
+            ccTrend = previousCC > 0 ? ((latestCC - previousCC) / previousCC) * 100 : 0;
+            pilTrend = previousPIL > 0 ? ((latestPIL - previousPIL) / previousPIL) * 100 : 0;
+            accountsTrend = previousAccounts > 0 ? ((latestAccounts - previousAccounts) / previousAccounts) * 100 : 0;
+        }
+        
+        const predictions = [];
+        
+        if (ccTrend > 10) {
+            predictions.push('• CC performance trending upward ↗️');
+        } else if (ccTrend < -10) {
+            predictions.push('• CC performance needs attention ⚠️');
+        } else {
+            predictions.push('• CC performance stable ➡️');
+        }
+        
+        if (pilTrend > 15) {
+            predictions.push('• PIL showing strong growth 📈');
+        } else if (pilTrend < -15) {
+            predictions.push('• PIL requires focus 🎯');
+        } else {
+            predictions.push('• PIL performance steady 📊');
+        }
+        
+        if (accountsTrend > 20) {
+            predictions.push('• Account opening accelerating 🚀');
+        } else if (accountsTrend < -20) {
+            predictions.push('• Account strategy review needed 🔍');
+        } else {
+            predictions.push('• Account performance consistent ✅');
+        }
+        
+        predictionsEl.innerHTML = predictions.join('<br>');
+    }
+
+    // ==========================================
+    // EXISTING FORM AND DATA FUNCTIONALITY
+    // ==========================================
+    
     // Get all form elements
     const entryForm = document.getElementById('entryForm');
     const cidInput = document.getElementById('cid');
@@ -1433,7 +2055,7 @@ body {
     const otherPointsSection = document.getElementById('otherPointsSection');
     const otherPointsInput = document.getElementById('otherPoints');
     const productOptionsContainer = document.getElementById('productOptionsContainer');
-    
+
     // Reset button
     document.getElementById('resetBtn').addEventListener('click', function() {
         resetForm();
@@ -1448,53 +2070,32 @@ body {
         otherBankingSection.classList.add('hidden');
         otherStatusSection.classList.add('hidden');
         
-        // Reset validation error messages
         document.getElementById('nameError').classList.add('hidden');
         document.getElementById('mobileError').classList.add('hidden');
         document.getElementById('productsError').classList.add('hidden');
 
-        // Hide update and delete buttons, show submit button
         document.getElementById('submitBtn').classList.remove('hidden');
         document.getElementById('updateBtn').classList.add('hidden');
         document.getElementById('deleteBtn').classList.add('hidden');
 
-        // Clear points
         pointsInput.value = '';
         
-        // Disable dependent checkboxes
         productSTL.disabled = true;
         product2ndCC.disabled = true;
-        
-        // Reset Other product checkbox
         productOther.checked = false;
         
-        // Enable CID input for new records
         cidInput.disabled = false;
         cidInput.readOnly = false;
         
-        // Clear any error styling
         document.querySelectorAll('.error-field').forEach(field => {
             field.classList.remove('error-field');
         });
         
-        // Clear stored product selections
-        currentSelections = {
-            ACC: '',
-            CC: '',
-            CCOption2: '',
-            PL: ''
-        };
-        
-        // Clear editing data
+        currentSelections = { ACC: '', CC: '', CCOption2: '', PL: '' };
         editingData = null;
-        
-        // Clear raw product string
         editingProductString = "";
         
-        // Reset ADCB override checkbox
         adcbOverrideCheckbox.checked = false;
-        
-        // Reset CC deduction override checkbox
         ccDeductionOverrideCheckbox.checked = false;
     }
 
@@ -1505,21 +2106,17 @@ body {
         } else {
             otherBankingSection.classList.add('hidden');
         }
-        // Recalculate points when banking changes (for CC point reduction)
         calculateTotalPoints();
     });
 
-    // ADCB override checkbox change event
     adcbOverrideCheckbox.addEventListener('change', function() {
         calculateTotalPoints();
     });
 
-    // CC Deduction override checkbox change event
     ccDeductionOverrideCheckbox.addEventListener('change', function() {
         calculateTotalPoints();
     });
 
-    // Status select change event
     statusSelect.addEventListener('change', function() {
         if (this.value === 'Other') {
             otherStatusSection.classList.remove('hidden');
@@ -1527,18 +2124,15 @@ body {
             otherStatusSection.classList.add('hidden');
         }
         
-        // Fix 3: If status is "Rejected", set points to 0
         if (this.value === 'Rejected') {
             pointsInput.value = '0';
         } else {
-            // Recalculate points if status is not "Rejected"
             calculateTotalPoints();
         }
     });
 
     // Product checkbox change events
     productACC.addEventListener('change', function() {
-        // Enable/disable STL checkbox based on ACC checkbox
         productSTL.disabled = !this.checked;
         if (!this.checked) {
             productSTL.checked = false;
@@ -1562,7 +2156,6 @@ body {
 
     productCC.addEventListener('change', function() {
         updateProductOptions();
-        // Enable/disable 2nd CC checkbox based on CC checkbox
         product2ndCC.disabled = !this.checked;
         if (!this.checked) {
             product2ndCC.checked = false;
@@ -1591,425 +2184,15 @@ body {
         calculateTotalPoints();
     });
 
-    // Proposition radio button change event
     document.querySelectorAll('input[name="proposition"]').forEach(radio => {
         radio.addEventListener('change', function() {
             updateProductOptions();
         });
     });
 
-    // Salary input change event
     salaryInput.addEventListener('input', function() {
         updateProductOptions();
     });
-
-    // Set today's date as the default date
-    document.addEventListener('DOMContentLoaded', function() {
-        const today = new Date().toISOString().split('T')[0];
-        dateInput.value = today;
-        
-        // Disable 2nd CC and STL initially
-        product2ndCC.disabled = true;
-        productSTL.disabled = true;
-        
-        // Initialize with Summary tab visible by default
-        showSection('summary');
-        
-        // Initialize profile dropdown
-        loadProfiles();
-
-        // Create a sample record for testing
-        allRecordsData = [
-            {
-                CID: "12345",
-                "App ID": "",
-                "Customer Name": "John Doe",
-                Mobile: "5551234567",
-                Product: "Touchpoints Gold Visa",
-                Status: "Completed",
-                Points: "250",
-                Date: "2023-05-22",
-                "Loan Amount": ""
-            },
-            {
-                CID: "67890",
-                "App ID": "A12345",
-                "Customer Name": "Jane Smith",
-                Mobile: "5559876543",
-                Product: "Privilege 20K-30K, PL",
-                Status: "Under Review",
-                Points: "650",
-                Date: "2023-05-23",
-                "Loan Amount": "50000"
-            }
-        ];
-        
-        // Initialize real-time search by customer name - search Master sheet
-        document.getElementById('searchName').addEventListener('input', async function() {
-            const searchTerm = this.value.toLowerCase().trim();
-            
-            if (searchTerm.length < 2) {
-                // Clear search results if input is too short
-                document.getElementById('searchResultsBody').innerHTML = '';
-                return;
-            }
-            
-            // Search Master sheet for customer name
-            try {
-                const response = await fetch(`${scriptURL}?action=searchMaster&cid=&name=${encodeURIComponent(searchTerm)}&mobile=`);
-                const data = await response.json();
-                
-                if (data.success) {
-                    displayDataInTable(data.data, 'searchResultsBody', true);
-                } else {
-                    document.getElementById('searchResultsBody').innerHTML = '<tr><td colspan="7" class="text-center py-4">Error searching Master sheet</td></tr>';
-                }
-            } catch (error) {
-                console.error('Error searching Master sheet:', error);
-                document.getElementById('searchResultsBody').innerHTML = '<tr><td colspan="7" class="text-center py-4">Error connecting to Master sheet</td></tr>';
-            }
-        });
-
-        // Add Enter key listeners for search inputs
-        document.getElementById('searchCID').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                searchData();
-            }
-        });
-
-        document.getElementById('searchName').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                searchData();
-            }
-        });
-
-        document.getElementById('searchMobile').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                searchData();
-            }
-        });
-    });
-
-    // ==========================================
-    // PRODUCT OPTIONS AND POINTS CALCULATION
-    // ==========================================
-
-    // Store current selections for dropdowns
-    let currentSelections = {
-        ACC: '',
-        CC: '',
-        CCOption2: '',
-        PL: ''
-    };
-    
-    // Store raw editing data
-    let editingData = null;
-    let editingProductString = "";
-    
-    // Function to initialize product option dropdowns based on edit data
-    function initializeProductOptions() {
-        if (!editingData) return;
-        
-        console.log("Initializing product options for editing data:", editingData);
-        
-        // If we're editing a record with product data
-        const proposition = document.querySelector('input[name="proposition"]:checked').value;
-        const salary = parseFloat(salaryInput.value) || 0;
-        
-        // Check what products should be shown based on the product string
-        if (productACC.checked) {
-            console.log("ACC is checked, adding ACC options");
-            const accOptions = getACCOptions(proposition, salary);
-            
-            if (accOptions.length > 0) {
-                const accDiv = createProductOptionDiv('ACC', accOptions);
-                productOptionsContainer.appendChild(accDiv);
-                
-                const accSelect = document.getElementById('ACCSelect');
-                if (accSelect) {
-                    console.log("Setting ACC select change event");
-                    accSelect.addEventListener('change', function() {
-                        // No STL disabling for Privilege options anymore (Fixed requirement 2B)
-                        calculateTotalPoints();
-                    });
-                    
-                    // Try to set the correct value
-                    setAccDropdownValue(accSelect, editingData, salary);
-                }
-            }
-        }
-        
-        // Create CC dropdown if needed
-        if (productCC.checked) {
-            console.log("CC is checked, adding CC options");
-            const ccOptions = getCCOptions(proposition);
-            
-            if (ccOptions.length > 0) {
-                const ccDiv = createProductOptionDiv('CC', ccOptions);
-                productOptionsContainer.appendChild(ccDiv);
-                
-                const ccSelect = document.getElementById('CCSelect');
-                if (ccSelect) {
-                    console.log("Setting CC select change event");
-                    ccSelect.addEventListener('change', calculateTotalPoints);
-                    
-                    // Try to set the correct value
-                    setCcDropdownValue(ccSelect, editingData);
-                }
-            }
-            
-            // Add 2nd CC options if checked
-            if (product2ndCC.checked) {
-                console.log("2nd CC is checked, adding 2nd CC options");
-                const ccOptions = getCCOptions(proposition);
-                
-                if (ccOptions.length > 0) {
-                    const cc2Div = createProductOptionDiv('CC2', ccOptions, '2nd CC');
-                    productOptionsContainer.appendChild(cc2Div);
-                    
-                    const cc2Select = document.getElementById('CCSelect2');
-                    if (cc2Select) {
-                        console.log("Setting 2nd CC select change event");
-                        cc2Select.addEventListener('change', calculateTotalPoints);
-                        
-                        // Try to set the correct value for 2nd CC
-                        setCc2DropdownValue(cc2Select, editingData, editingProductString);
-                    }
-                }
-            }
-        }
-        
-        // Create PL dropdown if needed
-        if (productPL.checked) {
-            console.log("PL is checked, adding PL options");
-            const plOptions = getPLOptions(proposition);
-            
-            if (plOptions.length > 0) {
-                const plDiv = createProductOptionDiv('PL', plOptions);
-                productOptionsContainer.appendChild(plDiv);
-                
-                const plSelect = document.getElementById('PLSelect');
-                if (plSelect) {
-                    console.log("Setting PL select change event");
-                    plSelect.addEventListener('change', calculateTotalPoints);
-                    
-                    // Try to set the correct value
-                    setPlDropdownValue(plSelect, editingData);
-                }
-                
-                // Add change event to loan amount input
-                loanAmountInput.addEventListener('input', calculateTotalPoints);
-            }
-        }
-        
-        // Calculate points
-        calculateTotalPoints();
-    }
-    
-    // Helper functions to set dropdown values correctly
-    function setAccDropdownValue(accSelect, data, salary) {
-        if (!accSelect) return;
-        
-        console.log("Trying to set ACC dropdown value");
-        
-        // First check if we have explicit accOption from the server
-        if (data.accOption) {
-            console.log("Using explicit accOption from server:", data.accOption);
-            // Find the option that matches
-            for (let i = 0; i < accSelect.options.length; i++) {
-                if (accSelect.options[i].value === data.accOption) {
-                    accSelect.selectedIndex = i;
-                    console.log("Found matching ACC option at index", i);
-                    return;
-                }
-            }
-        }
-        
-        // If no explicit option or not found, try to match from product string
-        if (editingProductString) {
-            console.log("Checking product string for ACC option:", editingProductString);
-            // Check for specific ACC product names
-            if (editingProductString.includes("MDSA")) {
-                selectOptionByText(accSelect, "MDSA");
-            } else if (editingProductString.includes("Privilege 20K-40K")) {
-                selectOptionByText(accSelect, "Privilege 20K-40K");
-            } else if (editingProductString.includes("Privilege 40K")) {
-                selectOptionByText(accSelect, "Privilege 40K");
-            } else if (editingProductString.includes("Aspire 5K-10K")) {
-                selectOptionByText(accSelect, "Aspire 5K-10K");
-            } else if (editingProductString.includes("Aspire 10K-20K")) {
-                selectOptionByText(accSelect, "Aspire 10K-20K");
-            }
-        }
-        
-        // If still no match, try to match based on salary
-        if (accSelect.selectedIndex === 0) {
-            console.log("No match found, trying to set based on salary:", salary);
-            // Find the best option based on salary range
-            for (let i = 1; i < accSelect.options.length; i++) {
-                const option = accSelect.options[i];
-                const minSalary = parseInt(option.dataset.minsalary) || 0;
-                const maxSalary = parseInt(option.dataset.maxsalary) || Infinity;
-                
-                if (salary >= minSalary && salary <= maxSalary) {
-                    accSelect.selectedIndex = i;
-                    console.log("Found salary-matching ACC option at index", i);
-                    break;
-                }
-            }
-        }
-    }
-    
-    function setCcDropdownValue(ccSelect, data) {
-        if (!ccSelect) return;
-        
-        console.log("Trying to set CC dropdown value");
-        
-        // First check if we have explicit ccOption from the server
-        if (data.ccOption) {
-            console.log("Using explicit ccOption from server:", data.ccOption);
-            // Find the option that matches
-            for (let i = 0; i < ccSelect.options.length; i++) {
-                if (ccSelect.options[i].value === data.ccOption) {
-                    ccSelect.selectedIndex = i;
-                    console.log("Found matching CC option at index", i);
-                    return;
-                }
-            }
-        }
-        
-        // If no explicit option or not found, try to match from product string
-        if (editingProductString) {
-            console.log("Checking product string for CC option:", editingProductString);
-            
-            // Extract CC product names from the string
-            const products = editingProductString.split(',').map(p => p.trim());
-            const ccProductsInSheet = products.filter(p => 
-                p.includes("Touchpoints") || 
-                p.includes("Cashback") ||
-                p.includes("Talabat") ||
-                p.includes("Visa") ||
-                p.includes("MC")
-            );
-            
-            // If we found CC products, use the first one
-            if (ccProductsInSheet.length > 0) {
-                console.log("Found CC product in sheet:", ccProductsInSheet[0]);
-                selectOptionByText(ccSelect, ccProductsInSheet[0]);
-            }
-        }
-    }
-    
-    function setCc2DropdownValue(cc2Select, data, productString) {
-        if (!cc2Select) return;
-        
-        console.log("Trying to set 2nd CC dropdown value");
-        
-        // First check if we have explicit ccOption2 from the server
-        if (data.ccOption2) {
-            console.log("Using explicit ccOption2 from server:", data.ccOption2);
-            // Find the option that matches
-            for (let i = 0; i < cc2Select.options.length; i++) {
-                if (cc2Select.options[i].value === data.ccOption2) {
-                    cc2Select.selectedIndex = i;
-                    console.log("Found matching 2nd CC option at index", i);
-                    return;
-                }
-            }
-        }
-        
-        // If no explicit option or not found, try to match from product string
-        if (productString) {
-            console.log("Checking product string for 2nd CC option:", productString);
-            
-            // Extract CC product names from the string
-            const products = productString.split(',').map(p => p.trim());
-            const ccProductsInSheet = products.filter(p => 
-                p.includes("Touchpoints") || 
-                p.includes("Cashback") ||
-                p.includes("Talabat") ||
-                p.includes("Visa") ||
-                p.includes("MC")
-            );
-            
-            // If we found more than one CC product, use the second one
-            if (ccProductsInSheet.length > 1) {
-                console.log("Found 2nd CC product in sheet:", ccProductsInSheet[1]);
-                selectOptionByText(cc2Select, ccProductsInSheet[1]);
-            }
-        }
-    }
-    
-    function setPlDropdownValue(plSelect, data) {
-        if (!plSelect) return;
-        
-        console.log("Trying to set PL dropdown value");
-        
-        // First check if we have explicit plOption from the server
-        if (data.plOption) {
-            console.log("Using explicit plOption from server:", data.plOption);
-            // Find the option that matches
-            for (let i = 0; i < plSelect.options.length; i++) {
-                if (plSelect.options[i].value === data.plOption) {
-                    plSelect.selectedIndex = i;
-                    console.log("Found matching PL option at index", i);
-                    return;
-                }
-            }
-        }
-        
-        // If no explicit option or not found, try to match from product string
-        if (editingProductString) {
-            console.log("Checking product string for PL option:", editingProductString);
-            
-            // Check for specific PL product names
-            if (editingProductString.includes("Asipire Cat A & B")) {
-                selectOptionByText(plSelect, "Asipire Cat A & B");
-            } else if (editingProductString.includes("Privilege Cat A & B")) {
-                selectOptionByText(plSelect, "Privilege Cat A & B");
-            } else if (editingProductString.includes("Aspire Cat C & Below")) {
-                selectOptionByText(plSelect, "Aspire Cat C & Below");
-            } else if (editingProductString.includes("Privilege Cat C & Below")) {
-                selectOptionByText(plSelect, "Privilege Cat C & Below");
-            }
-        }
-    }
-    
-    // Helper function to select an option by its display text
-    function selectOptionByText(selectElement, searchText) {
-        if (!selectElement) return false;
-        
-        console.log(`Searching for option with text "${searchText}" in`, selectElement);
-        
-        for (let i = 0; i < selectElement.options.length; i++) {
-            const optionText = selectElement.options[i].text;
-            
-            // Try exact match first
-            if (optionText === searchText) {
-                selectElement.selectedIndex = i;
-                console.log(`Found exact match at index ${i}: ${optionText}`);
-                return true;
-            }
-            
-            // Then try contains match
-            if (optionText.includes(searchText) || searchText.includes(optionText)) {
-                selectElement.selectedIndex = i;
-                console.log(`Found partial match at index ${i}: ${optionText}`);
-                return true;
-            }
-            
-            // Try without parentheses (e.g., "Aspire 5K-10K (Salary: 5000-9999)" -> "Aspire 5K-10K")
-            const baseOptionText = optionText.split(' (')[0];
-            if (baseOptionText === searchText || searchText.includes(baseOptionText) || baseOptionText.includes(searchText)) {
-                selectElement.selectedIndex = i;
-                console.log(`Found base text match at index ${i}: ${baseOptionText}`);
-                return true;
-            }
-        }
-        
-        console.log(`No matching option found for "${searchText}"`);
-        return false;
-    }
 
     // Initialize product options when proposition or products change
     function updateProductOptions() {
@@ -2024,12 +2207,9 @@ body {
         if (ccSelect2) currentSelections.CCOption2 = ccSelect2.value;
         if (plSelect) currentSelections.PL = plSelect.value;
         
-        // Clear existing dropdowns
         productOptionsContainer.innerHTML = '';
         
-        // Check if we're in edit mode with data
         if (editingData) {
-            console.log("Updating product options with editing data");
             initializeProductOptions();
             return;
         }
@@ -2037,56 +2217,46 @@ body {
         const proposition = document.querySelector('input[name="proposition"]:checked').value;
         const salary = parseFloat(salaryInput.value) || 0;
         
-        // Process ACC product
         if (productACC.checked) {
             const accOptions = getACCOptions(proposition, salary);
             if (accOptions.length > 0) {
                 const accDiv = createProductOptionDiv('ACC', accOptions);
                 productOptionsContainer.appendChild(accDiv);
                 
-                // Add change event to ACC select
                 const newAccSelect = accDiv.querySelector('select');
                 newAccSelect.addEventListener('change', function() {
-                    // Fixed: Remove STL disabling logic for Privilege options
                     calculateTotalPoints();
                 });
                 
-                // Restore previous selection if it exists
                 if (currentSelections.ACC && newAccSelect.querySelector(`option[value="${currentSelections.ACC}"]`)) {
                     newAccSelect.value = currentSelections.ACC;
                 }
             }
         }
         
-        // Process CC product
         if (productCC.checked) {
             const ccOptions = getCCOptions(proposition);
             if (ccOptions.length > 0) {
                 const ccDiv = createProductOptionDiv('CC', ccOptions);
                 productOptionsContainer.appendChild(ccDiv);
                 
-                // Add change event to CC select
                 const newCcSelect = ccDiv.querySelector('select');
                 newCcSelect.addEventListener('change', calculateTotalPoints);
                 
-                // Restore previous selection if it exists
                 if (currentSelections.CC && newCcSelect.querySelector(`option[value="${currentSelections.CC}"]`)) {
                     newCcSelect.value = currentSelections.CC;
                 }
             }
             
-            // Process 2nd CC product (only when CC is checked and 2ndCC is checked)
             if (product2ndCC.checked) {
                 const ccOptions = getCCOptions(proposition);
                 if (ccOptions.length > 0) {
                     const cc2Div = createProductOptionDiv('CC2', ccOptions, '2nd CC');
                     productOptionsContainer.appendChild(cc2Div);
                     
-                    // Add change event to 2nd CC select
                     const newCc2Select = cc2Div.querySelector('select');
                     newCc2Select.addEventListener('change', calculateTotalPoints);
                     
-                    // Restore previous selection if it exists
                     if (currentSelections.CCOption2 && newCc2Select.querySelector(`option[value="${currentSelections.CCOption2}"]`)) {
                         newCc2Select.value = currentSelections.CCOption2;
                     }
@@ -2094,29 +2264,247 @@ body {
             }
         }
         
-        // Process PL product
         if (productPL.checked) {
             const plOptions = getPLOptions(proposition);
             if (plOptions.length > 0) {
                 const plDiv = createProductOptionDiv('PL', plOptions);
                 productOptionsContainer.appendChild(plDiv);
                 
-                // Add change event to PL select
                 const newPlSelect = plDiv.querySelector('select');
                 newPlSelect.addEventListener('change', calculateTotalPoints);
                 
-                // Restore previous selection if it exists
                 if (currentSelections.PL && newPlSelect.querySelector(`option[value="${currentSelections.PL}"]`)) {
                     newPlSelect.value = currentSelections.PL;
                 }
                 
-                // Add change event to Loan Amount input
                 loanAmountInput.addEventListener('input', calculateTotalPoints);
             }
         }
         
-        // Calculate total points
         calculateTotalPoints();
+    }
+
+    // Function to initialize product options based on edit data
+    function initializeProductOptions() {
+        if (!editingData) return;
+        
+        const proposition = document.querySelector('input[name="proposition"]:checked').value;
+        const salary = parseFloat(salaryInput.value) || 0;
+        
+        if (productACC.checked) {
+            const accOptions = getACCOptions(proposition, salary);
+            
+            if (accOptions.length > 0) {
+                const accDiv = createProductOptionDiv('ACC', accOptions);
+                productOptionsContainer.appendChild(accDiv);
+                
+                const accSelect = document.getElementById('ACCSelect');
+                if (accSelect) {
+                    accSelect.addEventListener('change', function() {
+                        calculateTotalPoints();
+                    });
+                    
+                    setAccDropdownValue(accSelect, editingData, salary);
+                }
+            }
+        }
+        
+        if (productCC.checked) {
+            const ccOptions = getCCOptions(proposition);
+            
+            if (ccOptions.length > 0) {
+                const ccDiv = createProductOptionDiv('CC', ccOptions);
+                productOptionsContainer.appendChild(ccDiv);
+                
+                const ccSelect = document.getElementById('CCSelect');
+                if (ccSelect) {
+                    ccSelect.addEventListener('change', calculateTotalPoints);
+                    setCcDropdownValue(ccSelect, editingData);
+                }
+            }
+            
+            if (product2ndCC.checked) {
+                const ccOptions = getCCOptions(proposition);
+                
+                if (ccOptions.length > 0) {
+                    const cc2Div = createProductOptionDiv('CC2', ccOptions, '2nd CC');
+                    productOptionsContainer.appendChild(cc2Div);
+                    
+                    const cc2Select = document.getElementById('CCSelect2');
+                    if (cc2Select) {
+                        cc2Select.addEventListener('change', calculateTotalPoints);
+                        setCc2DropdownValue(cc2Select, editingData, editingProductString);
+                    }
+                }
+            }
+        }
+        
+        if (productPL.checked) {
+            const plOptions = getPLOptions(proposition);
+            
+            if (plOptions.length > 0) {
+                const plDiv = createProductOptionDiv('PL', plOptions);
+                productOptionsContainer.appendChild(plDiv);
+                
+                const plSelect = document.getElementById('PLSelect');
+                if (plSelect) {
+                    plSelect.addEventListener('change', calculateTotalPoints);
+                    setPlDropdownValue(plSelect, editingData);
+                }
+                
+                loanAmountInput.addEventListener('input', calculateTotalPoints);
+            }
+        }
+        
+        calculateTotalPoints();
+    }
+    
+    // Helper functions to set dropdown values correctly
+    function setAccDropdownValue(accSelect, data, salary) {
+        if (!accSelect) return;
+        
+        if (data.accOption) {
+            for (let i = 0; i < accSelect.options.length; i++) {
+                if (accSelect.options[i].value === data.accOption) {
+                    accSelect.selectedIndex = i;
+                    return;
+                }
+            }
+        }
+        
+        if (editingProductString) {
+            if (editingProductString.includes("MDSA")) {
+                selectOptionByText(accSelect, "MDSA");
+            } else if (editingProductString.includes("Privilege 20K-40K")) {
+                selectOptionByText(accSelect, "Privilege 20K-40K");
+            } else if (editingProductString.includes("Privilege 40K")) {
+                selectOptionByText(accSelect, "Privilege 40K");
+            } else if (editingProductString.includes("Aspire 5K-10K")) {
+                selectOptionByText(accSelect, "Aspire 5K-10K");
+            } else if (editingProductString.includes("Aspire 10K-20K")) {
+                selectOptionByText(accSelect, "Aspire 10K-20K");
+            }
+        }
+        
+        if (accSelect.selectedIndex === 0) {
+            for (let i = 1; i < accSelect.options.length; i++) {
+                const option = accSelect.options[i];
+                const minSalary = parseInt(option.dataset.minsalary) || 0;
+                const maxSalary = parseInt(option.dataset.maxsalary) || Infinity;
+                
+                if (salary >= minSalary && salary <= maxSalary) {
+                    accSelect.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+    }
+    
+    function setCcDropdownValue(ccSelect, data) {
+        if (!ccSelect) return;
+        
+        if (data.ccOption) {
+            for (let i = 0; i < ccSelect.options.length; i++) {
+                if (ccSelect.options[i].value === data.ccOption) {
+                    ccSelect.selectedIndex = i;
+                    return;
+                }
+            }
+        }
+        
+        if (editingProductString) {
+            const products = editingProductString.split(',').map(p => p.trim());
+            const ccProductsInSheet = products.filter(p => 
+                p.includes("Touchpoints") || 
+                p.includes("Cashback") ||
+                p.includes("Talabat") ||
+                p.includes("Visa") ||
+                p.includes("MC")
+            );
+            
+            if (ccProductsInSheet.length > 0) {
+                selectOptionByText(ccSelect, ccProductsInSheet[0]);
+            }
+        }
+    }
+    
+    function setCc2DropdownValue(cc2Select, data, productString) {
+        if (!cc2Select) return;
+        
+        if (data.ccOption2) {
+            for (let i = 0; i < cc2Select.options.length; i++) {
+                if (cc2Select.options[i].value === data.ccOption2) {
+                    cc2Select.selectedIndex = i;
+                    return;
+                }
+            }
+        }
+        
+        if (productString) {
+            const products = productString.split(',').map(p => p.trim());
+            const ccProductsInSheet = products.filter(p => 
+                p.includes("Touchpoints") || 
+                p.includes("Cashback") ||
+                p.includes("Talabat") ||
+                p.includes("Visa") ||
+                p.includes("MC")
+            );
+            
+            if (ccProductsInSheet.length > 1) {
+                selectOptionByText(cc2Select, ccProductsInSheet[1]);
+            }
+        }
+    }
+    
+    function setPlDropdownValue(plSelect, data) {
+        if (!plSelect) return;
+        
+        if (data.plOption) {
+            for (let i = 0; i < plSelect.options.length; i++) {
+                if (plSelect.options[i].value === data.plOption) {
+                    plSelect.selectedIndex = i;
+                    return;
+                }
+            }
+        }
+        
+        if (editingProductString) {
+            if (editingProductString.includes("Asipire Cat A & B")) {
+                selectOptionByText(plSelect, "Asipire Cat A & B");
+            } else if (editingProductString.includes("Privilege Cat A & B")) {
+                selectOptionByText(plSelect, "Privilege Cat A & B");
+            } else if (editingProductString.includes("Aspire Cat C & Below")) {
+                selectOptionByText(plSelect, "Aspire Cat C & Below");
+            } else if (editingProductString.includes("Privilege Cat C & Below")) {
+                selectOptionByText(plSelect, "Privilege Cat C & Below");
+            }
+        }
+    }
+    
+    function selectOptionByText(selectElement, searchText) {
+        if (!selectElement) return false;
+        
+        for (let i = 0; i < selectElement.options.length; i++) {
+            const optionText = selectElement.options[i].text;
+            
+            if (optionText === searchText) {
+                selectElement.selectedIndex = i;
+                return true;
+            }
+            
+            if (optionText.includes(searchText) || searchText.includes(optionText)) {
+                selectElement.selectedIndex = i;
+                return true;
+            }
+            
+            const baseOptionText = optionText.split(' (')[0];
+            if (baseOptionText === searchText || searchText.includes(baseOptionText) || baseOptionText.includes(searchText)) {
+                selectElement.selectedIndex = i;
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     // Create a product option div with dropdown
@@ -2166,14 +2554,11 @@ body {
     function getACCOptions(proposition, salary) {
         const options = [];
         
-        // Add all options regardless of salary, but annotate with requirements
         options.push({ value: "Aspire5K-10K", text: "Aspire 5K-10K (Salary: 5000-9999)", points: 150, minSalary: 5000, maxSalary: 9999, disableSTL: false });
         options.push({ value: "Aspire10K-20K", text: "Aspire 10K-20K (Salary: 10000-19999)", points: 400, minSalary: 10000, maxSalary: 19999, disableSTL: false });
-        // Fixed: Remove STL disabling for Privilege options (requirement 2B)
         options.push({ value: "Privilege20K-40K", text: "Privilege 20K-40K (Salary: 20000-39999)", points: 550, minSalary: 20000, maxSalary: 39999, disableSTL: false });
         options.push({ value: "Privilege40K+", text: "Privilege 40K & Above (Salary: 40000+)", points: 800, minSalary: 40000, maxSalary: Infinity, disableSTL: false });
         
-        // Add Islamic-specific option
         if (proposition === "Islamic" || proposition === "Both") {
             options.push({ 
                 value: "MDSA", 
@@ -2224,12 +2609,10 @@ body {
                 { value: "EmiratiIslamicInfiniteVisa", text: "Emirati Islamic Infinite Visa", points: 750, paid: true }
             ];
         } else if (proposition === "Both") {
-            // Combine both lists and remove duplicates
             const conventional = getCCOptions("Conventional");
             const islamic = getCCOptions("Islamic");
             const combinedOptions = [...conventional];
             
-            // Add Islamic options that don't exist in conventional
             islamic.forEach(islamicOption => {
                 if (!conventional.some(convOption => convOption.value === islamicOption.value)) {
                     combinedOptions.push(islamicOption);
@@ -2244,7 +2627,6 @@ body {
 
     // Get PL options based on proposition
     function getPLOptions(proposition) {
-        // Same options for all propositions
         return [
             { value: "AspireCatAB", text: "Asipire Cat A & B", points: "0.50%" },
             { value: "PrivilegeCatAB", text: "Privilege Cat A & B", points: "0.50%" },
@@ -2255,7 +2637,6 @@ body {
 
     // Calculate total points based on selected options
     function calculateTotalPoints() {
-        // Fix 3: If status is "Rejected", set points to 0 and return
         if (statusSelect.value === 'Rejected') {
             pointsInput.value = '0';
             return;
@@ -2263,70 +2644,57 @@ body {
         
         let totalPoints = 0;
         
-        // Calculate points for ACC
         if (productACC.checked) {
             const accSelect = document.getElementById('ACCSelect');
             if (accSelect && accSelect.value) {
                 const selectedOption = accSelect.options[accSelect.selectedIndex];
                 const accPoints = parseInt(selectedOption.dataset.points) || 0;
                 
-                // Requirement 3B: If ACC is checked, ignore Banking and count 100%
                 if (productSTL.checked && !productSTL.disabled) {
-                    totalPoints += accPoints; // Always 100% for ACC when STL is checked
+                    totalPoints += accPoints;
                 }
-                
-                // No extra points for STL itself - STL checkbox only enables points calculation
             }
         }
         
-        // Calculate points for CC
         if (productCC.checked) {
             const ccSelect = document.getElementById('CCSelect');
             if (ccSelect && ccSelect.value) {
                 const selectedOption = ccSelect.options[ccSelect.selectedIndex];
                 let ccPoints = parseInt(selectedOption.dataset.points) || 0;
                 
-                // Requirement 3B: If ACC is checked, ignore Banking selection
                 if (!productACC.checked) {
-                    // Check for ADCB override checkbox first (requirement 2A)
                     if (!adcbOverrideCheckbox.checked && bankingSelect.value !== 'ADCB') {
-                        ccPoints = Math.round(ccPoints * 0.7); // 30% reduction
+                        ccPoints = Math.round(ccPoints * 0.7);
                     }
                 }
                 
-                // Requirement 3A: Check for 40% deduction override
                 if (ccDeductionOverrideCheckbox.checked) {
-                    ccPoints = Math.round(ccPoints * 0.6); // 40% deduction (60% remaining)
+                    ccPoints = Math.round(ccPoints * 0.6);
                 }
                 
                 totalPoints += ccPoints;
                 
-                // Check for 2nd CC (do not apply 40% deduction to 2nd CC as per requirement 3A)
                 if (product2ndCC.checked) {
                     const cc2Select = document.getElementById('CCSelect2');
                     if (cc2Select && cc2Select.value) {
                         const selectedOption2 = cc2Select.options[cc2Select.selectedIndex];
                         const isPaid = selectedOption2.dataset.paid === "true";
                         
-                        // Change 2: Set 2nd CC free cards to 80 points (paid remains the same at 250)
                         totalPoints += isPaid ? 250 : 80;
                     }
                 }
             }
         }
         
-        // Add points for BT/CCL
         if (productBTCCL.checked) {
             totalPoints += 100;
         }
         
-        // Add other points (miscellaneous)
         if (productOther.checked) {
             const otherPointsValue = parseFloat(otherPointsInput.value) || 0;
             totalPoints += otherPointsValue;
         }
         
-        // Calculate points for PL
         if (productPL.checked) {
             const plSelect = document.getElementById('PLSelect');
             const loanAmount = parseFloat(loanAmountInput.value) || 0;
@@ -2343,16 +2711,12 @@ body {
             }
         }
         
-        // Update points input
         pointsInput.value = totalPoints.toFixed(2);
     }
 
     // ==========================================
     // GOOGLE SHEETS INTEGRATION
     // ==========================================
-
-    // Google Apps Script Web App URL
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwngb8Ka97Re88mDNaT60W-b_Ts4VQTf0DKSrJVUXra1Za8OtdNbG4gmrWIwfSSXaz9Rg/exec';
 
     // Fetch all data from Google Sheets
     async function fetchAllData() {
@@ -2362,45 +2726,17 @@ body {
             const data = await response.json();
             
             if (data.success) {
-                // Store all data for "Show All" functionality
                 allRecordsData = data.data;
                 
-                // If no data from server, use test data
                 if (!allRecordsData || allRecordsData.length === 0) {
-                    console.log("No data returned from server, using test data");
-                    allRecordsData = [
-                        {
-                            CID: "12345",
-                            "App ID": "",
-                            "Customer Name": "John Doe",
-                            Mobile: "5551234567",
-                            Product: "Touchpoints Gold Visa",
-                            Status: "Completed",
-                            Points: "250",
-                            Date: "2023-05-22",
-                            "Loan Amount": ""
-                        },
-                        {
-                            CID: "67890",
-                            "App ID": "A12345",
-                            "Customer Name": "Jane Smith",
-                            Mobile: "5559876543",
-                            Product: "Privilege 20K-30K, PL",
-                            Status: "Under Review",
-                            Points: "650",
-                            Date: "2023-05-23",
-                            "Loan Amount": "50000"
-                        }
-                    ];
+                    allRecordsData = [];
                 }
                 
-                // Fix 3: Display only last 10 records initially
                 isShowingAllRecords = false;
-                const displayData = allRecordsData.slice(-maxInitialRecords); // Get last 10 records
+                const displayData = allRecordsData.slice(-maxInitialRecords);
                 displayDataInTable(displayData, 'dataTableBody');
                 calculatePointsTotals(allRecordsData);
                 
-                // Show or hide the "Show All" button based on data length
                 const showMoreContainer = document.getElementById('showMoreContainer');
                 if (allRecordsData.length > maxInitialRecords) {
                     showMoreContainer.classList.remove('hidden');
@@ -2412,45 +2748,12 @@ body {
             }
         } catch (error) {
             console.error('Error fetching data:', error);
-            showSuccess('Error fetching data from server. Using test data instead.');
-            
-            // Use test data if there's an error
-            allRecordsData = [
-                {
-                    CID: "12345",
-                    "App ID": "",
-                    "Customer Name": "John Doe",
-                    Mobile: "5551234567",
-                    Product: "Touchpoints Gold Visa",
-                    Status: "Completed",
-                    Points: "250",
-                    Date: "2023-05-22",
-                    "Loan Amount": ""
-                },
-                {
-                    CID: "67890",
-                    "App ID": "A12345",
-                    "Customer Name": "Jane Smith",
-                    Mobile: "5559876543",
-                    Product: "Privilege 20K-30K, PL",
-                    Status: "Under Review",
-                    Points: "650",
-                    Date: "2023-05-23",
-                    "Loan Amount": "50000"
-                }
-            ];
-            
-            displayDataInTable(allRecordsData, 'dataTableBody');
-            calculatePointsTotals(allRecordsData);
-            
-            // No "Show All" button needed for test data
-            document.getElementById('showMoreContainer').classList.add('hidden');
+            showSuccess('Error fetching data from server.');
         } finally {
             hideLoading();
         }
     }
 
-    // Fix 3: Show All Records button event handler
     document.getElementById('showAllRecordsBtn').addEventListener('click', function() {
         if (!isShowingAllRecords && allRecordsData.length > 0) {
             displayDataInTable(allRecordsData, 'dataTableBody');
@@ -2464,14 +2767,12 @@ body {
         }
     });
 
-    // Calculate and display point totals
     function calculatePointsTotals(data) {
         let earnedPoints = 0;
         let pendingPoints = 0;
         
         data.forEach(record => {
             const points = parseFloat(record.Points) || 0;
-            // Fix 3: Only count points if status is not Rejected
             if (record.Status === 'Completed') {
                 earnedPoints += points;
             } else if (record.Status !== 'Rejected') {
@@ -2483,7 +2784,6 @@ body {
         document.getElementById('pendingPointsTotal').textContent = Math.round(pendingPoints);
     }
 
-    // Fetch all data for the summary page
     async function fetchAllDataForSummary() {
         showLoading();
         try {
@@ -2494,78 +2794,17 @@ body {
                 populateSummaryData(data.data);
             } else {
                 showSuccess(`Error: ${data.error}`);
-                // Use test data for the summary
-                populateSummaryData([
-                    {
-                        CID: "12345",
-                        "App ID": "",
-                        "Customer Name": "John Doe",
-                        Mobile: "5551234567",
-                        Product: "Touchpoints Gold Visa",
-                        Status: "Completed",
-                        Points: "250",
-                        Date: "2023-05-22",
-                        "Loan Amount": "",
-                        Proposition: "Conventional",
-                        Scheme: "TML ALL"
-                    },
-                    {
-                        CID: "67890",
-                        "App ID": "A12345",
-                        "Customer Name": "Jane Smith",
-                        Mobile: "5559876543",
-                        Product: "Privilege 20K-30K, PL",
-                        Status: "Under Review",
-                        Points: "650",
-                        Date: "2023-05-23",
-                        "Loan Amount": "50000",
-                        Proposition: "Both",
-                        Scheme: "TML CC"
-                    }
-                ]);
             }
         } catch (error) {
             console.error('Error fetching data for summary:', error);
-            showSuccess('Error fetching data from server. Using test data for summary.');
-            
-            // Use test data for the summary
-            populateSummaryData([
-                {
-                    CID: "12345",
-                    "App ID": "",
-                    "Customer Name": "John Doe",
-                    Mobile: "5551234567",
-                    Product: "Touchpoints Gold Visa",
-                    Status: "Completed",
-                    Points: "250",
-                    Date: "2023-05-22",
-                    "Loan Amount": "",
-                    Proposition: "Conventional",
-                    Scheme: "TML ALL"
-                },
-                {
-                    CID: "67890",
-                    "App ID": "A12345",
-                    "Customer Name": "Jane Smith",
-                    Mobile: "5559876543",
-                    Product: "Privilege 20K-30K, PL",
-                    Status: "Under Review",
-                    Points: "650",
-                    Date: "2023-05-23",
-                    "Loan Amount": "50000",
-                    Proposition: "Both",
-                    Scheme: "TML CC"
-                }
-            ]);
+            showSuccess('Error fetching data from server.');
         } finally {
             hideLoading();
         }
     }
 
-    // Populate the summary data
     function populateSummaryData(data) {
         if (!data || data.length === 0) {
-            // Use default values if no data
             document.getElementById('summaryEarnedPoints').textContent = "0";
             document.getElementById('summaryPendingPoints').textContent = "0";
             document.getElementById('summaryTotalPoints').textContent = "0";
@@ -2586,36 +2825,15 @@ body {
             return;
         }
         
-        // Initialize counters
-        let earnedPoints = 0;
-        let pendingPoints = 0;
+        let earnedPoints = 0, pendingPoints = 0;
+        let inProgressCC = 0, completedCC = 0;
+        let inProgressLoanAmount = 0, completedLoanAmount = 0;
+        let inProgressMDSA = 0, completedMDSA = 0;
+        let inProgressPrivilege = 0, completedPrivilege = 0;
+        let conventionalCount = 0, islamicCount = 0, bothCount = 0;
+        let aspireCount = 0, privilegeCount = 0, mdsaCount = 0;
+        let tmlAllCount = 0, tmlCCCount = 0, tmSelectCount = 0, ntmlCount = 0;
         
-        let inProgressCC = 0;
-        let completedCC = 0;
-        
-        let inProgressLoanAmount = 0;
-        let completedLoanAmount = 0;
-        
-        let inProgressMDSA = 0;
-        let completedMDSA = 0;
-        
-        let inProgressPrivilege = 0;
-        let completedPrivilege = 0;
-        
-        let conventionalCount = 0;
-        let islamicCount = 0;
-        let bothCount = 0;
-        
-        let aspireCount = 0;
-        let privilegeCount = 0;
-        let mdsaCount = 0;
-        
-        let tmlAllCount = 0;
-        let tmlCCCount = 0;
-        let tmSelectCount = 0;
-        let ntmlCount = 0;
-        
-        // Process each record directly from the Google Sheet data
         data.forEach(record => {
             const points = parseFloat(record.Points) || 0;
             const isCompleted = record.Status === 'Completed';
@@ -2625,21 +2843,16 @@ body {
             const scheme = record.Scheme || '';
             const loanAmount = parseFloat(record['Loan Amount']) || 0;
             
-            // Fix 3: Calculate Earned/Pending Points based on Status
             if (isCompleted) {
                 earnedPoints += points;
-            } else if (!isRejected) { // Skip rejected records
+            } else if (!isRejected) {
                 pendingPoints += points;
             }
             
-            // Improved logic for counting credit cards
             let ccCount = 0;
-            
-            // Get all possible credit card names from our dropdown options
-            const ccOptions = getCCOptions('Both'); // Get all CC options (both conventional and Islamic)
+            const ccOptions = getCCOptions('Both');
             const allCCNames = ccOptions.map(option => option.text);
             
-            // Function to check if a product is a credit card
             const isCreditCard = (product) => {
                 return allCCNames.some(ccName => 
                     product.includes(ccName) || 
@@ -2650,11 +2863,9 @@ body {
                 );
             };
             
-            // Split the product string by commas and count credit cards
             if (productString) {
                 const products = productString.split(',').map(p => p.trim());
                 
-                // Count each product that matches a credit card
                 products.forEach(product => {
                     if (isCreditCard(product)) {
                         ccCount++;
@@ -2662,21 +2873,17 @@ body {
                 });
             }
 
-            // Check for MDSA and Privilege accounts
             const hasMDSA = productString.includes('MDSA');
             const hasPrivilege = productString.includes('Privilege');
 
-            // Categorize based on status
             if (isCompleted) {
-                // Completed stats
                 completedCC += ccCount;
                 if (loanAmount > 0) {
                     completedLoanAmount += loanAmount;
                 }
                 if (hasMDSA) completedMDSA++;
                 if (hasPrivilege) completedPrivilege++;
-            } else if (!isRejected) { // Fix 3: Skip rejected records in the In Progress count
-                // In Progress stats
+            } else if (!isRejected) {
                 inProgressCC += ccCount;
                 if (loanAmount > 0) {
                     inProgressLoanAmount += loanAmount;
@@ -2685,9 +2892,6 @@ body {
                 if (hasPrivilege) inProgressPrivilege++;
             }
             
-            // Fix 3: Don't skip rejected records for overall proposition and account stats
-            
-            // Proposition Distribution
             if (proposition === 'Conventional') {
                 conventionalCount++;
             } else if (proposition === 'Islamic') {
@@ -2696,7 +2900,6 @@ body {
                 bothCount++;
             }
             
-            // Account Types
             if (productString.includes('Aspire')) {
                 aspireCount++;
             } else if (productString.includes('Privilege')) {
@@ -2705,7 +2908,6 @@ body {
                 mdsaCount++;
             }
             
-            // Scheme Distribution (only count completed records)
             if (isCompleted) {
                 if (scheme === 'TML ALL') {
                     tmlAllCount++;
@@ -2719,20 +2921,15 @@ body {
             }
         });
         
-        // Calculate total points (earnedPoints + pendingPoints)
         const totalPoints = earnedPoints + pendingPoints;
-        
-        // Calculate total credit cards and loan amounts (Fix 4: Total Submissions)
         const totalCC = inProgressCC + completedCC;
         const totalLoanAmount = inProgressLoanAmount + completedLoanAmount;
         const totalAccounts = aspireCount + privilegeCount + mdsaCount;
         
-        // Format loan amounts
         function formatCurrency(amount) {
             return 'AED ' + amount.toLocaleString('en-US');
         }
         
-        // Update summary data in the DOM
         document.getElementById('summaryEarnedPoints').textContent = Math.round(earnedPoints);
         document.getElementById('summaryPendingPoints').textContent = Math.round(pendingPoints);
         document.getElementById('summaryTotalPoints').textContent = Math.round(totalPoints);
@@ -2751,23 +2948,18 @@ body {
         document.getElementById('summaryTotalPL').textContent = formatCurrency(totalLoanAmount > 0 ? totalLoanAmount : 0);
         document.getElementById('summaryTotalAccounts').textContent = totalAccounts > 0 ? totalAccounts : "0";
         
-        // Update target progress bars
         updateTargetProgress('CC', completedCC);
         updateTargetProgress('PL', completedLoanAmount);
         updateTargetProgress('ACC', totalAccounts);
         
-        // Update visualizations
         updateVisualizations(conventionalCount, islamicCount, bothCount, aspireCount, privilegeCount, mdsaCount, tmlAllCount, tmlCCCount, tmSelectCount, ntmlCount);
     }
 
-    // Function to update the visualizations with actual data
     function updateVisualizations(conventional, islamic, both, aspire, privilege, mdsa, tmlAll, tmlCC, tmSelect, ntml) {
-        // Calculate total counts and percentages
-        const totalProposition = conventional + islamic + both || 1; // Avoid division by zero
+        const totalProposition = conventional + islamic + both || 1;
         const totalAccounts = aspire + privilege + mdsa || 1;
         const totalSchemes = tmlAll + tmlCC + tmSelect + ntml || 1;
         
-        // Calculate percentages
         const conventionalPercent = Math.round((conventional / totalProposition) * 100);
         const islamicPercent = Math.round((islamic / totalProposition) * 100);
         const bothPercent = 100 - conventionalPercent - islamicPercent;
@@ -2781,7 +2973,6 @@ body {
         const tmSelectPercent = Math.round((tmSelect / totalSchemes) * 100);
         const ntmlPercent = 100 - tmlAllPercent - tmlCCPercent - tmSelectPercent;
         
-        // Update pie chart CSS with actual percentages
         document.querySelector('.pie-chart').style.background = `conic-gradient(
             #FF5349 0% ${conventionalPercent}%, 
             #2197b2 ${conventionalPercent}% ${conventionalPercent + islamicPercent}%, 
@@ -2802,7 +2993,6 @@ body {
         )`;
     }
     
-    // Update progress bars
     function updateTargetProgress(type, completed) {
         const targetInput = document.getElementById(`target${type}`);
         const remainingEl = document.getElementById(`remaining${type}`);
@@ -2821,7 +3011,6 @@ body {
         });
     }
     
-    // Copy summary to clipboard
     document.getElementById('copySummaryBtn').addEventListener('click', async function() {
         const summaryText = generateSummaryText();
         try {
@@ -2836,7 +3025,6 @@ body {
         }
     });
     
-    // Generate summary text with the new required format (requirement 1)
     function generateSummaryText() {
         const inProgressCC = document.getElementById('summaryInProgressCC').textContent;
         const inProgressPL = document.getElementById('summaryInProgressPL').textContent;
@@ -2852,7 +3040,6 @@ body {
         const totalPL = document.getElementById('summaryTotalPL').textContent;
         const totalAccounts = document.getElementById('summaryTotalAccounts').textContent;
         
-        // Get progress percentages
         const progressCC = document.getElementById('progressCC').textContent;
         const progressPL = document.getElementById('progressPL').textContent;
         const progressACC = document.getElementById('progressACC').textContent;
@@ -2888,18 +3075,15 @@ Accounts: ${progressACC}`;
         return summaryText;
     }
 
-    // Function to categorize product type
     function categorizeProductType(productString) {
         if (!productString) return "Unknown";
         
-        // Check for Account products
         if (productString.includes("MDSA") || 
             productString.includes("Aspire") || 
             productString.includes("Privilege")) {
             return "ACC";
         }
         
-        // Check for Credit Card products
         if (productString.includes("Touchpoints") || 
             productString.includes("Cashback") ||
             productString.includes("Talabat") ||
@@ -2909,13 +3093,11 @@ Accounts: ${progressACC}`;
             return "CC";
         }
         
-        // Check for Personal Loan
         if (productString.includes("Cat A & B") || 
             productString.includes("Cat C & Below")) {
             return "PL";
         }
         
-        // Generic checks based on product abbreviations
         if (productString.includes("ACC")) return "ACC";
         if (productString.includes("CC")) return "CC";
         if (productString.includes("2ndCC")) return "CC";
@@ -2926,7 +3108,6 @@ Accounts: ${progressACC}`;
         return "Unknown";
     }
 
-    // Search for data from Master sheet
     async function searchData() {
         const cid = document.getElementById('searchCID').value.trim();
         const name = document.getElementById('searchName').value.trim();
@@ -2939,7 +3120,6 @@ Accounts: ${progressACC}`;
         
         showLoading();
         try {
-            // Always search from server for Master sheet data
             const response = await fetch(`${scriptURL}?action=searchMaster&cid=${encodeURIComponent(cid)}&name=${encodeURIComponent(name)}&mobile=${encodeURIComponent(mobile)}`);
             const data = await response.json();
             
@@ -2961,7 +3141,6 @@ Accounts: ${progressACC}`;
         }
     }
 
-    // Clear search function
     function clearSearch() {
         document.getElementById('searchCID').value = '';
         document.getElementById('searchName').value = '';
@@ -2969,12 +3148,9 @@ Accounts: ${progressACC}`;
         document.getElementById('searchResultsBody').innerHTML = '';
     }
 
-    // Clear search button event listener
     document.getElementById('clearSearchBtn').addEventListener('click', clearSearch);
 
-    // Fix 2: Copy to clipboard function
     function copyToClipboard(text) {
-        // Use navigator.clipboard API if available
         if (navigator.clipboard && window.isSecureContext) {
             return navigator.clipboard.writeText(text).then(() => {
                 return true;
@@ -2988,7 +3164,6 @@ Accounts: ${progressACC}`;
     }
     
     function fallbackCopyToClipboard(text) {
-        // Create a temporary input element for plain text
         const input = document.createElement('textarea');
         input.style.position = 'fixed';
         input.style.opacity = 0;
@@ -2999,7 +3174,6 @@ Accounts: ${progressACC}`;
         input.setSelectionRange(0, 99999);
         
         try {
-            // Execute the copy command
             const successful = document.execCommand('copy');
             return successful;
         } catch (err) {
@@ -3010,7 +3184,6 @@ Accounts: ${progressACC}`;
         }
     }
 
-    // Start long press
     function startLongPress(element, cid) {
         isLongPressing = false;
         element.classList.add('longpress-active');
@@ -3022,7 +3195,6 @@ Accounts: ${progressACC}`;
         }, 1000);
     }
 
-    // End long press
     function endLongPress(element) {
         if (longPressTimer) {
             clearTimeout(longPressTimer);
@@ -3031,7 +3203,6 @@ Accounts: ${progressACC}`;
         element.classList.remove('longpress-active');
     }
 
-    // Fixed: Updated function with improved action button layout, copy functionality, and removed points column highlighting
     function displayDataInTable(data, targetTableId, isMasterSearch = false) {
         const tableBody = document.getElementById(targetTableId);
         tableBody.innerHTML = '';
@@ -3075,18 +3246,14 @@ Accounts: ${progressACC}`;
                 ${actionsHtml}
             `;
             
-            // Add long press event listeners for edit functionality (only for non-master search)
             if (!isMasterSearch) {
                 tr.addEventListener('mousedown', (e) => {
-                    // Don't trigger long press on Points column (7th column) or Actions column (last column)
                     const cell = e.target.closest('td');
                     if (e.button === 0 && cell && !cell.classList.contains('action-column')) {
-                        // Check if it's the points column (7th column, index 6)
                         const cellIndex = Array.from(cell.parentElement.children).indexOf(cell);
-                        if (cellIndex !== 6) { // Not the points column
+                        if (cellIndex !== 6) {
                             startLongPress(tr, cidValue);
                         } else {
-                            // Points column immediate edit
                             editRecord(cidValue);
                         }
                     }
@@ -3100,17 +3267,13 @@ Accounts: ${progressACC}`;
                     endLongPress(tr);
                 });
                 
-                // Touch events for mobile
                 tr.addEventListener('touchstart', (e) => {
-                    // Don't trigger long press on Points column (7th column) or Actions column (last column)
                     const cell = e.target.closest('td');
                     if (cell && !cell.classList.contains('action-column')) {
-                        // Check if it's the points column (7th column, index 6)
                         const cellIndex = Array.from(cell.parentElement.children).indexOf(cell);
-                        if (cellIndex !== 6) { // Not the points column
+                        if (cellIndex !== 6) {
                             startLongPress(tr, cidValue);
                         } else {
-                            // Points column immediate edit
                             editRecord(cidValue);
                         }
                     }
@@ -3131,11 +3294,10 @@ Accounts: ${progressACC}`;
             tableBody.appendChild(tr);
         });
         
-        // Add event listeners to delete buttons (only for non-master search)
         if (!isMasterSearch) {
             document.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.addEventListener('click', function(e) {
-                    e.stopPropagation(); // Prevent row long press
+                    e.stopPropagation();
                     const cid = this.getAttribute('data-cid');
                     if (confirm('Are you sure you want to delete this record?')) {
                         deleteRecord(cid);
@@ -3144,10 +3306,9 @@ Accounts: ${progressACC}`;
             });
         }
         
-        // Fix 2: Add event listeners for copyable fields
         document.querySelectorAll('.copyable').forEach(element => {
             element.addEventListener('click', function(e) {
-                e.stopPropagation(); // Prevent row long press
+                e.stopPropagation();
                 const value = this.getAttribute('data-value');
                 if (copyToClipboard(value)) {
                     this.classList.add('copied');
@@ -3159,7 +3320,6 @@ Accounts: ${progressACC}`;
         });
     }
 
-    // Submit form data
     async function submitFormData(formData) {
         showLoading();
         
@@ -3169,14 +3329,11 @@ Accounts: ${progressACC}`;
                 body: formData
             });
             
-            console.log("Response status:", response.status);
             const responseText = await response.text();
-            console.log("Raw response:", responseText);
             
             let data;
             try {
                 data = JSON.parse(responseText);
-                console.log("Parsed response:", data);
             } catch (parseError) {
                 console.error("Error parsing response:", parseError);
                 showSuccess('Error: Could not parse server response');
@@ -3187,7 +3344,6 @@ Accounts: ${progressACC}`;
             if (data.success) {
                 showSuccess('Data submitted successfully!');
                 resetForm();
-                // Stay on the form section after submitting
                 showSection('entry');
             } else {
                 showSuccess(`Error: ${data.error}`);
@@ -3200,7 +3356,6 @@ Accounts: ${progressACC}`;
         }
     }
 
-    // Update existing record
     async function updateRecord(formData) {
         showLoading();
         try {
@@ -3215,7 +3370,6 @@ Accounts: ${progressACC}`;
             if (data.success) {
                 showSuccess('Record updated successfully!');
                 resetForm();
-                // Navigate to View section after update
                 showSection('view');
             } else {
                 showSuccess(`Error: ${data.error}`);
@@ -3228,7 +3382,6 @@ Accounts: ${progressACC}`;
         }
     }
 
-    // Delete record
     async function deleteRecord(cid) {
         showLoading();
         try {
@@ -3241,10 +3394,8 @@ Accounts: ${progressACC}`;
                 showSuccess('Record deleted successfully!');
                 resetForm();
                 if (document.getElementById('entrySection').classList.contains('active')) {
-                    // If we're in the entry section, stay there
                     showSection('entry');
                 } else {
-                    // Otherwise refresh the current view
                     fetchAllData();
                     fetchAllDataForSummary();
                 }
@@ -3259,25 +3410,19 @@ Accounts: ${progressACC}`;
         }
     }
 
-    // Edit record (fetch and populate form)
     async function editRecord(cid) {
         showLoading();
         try {
-            // Check if the record exists in local data first
             const localRecord = allRecordsData.find(r => r.CID === cid);
             
             if (localRecord) {
-                // Use local data
                 editingData = localRecord;
                 editingProductString = localRecord.Product || "";
                 
-                console.log("Got data for editing from local:", editingData);
                 populateForm(localRecord);
                 
-                // Switch to entry section
                 showSection('entry');
                 
-                // Show update and delete buttons, hide submit button
                 document.getElementById('submitBtn').classList.add('hidden');
                 document.getElementById('updateBtn').classList.remove('hidden');
                 document.getElementById('deleteBtn').classList.remove('hidden');
@@ -3286,19 +3431,13 @@ Accounts: ${progressACC}`;
                 return;
             }
             
-            // If not found locally, try fetching from server
             const response = await fetch(`${scriptURL}?action=getById&cid=${cid}`);
             const data = await response.json();
             
             if (data.success && data.data) {
-                // Save the raw data for later use
                 editingData = data.data;
                 editingProductString = data.data.Product || "";
                 
-                console.log("Got data for editing:", editingData);
-                console.log("Product string:", editingProductString);
-                
-                // Clear any existing selections
                 currentSelections = {
                     ACC: '',
                     CC: '',
@@ -3306,19 +3445,15 @@ Accounts: ${progressACC}`;
                     PL: ''
                 };
                 
-                // Save the product options from the server if they exist
                 if (data.data.accOption) currentSelections.ACC = data.data.accOption;
                 if (data.data.ccOption) currentSelections.CC = data.data.ccOption;
                 if (data.data.ccOption2) currentSelections.CCOption2 = data.data.ccOption2;
                 if (data.data.plOption) currentSelections.PL = data.data.plOption;
                 
-                // Now populate the form - this will trigger updateProductOptions
                 populateForm(data.data);
                 
-                // Switch to entry section
                 showSection('entry');
                 
-                // Show update and delete buttons, hide submit button
                 document.getElementById('submitBtn').classList.add('hidden');
                 document.getElementById('updateBtn').classList.remove('hidden');
                 document.getElementById('deleteBtn').classList.remove('hidden');
@@ -3333,32 +3468,25 @@ Accounts: ${progressACC}`;
         }
     }
 
-    // Function to parse a product string into individual items
     function parseProductString(productString) {
         if (!productString) return [];
         
-        // Split by comma and trim each item
         return productString.split(',').map(p => p.trim());
     }
 
-    // Function to check if a product string contains a specific product
     function productStringContains(productString, product) {
         const products = parseProductString(productString);
         return products.some(p => p === product || p.includes(product));
     }
 
-    // Helper function to format date for input field
     function formatDateForInput(dateString) {
         if (!dateString) return '';
         
-        // Try to parse the date string
         const date = new Date(dateString);
         if (isNaN(date.getTime())) {
-            // If parsing fails, return the original string
             return dateString;
         }
         
-        // Format as YYYY-MM-DD
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
@@ -3366,24 +3494,17 @@ Accounts: ${progressACC}`;
         return `${year}-${month}-${day}`;
     }
 
-    // Populate form with record data
     function populateForm(data) {
-        console.log("Populating form with data:", data);
-        
-        // Clear form first
         resetForm();
         
-        // Save the editing data again (resetForm clears it)
         editingData = data;
         editingProductString = data.Product || "";
         
-        // Populate basic fields
         cidInput.value = data.CID || '';
-        cidInput.disabled = false; // Enable CID for editing
-        cidInput.readOnly = false; // Allow CID to be editable during editing
+        cidInput.disabled = false;
+        cidInput.readOnly = false;
         appIdInput.value = data['App ID'] || '';
         
-        // Set date with proper formatting
         if (data.Date) {
             dateInput.value = formatDateForInput(data.Date);
         }
@@ -3393,18 +3514,14 @@ Accounts: ${progressACC}`;
         mobileInput.value = data.Mobile || '';
         companyNameInput.value = data['Company Name'] || '';
         
-        // Parse the product column to determine which checkboxes should be checked
         const productString = data.Product || '';
         const products = parseProductString(productString);
-        console.log("Parsed products:", products);
         
-        // Save the raw product options for later use
         if (data.accOption) currentSelections.ACC = data.accOption;
         if (data.ccOption) currentSelections.CC = data.ccOption;
         if (data.ccOption2) currentSelections.CCOption2 = data.ccOption2;
         if (data.plOption) currentSelections.PL = data.plOption;
         
-        // Determine which product checkboxes to check based on the product string
         productACC.checked = productStringContains(productString, 'MDSA') || 
                             productStringContains(productString, 'Aspire') ||
                             productStringContains(productString, 'Privilege') ||
@@ -3447,11 +3564,9 @@ Accounts: ${progressACC}`;
             otherPointsInput.value = data['Other Points'] || '';
         }
         
-        // Enable/disable dependent checkboxes
         productSTL.disabled = !productACC.checked;
         product2ndCC.disabled = !productCC.checked;
         
-        // Set proposition
         const propositionRadios = document.getElementsByName('proposition');
         for (let radio of propositionRadios) {
             if (radio.value === data.Proposition) {
@@ -3460,7 +3575,6 @@ Accounts: ${progressACC}`;
             }
         }
         
-        // Set scheme
         const schemeRadios = document.getElementsByName('scheme');
         for (let radio of schemeRadios) {
             if (radio.value === data.Scheme) {
@@ -3469,7 +3583,6 @@ Accounts: ${progressACC}`;
             }
         }
         
-        // Set activation
         const activationRadios = document.getElementsByName('activation');
         for (let radio of activationRadios) {
             if (radio.value === data.Activation) {
@@ -3478,7 +3591,6 @@ Accounts: ${progressACC}`;
             }
         }
         
-        // Set banking and ADCB override
         if (data.Banking) {
             if (['SELECT', 'ADCB', 'ENBD', 'EIB', 'FAB', 'DIB', 'MASHREQ', 'ADIB', 'RAK', 'CBD', 'HSBC', 'CITI'].includes(data.Banking)) {
                 bankingSelect.value = data.Banking;
@@ -3489,13 +3601,9 @@ Accounts: ${progressACC}`;
             }
         }
         
-        // Set ADCB override checkbox if applicable
         adcbOverrideCheckbox.checked = data.adcbOverride === 'true' || data.adcbOverride === true;
-        
-        // Set CC deduction override checkbox if applicable
         ccDeductionOverrideCheckbox.checked = data.ccDeductionOverride === 'true' || data.ccDeductionOverride === true;
         
-        // Set status
         if (data.Status) {
             if (['Draft', 'Under Review', 'Completed', 'HR CPV', 'Compliance', 'Rejected'].includes(data.Status)) {
                 statusSelect.value = data.Status;
@@ -3506,19 +3614,15 @@ Accounts: ${progressACC}`;
             }
         }
         
-        // Set points
         pointsInput.value = data.Points || '';
         
-        // Generate product options containers
         initializeProductOptions();
         
-        // Fix 3: Make sure points are set to 0 if status is Rejected
         if (statusSelect.value === 'Rejected') {
             pointsInput.value = '0';
         }
     }
 
-    // Check if CID, Customer Name, or Mobile already exists
     async function checkUniqueness(cid, customerName, mobile) {
         try {
             const response = await fetch(`${scriptURL}?action=checkUnique&cid=${cid}&name=${encodeURIComponent(customerName)}&mobile=${mobile}`);
@@ -3534,16 +3638,13 @@ Accounts: ${progressACC}`;
         }
     }
 
-    // Validate form before submission
     async function validateForm() {
         let isValid = true;
         
-        // Clear previous validation errors
         document.getElementById('nameError').classList.add('hidden');
         document.getElementById('mobileError').classList.add('hidden');
         document.getElementById('productsError').classList.add('hidden');
         
-        // Fixed: Remove CID validation completely (requirement 3B)
         cidInput.classList.remove('error-field');
         
         if (!dateInput.value) {
@@ -3581,7 +3682,6 @@ Accounts: ${progressACC}`;
             statusSelect.classList.remove('error-field');
         }
         
-        // Product validation - at least one product must be selected
         const productSelected = productACC.checked || productSTL.checked || productCC.checked || 
                                product2ndCC.checked || productBTCCL.checked || productPL.checked || productOther.checked;
         
@@ -3590,13 +3690,11 @@ Accounts: ${progressACC}`;
             isValid = false;
         }
         
-        // For update operations, we don't need to check uniqueness for the current record
         if (document.getElementById('updateBtn').classList.contains('hidden')) {
-            // Check uniqueness only for customer name and mobile (not CID)
             if (isValid && (customerNameInput.value.trim() || mobileInput.value.trim())) {
                 showLoading();
                 const uniquenessCheck = await checkUniqueness(
-                    '', // Don't check CID uniqueness (fixed requirement 3B)
+                    '',
                     customerNameInput.value.trim(),
                     mobileInput.value.trim()
                 );
@@ -3616,7 +3714,6 @@ Accounts: ${progressACC}`;
                     }
                 } else if (!uniquenessCheck.success) {
                     console.log('Warning: Could not check uniqueness');
-                    // Don't fail validation if uniqueness check fails
                 }
             }
         }
@@ -3624,11 +3721,9 @@ Accounts: ${progressACC}`;
         return isValid;
     }
 
-    // Collect form data for submission
     function collectFormData() {
         const formData = new FormData();
         
-        // Add basic fields - CID is optional but if provided, should be valid
         const cidValue = cidInput.value.trim();
         formData.append('cid', cidValue);
         formData.append('appId', appIdInput.value);
@@ -3641,61 +3736,47 @@ Accounts: ${progressACC}`;
         formData.append('customerName', customerNameInput.value);
         formData.append('mobile', mobileInput.value);
         
-        // Banking
         let bankingValue = bankingSelect.value;
         if (bankingValue === 'Other') {
             bankingValue = otherBankingInput.value || 'Other';
         }
         formData.append('banking', bankingValue);
         
-        // ADCB override checkbox
         formData.append('adcbOverride', adcbOverrideCheckbox.checked);
-        
-        // CC deduction override checkbox
         formData.append('ccDeductionOverride', ccDeductionOverrideCheckbox.checked);
-        
-        // Company Name
         formData.append('companyName', companyNameInput.value);
         
-        // Scheme
         const scheme = document.querySelector('input[name="scheme"]:checked').value;
         formData.append('scheme', scheme);
         
-        // Status
         let statusValue = statusSelect.value;
         if (statusValue === 'Other') {
             statusValue = otherStatusInput.value || 'Other';
         }
         formData.append('status', statusValue);
         
-        // Activation
         const activation = document.querySelector('input[name="activation"]:checked').value;
         formData.append('activation', activation);
         
-        // Points - Fix 3: Ensure points are 0 if status is Rejected
         formData.append('points', statusValue === 'Rejected' ? '0' : pointsInput.value);
         
-        // Fix 2: Collect selected product options to store in Product column
         const selectedProductOptions = [];
         
-        // Get ACC selection
         if (productACC.checked) {
             const accSelect = document.getElementById('ACCSelect');
             if (accSelect && accSelect.value) {
                 const selectedOption = accSelect.options[accSelect.selectedIndex];
-                selectedProductOptions.push(selectedOption.text.split(' (')[0]);  // Get text before any parentheses
+                selectedProductOptions.push(selectedOption.text.split(' (')[0]);
                 formData.append('accOption', accSelect.value);
             } else {
                 selectedProductOptions.push('ACC');
             }
             
-            // Include STL if checked
             if (productSTL.checked) {
                 selectedProductOptions.push('STL');
             }
         }
         
-        // Get CC selection
         if (productCC.checked) {
             const ccSelect = document.getElementById('CCSelect');
             if (ccSelect && ccSelect.value) {
@@ -3706,7 +3787,6 @@ Accounts: ${progressACC}`;
                 selectedProductOptions.push('CC');
             }
             
-            // Get 2nd CC selection
             if (product2ndCC.checked) {
                 const cc2Select = document.getElementById('CCSelect2');
                 if (cc2Select && cc2Select.value) {
@@ -3719,18 +3799,15 @@ Accounts: ${progressACC}`;
             }
         }
         
-        // Include BT/CCL if checked
         if (productBTCCL.checked) {
             selectedProductOptions.push('BT/CCL');
         }
         
-        // Include Other if checked
         if (productOther.checked) {
             selectedProductOptions.push('Other');
             formData.append('otherPoints', otherPointsInput.value);
         }
         
-        // Get PL selection
         if (productPL.checked) {
             const plSelect = document.getElementById('PLSelect');
             if (plSelect && plSelect.value) {
@@ -3743,7 +3820,6 @@ Accounts: ${progressACC}`;
             formData.append('loanAmount', loanAmountInput.value);
         }
         
-        // Join all product selections into a single string
         const productList = selectedProductOptions.join(', ');
         formData.append('productList', productList);
         
@@ -3754,7 +3830,6 @@ Accounts: ${progressACC}`;
     // EXPORT FUNCTIONALITY
     // ==========================================
     
-    // Get required modal elements
     const exportModal = document.getElementById('exportModal');
     const closeExportModalBtn = document.getElementById('closeExportModal');
     const cancelExportBtn = document.getElementById('cancelExportBtn');
@@ -3766,23 +3841,17 @@ Accounts: ${progressACC}`;
     const selectedRowsCount = document.getElementById('selectedRowsCount');
     const totalAmountEl = document.getElementById('totalAmount');
     
-    // Profile management elements
     const profileNameInput = document.getElementById('profileName');
     const profileSelect = document.getElementById('profileSelect');
     const saveProfileBtn = document.getElementById('saveProfileBtn');
     const loadProfileBtn = document.getElementById('loadProfileBtn');
     const deleteProfileBtn = document.getElementById('deleteProfileBtn');
     
-    // Open export modal when Export button is clicked
     exportDataBtn.addEventListener('click', function() {
-        // Populate export table with data
         populateExportTable();
-        
-        // Show modal
         exportModal.style.display = 'block';
     });
     
-    // Close modal functions
     function closeExportModal() {
         exportModal.style.display = 'none';
     }
@@ -3790,14 +3859,12 @@ Accounts: ${progressACC}`;
     closeExportModalBtn.addEventListener('click', closeExportModal);
     cancelExportBtn.addEventListener('click', closeExportModal);
     
-    // Close modal when clicking outside the modal content
     window.addEventListener('click', function(event) {
         if (event.target === exportModal) {
             closeExportModal();
         }
     });
     
-    // Populate export table with records
     function populateExportTable() {
         exportTableBody.innerHTML = '';
         
@@ -3818,16 +3885,13 @@ Accounts: ${progressACC}`;
             const date = record.Date ? new Date(record.Date).toLocaleDateString() : '';
             const productType = categorizeProductType(record.Product);
             
-            // Prepare product display string
             let productDisplay = productType;
             if (productType === "PL" && record['Loan Amount']) {
                 productDisplay = `${productType} (AED ${parseInt(record['Loan Amount']).toLocaleString()})`;
             }
             
-            // Look for amount in saved profiles, defaulting to empty
             let savedAmount = '';
             
-            // Try to get saved amount from profile data
             if (record.exportAmount) {
                 savedAmount = record.exportAmount;
             }
@@ -3845,15 +3909,12 @@ Accounts: ${progressACC}`;
             exportTableBody.appendChild(tr);
         });
         
-        // Add event listeners to all amount inputs to recalculate total
         document.querySelectorAll('.amount-input').forEach(input => {
             input.addEventListener('input', calculateTotalAmount);
         });
         
-        // Initialize selected count
         updateSelectedRowsCount();
         
-        // Default to selecting all rows
         selectAllRows.checked = true;
         selectAllHeader.checked = true;
         document.querySelectorAll('#exportTableBody .row-checkbox').forEach(checkbox => {
@@ -3861,11 +3922,9 @@ Accounts: ${progressACC}`;
         });
         updateSelectedRowsCount();
         
-        // Calculate initial total
         calculateTotalAmount();
     }
     
-    // Calculate total amount from all checked rows
     function calculateTotalAmount() {
         let total = 0;
         const checkedRows = document.querySelectorAll('#exportTableBody .row-checkbox:checked');
@@ -3877,20 +3936,16 @@ Accounts: ${progressACC}`;
             total += amount;
         });
         
-        // Display the total with formatting
         totalAmountEl.textContent = total.toLocaleString('en-US');
     }
     
-    // Update selected rows count
     function updateSelectedRowsCount() {
         const checkedRows = document.querySelectorAll('#exportTableBody .row-checkbox:checked').length;
         selectedRowsCount.textContent = `${checkedRows} rows selected`;
         
-        // Recalculate total when selection changes
         calculateTotalAmount();
     }
     
-    // Handle "Select All" checkbox in the header
     selectAllHeader.addEventListener('change', function() {
         const checkboxes = document.querySelectorAll('#exportTableBody .row-checkbox');
         checkboxes.forEach(checkbox => {
@@ -3901,7 +3956,6 @@ Accounts: ${progressACC}`;
         updateSelectedRowsCount();
     });
     
-    // Handle "Select All" checkbox above the table
     selectAllRows.addEventListener('change', function() {
         const checkboxes = document.querySelectorAll('#exportTableBody .row-checkbox');
         checkboxes.forEach(checkbox => {
@@ -3912,7 +3966,6 @@ Accounts: ${progressACC}`;
         updateSelectedRowsCount();
     });
     
-    // Update count when individual checkboxes change
     exportTableBody.addEventListener('change', function(e) {
         if (e.target.classList.contains('row-checkbox')) {
             const allCheckboxes = document.querySelectorAll('#exportTableBody .row-checkbox');
@@ -3925,17 +3978,14 @@ Accounts: ${progressACC}`;
         }
     });
     
-    // Export selected data as PDF
     confirmExportBtn.addEventListener('click', function() {
         const checkedRows = document.querySelectorAll('#exportTableBody .row-checkbox:checked');
         
-        // Check if we have selected rows
         if (checkedRows.length === 0) {
             showSuccess("Please select at least one record to export");
             return;
         }
         
-        // Check if all amount fields are empty
         let hasAmounts = false;
         checkedRows.forEach(checkbox => {
             const row = checkbox.closest('tr');
@@ -3945,7 +3995,6 @@ Accounts: ${progressACC}`;
             }
         });
         
-        // Extract data directly from the checked rows
         let selectedData = [];
         checkedRows.forEach(checkbox => {
             const row = checkbox.closest('tr');
@@ -3963,14 +4012,12 @@ Accounts: ${progressACC}`;
                         Status: cells[5].textContent
                     };
                     
-                    // Only include amount if there are amounts in the data
                     if (hasAmounts) {
                         rowData.Amount = amount;
                     }
                     
                     selectedData.push(rowData);
                     
-                    // Save amount to corresponding record in allRecordsData for profile saving
                     const cid = checkbox.getAttribute('data-cid');
                     const record = allRecordsData.find(r => r.CID === cid);
                     if (record) {
@@ -3980,19 +4027,6 @@ Accounts: ${progressACC}`;
             }
         });
         
-        // Fallback to test data if still no data
-        if (selectedData.length === 0) {
-            selectedData = testData.map(item => {
-                const data = {...item};
-                if (hasAmounts) {
-                    data.Amount = "0";
-                }
-                return data;
-            });
-            showSuccess("Using fallback data for PDF export.");
-        }
-        
-        // Calculate total amount for PDF (only if amounts exist)
         let totalAmount = 0;
         if (hasAmounts) {
             totalAmount = selectedData.reduce((total, record) => {
@@ -4000,52 +4034,39 @@ Accounts: ${progressACC}`;
             }, 0);
         }
         
-        // Create PDF with conditional Amount column
         createPDF(selectedData, totalAmount, hasAmounts);
         
-        // Close modal
         closeExportModal();
         
-        // Show success message
         showSuccess(`Exported ${selectedData.length} records as PDF successfully`);
     });
     
-    // Updated PDF generation function to handle optional Amount column with updated colors
     function createPDF(data, totalAmount, includeAmount) {
         try {
-            console.log("Creating PDF with data:", JSON.stringify(data));
-            console.log("Include amount column:", includeAmount);
-            
-            // Create a new jsPDF instance
             const doc = new jsPDF();
             
-            // Add title with new primary color
             doc.setFontSize(18);
-            doc.setTextColor(26, 58, 74); // Primary color #1A3A4A
+            doc.setTextColor(26, 58, 74);
             doc.text('Sales Report', 15, 15);
             
-            // Add date with better styling
             doc.setFontSize(11);
             doc.setTextColor(0, 0, 0);
             doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 15, 25);
             
-            // Total available width is 180 units (from the border drawing)
             const totalWidth = 180;
-            // Margin from left edge
             const leftMargin = 15;
             
             let colWidthNo, colWidthCID, colWidthDate, colWidthName, colWidthProduct, colWidthStatus, colWidthAmount;
             let col0X, col1X, col2X, col3X, col4X, col5X, col6X;
             
             if (includeAmount) {
-                // Define column widths with amount column
-                colWidthNo = totalWidth * 0.05;      // 5%
-                colWidthCID = totalWidth * 0.10;     // 10%
-                colWidthDate = totalWidth * 0.10;    // 10%
-                colWidthName = totalWidth * 0.30;    // 30%
-                colWidthProduct = totalWidth * 0.10; // 10%
-                colWidthStatus = totalWidth * 0.15;  // 15%
-                colWidthAmount = totalWidth * 0.20;  // 20%
+                colWidthNo = totalWidth * 0.05;
+                colWidthCID = totalWidth * 0.10;
+                colWidthDate = totalWidth * 0.10;
+                colWidthName = totalWidth * 0.30;
+                colWidthProduct = totalWidth * 0.10;
+                colWidthStatus = totalWidth * 0.15;
+                colWidthAmount = totalWidth * 0.20;
                 
                 col0X = leftMargin + 3;
                 col1X = leftMargin + colWidthNo;
@@ -4055,13 +4076,12 @@ Accounts: ${progressACC}`;
                 col5X = col4X + colWidthProduct;
                 col6X = col5X + colWidthStatus;
             } else {
-                // Define column widths without amount column
-                colWidthNo = totalWidth * 0.06;      // 6%
-                colWidthCID = totalWidth * 0.12;     // 12%
-                colWidthDate = totalWidth * 0.12;    // 12%
-                colWidthName = totalWidth * 0.40;    // 40%
-                colWidthProduct = totalWidth * 0.15; // 15%
-                colWidthStatus = totalWidth * 0.15;  // 15%
+                colWidthNo = totalWidth * 0.06;
+                colWidthCID = totalWidth * 0.12;
+                colWidthDate = totalWidth * 0.12;
+                colWidthName = totalWidth * 0.40;
+                colWidthProduct = totalWidth * 0.15;
+                colWidthStatus = totalWidth * 0.15;
                 
                 col0X = leftMargin + 3;
                 col1X = leftMargin + colWidthNo;
@@ -4071,13 +4091,11 @@ Accounts: ${progressACC}`;
                 col5X = col4X + colWidthProduct;
             }
             
-            // Add header with primary color background
-            doc.setFillColor(26, 58, 74); // Primary color #1A3A4A
+            doc.setFillColor(26, 58, 74);
             doc.rect(15, 30, 180, 8, 'F');
             
-            // Add header text
             doc.setFontSize(10);
-            doc.setTextColor(255, 255, 255); // White text
+            doc.setTextColor(255, 255, 255);
             doc.setFont(undefined, 'bold');
             
             doc.text('No', col0X, 35);
@@ -4090,24 +4108,19 @@ Accounts: ${progressACC}`;
                 doc.text('Amount', col6X, 35);
             }
             
-            // Reset font and color for data rows
             doc.setFont(undefined, 'normal');
             doc.setTextColor(0, 0, 0);
             
-            // Add data rows
             let y = 45;
             data.forEach((row, i) => {
-                // Check if we need a new page
                 if (y > 270) {
                     doc.addPage();
                     y = 20;
                     
-                    // Add header to new page
-                    doc.setFillColor(26, 58, 74); // Primary color #1A3A4A
+                    doc.setFillColor(26, 58, 74);
                     doc.rect(15, y-5, 180, 8, 'F');
                     
-                    // Add header text
-                    doc.setTextColor(255, 255, 255); // White text
+                    doc.setTextColor(255, 255, 255);
                     doc.setFont(undefined, 'bold');
                     
                     doc.text('No', col0X, y);
@@ -4120,20 +4133,17 @@ Accounts: ${progressACC}`;
                         doc.text('Amount', col6X, y);
                     }
                     
-                    // Reset font for data
                     doc.setFont(undefined, 'normal');
                     doc.setTextColor(0, 0, 0);
                     
                     y += 10;
                 }
                 
-                // Add alternating row background
                 if (i % 2 === 1) {
                     doc.setFillColor(240, 240, 240);
                     doc.rect(15, y-5, 180, 8, 'F');
                 }
                 
-                // Add row data
                 doc.text((i + 1).toString(), col0X, y);
                 doc.text(row.CID?.toString() || '', col1X, y);
                 doc.text(row.Date?.toString() || '', col2X, y);
@@ -4150,12 +4160,11 @@ Accounts: ${progressACC}`;
                 y += 10;
             });
             
-            // Add total row only if amount column is included
             if (includeAmount) {
                 doc.setFillColor(240, 240, 240);
                 doc.rect(15, y-5, 180, 8, 'F');
                 
-                doc.setDrawColor(26, 58, 74); // Primary color for border
+                doc.setDrawColor(26, 58, 74);
                 doc.setLineWidth(0.5);
                 doc.line(15, y-5, 195, y-5);
                 
@@ -4168,8 +4177,7 @@ Accounts: ${progressACC}`;
                 y += 10;
             }
             
-            // Draw border around the table
-            doc.setDrawColor(26, 58, 74); // Primary color for border
+            doc.setDrawColor(26, 58, 74);
             doc.setLineWidth(0.5);
             for (let i = 1; i <= doc.internal.getNumberOfPages(); i++) {
                 doc.setPage(i);
@@ -4181,34 +4189,23 @@ Accounts: ${progressACC}`;
                 }
             }
             
-            // Add footer with page numbers
             const pageCount = doc.internal.getNumberOfPages();
             for (let i = 1; i <= pageCount; i++) {
                 doc.setPage(i);
                 doc.setFontSize(10);
-                doc.setTextColor(26, 58, 74); // Primary color
+                doc.setTextColor(26, 58, 74);
                 doc.text(`Page ${i} of ${pageCount}`, 100, 290, { align: 'center' });
             }
             
-            // Save the PDF
             doc.save('customer_data_report.pdf');
-            console.log("PDF generated successfully");
         } catch (error) {
             console.error("Error generating PDF:", error);
             alert("Error generating PDF: " + error.message + "\n\nPlease check console for details.");
             
-            // Fallback for absolute emergencies - download JSON
             downloadJSON(data);
         }
     }
     
-    // Helper function to truncate text that's too long for its column
-    function truncateText(text, maxLength) {
-        if (!text) return '';
-        return text.length > maxLength ? text.substring(0, maxLength - 3) + '...' : text;
-    }
-    
-    // FALLBACK: Download JSON if everything else fails
     function downloadJSON(data) {
         try {
             const jsonString = JSON.stringify(data, null, 2);
@@ -4223,7 +4220,6 @@ Accounts: ${progressACC}`;
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            console.log("JSON data downloaded as fallback");
             showSuccess("PDF generation failed. Data downloaded as JSON instead.");
         } catch (e) {
             console.error("Even JSON fallback failed:", e);
@@ -4235,7 +4231,6 @@ Accounts: ${progressACC}`;
     // PROFILE MANAGEMENT
     // ==========================================
     
-    // Save profile
     saveProfileBtn.addEventListener('click', function() {
         const profileName = profileNameInput.value.trim();
         
@@ -4244,7 +4239,6 @@ Accounts: ${progressACC}`;
             return;
         }
         
-        // Get selected CIDs and amounts
         const selectedRecords = [];
         const checkedRows = document.querySelectorAll('#exportTableBody .row-checkbox:checked');
         
@@ -4265,20 +4259,12 @@ Accounts: ${progressACC}`;
             return;
         }
         
-        // Save profile to localStorage
         saveProfile(profileName, selectedRecords);
-        
-        // Refresh profile dropdown
         loadProfiles();
-        
-        // Show success message
         showSuccess(`Profile "${profileName}" saved with ${selectedRecords.length} records`);
-        
-        // Clear the input
         profileNameInput.value = '';
     });
     
-    // Load profile
     loadProfileBtn.addEventListener('click', function() {
         const profileName = profileSelect.value;
         
@@ -4287,7 +4273,6 @@ Accounts: ${progressACC}`;
             return;
         }
         
-        // Load profile from localStorage
         const selectedRecords = loadProfile(profileName);
         
         if (!selectedRecords || selectedRecords.length === 0) {
@@ -4295,15 +4280,12 @@ Accounts: ${progressACC}`;
             return;
         }
         
-        // Select rows based on loaded CIDs and set amounts
         const rowCheckboxes = document.querySelectorAll('#exportTableBody .row-checkbox');
         
-        // First, uncheck all checkboxes
         rowCheckboxes.forEach(checkbox => {
             checkbox.checked = false;
         });
         
-        // Then check only those that are in the profile and set amounts
         rowCheckboxes.forEach(checkbox => {
             const cid = checkbox.dataset.cid;
             const recordData = selectedRecords.find(record => record.cid === cid);
@@ -4311,7 +4293,6 @@ Accounts: ${progressACC}`;
             if (recordData) {
                 checkbox.checked = true;
                 
-                // Set amount if available
                 if (recordData.amount) {
                     const row = checkbox.closest('tr');
                     const amountInput = row.querySelector('.amount-input');
@@ -4322,22 +4303,18 @@ Accounts: ${progressACC}`;
             }
         });
         
-        // Update select all checkboxes
         const allCheckboxes = document.querySelectorAll('#exportTableBody .row-checkbox');
         const checkedCheckboxes = document.querySelectorAll('#exportTableBody .row-checkbox:checked');
         
         selectAllRows.checked = allCheckboxes.length === checkedCheckboxes.length && allCheckboxes.length > 0;
         selectAllHeader.checked = allCheckboxes.length === checkedCheckboxes.length && allCheckboxes.length > 0;
         
-        // Update selected count and recalculate total
         updateSelectedRowsCount();
         calculateTotalAmount();
         
-        // Show success message
         showSuccess(`Profile "${profileName}" loaded with ${selectedRecords.length} records`);
     });
     
-    // Delete profile
     deleteProfileBtn.addEventListener('click', function() {
         const profileName = profileSelect.value;
         
@@ -4346,35 +4323,22 @@ Accounts: ${progressACC}`;
             return;
         }
         
-        // Delete profile from localStorage
         deleteProfile(profileName);
-        
-        // Refresh profile dropdown
         loadProfiles();
-        
-        // Show success message
         showSuccess(`Profile "${profileName}" deleted`);
     });
     
-    // Save profile to localStorage
     function saveProfile(name, selectedRecords) {
-        // Get existing profiles
         const profiles = JSON.parse(localStorage.getItem('exportProfiles')) || {};
-        
-        // Add or update profile
         profiles[name] = selectedRecords;
-        
-        // Save back to localStorage
         localStorage.setItem('exportProfiles', JSON.stringify(profiles));
     }
     
-    // Load profile from localStorage
     function loadProfile(name) {
         const profiles = JSON.parse(localStorage.getItem('exportProfiles')) || {};
         return profiles[name] || [];
     }
     
-    // Delete profile from localStorage
     function deleteProfile(name) {
         const profiles = JSON.parse(localStorage.getItem('exportProfiles')) || {};
         
@@ -4384,16 +4348,13 @@ Accounts: ${progressACC}`;
         }
     }
     
-    // Load profiles into dropdown
     function loadProfiles() {
         const profiles = JSON.parse(localStorage.getItem('exportProfiles')) || {};
         
-        // Clear dropdown except first option
         while (profileSelect.options.length > 1) {
             profileSelect.remove(1);
         }
         
-        // Add profiles to dropdown
         for (const profileName in profiles) {
             const option = document.createElement('option');
             option.value = profileName;
@@ -4406,7 +4367,6 @@ Accounts: ${progressACC}`;
     // EVENT LISTENERS
     // ==========================================
 
-    // Form submit event
     entryForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
@@ -4417,7 +4377,6 @@ Accounts: ${progressACC}`;
         }
     });
 
-    // Update button click event
     document.getElementById('updateBtn').addEventListener('click', async function() {
         if (await validateForm()) {
             const formData = collectFormData();
@@ -4425,7 +4384,6 @@ Accounts: ${progressACC}`;
         }
     });
 
-    // Delete button click event
     document.getElementById('deleteBtn').addEventListener('click', function() {
         const cid = cidInput.value;
         if (cid && confirm('Are you sure you want to delete this record?')) {
@@ -4433,15 +4391,54 @@ Accounts: ${progressACC}`;
         }
     });
 
-    // Refresh data button click event
     document.getElementById('refreshDataBtn').addEventListener('click', function() {
         fetchAllData();
-        fetchAllDataForSummary(); // Also refresh summary data
+        fetchAllDataForSummary();
     });
 
-    // Search button click event
     document.getElementById('searchBtn').addEventListener('click', function() {
         searchData();
+    });
+
+    document.getElementById('searchName').addEventListener('input', async function() {
+        const searchTerm = this.value.toLowerCase().trim();
+        
+        if (searchTerm.length < 2) {
+            document.getElementById('searchResultsBody').innerHTML = '';
+            return;
+        }
+        
+        try {
+            const response = await fetch(`${scriptURL}?action=searchMaster&cid=&name=${encodeURIComponent(searchTerm)}&mobile=`);
+            const data = await response.json();
+            
+            if (data.success) {
+                displayDataInTable(data.data, 'searchResultsBody', true);
+            } else {
+                document.getElementById('searchResultsBody').innerHTML = '<tr><td colspan="7" class="text-center py-4">Error searching Master sheet</td></tr>';
+            }
+        } catch (error) {
+            console.error('Error searching Master sheet:', error);
+            document.getElementById('searchResultsBody').innerHTML = '<tr><td colspan="7" class="text-center py-4">Error connecting to Master sheet</td></tr>';
+        }
+    });
+
+    document.getElementById('searchCID').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchData();
+        }
+    });
+
+    document.getElementById('searchName').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchData();
+        }
+    });
+
+    document.getElementById('searchMobile').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchData();
+        }
     });
 </script>
 </body>
