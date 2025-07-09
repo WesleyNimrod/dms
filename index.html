@@ -267,7 +267,6 @@
             min-height: 60px;
             flex-wrap: wrap;
             gap: 5px;
-            pointer-events: none; /* Lock tabs */
         }
         
         .tab-btn {
@@ -281,10 +280,9 @@
             align-items: center;
             justify-content: center;
             min-width: 50px;
-            cursor: default; /* Change cursor to indicate locked state */
+            cursor: pointer;
             border: none;
             background: transparent;
-            pointer-events: none; /* Lock individual tabs */
         }
         
         .tab-btn i {
@@ -793,10 +791,10 @@
                                 <div id="creditCardsContainer">
                                     <div class="credit-card-entry mb-2">
                                         <div class="flex justify-between items-center mb-1">
-                                            <div class="flex items-center gap-2 w-full">
-                                                <label class="text-gray-700 dark:text-gray-300 font-medium" style="width: 75%;">Credit Card 1:</label>
-                                                <input type="number" placeholder="Settle Amount" class="credit-card-settle-amount border rounded-md p-1 text-xs dark:bg-gray-800 dark:text-white dark:border-gray-600 hidden" style="width: 15%;">
-                                                <button class="settle-card-btn custom-btn text-white px-2 py-1 rounded text-xs" style="width: 10%;">Settle</button>
+                                            <div class="flex items-center gap-1 w-full">
+                                                <label class="text-gray-700 dark:text-gray-300 font-medium flex-1">Credit Card 1:</label>
+                                                <input type="number" placeholder="Settle Amount" class="credit-card-settle-amount border rounded-md p-1 text-xs dark:bg-gray-800 dark:text-white dark:border-gray-600 hidden w-20">
+                                                <button class="settle-card-btn custom-btn text-white px-2 py-1 rounded text-xs w-14 text-center">Settle</button>
                                             </div>
                                         </div>
                                         <div class="flex gap-2 items-center">
@@ -834,8 +832,8 @@
                                 
                                 <div class="grid grid-cols-3 gap-2 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Total CC Limit:</label>
-                                    <input type="text" id="totalCCLimit" class="border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" style="width: 70%;" readonly>
-                                    <input type="text" id="dbrCC" class="border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" style="width: 30%;" readonly>
+                                    <input type="text" id="totalCCLimit" class="col-span-1 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                                    <input type="text" id="dbrCC" class="col-span-1 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                                 </div>
                                 
                                 <div class="grid grid-cols-3 gap-2 items-center">
@@ -1288,6 +1286,43 @@
         // Track settled credit cards and loans with their original values
         let settledCards = new Map(); // Store original outstanding values
         let settledLoans = new Set();
+        
+        // ==========================================
+        // TAB FUNCTIONALITY
+        // ==========================================
+        
+        // Tab switching functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetTab = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all buttons and contents
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                        btn.classList.add('text-white/80');
+                        btn.classList.remove('text-white');
+                    });
+                    
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked button and corresponding content
+                    this.classList.add('active');
+                    this.classList.remove('text-white/80');
+                    this.classList.add('text-white');
+                    
+                    const targetContent = document.getElementById(`tab-${targetTab}`);
+                    if (targetContent) {
+                        targetContent.classList.add('active');
+                    }
+                });
+            });
+        });
         
         // ==========================================
         // GOOGLE DRIVE INTEGRATION (Fixed)
@@ -1987,21 +2022,22 @@
             // CREDIT CARD FUNCTIONALITY (UPDATED)
             // ==========================================
             
-            // Function to validate outstanding vs new limit for non-ADCB cards
-            function validateOutstandingVsNewLimit(cardEntry) {
+            // Function to validate outstanding vs new limit/credit limit for all cards
+            function validateOutstandingVsLimit(cardEntry) {
                 const bankSelect = cardEntry.querySelector('.card-bank-select');
+                const creditLimitInput = cardEntry.querySelector('.credit-card-amount');
                 const newLimitInput = cardEntry.querySelector('.credit-card-new-limit');
                 const outstandingInput = cardEntry.querySelector('.credit-card-outstanding');
                 
-                if (bankSelect.value !== 'ADCB') {
-                    const newLimit = parseFloat(newLimitInput.value) || 0;
-                    const outstanding = parseFloat(outstandingInput.value) || 0;
-                    
-                    if (newLimit > 0 && outstanding > newLimit) {
-                        outstandingInput.classList.add('outstanding-warning');
-                    } else {
-                        outstandingInput.classList.remove('outstanding-warning');
-                    }
+                const creditLimit = parseFloat(creditLimitInput.value) || 0;
+                const newLimit = parseFloat(newLimitInput.value) || 0;
+                const outstanding = parseFloat(outstandingInput.value) || 0;
+                
+                // Use new limit if provided, otherwise use credit limit
+                const effectiveLimit = newLimit > 0 ? newLimit : creditLimit;
+                
+                if (effectiveLimit > 0 && outstanding > effectiveLimit) {
+                    outstandingInput.classList.add('outstanding-warning');
                 } else {
                     outstandingInput.classList.remove('outstanding-warning');
                 }
@@ -2025,6 +2061,40 @@
                 }
             }
             
+            // Function to handle settle amount changes for ADCB
+            function handleSettleAmountChange(cardEntry) {
+                const bankSelect = cardEntry.querySelector('.card-bank-select');
+                const outstandingInput = cardEntry.querySelector('.credit-card-outstanding');
+                const settleAmountInput = cardEntry.querySelector('.credit-card-settle-amount');
+                const cardIndex = Array.from(document.querySelectorAll('.credit-card-entry')).indexOf(cardEntry);
+                
+                if (bankSelect.value === 'ADCB' && !settleAmountInput.classList.contains('hidden')) {
+                    const settleAmount = parseFloat(settleAmountInput.value) || 0;
+                    
+                    // If there's a settle amount, subtract it from outstanding (if not already settled)
+                    if (settleAmount > 0 && !settledCards.has(cardIndex)) {
+                        // Get the original outstanding value if it exists, otherwise use current value
+                        let originalOutstanding = settledCards.get(cardIndex);
+                        if (!originalOutstanding) {
+                            originalOutstanding = parseFloat(outstandingInput.value) || 0;
+                        }
+                        
+                        // Calculate new outstanding amount
+                        const newOutstanding = Math.max(0, originalOutstanding - settleAmount);
+                        outstandingInput.value = newOutstanding.toFixed(2);
+                        
+                        // Store the original outstanding value for reference
+                        if (!settledCards.has(cardIndex)) {
+                            settledCards.set(cardIndex, originalOutstanding);
+                        }
+                    }
+                }
+                
+                // Validate outstanding vs limits
+                validateOutstandingVsLimit(cardEntry);
+                updateDBRCalculator();
+            }
+            
             // Function to handle bank selection changes
             function handleBankSelection(cardEntry) {
                 const bankSelect = cardEntry.querySelector('.card-bank-select');
@@ -2038,22 +2108,21 @@
                 } else {
                     settleAmountInput.classList.add('hidden');
                     settleAmountInput.value = '';
-                    validateOutstandingVsNewLimit(cardEntry);
                 }
                 
                 // Remove warnings from fields that are no longer relevant
-                if (bankSelect.value === 'ADCB') {
-                    outstandingInput.classList.remove('outstanding-warning');
-                } else {
+                if (bankSelect.value !== 'ADCB') {
                     newLimitInput.classList.remove('outstanding-warning');
                 }
                 
+                validateOutstandingVsLimit(cardEntry);
                 updateDBRCalculator();
             }
             
             // Add event listeners to initial credit card
             const initialCardEntry = document.querySelector('.credit-card-entry');
             const initialBankSelect = initialCardEntry.querySelector('.card-bank-select');
+            const initialCreditLimitInput = initialCardEntry.querySelector('.credit-card-amount');
             const initialNewLimitInput = initialCardEntry.querySelector('.credit-card-new-limit');
             const initialOutstandingInput = initialCardEntry.querySelector('.credit-card-outstanding');
             const initialSettleAmountInput = initialCardEntry.querySelector('.credit-card-settle-amount');
@@ -2062,19 +2131,24 @@
                 handleBankSelection(initialCardEntry);
             });
             
+            initialCreditLimitInput.addEventListener('input', function() {
+                validateOutstandingVsLimit(initialCardEntry);
+                updateDBRCalculator();
+            });
+            
             initialNewLimitInput.addEventListener('input', function() {
                 validateADCBNewLimit(initialCardEntry);
-                validateOutstandingVsNewLimit(initialCardEntry);
+                validateOutstandingVsLimit(initialCardEntry);
                 updateDBRCalculator();
             });
             
             initialOutstandingInput.addEventListener('input', function() {
-                validateOutstandingVsNewLimit(initialCardEntry);
+                validateOutstandingVsLimit(initialCardEntry);
                 updateDBRCalculator();
             });
             
             initialSettleAmountInput.addEventListener('input', function() {
-                updateDBRCalculator();
+                handleSettleAmountChange(initialCardEntry);
             });
             
             // ==========================================
@@ -2373,7 +2447,7 @@
                     loanAmountInput.value = profileData.loanAmount;
                     reducingRateInput.value = profileData.reducingRate;
                     specialNote.value = profileData.specialNote;
-                    netAmountCheckbox.checked = profileData.netAmountChecked || false;
+                    netAmountCheckbox.checked = profileData.netAmountChecked !== undefined ? profileData.netAmountChecked : true;
                     
                     // Handle credit cards
                     if (profileData.creditCards && profileData.creditCards.length > 0) {
@@ -3173,21 +3247,13 @@
                         // Restore original outstanding amount
                         outstandingInput.value = originalOutstanding;
                     } else {
-                        // Settle - store original value and use settle amount or outstanding for calculation
+                        // Settle - store original value for restoration
                         const currentOutstanding = parseFloat(outstandingInput.value) || 0;
                         settledCards.set(cardIndex, currentOutstanding); // Store original value
                         cardEntry.classList.add('card-settled');
                         e.target.textContent = 'Unsettle';
                         e.target.classList.remove('custom-btn');
                         e.target.classList.add('bg-gradient-to-r', 'from-red-500', 'to-red-600');
-                        
-                        // For ADCB, if settle amount is present, update outstanding to reflect remaining amount
-                        if (bankSelect.value === 'ADCB' && !settleAmountInput.classList.contains('hidden')) {
-                            const settleAmount = parseFloat(settleAmountInput.value) || 0;
-                            if (settleAmount > 0 && settleAmount <= currentOutstanding) {
-                                outstandingInput.value = (currentOutstanding - settleAmount).toFixed(2);
-                            }
-                        }
                     }
                     
                     // Update calculations
@@ -3233,23 +3299,12 @@
                         totalCCLimit += effectiveLimit;
                     }
                     
-                    // For Total Outstanding calculation, handle ADCB vs non-ADCB differently
+                    // For Total Outstanding calculation, handle settled vs non-settled cards
                     if (settledCards.has(index)) {
-                        if (bankSelect.value === 'ADCB' && !settleAmountInput.classList.contains('hidden')) {
-                            // For ADCB cards, if there's a settle amount, use it
-                            const settleAmount = parseFloat(settleAmountInput.value) || 0;
-                            if (settleAmount > 0) {
-                                totalCCOutstanding += settleAmount;
-                            } else {
-                                // Fallback to outstanding if no settle amount
-                                totalCCOutstanding += outstanding;
-                            }
-                        } else {
-                            // For non-ADCB cards or when settle button is pressed, use outstanding
-                            totalCCOutstanding += outstanding;
-                        }
+                        // For settled cards, use outstanding as settlement amount
+                        totalCCOutstanding += outstanding;
                     } else {
-                        // For non-settled cards, check if there's a settle amount entered (ADCB only)
+                        // For non-settled ADCB cards with settle amount, use settle amount
                         if (bankSelect.value === 'ADCB' && !settleAmountInput.classList.contains('hidden')) {
                             const settleAmount = parseFloat(settleAmountInput.value) || 0;
                             if (settleAmount > 0) {
@@ -4218,10 +4273,10 @@
                 creditCardDiv.classList.add('credit-card-entry', 'mb-2');
                 creditCardDiv.innerHTML = `
                     <div class="flex justify-between items-center mb-1">
-                        <div class="flex items-center gap-2 w-full">
-                            <label class="text-gray-700 dark:text-gray-300 font-medium" style="width: 75%;">Credit Card ${cardCount}:</label>
-                            <input type="number" placeholder="Settle Amount" class="credit-card-settle-amount border rounded-md p-1 text-xs dark:bg-gray-800 dark:text-white dark:border-gray-600 hidden" style="width: 15%;">
-                            <button class="settle-card-btn custom-btn text-white px-2 py-1 rounded text-xs" style="width: 10%;">Settle</button>
+                        <div class="flex items-center gap-1 w-full">
+                            <label class="text-gray-700 dark:text-gray-300 font-medium flex-1">Credit Card ${cardCount}:</label>
+                            <input type="number" placeholder="Settle Amount" class="credit-card-settle-amount border rounded-md p-1 text-xs dark:bg-gray-800 dark:text-white dark:border-gray-600 hidden w-20">
+                            <button class="settle-card-btn custom-btn text-white px-2 py-1 rounded text-xs w-14 text-center">Settle</button>
                         </div>
                     </div>
                     <div class="flex gap-2 items-center">
@@ -4260,18 +4315,24 @@
                     handleBankSelection(creditCardDiv);
                 });
                 
-                newCreditCardInput.addEventListener('input', updateDBRCalculator);
+                newCreditCardInput.addEventListener('input', function() {
+                    validateOutstandingVsLimit(creditCardDiv);
+                    updateDBRCalculator();
+                });
+                
                 newCreditCardNewLimitInput.addEventListener('input', function() {
                     validateADCBNewLimit(creditCardDiv);
-                    validateOutstandingVsNewLimit(creditCardDiv);
+                    validateOutstandingVsLimit(creditCardDiv);
                     updateDBRCalculator();
                 });
+                
                 newOutstandingInput.addEventListener('input', function() {
-                    validateOutstandingVsNewLimit(creditCardDiv);
+                    validateOutstandingVsLimit(creditCardDiv);
                     updateDBRCalculator();
                 });
+                
                 newSettleAmountInput.addEventListener('input', function() {
-                    updateDBRCalculator();
+                    handleSettleAmountChange(creditCardDiv);
                 });
             });
             
@@ -4462,6 +4523,11 @@
                 // Remove high DBR styling
                 dbrPercentageInput.classList.remove('dbr-high');
                 
+                // Clear all outstanding warnings
+                document.querySelectorAll('.outstanding-warning').forEach(element => {
+                    element.classList.remove('outstanding-warning');
+                });
+                
                 // Update calculations
                 updateDBRCalculator();
                 updateEMICalculator();
@@ -4471,20 +4537,21 @@
             salaryInput.addEventListener('input', updateGrossSalary);
             
             // Add event listeners to initial credit card inputs
-            document.querySelector('.credit-card-amount').addEventListener('input', updateDBRCalculator);
+            document.querySelector('.credit-card-amount').addEventListener('input', function() {
+                validateOutstandingVsLimit(initialCardEntry);
+                updateDBRCalculator();
+            });
             document.querySelector('.credit-card-new-limit').addEventListener('input', function() {
-                const firstCardEntry = document.querySelector('.credit-card-entry');
-                validateADCBNewLimit(firstCardEntry);
-                validateOutstandingVsNewLimit(firstCardEntry);
+                validateADCBNewLimit(initialCardEntry);
+                validateOutstandingVsLimit(initialCardEntry);
                 updateDBRCalculator();
             });
             document.querySelector('.credit-card-outstanding').addEventListener('input', function() {
-                const firstCardEntry = document.querySelector('.credit-card-entry');
-                validateOutstandingVsNewLimit(firstCardEntry);
+                validateOutstandingVsLimit(initialCardEntry);
                 updateDBRCalculator();
             });
             document.querySelector('.credit-card-settle-amount').addEventListener('input', function() {
-                updateDBRCalculator();
+                handleSettleAmountChange(initialCardEntry);
             });
             
             loanTypeSelect.addEventListener('change', function() {
