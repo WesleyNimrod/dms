@@ -112,6 +112,16 @@
             color: #34d399 !important;
         }
         
+        .settlement-suggestion-text {
+            color: #ef4444 !important;
+            font-weight: bold;
+        }
+        
+        .dark .settlement-suggestion-text {
+            color: #f87171 !important;
+            font-weight: bold;
+        }
+        
         .modal {
             position: fixed;
             top: 0;
@@ -915,13 +925,9 @@
                                 </div>
                                 
                                 <div class="grid grid-cols-3 gap-2 items-center">
-                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Reducing Rate %:</label>
-                                    <input type="number" id="reducingRate" step="0.01" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" value="10">
-                                </div>
-                                
-                                <div class="grid grid-cols-3 gap-2 items-center">
-                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Flat Rate %:</label>
-                                    <input type="text" id="flatRate" step="0.01" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Rate %:</label>
+                                    <input type="number" id="reducingRate" step="0.01" class="col-span-1 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" value="10">
+                                    <input type="text" id="flatRate" step="0.01" class="col-span-1 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                                 </div>
                                 
                                 <div class="grid grid-cols-3 gap-2 items-center">
@@ -1286,6 +1292,7 @@
         // Track settled credit cards and loans with their original values
         let settledCards = new Map(); // Store original outstanding values
         let settledLoans = new Set();
+        let originalOutstandingValues = new Map(); // Store original outstanding values for ADCB cards
         
         // ==========================================
         // TAB FUNCTIONALITY
@@ -1295,6 +1302,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const tabButtons = document.querySelectorAll('.tab-btn');
             const tabContents = document.querySelectorAll('.tab-content');
+            const headerControls = document.getElementById('headerControls');
             
             tabButtons.forEach(button => {
                 button.addEventListener('click', function() {
@@ -1319,6 +1327,13 @@
                     const targetContent = document.getElementById(`tab-${targetTab}`);
                     if (targetContent) {
                         targetContent.classList.add('active');
+                    }
+                    
+                    // Show/hide header controls based on tab
+                    if (targetTab === 'main') {
+                        headerControls.style.display = 'block';
+                    } else {
+                        headerControls.style.display = 'none';
                     }
                 });
             });
@@ -2071,22 +2086,21 @@
                 if (bankSelect.value === 'ADCB' && !settleAmountInput.classList.contains('hidden')) {
                     const settleAmount = parseFloat(settleAmountInput.value) || 0;
                     
-                    // If there's a settle amount, subtract it from outstanding (if not already settled)
-                    if (settleAmount > 0 && !settledCards.has(cardIndex)) {
-                        // Get the original outstanding value if it exists, otherwise use current value
-                        let originalOutstanding = settledCards.get(cardIndex);
-                        if (!originalOutstanding) {
-                            originalOutstanding = parseFloat(outstandingInput.value) || 0;
-                        }
-                        
-                        // Calculate new outstanding amount
+                    // Store original outstanding value if not already stored
+                    if (!originalOutstandingValues.has(cardIndex)) {
+                        const currentOutstanding = parseFloat(outstandingInput.value) || 0;
+                        originalOutstandingValues.set(cardIndex, currentOutstanding);
+                    }
+                    
+                    const originalOutstanding = originalOutstandingValues.get(cardIndex);
+                    
+                    // Update outstanding based on settle amount
+                    if (settleAmount > 0) {
                         const newOutstanding = Math.max(0, originalOutstanding - settleAmount);
                         outstandingInput.value = newOutstanding.toFixed(2);
-                        
-                        // Store the original outstanding value for reference
-                        if (!settledCards.has(cardIndex)) {
-                            settledCards.set(cardIndex, originalOutstanding);
-                        }
+                    } else {
+                        // If settle amount is cleared, restore original outstanding
+                        outstandingInput.value = originalOutstanding.toFixed(2);
                     }
                 }
                 
@@ -2101,6 +2115,7 @@
                 const settleAmountInput = cardEntry.querySelector('.credit-card-settle-amount');
                 const newLimitInput = cardEntry.querySelector('.credit-card-new-limit');
                 const outstandingInput = cardEntry.querySelector('.credit-card-outstanding');
+                const cardIndex = Array.from(document.querySelectorAll('.credit-card-entry')).indexOf(cardEntry);
                 
                 if (bankSelect.value === 'ADCB') {
                     settleAmountInput.classList.remove('hidden');
@@ -2108,6 +2123,11 @@
                 } else {
                     settleAmountInput.classList.add('hidden');
                     settleAmountInput.value = '';
+                    
+                    // Clear original outstanding value when bank changes to non-ADCB
+                    if (originalOutstandingValues.has(cardIndex)) {
+                        originalOutstandingValues.delete(cardIndex);
+                    }
                 }
                 
                 // Remove warnings from fields that are no longer relevant
@@ -2143,6 +2163,15 @@
             });
             
             initialOutstandingInput.addEventListener('input', function() {
+                const cardIndex = Array.from(document.querySelectorAll('.credit-card-entry')).indexOf(initialCardEntry);
+                const bankSelect = initialCardEntry.querySelector('.card-bank-select');
+                
+                // Store original value when manually edited (for non-ADCB or first entry)
+                if (bankSelect.value !== 'ADCB' || !originalOutstandingValues.has(cardIndex)) {
+                    const currentValue = parseFloat(this.value) || 0;
+                    originalOutstandingValues.set(cardIndex, currentValue);
+                }
+                
                 validateOutstandingVsLimit(initialCardEntry);
                 updateDBRCalculator();
             });
@@ -2299,7 +2328,7 @@
                             newLimit: entry.querySelector('.credit-card-new-limit').value,
                             outstanding: entry.querySelector('.credit-card-outstanding').value,
                             settled: settledCards.has(index),
-                            originalOutstanding: settledCards.get(index) || entry.querySelector('.credit-card-outstanding').value,
+                            originalOutstanding: originalOutstandingValues.get(index) || entry.querySelector('.credit-card-outstanding').value,
                             settleAmount: entry.querySelector('.credit-card-settle-amount').value
                         };
                     }),
@@ -2458,6 +2487,11 @@
                         firstCardElement.querySelector('.credit-card-new-limit').value = profileData.creditCards[0].newLimit || '';
                         firstCardElement.querySelector('.credit-card-outstanding').value = profileData.creditCards[0].outstanding;
                         
+                        // Store original outstanding value
+                        if (profileData.creditCards[0].originalOutstanding) {
+                            originalOutstandingValues.set(0, parseFloat(profileData.creditCards[0].originalOutstanding));
+                        }
+                        
                         // Handle ADCB settle amount visibility and value
                         handleBankSelection(firstCardElement);
                         if (profileData.creditCards[0].settleAmount) {
@@ -2485,6 +2519,11 @@
                             newCard.querySelector('.credit-card-amount').value = profileData.creditCards[i].limit;
                             newCard.querySelector('.credit-card-new-limit').value = profileData.creditCards[i].newLimit || '';
                             newCard.querySelector('.credit-card-outstanding').value = profileData.creditCards[i].outstanding;
+                            
+                            // Store original outstanding value
+                            if (profileData.creditCards[i].originalOutstanding) {
+                                originalOutstandingValues.set(i, parseFloat(profileData.creditCards[i].originalOutstanding));
+                            }
                             
                             // Handle ADCB settle amount visibility and value
                             handleBankSelection(newCard);
@@ -2803,7 +2842,7 @@
                             newLimit: entry.querySelector('.credit-card-new-limit').value,
                             outstanding: entry.querySelector('.credit-card-outstanding').value,
                             settled: settledCards.has(index),
-                            originalOutstanding: settledCards.get(index) || entry.querySelector('.credit-card-outstanding').value,
+                            originalOutstanding: originalOutstandingValues.get(index) || entry.querySelector('.credit-card-outstanding').value,
                             settleAmount: entry.querySelector('.credit-card-settle-amount').value
                         };
                     }),
@@ -2855,6 +2894,11 @@
                         firstCardElement.querySelector('.credit-card-new-limit').value = tempState.creditCards[0].newLimit || '';
                         firstCardElement.querySelector('.credit-card-outstanding').value = tempState.creditCards[0].outstanding || '';
                         
+                        // Store original outstanding value
+                        if (tempState.creditCards[0].originalOutstanding) {
+                            originalOutstandingValues.set(0, parseFloat(tempState.creditCards[0].originalOutstanding));
+                        }
+                        
                         // Handle ADCB settle amount visibility and value
                         handleBankSelection(firstCardElement);
                         if (tempState.creditCards[0].settleAmount) {
@@ -2882,6 +2926,11 @@
                             newCard.querySelector('.credit-card-amount').value = tempState.creditCards[i].limit || '';
                             newCard.querySelector('.credit-card-new-limit').value = tempState.creditCards[i].newLimit || '';
                             newCard.querySelector('.credit-card-outstanding').value = tempState.creditCards[i].outstanding || '';
+                            
+                            // Store original outstanding value
+                            if (tempState.creditCards[i].originalOutstanding) {
+                                originalOutstandingValues.set(i, parseFloat(tempState.creditCards[i].originalOutstanding));
+                            }
                             
                             // Handle ADCB settle amount visibility and value
                             handleBankSelection(newCard);
@@ -3246,6 +3295,7 @@
                         
                         // Restore original outstanding amount
                         outstandingInput.value = originalOutstanding;
+                        originalOutstandingValues.set(cardIndex, originalOutstanding);
                     } else {
                         // Settle - store original value for restoration
                         const currentOutstanding = parseFloat(outstandingInput.value) || 0;
@@ -3301,8 +3351,9 @@
                     
                     // For Total Outstanding calculation, handle settled vs non-settled cards
                     if (settledCards.has(index)) {
-                        // For settled cards, use outstanding as settlement amount
-                        totalCCOutstanding += outstanding;
+                        // For settled cards, use the original outstanding value
+                        const originalOutstanding = settledCards.get(index) || outstanding;
+                        totalCCOutstanding += originalOutstanding;
                     } else {
                         // For non-settled ADCB cards with settle amount, use settle amount
                         if (bankSelect.value === 'ADCB' && !settleAmountInput.classList.contains('hidden')) {
@@ -3522,13 +3573,25 @@
                             const adcbCard = adcbCards[0]; // Take first ADCB card
                             const creditLimit = parseFloat(adcbCard.querySelector('.credit-card-amount').value) || 0;
                             const outstanding = parseFloat(adcbCard.querySelector('.credit-card-outstanding').value) || 0;
+                            const newLimitInput = adcbCard.querySelector('.credit-card-new-limit');
+                            const newLimitValue = parseFloat(newLimitInput.value) || 0;
                             
                             if (creditLimit > 0) {
                                 // Suggest new limit and settlement
                                 const suggestedNewLimit = Math.max(3000, creditLimit - ccLimitReductionNeeded); // Ensure minimum 3000
-                                const settlementAmount = Math.max(0, outstanding + 500 - suggestedNewLimit);
                                 
-                                adcbSuggestion = ` For ADCB Credit Card: Reduce limit to AED ${formatNumber(suggestedNewLimit.toFixed(2))} and settle AED ${formatNumber(settlementAmount.toFixed(2))}.`;
+                                if (suggestedNewLimit < 3000) {
+                                    adcbSuggestion = ` For ADCB Credit Card: Cancel the card as the required limit would be below AED 3,000.`;
+                                } else {
+                                    // Check if new limit is entered and outstanding is greater (Fix 2B)
+                                    if (newLimitValue > 0 && outstanding > newLimitValue) {
+                                        const settlementAmount = outstanding - newLimitValue;
+                                        adcbSuggestion = ` For ADCB Credit Card: Reduce limit to AED ${formatNumber(suggestedNewLimit.toFixed(2))} and settle AED ${formatNumber(settlementAmount.toFixed(2))}.`;
+                                    } else {
+                                        const settlementAmount = Math.max(0, outstanding + 500 - suggestedNewLimit);
+                                        adcbSuggestion = ` For ADCB Credit Card: Reduce limit to AED ${formatNumber(suggestedNewLimit.toFixed(2))} and settle AED ${formatNumber(settlementAmount.toFixed(2))}.`;
+                                    }
+                                }
                             }
                         }
                         
@@ -3537,8 +3600,9 @@
                         ccSuggestionText.textContent = `Your DBR is at the limit. Consider reducing credit card limits or settling outstanding amounts.`;
                     }
                     
-                    // Remove green text styling for settlement suggestion
+                    // Apply red text styling for settlement suggestion (Fix 2A)
                     ccSuggestionText.classList.remove('cc-suggestion-text');
+                    ccSuggestionText.classList.add('settlement-suggestion-text');
                     ccSuggestionContainer.classList.remove('hidden');
                 } else {
                     // Switch to CREDIT CARD SUGGESTION
@@ -3551,16 +3615,32 @@
                     const dbrRate = 5; // Fixed at 5%
                     const optimalCCLimit = availableLiability / (dbrRate/100);
                     
-                    if (availableLiability > 0) {
+                    // Check if any ADCB card is settled - hide suggestion if settled
+                    let hideForADCBSettled = false;
+                    document.querySelectorAll('.credit-card-entry').forEach((entry, index) => {
+                        const bankSelect = entry.querySelector('.card-bank-select');
+                        if (bankSelect.value === 'ADCB' && settledCards.has(index)) {
+                            hideForADCBSettled = true;
+                        }
+                    });
+                    
+                    if (hideForADCBSettled) {
+                        ccSuggestionContainer.classList.add('hidden');
+                    } else if (availableLiability > 0 && optimalCCLimit >= 3000) {
                         ccSuggestionContainer.classList.remove('hidden');
                         ccSuggestionText.textContent = `Based on your available liability of AED ${formatNumber(availableLiability.toFixed(2))} and current DBR of ${dbrPercentage.toFixed(2)}%, the optimal credit card limit for you would be AED ${formatNumber(optimalCCLimit.toFixed(2))}. This would keep your DBR within the 49.99% limit.`;
                         // Add green text styling for credit card suggestion
                         ccSuggestionText.classList.add('cc-suggestion-text');
+                        ccSuggestionText.classList.remove('settlement-suggestion-text');
+                    } else if (optimalCCLimit < 3000 && availableLiability > 0) {
+                        // Hide suggestion if optimal limit is less than 3000 (Fix 4A)
+                        ccSuggestionContainer.classList.add('hidden');
                     } else {
                         ccSuggestionContainer.classList.remove('hidden');
                         ccSuggestionText.textContent = `Your current liabilities exceed or are close to the 49.99% DBR limit. It is not recommended to apply for any credit cards at this time.`;
                         // Add green text styling for credit card suggestion
                         ccSuggestionText.classList.add('cc-suggestion-text');
+                        ccSuggestionText.classList.remove('settlement-suggestion-text');
                     }
                 }
             }
@@ -3899,18 +3979,38 @@
                 }
             }
             
-            // Function to find optimal loan amount for 49.99% DBR
+            // ==========================================
+            // FIND OPTIMAL LOAN FUNCTION (FIX 1)
+            // ==========================================
+            
+            // Function to find optimal loan amount for 49.99% DBR (Fixed)
             function findOptimalLoanAmount() {
                 const grossSalary = parseFloat(grossSalaryInput.value.replace(/,/g, '')) || 0;
+                const currentDBR = parseFloat(dbrPercentageInput.value) || 0;
+                
                 if (grossSalary <= 0) {
                     showSuccess('Please Enter A Valid Salary Amount First.');
+                    return;
+                }
+                
+                // Check if DBR is already within 49.99%
+                if (currentDBR <= 49.99) {
+                    showSuccess('Your DBR is already within the 49.99% limit. No optimization needed.');
                     return;
                 }
                 
                 const reducingRate = parseFloat(reducingRateInput.value) || 0;
                 const tenureMonths = parseInt(tenureMonthsInput.value) || 0;
                 const loanType = loanTypeSelect.value;
-                const allowedLiability = grossSalary * 0.4999; // 49.99% of gross salary
+                
+                if (reducingRate <= 0 || tenureMonths <= 0) {
+                    showSuccess('Please enter valid reducing rate and tenure first.');
+                    return;
+                }
+                
+                // Use the same calculation logic from checkLoanAmountWithDBR
+                const allowedDBRPercentage = 49.99;
+                const allowedLiability = grossSalary * (allowedDBRPercentage / 100);
                 
                 // Get existing loans installments (only for non-settled loans)
                 let totalExistingLoansInstallments = 0;
@@ -3937,6 +4037,7 @@
                         totalCCLimit += effectiveLimit;
                     }
                 });
+                
                 const dbrRate = 0.05; // Fixed at 5%
                 const dbrCC = totalCCLimit * dbrRate;
                 
@@ -3951,10 +4052,9 @@
                     return;
                 }
                 
-                // Now we need to find the loan amount that would result in this EMI
-                // Using binary search to find optimal loan amount
+                // Binary search to find optimal loan amount (same logic as checkLoanAmountWithDBR)
                 let low = 0;
-                let high = grossSalary * 100; // Setting a very high upper bound
+                let high = grossSalary * 100; // Setting a high upper bound
                 let optimalLoanAmount = 0;
                 
                 while (high - low > 1) {
@@ -3971,6 +4071,9 @@
                 
                 // Update loan amount input
                 loanAmountInput.value = Math.floor(optimalLoanAmount);
+                
+                // Show success message
+                showSuccess(`Optimal loan amount: AED ${formatNumber(Math.floor(optimalLoanAmount))} suggested to keep DBR within 49.99%.`);
                 
                 // Recalculate everything
                 updateEMICalculator();
@@ -4327,6 +4430,15 @@
                 });
                 
                 newOutstandingInput.addEventListener('input', function() {
+                    const cardIndex = Array.from(document.querySelectorAll('.credit-card-entry')).indexOf(creditCardDiv);
+                    const bankSelect = creditCardDiv.querySelector('.card-bank-select');
+                    
+                    // Store original value when manually edited (for non-ADCB or first entry)
+                    if (bankSelect.value !== 'ADCB' || !originalOutstandingValues.has(cardIndex)) {
+                        const currentValue = parseFloat(this.value) || 0;
+                        originalOutstandingValues.set(cardIndex, currentValue);
+                    }
+                    
                     validateOutstandingVsLimit(creditCardDiv);
                     updateDBRCalculator();
                 });
@@ -4343,9 +4455,12 @@
                     const lastEntry = creditCardEntries[creditCardEntries.length - 1];
                     const lastEntryIndex = Array.from(document.querySelectorAll('.credit-card-entry')).indexOf(lastEntry);
                     
-                    // Remove from settled cards if it was settled
+                    // Remove from settled cards and original values if they were set
                     if (settledCards.has(lastEntryIndex)) {
                         settledCards.delete(lastEntryIndex);
+                    }
+                    if (originalOutstandingValues.has(lastEntryIndex)) {
+                        originalOutstandingValues.delete(lastEntryIndex);
                     }
                     
                     // Remove the element
@@ -4450,6 +4565,7 @@
                 // Clear settled cards and loans
                 settledCards.clear();
                 settledLoans.clear();
+                originalOutstandingValues.clear();
                 
                 // Remove extra credit cards
                 const creditCardEntries = document.querySelectorAll('.credit-card-entry');
@@ -4533,6 +4649,9 @@
                 updateEMICalculator();
             });
             
+            // Find Optimal Loan button event listener (Fixed)
+            findOptimalLoanBtn.addEventListener('click', findOptimalLoanAmount);
+            
             // Input event listeners
             salaryInput.addEventListener('input', updateGrossSalary);
             
@@ -4547,6 +4666,15 @@
                 updateDBRCalculator();
             });
             document.querySelector('.credit-card-outstanding').addEventListener('input', function() {
+                const cardIndex = Array.from(document.querySelectorAll('.credit-card-entry')).indexOf(initialCardEntry);
+                const bankSelect = initialCardEntry.querySelector('.card-bank-select');
+                
+                // Store original value when manually edited (for non-ADCB or first entry)
+                if (bankSelect.value !== 'ADCB' || !originalOutstandingValues.has(cardIndex)) {
+                    const currentValue = parseFloat(this.value) || 0;
+                    originalOutstandingValues.set(cardIndex, currentValue);
+                }
+                
                 validateOutstandingVsLimit(initialCardEntry);
                 updateDBRCalculator();
             });
