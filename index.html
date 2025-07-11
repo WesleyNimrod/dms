@@ -4396,16 +4396,16 @@
                 
                 message += "*Loan Details*\n";
                 message += `Loan Amount: AED ${formatNumber(loanAmount.toFixed(2))}\n`;
-                message += `EMI: AED ${formatNumber(emi.toFixed(2))}\n`;
+                message += `Monthly Installement: AED ${formatNumber(emi.toFixed(2))}\n`;
                 message += `Tenure: ${tenureMonths} Months\n`;
                 message += `Reducing Rate: ${reducingRate}%\n`;
                 message += `Flat Rate: ${flatRate.toFixed(2)}%\n`;
                 message += `Max Loan Eligibity: AED ${formatNumber(maxLoanEligibility.toFixed(2))}\n`;
-                message += `Grace period: ${daysBetween} days\n`;
+                message += `Grace Period: ${daysBetween} days\n`;
                 message += `Total Payment: AED ${formatNumber(totalPayment.toFixed(2))}\n`;
-                message += `Processing Fees + VAT: AED ${formatNumber(processingFees.toFixed(2))}\n`;
+                message += `Processing Fees(+VAT): AED ${formatNumber(processingFees.toFixed(2))}\n`;
                 message += `Insurance Fees: AED 0\n`;
-                message += `Total Outstanding: AED ${formatNumber(totalOutstanding.toFixed(2))}\n`;
+                message += `Current Outstanding: AED ${formatNumber(totalOutstanding.toFixed(2))}\n`;
                 message += `Cash In Hand: AED ${formatNumber(cashInHand.toFixed(2))}\n\n`;
                 
                 // Generate special note with settlement and limit reduction info (Fix 6)
@@ -4429,9 +4429,9 @@
                     const settleAmount = entry.querySelector('.credit-card-settle-amount').value;
                     
                     if (settledCards.has(index)) {
-                        autoSpecialNote += `• ${bank} Credit Card settled from loan proceeds\n`;
+                        autoSpecialNote += `• ${bank} Credit Card settle with liability letter from loan proceeds\n`;
                     } else if (bank === 'ADCB' && newLimit && parseFloat(newLimit) !== parseFloat(creditLimit)) {
-                        let noteText = `• ${bank} Credit Card limit reduced from AED ${formatNumber(parseFloat(creditLimit).toFixed(2))} to AED ${formatNumber(parseFloat(newLimit).toFixed(2))}`;
+                        let noteText = `• ${bank} Credit Card limit reduce from AED ${formatNumber(parseFloat(creditLimit).toFixed(2))} to AED ${formatNumber(parseFloat(newLimit).toFixed(2))}`;
                         if (settleAmount && parseFloat(settleAmount) > 0) {
                             noteText += ` and settle AED ${formatNumber(parseFloat(settleAmount).toFixed(2))} from loan proceeds`;
                         }
