@@ -97,6 +97,17 @@
             position: relative;
         }
 
+        /* Row selection */
+        .calling-table tr.selected {
+            background-color: rgba(111, 44, 79, 0.2) !important;
+        }
+
+        .selection-checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
         /* Editable cell styling */
         .editable {
             position: relative;
@@ -199,6 +210,41 @@
         .comment-btn {
             background-color: #eab308;
         }
+
+        /* Icon buttons */
+        .icon-btn {
+            padding: 8px 12px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            color: white;
+            min-width: 40px;
+            height: 40px;
+        }
+
+        .icon-btn:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+
+        .icon-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-refresh { background-color: #6F2C4F; }
+        .btn-sheet { background-color: #16a34a; }
+        .btn-undo { background-color: #6b7280; }
+        .btn-show-more { background-color: #6b7280; }
+        .btn-copy { background-color: #3b82f6; }
+        .btn-delete { background-color: #ef4444; }
+        .btn-duplicate { background-color: #f59e0b; }
+        .btn-duplicate.active { background-color: #d97706; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); }
 
         /* Result dropdown styling */
         .result-dropdown {
@@ -403,6 +449,50 @@
             border: 1px solid #6F2C4F;
             border-radius: 4px;
         }
+
+        /* Selection info */
+        .selection-info {
+            background-color: rgba(111, 44, 79, 0.1);
+            border: 1px solid #6F2C4F;
+            border-radius: 4px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .selection-info.show {
+            display: block;
+        }
+
+        /* Confirm Dialog */
+        .confirm-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .confirm-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .confirm-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-tahoma">
@@ -419,21 +509,41 @@
                     <p class="text-gray-600 text-sm ml-4" id="recordsInfo">Showing 0 records</p>
                 </div>
                 <div class="flex gap-2">
-                    <button id="refreshBtn" class="custom-btn text-white py-2 px-4 rounded-md flex items-center">
-                        <i class="fas fa-sync-alt mr-2"></i> Refresh Data
+                    <button id="refreshBtn" class="icon-btn btn-refresh tooltip" title="Refresh Data">
+                        <i class="fas fa-sync-alt"></i>
+                        <span class="tooltip-text">Refresh Data</span>
                     </button>
-                    <a href="https://docs.google.com/spreadsheets/d/1VfEPU_2EvNqB6g2ldAzD05fvwFigL1yN3L0wLOwZP4o/edit?gid=276425933#gid=276425933" target="_blank" class="custom-btn text-white py-2 px-4 rounded-md flex items-center">
-                        <i class="fas fa-file-excel mr-2"></i> Sheet
+                    <a href="https://docs.google.com/spreadsheets/d/1VfEPU_2EvNqB6g2ldAzD05fvwFigL1yN3L0wLOwZP4o/edit?gid=276425933#gid=276425933" target="_blank" class="icon-btn btn-sheet tooltip" title="Open Sheet">
+                        <i class="fas fa-file-excel"></i>
+                        <span class="tooltip-text">Open Sheet</span>
                     </a>
-                    <button id="undoBtn" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 flex items-center tooltip">
-                        <i class="fas fa-undo mr-2"></i> Undo
+                    <button id="undoBtn" class="icon-btn btn-undo tooltip" title="Undo">
+                        <i class="fas fa-undo"></i>
                         <span class="tooltip-text">Undo last change</span>
                     </button>
-                    <button id="showMoreBtn" class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 flex items-center hidden">
-                        <i class="fas fa-expand-alt mr-2"></i> Show More
+                    <button id="showMoreBtn" class="icon-btn btn-show-more tooltip hidden" title="Show More">
+                        <i class="fas fa-expand-alt"></i>
+                        <span class="tooltip-text">Show More</span>
+                    </button>
+                    <button id="copyBtn" class="icon-btn btn-copy tooltip" title="Copy Selected" disabled>
+                        <i class="fas fa-copy"></i>
+                        <span class="tooltip-text">Copy Selected</span>
+                    </button>
+                    <button id="deleteBtn" class="icon-btn btn-delete tooltip" title="Delete Selected" disabled>
+                        <i class="fas fa-trash"></i>
+                        <span class="tooltip-text">Delete Selected</span>
+                    </button>
+                    <button id="duplicateBtn" class="icon-btn btn-duplicate tooltip" title="Show Duplicates">
+                        <i class="fas fa-clone"></i>
+                        <span class="tooltip-text">Show Duplicates</span>
                     </button>
                 </div>
             </div>
+            
+            <div id="selectionInfo" class="selection-info">
+                <span id="selectionCount">0</span> rows selected
+            </div>
+
             <div class="mb-4">
                 <div class="flex justify-between items-center">
                     <h3 class="font-semibold text-lg mb-2 text-[#6F2C4F]">Filters</h3>
@@ -446,6 +556,7 @@
                             <option value="To Call">To Call</option>
                             <option value="No Answer">No Answer</option>
                             <option value="Busy">Busy</option>
+                            <option value="DNCR">DNCR</option>
                             <option value="Not Interested">Not Interested</option>
                             <option value="Interested">Interested</option>
                             <option value="ROI Inquired">ROI Inquired</option>
@@ -483,6 +594,9 @@
                 <table id="callingTable" class="calling-table" style="border-spacing: 0;">
                     <thead>
                         <tr>
+                            <th style="width: 40px;">
+                                <input type="checkbox" id="selectAllCheckbox" class="selection-checkbox">
+                            </th>
                             <th style="width: 110px;">Actions</th>
                             <th style="width: 150px;">Result</th>
                             <th style="width: 120px;">Mobile</th>
@@ -495,7 +609,7 @@
                     </thead>
                     <tbody id="callingTableBody">
                         <tr>
-                            <td colspan="8" class="table-placeholder">
+                            <td colspan="9" class="table-placeholder">
                                 <div class="py-8">
                                     <i class="fas fa-spinner fa-spin text-3xl mb-4 text-[#6F2C4F]"></i>
                                     <p>Loading data, please wait...</p>
@@ -553,6 +667,17 @@
         </div>
     </div>
 
+    <div id="confirmDialog" class="confirm-dialog">
+        <div class="confirm-content">
+            <h3 class="text-lg font-semibold mb-4">Confirm Action</h3>
+            <p id="confirmMessage">Are you sure?</p>
+            <div class="confirm-buttons">
+                <button id="confirmCancel" class="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400">Cancel</button>
+                <button id="confirmOk" class="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600">Confirm</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // *** IMPORTANT: Replace 'YOUR_WEB_APP_URL_HERE' with your actual Google Apps Script Web App URL ***
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwngb8Ka97Re88mDNaT60W-b_Ts4VQTf0DKSrJVUXra1Za8OtdNbG4gmrWIwfSSXaz9Rg/exec'; 
@@ -561,11 +686,13 @@
         let displayedData = [];
         let currentIndex = 0;
         let lastUndoAction = null;
-        const columnNames = ["Actions", "Result", "Mobile", "Name", "Company", "Scheme", "Bank", "Salary"]; // Added "Actions" for the first column
+        const columnNames = ["Select", "Actions", "Result", "Mobile", "Name", "Company", "Scheme", "Bank", "Salary"];
         let callCount = 0;
         let longPressTimer;
         let priorityResultOptions = ["To Call", "No Answer", "Interested", "Busy"];
         let changedRows = {}; // Track which rows have been changed today
+        let selectedRows = new Set();
+        let isDuplicateMode = false;
 
         document.addEventListener('DOMContentLoaded', function() {
             // Load call count and changed rows from localStorage if available
@@ -585,6 +712,14 @@
             document.getElementById('saveCommentBtn').addEventListener('click', saveComment);
             document.getElementById('cancelCommentBtn').addEventListener('click', hideCommentModal);
             document.querySelector('.modal-close').addEventListener('click', hideCommentModal);
+            document.getElementById('copyBtn').addEventListener('click', copySelectedRows);
+            document.getElementById('deleteBtn').addEventListener('click', deleteSelectedRows);
+            document.getElementById('duplicateBtn').addEventListener('click', toggleDuplicateMode);
+            document.getElementById('selectAllCheckbox').addEventListener('change', toggleSelectAll);
+
+            // Confirm dialog listeners
+            document.getElementById('confirmCancel').addEventListener('click', hideConfirmDialog);
+            document.getElementById('confirmOk').addEventListener('click', executeConfirmedAction);
 
             // Filter listeners
             document.getElementById('resultFilter').addEventListener('change', applyFilters);
@@ -625,6 +760,8 @@
 
                     if (result.success) {
                         allData = result.data;
+                        selectedRows.clear();
+                        updateSelectionUI();
                         applyFilters(); // Apply filters to the newly fetched data
                         showSuccessIndicator('Data refreshed!');
                     } else {
@@ -647,10 +784,10 @@
                 const bankFilter = document.getElementById('bankFilter').value.toLowerCase();
                 const salaryFilter = parseFloat(document.getElementById('salaryFilter').value);
 
-                // Filter data, excluding DNCR results
-                const filteredData = allData.filter(record => {
-                    // Skip any record with DNCR as result
-                    if (record.Result === "DNCR") {
+                // Filter data
+                let filteredData = allData.filter(record => {
+                    // Include DNCR only if specifically selected in filter
+                    if (record.Result === "DNCR" && resultFilter !== "dncr") {
                         return false;
                     }
                     
@@ -663,6 +800,11 @@
                     
                     return matchesResult && matchesName && matchesCompany && matchesScheme && matchesBank && matchesSalary;
                 });
+
+                // If in duplicate mode, filter to show only duplicates
+                if (isDuplicateMode) {
+                    filteredData = filterDuplicates(filteredData);
+                }
 
                 // Sort data by Result value according to priority
                 const sortedData = filteredData.sort((a, b) => {
@@ -685,6 +827,70 @@
                 populateTable(true); // Clear and repopulate
             }
 
+            // Filter to show only duplicates based on Mobile or Name
+            function filterDuplicates(data) {
+                const duplicates = [];
+                const mobileMap = {};
+                const nameMap = {};
+
+                // Build maps to track duplicates
+                data.forEach(record => {
+                    const mobile = record.Mobile ? record.Mobile.toString().trim() : '';
+                    const name = record.Name ? record.Name.toString().trim().toLowerCase() : '';
+
+                    if (mobile) {
+                        if (!mobileMap[mobile]) {
+                            mobileMap[mobile] = [];
+                        }
+                        mobileMap[mobile].push(record);
+                    }
+
+                    if (name) {
+                        if (!nameMap[name]) {
+                            nameMap[name] = [];
+                        }
+                        nameMap[name].push(record);
+                    }
+                });
+
+                // Find records with duplicates
+                const duplicateSet = new Set();
+
+                // Add mobile duplicates
+                Object.values(mobileMap).forEach(records => {
+                    if (records.length > 1) {
+                        records.forEach(record => duplicateSet.add(record));
+                    }
+                });
+
+                // Add name duplicates
+                Object.values(nameMap).forEach(records => {
+                    if (records.length > 1) {
+                        records.forEach(record => duplicateSet.add(record));
+                    }
+                });
+
+                return Array.from(duplicateSet);
+            }
+
+            // Toggle duplicate mode
+            function toggleDuplicateMode() {
+                isDuplicateMode = !isDuplicateMode;
+                const btn = document.getElementById('duplicateBtn');
+                
+                if (isDuplicateMode) {
+                    btn.classList.add('active');
+                    btn.title = 'Show All Records';
+                    btn.querySelector('.tooltip-text').textContent = 'Show All Records';
+                } else {
+                    btn.classList.remove('active');
+                    btn.title = 'Show Duplicates';
+                    btn.querySelector('.tooltip-text').textContent = 'Show Duplicates';
+                }
+                
+                applyFilters();
+            }
+
             // Populate table with data
             function populateTable(clearExisting = false) {
                 const tableBody = document.getElementById('callingTableBody');
@@ -705,6 +911,18 @@
                 for (let i = currentIndex; i < endIndex; i++) {
                     const record = displayedData[i];
                     const row = document.createElement('tr');
+                    row.dataset.rowIndex = record.rowIndex;
+                    
+                    // Selection checkbox column
+                    const selectCell = document.createElement('td');
+                    selectCell.style.width = '40px';
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'selection-checkbox row-checkbox';
+                    checkbox.dataset.rowIndex = record.rowIndex;
+                    checkbox.addEventListener('change', handleRowSelection);
+                    selectCell.appendChild(checkbox);
+                    row.appendChild(selectCell);
                     
                     // Actions column
                     const actionsCell = document.createElement('td');
@@ -721,12 +939,12 @@
                     directCallBtn.innerHTML = '<i class="fas fa-phone"></i><span class="tooltip-text">Call</span>';
                     
                     // Teams call button
-                   const teamsBtn = document.createElement('a');
-teamsBtn.href = `https://teams.microsoft.com/l/call/0/0?users=4:${formattedMobile}`;
-teamsBtn.target = "_blank";
-teamsBtn.classList.add('call-btn', 'teams-call', 'tooltip');
-teamsBtn.title = `Teams Call ${record.Name || 'Unknown'}`;
-teamsBtn.innerHTML = '<i class="fas fa-users"></i><span class="tooltip-text">Teams</span>';
+                    const teamsBtn = document.createElement('a');
+                    teamsBtn.href = `https://teams.microsoft.com/l/call/0/0?users=4:${formattedMobile}`;
+                    teamsBtn.target = "_blank";
+                    teamsBtn.classList.add('call-btn', 'teams-call', 'tooltip');
+                    teamsBtn.title = `Teams Call ${record.Name || 'Unknown'}`;
+                    teamsBtn.innerHTML = '<i class="fas fa-users"></i><span class="tooltip-text">Teams</span>';
                     
                     // WhatsApp button
                     const whatsappBtn = document.createElement('a');
@@ -750,7 +968,7 @@ teamsBtn.innerHTML = '<i class="fas fa-users"></i><span class="tooltip-text">Tea
                     row.appendChild(actionsCell);
 
                     // Data columns
-                    columnNames.slice(1).forEach(colName => {
+                    columnNames.slice(2).forEach(colName => {
                         const cell = document.createElement('td');
                         const value = record[colName] || '';
                         
@@ -848,6 +1066,144 @@ teamsBtn.innerHTML = '<i class="fas fa-users"></i><span class="tooltip-text">Tea
                 attachButtonListeners(tableBody);
 
                 updateRecordsInfo();
+                updateSelectAllCheckbox();
+            }
+
+            // Handle row selection
+            function handleRowSelection(event) {
+                const rowIndex = event.target.dataset.rowIndex;
+                const row = event.target.closest('tr');
+                
+                if (event.target.checked) {
+                    selectedRows.add(rowIndex);
+                    row.classList.add('selected');
+                } else {
+                    selectedRows.delete(rowIndex);
+                    row.classList.remove('selected');
+                }
+                
+                updateSelectionUI();
+            }
+
+            // Toggle select all
+            function toggleSelectAll() {
+                const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+                const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+                
+                rowCheckboxes.forEach(checkbox => {
+                    const rowIndex = checkbox.dataset.rowIndex;
+                    const row = checkbox.closest('tr');
+                    
+                    if (selectAllCheckbox.checked) {
+                        checkbox.checked = true;
+                        selectedRows.add(rowIndex);
+                        row.classList.add('selected');
+                    } else {
+                        checkbox.checked = false;
+                        selectedRows.delete(rowIndex);
+                        row.classList.remove('selected');
+                    }
+                });
+                
+                updateSelectionUI();
+            }
+
+            // Update selection UI
+            function updateSelectionUI() {
+                const selectionInfo = document.getElementById('selectionInfo');
+                const selectionCount = document.getElementById('selectionCount');
+                const copyBtn = document.getElementById('copyBtn');
+                const deleteBtn = document.getElementById('deleteBtn');
+                
+                const count = selectedRows.size;
+                selectionCount.textContent = count;
+                
+                if (count > 0) {
+                    selectionInfo.classList.add('show');
+                    copyBtn.disabled = false;
+                    deleteBtn.disabled = false;
+                } else {
+                    selectionInfo.classList.remove('show');
+                    copyBtn.disabled = true;
+                    deleteBtn.disabled = true;
+                }
+            }
+
+            // Update select all checkbox state
+            function updateSelectAllCheckbox() {
+                const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+                const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+                const checkedCount = document.querySelectorAll('.row-checkbox:checked').length;
+                
+                if (checkedCount === 0) {
+                    selectAllCheckbox.checked = false;
+                    selectAllCheckbox.indeterminate = false;
+                } else if (checkedCount === rowCheckboxes.length) {
+                    selectAllCheckbox.checked = true;
+                    selectAllCheckbox.indeterminate = false;
+                } else {
+                    selectAllCheckbox.checked = false;
+                    selectAllCheckbox.indeterminate = true;
+                }
+            }
+
+            // Copy selected rows
+            function copySelectedRows() {
+                if (selectedRows.size === 0) {
+                    showError('No rows selected');
+                    return;
+                }
+
+                const selectedData = [];
+                selectedRows.forEach(rowIndex => {
+                    const record = allData.find(r => r.rowIndex == rowIndex);
+                    if (record) {
+                        selectedData.push(`${record.Name || ''}\t${record.Mobile || ''}`);
+                    }
+                });
+
+                const textToCopy = selectedData.join('\n');
+                
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    showSuccessIndicator(`Copied ${selectedRows.size} contacts to clipboard`);
+                }).catch(err => {
+                    showError('Failed to copy to clipboard');
+                    console.error('Copy failed:', err);
+                });
+            }
+
+            // Delete selected rows
+            function deleteSelectedRows() {
+                if (selectedRows.size === 0) {
+                    showError('No rows selected');
+                    return;
+                }
+
+                showConfirmDialog(
+                    `Are you sure you want to delete ${selectedRows.size} selected rows? This action cannot be undone.`,
+                    async () => {
+                        showLoadingIndicator();
+                        try {
+                            const rowsToDelete = Array.from(selectedRows);
+                            const response = await fetch(`${WEB_APP_URL}?action=deleteRows&rows=${rowsToDelete.join(',')}`);
+                            const result = await response.json();
+
+                            if (result.success) {
+                                showSuccessIndicator(`Deleted ${selectedRows.size} rows successfully`);
+                                selectedRows.clear();
+                                updateSelectionUI();
+                                fetchCallingData(); // Refresh data
+                            } else {
+                                showError(result.error || 'Failed to delete rows');
+                            }
+                        } catch (error) {
+                            console.error('Error deleting rows:', error);
+                            showError('Network error during deletion');
+                        } finally {
+                            hideLoadingIndicator();
+                        }
+                    }
+                );
             }
 
             // Make a cell editable
@@ -918,19 +1274,19 @@ teamsBtn.innerHTML = '<i class="fas fa-users"></i><span class="tooltip-text">Tea
             // Attach event listeners for call and comment buttons
             function attachButtonListeners(container) {
                 container.querySelectorAll('.direct-call').forEach(button => {
-                    button.removeEventListener('click', handleCallClick); // Prevent double-listening
+                    button.removeEventListener('click', handleCallClick);
                     button.addEventListener('click', handleCallClick);
                 });
                 container.querySelectorAll('.teams-call').forEach(button => {
-                    button.removeEventListener('click', handleTeamsClick); // Prevent double-listening
+                    button.removeEventListener('click', handleTeamsClick);
                     button.addEventListener('click', handleTeamsClick);
                 });
                 container.querySelectorAll('.whatsapp-call').forEach(button => {
-                    button.removeEventListener('click', handleWhatsappClick); // Prevent double-listening
+                    button.removeEventListener('click', handleWhatsappClick);
                     button.addEventListener('click', handleWhatsappClick);
                 });
                 container.querySelectorAll('.comment-btn').forEach(button => {
-                    button.removeEventListener('click', handleCommentClick); // Prevent double-listening
+                    button.removeEventListener('click', handleCommentClick);
                     button.addEventListener('click', handleCommentClick);
                 });
             }
@@ -941,7 +1297,7 @@ teamsBtn.innerHTML = '<i class="fas fa-users"></i><span class="tooltip-text">Tea
                     incrementCallCounter();
                     window.location.href = `tel:+${mobile}`;
                 } else {
-                    alert('Mobile number not available.');
+                    showError('Mobile number not available.');
                 }
             }
             
@@ -961,9 +1317,8 @@ teamsBtn.innerHTML = '<i class="fas fa-users"></i><span class="tooltip-text">Tea
 
             function handleCommentClick() {
                 const rowIndex = this.dataset.rowIndex;
-                const columnName = this.dataset.columnName; // This is always 'Result' from your HTML
-                // Assuming 'Name' is always in the 4th cell (index 3 if 0-indexed) of the same row
-                const customerName = this.closest('tr').querySelector('td:nth-child(4)').textContent; 
+                const columnName = this.dataset.columnName;
+                const customerName = this.closest('tr').querySelector('td:nth-child(5)').textContent; 
                 showCommentModal(rowIndex, columnName, customerName);
             }
 
@@ -1004,75 +1359,67 @@ teamsBtn.innerHTML = '<i class="fas fa-users"></i><span class="tooltip-text">Tea
                     } else {
                         showError(result.error || 'Failed to update cell.');
                         // Revert the UI change if update failed
-                        // Find the original cell and revert its value/selection
-                        const tableBody = document.getElementById('callingTableBody');
-                        const rows = tableBody.querySelectorAll('tr');
-                        
-                        for (let i = 0; i < rows.length; i++) {
-                            const row = rows[i];
-                            const cells = row.querySelectorAll('td');
-                            
-                            // Check if this is the row we're looking for
-                            if (cells.length > 0) {
-                                const actionCell = cells[0];
-                                const commentBtn = actionCell.querySelector('.comment-btn');
-                                
-                                if (commentBtn && commentBtn.dataset.rowIndex == rowIndex) {
-                                    // This is our row
-                                    const colIndexInHtmlTable = columnNames.indexOf(columnName);
-                                    if (colIndexInHtmlTable !== -1) {
-                                        const targetCell = cells[colIndexInHtmlTable];
-                                        if (columnName === 'Result') {
-                                            targetCell.querySelector('.result-dropdown').value = oldValue;
-                                        } else {
-                                            targetCell.textContent = oldValue;
-                                        }
-                                        break;
-                                    }
-                                }
-                            }
-                        }
+                        revertCellUpdate(rowIndex, columnName, oldValue);
                     }
                 } catch (error) {
                     console.error('Error updating cell:', error);
                     showError('Network error during cell update. Check console for details.');
-                    // Similar reversion code as above for network errors
+                    revertCellUpdate(rowIndex, columnName, oldValue);
                 } finally {
                     hideLoadingIndicator();
                 }
             }
 
+            function revertCellUpdate(rowIndex, columnName, oldValue) {
+                const tableBody = document.getElementById('callingTableBody');
+                const rows = tableBody.querySelectorAll('tr');
+                
+                for (let i = 0; i < rows.length; i++) {
+                    const row = rows[i];
+                    if (row.dataset.rowIndex == rowIndex) {
+                        const cells = row.querySelectorAll('td');
+                        const colIndexInHtmlTable = columnNames.indexOf(columnName);
+                        if (colIndexInHtmlTable !== -1) {
+                            const targetCell = cells[colIndexInHtmlTable];
+                            if (columnName === 'Result') {
+                                targetCell.querySelector('.result-dropdown').value = oldValue;
+                            } else {
+                                targetCell.textContent = oldValue;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
             async function undoLastChange() {
                 if (!lastUndoAction) {
-                    alert('No action to undo.');
+                    showError('No action to undo.');
                     return;
                 }
 
                 showLoadingIndicator();
-                hideUndoNotification(); // Hide undo notification immediately
+                hideUndoNotification();
                 try {
                     const { action, rowIndex, columnName, oldValue } = lastUndoAction;
                     let response;
                     let result;
 
                     if (action === 'update') {
-                        // Undo an update by setting the value back to oldValue
                         response = await fetch(`${WEB_APP_URL}?action=updateCallingCell&row=${rowIndex}&column=${columnName}&value=${encodeURIComponent(oldValue)}`);
                         result = await response.json();
 
                         if (result.success) {
                             showSuccessIndicator('Last change undone!');
-                            // Update UI to reflect undone change
-                            fetchCallingData(); // Re-fetch to ensure consistency
+                            fetchCallingData();
                             
-                            // If undoing a Result column change, remove this row from today's changed rows
                             if (columnName === 'Result' && changedRows[rowIndex]) {
                                 delete changedRows[rowIndex];
                                 decrementCallCounter();
                                 saveCallData();
                             }
                             
-                            lastUndoAction = null; // Clear undo action after successful undo
+                            lastUndoAction = null;
                         } else {
                             showError(result.error || 'Failed to undo change.');
                         }
@@ -1088,12 +1435,12 @@ teamsBtn.innerHTML = '<i class="fas fa-users"></i><span class="tooltip-text">Tea
             // Function to handle saving the comment
             async function saveComment() {
                 const rowIndex = document.getElementById('commentRowIndex').value;
-                const column = document.getElementById('commentColumn').value; // This will be 'Result'
+                const column = document.getElementById('commentColumn').value;
                 const commentText = document.getElementById('commentText').value;
-                const commentType = document.querySelector('input[name="commentType"]:checked').value; // 'sheet' or 'value'
+                const commentType = document.querySelector('input[name="commentType"]:checked').value;
 
                 if (!commentText.trim()) {
-                    alert('Comment cannot be empty.');
+                    showError('Comment cannot be empty.');
                     return;
                 }
 
@@ -1103,26 +1450,21 @@ teamsBtn.innerHTML = '<i class="fas fa-users"></i><span class="tooltip-text">Tea
                     let successMessage = '';
 
                     if (commentType === 'sheet') {
-                        // This sends a GET request to doGet with action=addCellComment
                         apiUrl += `?action=addCellComment&row=${rowIndex}&column=${column}&comment=${encodeURIComponent(commentText)}`;
                         successMessage = 'Comment added to cell!';
                     } else if (commentType === 'value') {
-                        // This sends a GET request to doGet with action=updateCallingCell
                         apiUrl += `?action=updateCallingCell&row=${rowIndex}&column=${column}&value=${encodeURIComponent(commentText)}`;
                         successMessage = 'Cell value updated!';
-                        
-                        // Track row change for call counter
                         trackRowChange(rowIndex);
                     }
                     
                     const response = await fetch(apiUrl);
-                    const result = await response.json(); // Apps Script returns JSON
+                    const result = await response.json();
 
                     if (result.success) {
                         showSuccessIndicator(successMessage);
                         hideCommentModal();
                         if (commentType === 'value') {
-                            // If value was updated, refresh data to reflect the change
                             fetchCallingData();
                         }
                     } else {
@@ -1152,7 +1494,7 @@ teamsBtn.innerHTML = '<i class="fas fa-users"></i><span class="tooltip-text">Tea
             }
             
             function saveCallData() {
-                const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+                const today = new Date().toISOString().split('T')[0];
                 localStorage.setItem('callCount', callCount.toString());
                 localStorage.setItem('callCountDate', today);
                 localStorage.setItem('changedRows', JSON.stringify(changedRows));
@@ -1172,11 +1514,10 @@ teamsBtn.innerHTML = '<i class="fas fa-users"></i><span class="tooltip-text">Tea
             }
             
             function checkAndResetDailyCounter() {
-                const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+                const today = new Date().toISOString().split('T')[0];
                 const lastDate = localStorage.getItem('callCountDate');
                 
                 if (lastDate !== today) {
-                    // It's a new day, reset counter and changed rows tracking
                     callCount = 0;
                     changedRows = {};
                     document.getElementById('callCounter').textContent = '0';
@@ -1188,14 +1529,34 @@ teamsBtn.innerHTML = '<i class="fas fa-users"></i><span class="tooltip-text">Tea
             function showCommentModal(rowIndex, columnName, customerName) {
                 document.getElementById('commentModal').style.display = 'flex';
                 document.getElementById('commentRowIndex').value = rowIndex;
-                document.getElementById('commentColumn').value = columnName; // 'Result'
+                document.getElementById('commentColumn').value = columnName;
                 document.getElementById('commentName').textContent = customerName;
-                document.getElementById('commentText').value = ''; // Clear previous comment
-                document.querySelector('input[name="commentType"][value="sheet"]').checked = true; // Default to sheet comment
+                document.getElementById('commentText').value = '';
+                document.querySelector('input[name="commentType"][value="sheet"]').checked = true;
             }
 
             function hideCommentModal() {
                 document.getElementById('commentModal').style.display = 'none';
+            }
+
+            // Confirm dialog functions
+            function showConfirmDialog(message, onConfirm) {
+                document.getElementById('confirmMessage').textContent = message;
+                document.getElementById('confirmDialog').style.display = 'flex';
+                
+                // Store the confirm action
+                document.getElementById('confirmOk').onclick = () => {
+                    hideConfirmDialog();
+                    onConfirm();
+                };
+            }
+
+            function hideConfirmDialog() {
+                document.getElementById('confirmDialog').style.display = 'none';
+            }
+
+            function executeConfirmedAction() {
+                // This will be overridden by showConfirmDialog
             }
 
             // Utility functions
@@ -1212,9 +1573,9 @@ teamsBtn.innerHTML = '<i class="fas fa-users"></i><span class="tooltip-text">Tea
                 document.getElementById('successMessage').textContent = message;
                 indicator.classList.remove('hidden');
                 indicator.style.opacity = '1';
-                indicator.style.animation = 'none'; // Reset animation
-                void indicator.offsetWidth; // Trigger reflow
-                indicator.style.animation = 'fadeOut 2s forwards'; // Re-apply animation
+                indicator.style.animation = 'none';
+                void indicator.offsetWidth;
+                indicator.style.animation = 'fadeOut 2s forwards';
             }
 
             function showError(message) {
@@ -1241,7 +1602,7 @@ teamsBtn.innerHTML = '<i class="fas fa-users"></i><span class="tooltip-text">Tea
                     element.classList.add('copied');
                     setTimeout(() => {
                         element.classList.remove('copied');
-                    }, 1500); // Matches animation duration
+                    }, 1500);
                 }).catch(err => {
                     console.error('Failed to copy: ', err);
                 });
@@ -1250,17 +1611,14 @@ teamsBtn.innerHTML = '<i class="fas fa-users"></i><span class="tooltip-text">Tea
             // Close modal if clicked outside
             window.addEventListener('click', function(event) {
                 const modal = document.getElementById('commentModal');
+                const confirmDialog = document.getElementById('confirmDialog');
                 if (event.target === modal) {
                     hideCommentModal();
                 }
+                if (event.target === confirmDialog) {
+                    hideConfirmDialog();
+                }
             });
-            
-            // Add information about cell comments
-            const tableContainer = document.querySelector('.table-container');
-            const infoDiv = document.createElement('div');
-            infoDiv.className = 'text-sm text-gray-600 mt-2';
-            infoDiv.innerHTML = 'Tip: Right-click on any cell to add a Google Sheets comment (appears as a yellow triangle). Click the comment button <i class="fas fa-comment text-yellow-500"></i> to update the Result value.';
-            tableContainer.parentNode.insertBefore(infoDiv, tableContainer.nextSibling);
         });
     </script>
 </body>
