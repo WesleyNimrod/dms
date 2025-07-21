@@ -102,6 +102,19 @@
             background-color: rgba(111, 44, 79, 0.2) !important;
         }
 
+        /* Duplicate group styling */
+        .calling-table tr.duplicate-group {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .calling-table tr.duplicate-group:first-of-type {
+            border-top: 2px solid #f59e0b;
+        }
+
+        .calling-table tr.duplicate-group:last-of-type {
+            border-bottom: 2px solid #f59e0b;
+        }
+
         .selection-checkbox {
             width: 16px;
             height: 16px;
@@ -241,6 +254,7 @@
         .btn-sheet { background-color: #16a34a; }
         .btn-undo { background-color: #6b7280; }
         .btn-show-more { background-color: #6b7280; }
+        .btn-add-new { background-color: #059669; }
         .btn-copy { background-color: #3b82f6; }
         .btn-delete { background-color: #ef4444; }
         .btn-duplicate { background-color: #f59e0b; }
@@ -346,7 +360,7 @@
             opacity: 1;
         }
         
-        /* Comment Modal */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -368,6 +382,8 @@
             max-width: 500px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
         .modal-header {
@@ -407,6 +423,47 @@
             border-radius: 4px;
             resize: vertical;
             font-size: 16px;
+        }
+
+        /* Form styling */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #6F2C4F;
+            box-shadow: 0 0 0 2px rgba(111, 44, 79, 0.2);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: white;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #6F2C4F;
+            box-shadow: 0 0 0 2px rgba(111, 44, 79, 0.2);
         }
 
         /* Comment toggle */
@@ -525,6 +582,10 @@
                         <i class="fas fa-expand-alt"></i>
                         <span class="tooltip-text">Show More</span>
                     </button>
+                    <button id="addNewBtn" class="icon-btn btn-add-new tooltip" title="Add New Record">
+                        <i class="fas fa-plus"></i>
+                        <span class="tooltip-text">Add New Record</span>
+                    </button>
                     <button id="copyBtn" class="icon-btn btn-copy tooltip" title="Copy Selected" disabled>
                         <i class="fas fa-copy"></i>
                         <span class="tooltip-text">Copy Selected</span>
@@ -553,20 +614,13 @@
                     <div class="filter-item">
                         <select id="resultFilter" class="w-full border rounded-md p-2 text-base">
                             <option value="">All Results</option>
-                            <option value="To Call">To Call</option>
-                            <option value="No Answer">No Answer</option>
-                            <option value="Busy">Busy</option>
                             <option value="DNCR">DNCR</option>
                             <option value="Not Interested">Not Interested</option>
                             <option value="Interested">Interested</option>
-                            <option value="ROI Inquired">ROI Inquired</option>
-                            <option value="Call back">Call back</option>
-                            <option value="On Hold">On Hold</option>
-                            <option value="In Future, Shared details">In Future, Shared details</option>
+                            <option value="Call Back">Call Back</option>
                             <option value="Switched off">Switched off</option>
-                            <option value="Referal">Referal</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Rejected">Rejected</option>
+                            <option value="No answer">No answer</option>
+                            <option value="Applied">Applied</option>
                             <option value="Option 1">Option 1</option>
                             <option value="Option 2">Option 2</option>
                         </select>
@@ -638,6 +692,75 @@
         <button id="undoChangeBtn" class="undo-btn">Undo</button>
     </div>
 
+    <!-- Add New Record Modal -->
+    <div id="addNewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-lg font-semibold">Add New Record</h3>
+                <span class="modal-close" id="addNewModalClose">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addNewForm">
+                    <div class="form-group">
+                        <label class="form-label" for="newDate">Date</label>
+                        <input type="date" id="newDate" class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="newResult">Result *</label>
+                        <select id="newResult" class="form-select" required>
+                            <option value="">Select Result</option>
+                            <option value="DNCR">DNCR</option>
+                            <option value="Not Interested">Not Interested</option>
+                            <option value="Interested">Interested</option>
+                            <option value="Call Back">Call Back</option>
+                            <option value="Switched off">Switched off</option>
+                            <option value="No answer">No answer</option>
+                            <option value="Applied">Applied</option>
+                            <option value="Option 1">Option 1</option>
+                            <option value="Option 2">Option 2</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="newMobile">Mobile *</label>
+                        <input type="text" id="newMobile" class="form-input" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="newCmName">CM Name</label>
+                        <input type="text" id="newCmName" class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="newCompanyName">Company Name *</label>
+                        <input type="text" id="newCompanyName" class="form-input" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="newScheme">Scheme</label>
+                        <input type="text" id="newScheme" class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="newBanking">Banking</label>
+                        <input type="text" id="newBanking" class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="newSalary">Salary</label>
+                        <input type="number" id="newSalary" class="form-input">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelAddNewBtn" class="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400">Cancel</button>
+                <button id="saveAddNewBtn" class="custom-btn text-white py-2 px-4 rounded-md">Save Record</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comment Modal -->
     <div id="commentModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -717,6 +840,12 @@
             document.getElementById('duplicateBtn').addEventListener('click', toggleDuplicateMode);
             document.getElementById('selectAllCheckbox').addEventListener('change', toggleSelectAll);
 
+            // Add New Record Modal listeners
+            document.getElementById('addNewBtn').addEventListener('click', showAddNewModal);
+            document.getElementById('addNewModalClose').addEventListener('click', hideAddNewModal);
+            document.getElementById('cancelAddNewBtn').addEventListener('click', hideAddNewModal);
+            document.getElementById('saveAddNewBtn').addEventListener('click', saveNewRecord);
+
             // Confirm dialog listeners
             document.getElementById('confirmCancel').addEventListener('click', hideConfirmDialog);
             document.getElementById('confirmOk').addEventListener('click', executeConfirmedAction);
@@ -775,6 +904,69 @@
                 }
             }
 
+            // Show Add New Modal
+            function showAddNewModal() {
+                document.getElementById('addNewModal').style.display = 'flex';
+                // Reset form
+                document.getElementById('addNewForm').reset();
+            }
+
+            // Hide Add New Modal
+            function hideAddNewModal() {
+                document.getElementById('addNewModal').style.display = 'none';
+            }
+
+            // Save new record
+            async function saveNewRecord() {
+                const formData = {
+                    date: document.getElementById('newDate').value || '',
+                    result: document.getElementById('newResult').value,
+                    mobile: document.getElementById('newMobile').value,
+                    cmName: document.getElementById('newCmName').value || '',
+                    seName: '',
+                    status: '',
+                    ccProduct: '',
+                    companyName: document.getElementById('newCompanyName').value,
+                    companyLandline: '',
+                    designation: '',
+                    scheme: document.getElementById('newScheme').value || '',
+                    banking: document.getElementById('newBanking').value || '',
+                    salary: document.getElementById('newSalary').value || ''
+                };
+
+                // Validation
+                if (!formData.result || !formData.mobile || !formData.companyName) {
+                    showError('Please fill in all required fields (Result, Mobile, Company Name)');
+                    return;
+                }
+
+                showLoadingIndicator();
+                try {
+                    const response = await fetch(`${WEB_APP_URL}?action=addCallingRecord`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams(formData)
+                    });
+                    
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showSuccessIndicator('New record added successfully!');
+                        hideAddNewModal();
+                        fetchCallingData(); // Refresh data
+                    } else {
+                        showError(result.error || 'Failed to add new record');
+                    }
+                } catch (error) {
+                    console.error('Error adding record:', error);
+                    showError('Network error during record addition');
+                } finally {
+                    hideLoadingIndicator();
+                }
+            }
+
             // Apply filters and populate table
             function applyFilters() {
                 const resultFilter = document.getElementById('resultFilter').value.toLowerCase();
@@ -786,17 +978,12 @@
 
                 // Filter data
                 let filteredData = allData.filter(record => {
-                    // Include DNCR only if specifically selected in filter
-                    if (record.Result === "DNCR" && resultFilter !== "dncr") {
-                        return false;
-                    }
-                    
-                    const matchesResult = resultFilter === "" || record.Result.toLowerCase().includes(resultFilter);
-                    const matchesName = nameFilter === "" || record.Name.toLowerCase().includes(nameFilter);
-                    const matchesCompany = companyFilter === "" || record.Company.toLowerCase().includes(companyFilter);
-                    const matchesScheme = schemeFilter === "" || record.Scheme.toLowerCase().includes(schemeFilter);
-                    const matchesBank = bankFilter === "" || record.Bank.toLowerCase().includes(bankFilter);
-                    const matchesSalary = isNaN(salaryFilter) || parseFloat(record.Salary) >= salaryFilter;
+                    const matchesResult = resultFilter === "" || (record.Result && record.Result.toLowerCase().includes(resultFilter));
+                    const matchesName = nameFilter === "" || (record.Name && record.Name.toLowerCase().includes(nameFilter));
+                    const matchesCompany = companyFilter === "" || (record.Company && record.Company.toLowerCase().includes(companyFilter));
+                    const matchesScheme = schemeFilter === "" || (record.Scheme && record.Scheme.toLowerCase().includes(schemeFilter));
+                    const matchesBank = bankFilter === "" || (record.Bank && record.Bank.toLowerCase().includes(bankFilter));
+                    const matchesSalary = isNaN(salaryFilter) || parseFloat(record.Salary || 0) >= salaryFilter;
                     
                     return matchesResult && matchesName && matchesCompany && matchesScheme && matchesBank && matchesSalary;
                 });
@@ -806,71 +993,50 @@
                     filteredData = filterDuplicates(filteredData);
                 }
 
-                // Sort data by Result value according to priority
-                const sortedData = filteredData.sort((a, b) => {
-                    // Helper function to get priority index
-                    const getPriorityIndex = (result) => {
-                        const index = priorityResultOptions.indexOf(result);
-                        return index === -1 ? priorityResultOptions.length : index;
-                    };
-                    
-                    // Get priority indexes for comparison
-                    const aPriority = getPriorityIndex(a.Result);
-                    const bPriority = getPriorityIndex(b.Result);
-                    
-                    // Sort by priority
-                    return aPriority - bPriority;
-                });
-
-                displayedData = sortedData;
+                displayedData = filteredData;
                 currentIndex = 0; // Reset index for new filtered data
                 populateTable(true); // Clear and repopulate
             }
 
-            // Filter to show only duplicates based on Mobile or Name
+            // Filter to show only duplicates based on Mobile
             function filterDuplicates(data) {
-                const duplicates = [];
                 const mobileMap = {};
-                const nameMap = {};
 
-                // Build maps to track duplicates
+                // Build map to track all records by mobile number
                 data.forEach(record => {
                     const mobile = record.Mobile ? record.Mobile.toString().trim() : '';
-                    const name = record.Name ? record.Name.toString().trim().toLowerCase() : '';
-
                     if (mobile) {
                         if (!mobileMap[mobile]) {
                             mobileMap[mobile] = [];
                         }
                         mobileMap[mobile].push(record);
                     }
-
-                    if (name) {
-                        if (!nameMap[name]) {
-                            nameMap[name] = [];
-                        }
-                        nameMap[name].push(record);
-                    }
                 });
 
-                // Find records with duplicates
-                const duplicateSet = new Set();
-
-                // Add mobile duplicates
-                Object.values(mobileMap).forEach(records => {
+                // Find all records that have duplicates and group them
+                const duplicateGroups = [];
+                Object.entries(mobileMap).forEach(([mobile, records]) => {
                     if (records.length > 1) {
-                        records.forEach(record => duplicateSet.add(record));
+                        // Sort records within each group by name for consistency
+                        records.sort((a, b) => {
+                            const nameA = (a.Name || '').toLowerCase();
+                            const nameB = (b.Name || '').toLowerCase();
+                            return nameA.localeCompare(nameB);
+                        });
+                        duplicateGroups.push({ mobile, records });
                     }
                 });
 
-                // Add name duplicates
-                Object.values(nameMap).forEach(records => {
-                    if (records.length > 1) {
-                        records.forEach(record => duplicateSet.add(record));
-                    }
+                // Sort groups by mobile number
+                duplicateGroups.sort((a, b) => a.mobile.localeCompare(b.mobile));
+
+                // Flatten the grouped records while maintaining group order
+                const duplicateArray = [];
+                duplicateGroups.forEach(group => {
+                    duplicateArray.push(...group.records);
                 });
 
-                return Array.from(duplicateSet);
+                return duplicateArray;
             }
 
             // Toggle duplicate mode
@@ -912,6 +1078,11 @@
                     const record = displayedData[i];
                     const row = document.createElement('tr');
                     row.dataset.rowIndex = record.rowIndex;
+                    
+                    // Add duplicate group styling if in duplicate mode
+                    if (isDuplicateMode) {
+                        row.classList.add('duplicate-group');
+                    }
                     
                     // Selection checkbox column
                     const selectCell = document.createElement('td');
@@ -983,12 +1154,10 @@
                             emptyOption.textContent = 'Select Result';
                             select.appendChild(emptyOption);
                             
-                            // All possible result options including DNCR
+                            // All possible result options
                             const resultOptions = [
-                                'To Call', 'No Answer', 'Busy', 'DNCR', 'Not Interested', 
-                                'Interested', 'ROI Inquired', 'Call back', 'On Hold', 
-                                'In Future, Shared details', 'Switched off', 'Referal',
-                                'Completed', 'Rejected', 'Option 1', 'Option 2'
+                                'DNCR', 'Not Interested', 'Interested', 'Call Back', 
+                                'Switched off', 'No answer', 'Applied', 'Option 1', 'Option 2'
                             ];
                             
                             // Add all result options
@@ -1185,7 +1354,7 @@
                         showLoadingIndicator();
                         try {
                             const rowsToDelete = Array.from(selectedRows);
-                            const response = await fetch(`${WEB_APP_URL}?action=deleteRows&rows=${rowsToDelete.join(',')}`);
+                            const response = await fetch(`${WEB_APP_URL}?action=deleteCallingRows&rows=${rowsToDelete.join(',')}`);
                             const result = await response.json();
 
                             if (result.success) {
@@ -1250,7 +1419,11 @@
 
             function updateRecordsInfo() {
                 const recordsInfo = document.getElementById('recordsInfo');
-                recordsInfo.textContent = `Showing ${displayedData.length} records`;
+                if (isDuplicateMode) {
+                    recordsInfo.textContent = `Showing ${displayedData.length} duplicate records`;
+                } else {
+                    recordsInfo.textContent = `Showing ${displayedData.length} records`;
+                }
 
                 const showMoreBtn = document.getElementById('showMoreBtn');
                 if (currentIndex < displayedData.length) {
@@ -1450,7 +1623,7 @@
                     let successMessage = '';
 
                     if (commentType === 'sheet') {
-                        apiUrl += `?action=addCellComment&row=${rowIndex}&column=${column}&comment=${encodeURIComponent(commentText)}`;
+                        apiUrl += `?action=addCallingCellComment&row=${rowIndex}&column=${column}&comment=${encodeURIComponent(commentText)}`;
                         successMessage = 'Comment added to cell!';
                     } else if (commentType === 'value') {
                         apiUrl += `?action=updateCallingCell&row=${rowIndex}&column=${column}&value=${encodeURIComponent(commentText)}`;
@@ -1610,10 +1783,15 @@
 
             // Close modal if clicked outside
             window.addEventListener('click', function(event) {
-                const modal = document.getElementById('commentModal');
+                const commentModal = document.getElementById('commentModal');
+                const addNewModal = document.getElementById('addNewModal');
                 const confirmDialog = document.getElementById('confirmDialog');
-                if (event.target === modal) {
+                
+                if (event.target === commentModal) {
                     hideCommentModal();
+                }
+                if (event.target === addNewModal) {
+                    hideAddNewModal();
                 }
                 if (event.target === confirmDialog) {
                     hideConfirmDialog();
