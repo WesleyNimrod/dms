@@ -1313,7 +1313,7 @@
     <div id="viewSection" class="section">
         <div class="bg-white p-4 rounded-lg shadow-md">
             <div class="flex flex-wrap justify-between items-center mb-4">
-                <h2 class="text-xl font-bold text-primary">View All Records</h2>
+                <h2 class="text-xl font-bold text-primary">View All Records (Data Sheet)</h2>
                 <div class="flex flex-wrap gap-2 mt-2 sm:mt-0">
                     <button id="earnPointsBtn" class="points-btn earned">
                         <i class="fas fa-check-circle mr-2"></i><span id="earnedPointsTotal">0</span></button>
@@ -1525,6 +1525,7 @@
     let currentSelections = { ACC: '', ACC2: '', CC: '', CCOption2: '', PL: '' };
     let editingData = null;
     let editingProductString = "";
+    let editingFromMaster = false;
 
     // ==========================================
     // THEME AND UI FUNCTIONALITY
@@ -2108,6 +2109,7 @@
         currentSelections = { ACC: '', ACC2: '', CC: '', CCOption2: '', PL: '' };
         editingData = null;
         editingProductString = "";
+        editingFromMaster = false;
         
         adcbOverrideCheckbox.checked = false;
         ccDeductionOverrideCheckbox.checked = false;
@@ -2343,7 +2345,7 @@
                         calculateTotalPoints();
                     });
                     
-                    setAccDropdownValue(accSelect, editingData, salary);
+                    setAccDropdownFromString(accSelect, editingProductString, 0);
                 }
             }
             
@@ -2360,7 +2362,7 @@
                             calculateTotalPoints();
                         });
                         
-                        setAcc2DropdownValue(acc2Select, editingData, editingProductString);
+                        setAccDropdownFromString(acc2Select, editingProductString, 1);
                     }
                 }
             }
@@ -2376,7 +2378,7 @@
                 const ccSelect = document.getElementById('CCSelect');
                 if (ccSelect) {
                     ccSelect.addEventListener('change', calculateTotalPoints);
-                    setCcDropdownValue(ccSelect, editingData);
+                    setCcDropdownFromString(ccSelect, editingProductString, 0);
                 }
             }
             
@@ -2390,7 +2392,7 @@
                     const cc2Select = document.getElementById('CCSelect2');
                     if (cc2Select) {
                         cc2Select.addEventListener('change', calculateTotalPoints);
-                        setCc2DropdownValue(cc2Select, editingData, editingProductString);
+                        setCcDropdownFromString(cc2Select, editingProductString, 1);
                     }
                 }
             }
@@ -2406,7 +2408,7 @@
                 const plSelect = document.getElementById('PLSelect');
                 if (plSelect) {
                     plSelect.addEventListener('change', calculateTotalPoints);
-                    setPlDropdownValue(plSelect, editingData);
+                    setPlDropdownFromString(plSelect, editingProductString);
                 }
                 
                 loanAmountInput.addEventListener('input', calculateTotalPoints);
@@ -2416,59 +2418,9 @@
         calculateTotalPoints();
     }
     
-    // Helper functions to set dropdown values correctly based on saved product string
-    function setAccDropdownValue(accSelect, data, salary) {
-        if (!accSelect || !editingProductString) return;
-        
-        // Find the ACC-related products in the saved string
-        const products = editingProductString.split(',').map(p => p.trim());
-        let foundProduct = null;
-        
-        // Look for specific ACC patterns in the saved data
-        for (let product of products) {
-            if (product.includes('Aspire 5K-10K') || product === 'Aspire 5K-10K') {
-                foundProduct = 'Aspire5K-10K';
-                break;
-            } else if (product.includes('Aspire 10K-20K') || product === 'Aspire 10K-20K') {
-                foundProduct = 'Aspire10K-20K';
-                break;
-            } else if (product.includes('Privilege 20K-40K') || product === 'Privilege 20K-40K') {
-                foundProduct = 'Privilege20K-40K';
-                break;
-            } else if (product.includes('Privilege 40K') || product === 'Privilege 40K & Above') {
-                foundProduct = 'Privilege40K+';
-                break;
-            } else if (product === 'MDSA') {
-                foundProduct = 'MDSA';
-                break;
-            }
-        }
-        
-        if (foundProduct) {
-            // Set the select to the found product
-            for (let option of accSelect.options) {
-                if (option.value === foundProduct) {
-                    accSelect.value = foundProduct;
-                    return;
-                }
-            }
-        }
-        
-        // Fallback: use salary-based selection if no specific product found
-        for (let i = 1; i < accSelect.options.length; i++) {
-            const option = accSelect.options[i];
-            const minSalary = parseInt(option.dataset.minsalary) || 0;
-            const maxSalary = parseInt(option.dataset.maxsalary) || Infinity;
-            
-            if (salary >= minSalary && salary <= maxSalary) {
-                accSelect.selectedIndex = i;
-                break;
-            }
-        }
-    }
-    
-    function setAcc2DropdownValue(acc2Select, data, productString) {
-        if (!acc2Select || !productString) return;
+    // Improved helper functions to set dropdown values correctly based on saved product string
+    function setAccDropdownFromString(accSelect, productString, accIndex = 0) {
+        if (!accSelect || !productString) return;
         
         const products = productString.split(',').map(p => p.trim());
         const accProducts = products.filter(p => 
@@ -2477,56 +2429,47 @@
             p.includes('Privilege')
         );
         
-        // For 2nd ACC, we want the second ACC product if it exists
-        if (accProducts.length > 1) {
-            const secondAccProduct = accProducts[1];
-            
-            if (secondAccProduct.includes('Aspire 5K-10K')) {
-                selectOptionByValue(acc2Select, 'Aspire5K-10K');
-            } else if (secondAccProduct.includes('Aspire 10K-20K')) {
-                selectOptionByValue(acc2Select, 'Aspire10K-20K');
-            } else if (secondAccProduct.includes('Privilege 20K-40K')) {
-                selectOptionByValue(acc2Select, 'Privilege20K-40K');
-            } else if (secondAccProduct.includes('Privilege 40K')) {
-                selectOptionByValue(acc2Select, 'Privilege40K+');
-            } else if (secondAccProduct === 'MDSA') {
-                selectOptionByValue(acc2Select, 'MDSA');
-            }
-        }
-    }
-    
-    function setCcDropdownValue(ccSelect, data) {
-        if (!ccSelect || !editingProductString) return;
+        console.log('ACC Products found:', accProducts, 'Index:', accIndex);
         
-        const products = editingProductString.split(',').map(p => p.trim());
-        const ccProducts = products.filter(p => 
-            p.includes('Touchpoints') || 
-            p.includes('Cashback') ||
-            p.includes('Talabat') ||
-            p.includes('Lulu') ||
-            p.includes('Etihad') ||
-            p.includes('Shukran') ||
-            p.includes('All ') ||
-            p.includes('Traveller') ||
-            p.includes('Betaqti') ||
-            p.includes('Emirati')
-        );
-        
-        if (ccProducts.length > 0) {
-            const firstCcProduct = ccProducts[0];
+        if (accProducts.length > accIndex) {
+            const targetProduct = accProducts[accIndex];
+            console.log('Setting ACC dropdown to:', targetProduct);
             
-            // Find matching option by text content
-            for (let option of ccSelect.options) {
-                if (option.text.includes(firstCcProduct) || firstCcProduct.includes(option.text.split(' (')[0])) {
-                    ccSelect.value = option.value;
+            // Improved matching logic
+            for (let option of accSelect.options) {
+                const optionValue = option.value;
+                const optionText = option.text;
+                
+                console.log('Checking option:', optionValue, optionText);
+                
+                // Direct matches
+                if (targetProduct === 'MDSA' && optionValue === 'MDSA') {
+                    accSelect.value = optionValue;
+                    console.log('Set MDSA');
+                    return;
+                } else if (targetProduct.includes('Aspire 5K-10K') && optionValue === 'Aspire5K-10K') {
+                    accSelect.value = optionValue;
+                    console.log('Set Aspire5K-10K');
+                    return;
+                } else if (targetProduct.includes('Aspire 10K-20K') && optionValue === 'Aspire10K-20K') {
+                    accSelect.value = optionValue;
+                    console.log('Set Aspire10K-20K');
+                    return;
+                } else if (targetProduct.includes('Privilege 20K-40K') && optionValue === 'Privilege20K-40K') {
+                    accSelect.value = optionValue;
+                    console.log('Set Privilege20K-40K');
+                    return;
+                } else if (targetProduct.includes('Privilege 40K') && optionValue === 'Privilege40K+') {
+                    accSelect.value = optionValue;
+                    console.log('Set Privilege40K+');
                     return;
                 }
             }
         }
     }
     
-    function setCc2DropdownValue(cc2Select, data, productString) {
-        if (!cc2Select || !productString) return;
+    function setCcDropdownFromString(ccSelect, productString, ccIndex = 0) {
+        if (!ccSelect || !productString) return;
         
         const products = productString.split(',').map(p => p.trim());
         const ccProducts = products.filter(p => 
@@ -2542,30 +2485,62 @@
             p.includes('Emirati')
         );
         
-        // For 2nd CC, we want the second CC product if it exists
-        if (ccProducts.length > 1) {
-            const secondCcProduct = ccProducts[1];
+        console.log('CC Products found:', ccProducts, 'Index:', ccIndex);
+        
+        if (ccProducts.length > ccIndex) {
+            const targetProduct = ccProducts[ccIndex];
+            console.log('Setting CC dropdown to:', targetProduct);
             
-            // Find matching option by text content
-            for (let option of cc2Select.options) {
-                if (option.text.includes(secondCcProduct) || secondCcProduct.includes(option.text.split(' (')[0])) {
-                    cc2Select.value = option.value;
-                    return;
+            // Find matching option by comparing with option text
+            for (let option of ccSelect.options) {
+                const optionText = option.text.toLowerCase();
+                const targetText = targetProduct.toLowerCase();
+                
+                console.log('Checking CC option:', option.value, optionText);
+                
+                // More flexible matching - check if key words match
+                if ((targetText.includes('touchpoints') && optionText.includes('touchpoints')) ||
+                    (targetText.includes('cashback') && optionText.includes('cashback')) ||
+                    (targetText.includes('talabat') && optionText.includes('talabat')) ||
+                    (targetText.includes('lulu') && optionText.includes('lulu')) ||
+                    (targetText.includes('etihad') && optionText.includes('etihad')) ||
+                    (targetText.includes('shukran') && optionText.includes('shukran')) ||
+                    (targetText.includes('all ') && optionText.includes('all ')) ||
+                    (targetText.includes('traveller') && optionText.includes('traveller')) ||
+                    (targetText.includes('betaqti') && optionText.includes('betaqti')) ||
+                    (targetText.includes('emirati') && optionText.includes('emirati'))) {
+                    
+                    // Additional checks for specific variants (gold, platinum, etc.)
+                    if ((targetText.includes('gold') && optionText.includes('gold')) ||
+                        (targetText.includes('platinum') && optionText.includes('platinum')) ||
+                        (targetText.includes('titanium') && optionText.includes('titanium')) ||
+                        (targetText.includes('signature') && optionText.includes('signature')) ||
+                        (targetText.includes('infinite') && optionText.includes('infinite')) ||
+                        (targetText.includes('365') && optionText.includes('365')) ||
+                        (!targetText.includes('gold') && !targetText.includes('platinum') && 
+                         !targetText.includes('titanium') && !targetText.includes('signature') && 
+                         !targetText.includes('infinite') && !targetText.includes('365'))) {
+                        ccSelect.value = option.value;
+                        console.log('Set CC to:', option.value);
+                        return;
+                    }
                 }
             }
         }
     }
     
-    function setPlDropdownValue(plSelect, data) {
-        if (!plSelect || !editingProductString) return;
+    function setPlDropdownFromString(plSelect, productString) {
+        if (!plSelect || !productString) return;
         
-        if (editingProductString.includes('Asipire Cat A & B')) {
+        console.log('Setting PL dropdown from:', productString);
+        
+        if (productString.includes('Asipire Cat A & B')) {
             selectOptionByValue(plSelect, 'AspireCatAB');
-        } else if (editingProductString.includes('Privilege Cat A & B')) {
+        } else if (productString.includes('Privilege Cat A & B')) {
             selectOptionByValue(plSelect, 'PrivilegeCatAB');
-        } else if (editingProductString.includes('Aspire Cat C & Below')) {
+        } else if (productString.includes('Aspire Cat C & Below')) {
             selectOptionByValue(plSelect, 'AspireCatCBelow');
-        } else if (editingProductString.includes('Privilege Cat C & Below')) {
+        } else if (productString.includes('Privilege Cat C & Below')) {
             selectOptionByValue(plSelect, 'PrivilegeCatCBelow');
         }
     }
@@ -2576,10 +2551,12 @@
         for (let option of selectElement.options) {
             if (option.value === value) {
                 selectElement.value = value;
+                console.log('Set option to:', value);
                 return true;
             }
         }
         
+        console.log('Option not found:', value);
         return false;
     }
 
@@ -2842,7 +2819,7 @@
     // GOOGLE SHEETS INTEGRATION
     // ==========================================
 
-    // Fetch all data from Google Sheets
+    // Fetch all data from Google Sheets Data sheet
     async function fetchAllData() {
         showLoading();
         try {
@@ -2858,7 +2835,7 @@
                 
                 isShowingAllRecords = false;
                 const displayData = allRecordsData.slice(-maxInitialRecords);
-                displayDataInTable(displayData, 'dataTableBody');
+                displayDataInTable(displayData, 'dataTableBody', false, false, 'data');
                 calculatePointsTotals(allRecordsData);
             } else {
                 showSuccess(`Error: ${data.error}`);
@@ -2873,12 +2850,12 @@
 
     document.getElementById('showAllRecordsBtn').addEventListener('click', function() {
         if (!isShowingAllRecords && allRecordsData.length > 0) {
-            displayDataInTable(allRecordsData, 'dataTableBody');
+            displayDataInTable(allRecordsData, 'dataTableBody', false, false, 'data');
             isShowingAllRecords = true;
             this.innerHTML = '<i class="fas fa-list-alt mr-2"></i> Show Last 10 Records';
         } else {
             const displayData = allRecordsData.slice(-maxInitialRecords);
-            displayDataInTable(displayData, 'dataTableBody');
+            displayDataInTable(displayData, 'dataTableBody', false, false, 'data');
             isShowingAllRecords = false;
             this.innerHTML = '<i class="fas fa-list mr-2"></i> Show All Records';
         }
@@ -3241,7 +3218,7 @@ Accounts: ${progressACC}`;
             const data = await response.json();
             
             if (data.success) {
-                displayDataInTable(data.data, 'searchResultsBody', true);
+                displayDataInTable(data.data, 'searchResultsBody', true, false, 'master');
                 if (data.data.length === 0) {
                     document.getElementById('searchResultsBody').innerHTML = '<tr><td colspan="8" class="text-center py-4">No matching records found in Master sheet</td></tr>';
                 }
@@ -3276,7 +3253,7 @@ Accounts: ${progressACC}`;
                 }
                 
                 // Display first batch
-                displayDataInTable(allMasterData, 'searchResultsBody', false, true);
+                displayDataInTable(allMasterData, 'searchResultsBody', false, true, 'master');
                 
                 // Show "Show More" button if there might be more records
                 const showMoreContainer = document.getElementById('masterShowMoreContainer');
@@ -3313,7 +3290,7 @@ Accounts: ${progressACC}`;
                 masterDataOffset += 20;
                 
                 // Redisplay all data
-                displayDataInTable(allMasterData, 'searchResultsBody', false, true);
+                displayDataInTable(allMasterData, 'searchResultsBody', false, true, 'master');
                 
                 // Hide "Show More" if we got less than 20 records (indicating end of data)
                 if (data.data.length < 20) {
@@ -3400,12 +3377,12 @@ Accounts: ${progressACC}`;
         element.classList.remove('longpress-active');
     }
 
-    function displayDataInTable(data, targetTableId, isMasterSearch = false, isMasterFetch = false) {
+    function displayDataInTable(data, targetTableId, isMasterSearch = false, isMasterFetch = false, sheetType = 'data') {
         const tableBody = document.getElementById(targetTableId);
         tableBody.innerHTML = '';
         
         if (data.length === 0) {
-            const colSpan = (isMasterSearch || isMasterFetch) ? 8 : 8;
+            const colSpan = 8;
             tableBody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-4">No records found</td></tr>`;
             return;
         }
@@ -3425,7 +3402,7 @@ Accounts: ${progressACC}`;
                         <a href="tel:+${mobileNumber}" class="action-btn bg-green-600 text-white p-1 rounded inline-block" title="Call ${row['Customer Name']}" role="button">
                             <i class="fas fa-phone"></i>
                         </a>
-                        <button class="delete-btn action-btn bg-red-600 text-white p-1 rounded" data-cid="${row.CID}" title="Delete">
+                        <button class="delete-btn action-btn bg-red-600 text-white p-1 rounded" data-cid="${row.CID}" data-sheet="${sheetType}" title="Delete">
                             <i class="fas fa-trash-alt"></i>
                         </button>
                     </td>
@@ -3436,7 +3413,7 @@ Accounts: ${progressACC}`;
                         <a href="tel:+${mobileNumber}" class="action-btn bg-green-600 text-white p-1 rounded inline-block" title="Call ${row['Customer Name']}" role="button">
                             <i class="fas fa-phone"></i>
                         </a>
-                        <button class="delete-btn action-btn bg-red-600 text-white p-1 rounded" data-cid="${row.CID}" title="Delete">
+                        <button class="delete-btn action-btn bg-red-600 text-white p-1 rounded" data-cid="${row.CID}" data-sheet="${sheetType}" title="Delete">
                             <i class="fas fa-trash-alt"></i>
                         </button>
                     </td>
@@ -3458,7 +3435,7 @@ Accounts: ${progressACC}`;
                 <td class="copyable" data-value="${mobileNumber}">${mobileNumber}</td>
                 <td>${row.Product || ''}</td>
                 <td>${row.Status || ''}</td>
-                <td data-cid="${cidValue}" style="cursor: pointer; color: #1A3A4A; font-weight: bold;">${row.Points || ''}</td>
+                <td data-cid="${cidValue}" data-sheet="${sheetType}" style="cursor: pointer; color: #1A3A4A; font-weight: bold;">${row.Points || ''}</td>
                 ${actionsHtml}
             `;
             
@@ -3470,6 +3447,7 @@ Accounts: ${progressACC}`;
                         if (cellIndex !== 6) {
                             startLongPress(tr, cidValue);
                         } else {
+                            editingFromMaster = (sheetType === 'master');
                             editRecord(cidValue);
                         }
                     }
@@ -3490,6 +3468,7 @@ Accounts: ${progressACC}`;
                         if (cellIndex !== 6) {
                             startLongPress(tr, cidValue);
                         } else {
+                            editingFromMaster = (sheetType === 'master');
                             editRecord(cidValue);
                         }
                     }
@@ -3513,6 +3492,7 @@ Accounts: ${progressACC}`;
                         const cellIndex = Array.from(cell.parentElement.children).indexOf(cell);
                         if (cellIndex === 6) {
                             // Points column clicked - edit record
+                            editingFromMaster = true;
                             editRecord(cidValue);
                         } else if (cellIndex !== 6) {
                             startLongPress(tr, cidValue);
@@ -3534,6 +3514,7 @@ Accounts: ${progressACC}`;
                         const cellIndex = Array.from(cell.parentElement.children).indexOf(cell);
                         if (cellIndex === 6) {
                             // Points column clicked - edit record
+                            editingFromMaster = true;
                             editRecord(cidValue);
                         } else if (cellIndex !== 6) {
                             startLongPress(tr, cidValue);
@@ -3558,8 +3539,9 @@ Accounts: ${progressACC}`;
             btn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 const cid = this.getAttribute('data-cid');
+                const sheet = this.getAttribute('data-sheet');
                 showConfirmDialog('Are you sure you want to delete this record?', () => {
-                    deleteRecord(cid);
+                    deleteRecord(cid, sheet);
                 });
             });
         });
@@ -3646,7 +3628,12 @@ Accounts: ${progressACC}`;
     async function updateRecord(formData) {
         showLoading();
         try {
-            formData.append('action', 'update');
+            // Set the correct action and sheet based on editing source
+            if (editingFromMaster) {
+                formData.append('action', 'updateMaster');
+            } else {
+                formData.append('action', 'update');
+            }
             
             const response = await fetch(scriptURL, {
                 method: 'POST',
@@ -3669,10 +3656,15 @@ Accounts: ${progressACC}`;
         }
     }
 
-    async function deleteRecord(cid) {
+    async function deleteRecord(cid, sourceSheet = null) {
         showLoading();
         try {
-            const response = await fetch(`${scriptURL}?action=delete&cid=${cid}`, {
+            let action = 'delete';
+            if (sourceSheet === 'master') {
+                action = 'deleteMaster';
+            }
+            
+            const response = await fetch(`${scriptURL}?action=${action}&cid=${cid}`, {
                 method: 'GET'
             });
             
@@ -3702,15 +3694,18 @@ Accounts: ${progressACC}`;
         try {
             // First check local data
             let localRecord = allRecordsData.find(r => r.CID === cid);
+            let fromMaster = false;
             
             // If not found in Data sheet, check Master sheet
             if (!localRecord) {
                 localRecord = allMasterData.find(r => r.CID === cid);
+                fromMaster = true;
             }
             
             if (localRecord) {
                 editingData = localRecord;
                 editingProductString = localRecord.Product || "";
+                editingFromMaster = fromMaster;
                 
                 populateForm(localRecord);
                 
@@ -3813,6 +3808,9 @@ Accounts: ${progressACC}`;
         const productString = data.Product || '';
         const products = parseProductString(productString);
         
+        console.log('Populating form with product string:', productString);
+        console.log('Parsed products:', products);
+        
         if (data.accOption) currentSelections.ACC = data.accOption;
         if (data.accOption2) currentSelections.ACC2 = data.accOption2;
         if (data.ccOption) currentSelections.CC = data.ccOption;
@@ -3826,6 +3824,9 @@ Accounts: ${progressACC}`;
                             
         product2ndACC.checked = productStringContains(productString, '2nd ACC');
         productSTL.checked = productStringContains(productString, 'STL');
+        
+        console.log('ACC checked:', productACC.checked);
+        console.log('2nd ACC checked:', product2ndACC.checked);
         
         productCC.checked = productStringContains(productString, 'Touchpoints') ||
                            productStringContains(productString, 'Cashback') ||
@@ -3915,6 +3916,7 @@ Accounts: ${progressACC}`;
         
         pointsInput.value = data.Points || '';
         
+        console.log('Before calling initializeProductOptions');
         initializeProductOptions();
         
         if (statusSelect.value === 'Rejected') {
@@ -4353,159 +4355,149 @@ Accounts: ${progressACC}`;
     
     function createPDF(data, totalAmount, includeAmount) {
         try {
-            const doc = new jsPDF();
+            const doc = new jsPDF('landscape');
             
-            doc.setFontSize(18);
+            // Use A4 landscape dimensions in mm
+            const pageWidth = 297;
+            const pageHeight = 210;
+            const margin = 10;
+            const usableWidth = pageWidth - (margin * 2);
+            
+            doc.setFontSize(16);
             doc.setTextColor(26, 58, 74);
-            doc.text('Sales Report', 15, 15);
-            
-            doc.setFontSize(11);
-            doc.setTextColor(0, 0, 0);
-            doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 15, 25);
-            
-            const totalWidth = 180;
-            const leftMargin = 15;
-            
-            let colWidthNo, colWidthCID, colWidthDate, colWidthName, colWidthProduct, colWidthStatus, colWidthAmount;
-            let col0X, col1X, col2X, col3X, col4X, col5X, col6X;
-            
-            if (includeAmount) {
-                colWidthNo = totalWidth * 0.05;
-                colWidthCID = totalWidth * 0.10;
-                colWidthDate = totalWidth * 0.10;
-                colWidthName = totalWidth * 0.30;
-                colWidthProduct = totalWidth * 0.10;
-                colWidthStatus = totalWidth * 0.15;
-                colWidthAmount = totalWidth * 0.20;
-                
-                col0X = leftMargin + 3;
-                col1X = leftMargin + colWidthNo;
-                col2X = col1X + colWidthCID;
-                col3X = col2X + colWidthDate;
-                col4X = col3X + colWidthName;
-                col5X = col4X + colWidthProduct;
-                col6X = col5X + colWidthStatus;
-            } else {
-                colWidthNo = totalWidth * 0.06;
-                colWidthCID = totalWidth * 0.12;
-                colWidthDate = totalWidth * 0.12;
-                colWidthName = totalWidth * 0.40;
-                colWidthProduct = totalWidth * 0.15;
-                colWidthStatus = totalWidth * 0.15;
-                
-                col0X = leftMargin + 3;
-                col1X = leftMargin + colWidthNo;
-                col2X = col1X + colWidthCID;
-                col3X = col2X + colWidthDate;
-                col4X = col3X + colWidthName;
-                col5X = col4X + colWidthProduct;
-            }
-            
-            doc.setFillColor(26, 58, 74);
-            doc.rect(15, 30, 180, 8, 'F');
+            doc.text('Sales Report', margin, 20);
             
             doc.setFontSize(10);
-            doc.setTextColor(255, 255, 255);
-            doc.setFont(undefined, 'bold');
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Generated on: ${new Date().toLocaleDateString()}`, margin, 28);
             
-            doc.text('No', col0X, 35);
-            doc.text('CID', col1X, 35);
-            doc.text('Date', col2X, 35);
-            doc.text('Customer Name', col3X, 35);
-            doc.text('Product', col4X, 35);
-            doc.text('Status', col5X, 35);
+            // Calculate column widths based on specified percentages
+            const columnPercentages = {
+                no: 3,
+                cid: 10,
+                date: 10,
+                customerName: 30,
+                product: 25,
+                status: 15,
+                amount: 7
+            };
+            
+            // Calculate actual widths in mm based on percentages
+            const columnWidths = {
+                no: (usableWidth * columnPercentages.no) / 100,
+                cid: (usableWidth * columnPercentages.cid) / 100,
+                date: (usableWidth * columnPercentages.date) / 100,
+                customerName: (usableWidth * columnPercentages.customerName) / 100,
+                product: (usableWidth * columnPercentages.product) / 100,
+                status: (usableWidth * columnPercentages.status) / 100,
+                amount: includeAmount ? (usableWidth * columnPercentages.amount) / 100 : 0
+            };
+            
+            // Define columns with exact width specifications
+            const columns = [
+                { header: 'No', dataKey: 'no', width: columnWidths.no },
+                { header: 'CID', dataKey: 'cid', width: columnWidths.cid },
+                { header: 'Date', dataKey: 'date', width: columnWidths.date },
+                { header: 'Customer Name', dataKey: 'customerName', width: columnWidths.customerName },
+                { header: 'Product', dataKey: 'product', width: columnWidths.product },
+                { header: 'Status', dataKey: 'status', width: columnWidths.status }
+            ];
+            
             if (includeAmount) {
-                doc.text('Amount', col6X, 35);
+                columns.push({ header: 'Amount', dataKey: 'amount', width: columnWidths.amount });
             }
             
-            doc.setFont(undefined, 'normal');
-            doc.setTextColor(0, 0, 0);
-            
-            let y = 45;
-            data.forEach((row, i) => {
-                if (y > 270) {
-                    doc.addPage();
-                    y = 20;
-                    
-                    doc.setFillColor(26, 58, 74);
-                    doc.rect(15, y-5, 180, 8, 'F');
-                    
-                    doc.setTextColor(255, 255, 255);
-                    doc.setFont(undefined, 'bold');
-                    
-                    doc.text('No', col0X, y);
-                    doc.text('CID', col1X, y);
-                    doc.text('Date', col2X, y);
-                    doc.text('Customer Name', col3X, y);
-                    doc.text('Product', col4X, y);
-                    doc.text('Status', col5X, y);
-                    if (includeAmount) {
-                        doc.text('Amount', col6X, y);
-                    }
-                    
-                    doc.setFont(undefined, 'normal');
-                    doc.setTextColor(0, 0, 0);
-                    
-                    y += 10;
-                }
-                
-                if (i % 2 === 1) {
-                    doc.setFillColor(240, 240, 240);
-                    doc.rect(15, y-5, 180, 8, 'F');
-                }
-                
-                doc.text((i + 1).toString(), col0X, y);
-                doc.text(row.CID?.toString() || '', col1X, y);
-                doc.text(row.Date?.toString() || '', col2X, y);
-                doc.text(row['Customer Name']?.toString() || '', col3X, y);
-                doc.text(row.Product?.toString() || '', col4X, y);
-                doc.text(row.Status?.toString() || '', col5X, y);
+            // Prepare data for autoTable
+            const tableData = data.map((row, index) => {
+                const rowData = {
+                    no: (index + 1).toString(),
+                    cid: row.CID || '',
+                    date: row.Date || '',
+                    customerName: row['Customer Name'] || '',
+                    product: row.Product || '',
+                    status: row.Status || ''
+                };
                 
                 if (includeAmount) {
                     const amountValue = parseFloat(row.Amount) || 0;
-                    const formattedAmount = amountValue.toLocaleString('en-US');
-                    doc.text(formattedAmount, col6X + colWidthAmount - 5, y, { align: 'right' });
+                    rowData.amount = amountValue.toLocaleString('en-US');
                 }
                 
-                y += 10;
+                return rowData;
             });
             
+            // Add total row if amounts are included
             if (includeAmount) {
-                doc.setFillColor(240, 240, 240);
-                doc.rect(15, y-5, 180, 8, 'F');
-                
-                doc.setDrawColor(26, 58, 74);
-                doc.setLineWidth(0.5);
-                doc.line(15, y-5, 195, y-5);
-                
-                doc.setFont(undefined, 'bold');
-                doc.text('Total:', col5X, y);
-                
-                const formattedTotal = totalAmount.toLocaleString('en-US');
-                doc.text(formattedTotal, col6X + colWidthAmount - 5, y, { align: 'right' });
-                
-                y += 10;
+                tableData.push({
+                    no: '',
+                    cid: '',
+                    date: '',
+                    customerName: '',
+                    product: '',
+                    status: 'Total:',
+                    amount: totalAmount.toLocaleString('en-US')
+                });
             }
             
-            doc.setDrawColor(26, 58, 74);
-            doc.setLineWidth(0.5);
-            for (let i = 1; i <= doc.internal.getNumberOfPages(); i++) {
-                doc.setPage(i);
-                const pageHeight = doc.internal.pageSize.height;
-                if (i === doc.internal.getNumberOfPages()) {
-                    doc.rect(15, 30, 180, Math.min(y - 35, pageHeight - 40));
-                } else {
-                    doc.rect(15, 30, 180, pageHeight - 40);
-                }
-            }
-            
-            const pageCount = doc.internal.getNumberOfPages();
-            for (let i = 1; i <= pageCount; i++) {
-                doc.setPage(i);
-                doc.setFontSize(10);
-                doc.setTextColor(26, 58, 74);
-                doc.text(`Page ${i} of ${pageCount}`, 100, 290, { align: 'center' });
-            }
+            // Use autoTable for proper formatting
+            doc.autoTable({
+                columns: columns,
+                body: tableData,
+                startY: 35,
+                theme: 'grid',
+                styles: {
+                    fontSize: 8,
+                    cellPadding: 2,
+                    overflow: 'linebreak',
+                    halign: 'left',
+                    valign: 'middle'
+                },
+                headStyles: {
+                    fillColor: [26, 58, 74],
+                    textColor: [255, 255, 255],
+                    fontStyle: 'bold',
+                    halign: 'center',
+                    fontSize: 8
+                },
+                alternateRowStyles: {
+                    fillColor: [222, 191, 207]
+                },
+                columnStyles: {
+                    0: { halign: 'center', width: columnWidths.no },
+                    1: { halign: 'center', width: columnWidths.cid },
+                    2: { halign: 'center', width: columnWidths.date },
+                    3: { halign: 'left', width: columnWidths.customerName },
+                    4: { halign: 'left', width: columnWidths.product },
+                    5: { halign: 'center', width: columnWidths.status },
+                    6: { halign: 'right', width: columnWidths.amount }
+                },
+                didParseCell: function(data) {
+                    // Ensure text wrapping for long content
+                    if (data.column.dataKey === 'customerName' || data.column.dataKey === 'product') {
+                        data.cell.styles.overflow = 'linebreak';
+                        data.cell.styles.cellWidth = 'wrap';
+                    }
+                    
+                    // Style total row
+                    if (includeAmount && data.row.index === tableData.length - 1) {
+                        data.cell.styles.fillColor = [240, 240, 240];
+                        data.cell.styles.fontStyle = 'bold';
+                        data.cell.styles.lineColor = [26, 58, 74];
+                        data.cell.styles.lineWidth = 0.8;
+                    }
+                },
+                didDrawPage: function(data) {
+                    // Add page numbers
+                    const pageCount = doc.internal.getNumberOfPages();
+                    const currentPage = doc.internal.getCurrentPageInfo().pageNumber;
+                    
+                    doc.setFontSize(8);
+                    doc.setTextColor(26, 58, 74);
+                    doc.text(`Page ${currentPage} of ${pageCount}`, pageWidth/2, pageHeight - 5, { align: 'center' });
+                },
+                margin: { top: 35, left: margin, right: margin, bottom: 15 },
+                tableWidth: usableWidth
+            });
             
             doc.save('customer_data_report.pdf');
         } catch (error) {
@@ -4698,7 +4690,7 @@ Accounts: ${progressACC}`;
         const cid = cidInput.value;
         if (cid) {
             showConfirmDialog('Are you sure you want to delete this record?', () => {
-                deleteRecord(cid);
+                deleteRecord(cid, editingFromMaster ? 'master' : 'data');
             });
         }
     });
@@ -4725,7 +4717,7 @@ Accounts: ${progressACC}`;
             const data = await response.json();
             
             if (data.success) {
-                displayDataInTable(data.data, 'searchResultsBody', true);
+                displayDataInTable(data.data, 'searchResultsBody', true, false, 'master');
             } else {
                 document.getElementById('searchResultsBody').innerHTML = '<tr><td colspan="8" class="text-center py-4">Error searching Master sheet</td></tr>';
             }
