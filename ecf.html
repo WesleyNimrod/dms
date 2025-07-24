@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Early Loan Closure Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .calculator-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 1.2rem;
+        }
+        
+        .input-label {
+            position: absolute;
+            top: -8px;
+            left: 12px;
+            background: white;
+            padding: 0 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #4F46E5;
+            z-index: 1;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #4F46E5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #D1D5DB;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-label {
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .result-value {
+            font-weight: 700;
+            color: #1F2937;
+        }
+        
+        .closure-highlight {
+            background: #DC2626;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 16px;
+        }
+
+        .savings-highlight {
+            background: #22C55E;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body class="p-4">
+    <div class="max-w-5xl mx-auto">
+        <div class="grid lg:grid-cols-2 gap-6">
+            <!-- Calculator Input Section -->
+            <div class="calculator-card p-6">
+                <h2 class="text-2xl font-bold mb-5 text-gray-800">Loan Details</h2>
+                
+                <div class="input-group">
+                    <label class="input-label">Original Loan Amount (AED)</label>
+                    <input type="number" id="closureLoanAmount" class="input-field" value="">
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Interest Rate (% per annum)</label>
+                    <input type="number" id="closureInterestRate" class="input-field" value="" step="0.1">
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Original Tenure (Months)</label>
+                    <input type="number" id="closureTenure" class="input-field" value="48">
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">EMIs Paid</label>
+                    <input type="number" id="emisPaid" class="input-field" value="">
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Early Closure Fee (%)</label>
+                    <input type="number" id="closureFee" class="input-field" value="1.05" step="0.01">
+                </div>
+            </div>
+            
+            <!-- Results Section -->
+            <div class="calculator-card p-6">
+                <h2 class="text-2xl font-bold mb-5 text-gray-800">
+                    <i class="fas fa-chart-line mr-2"></i>Closure Calculation Results
+                </h2>
+                
+                <div class="result-card">
+                    <div class="result-item">
+                        <span class="result-label">Monthly EMI</span>
+                        <span class="result-value" id="closureEMI">AED 0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Total Amount Paid</span>
+                        <span class="result-value" id="amountPaid">AED 0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Outstanding Principal</span>
+                        <span class="result-value" id="outstandingPrincipal">AED 0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Early Closure Fee</span>
+                        <span class="result-value" id="closureFeeAmount">AED 0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Total Closure Amount</span>
+                        <span class="result-value" id="totalClosureAmount">AED 0</span>
+                    </div>
+                    
+                    <div class="closure-highlight" id="closureSummary">
+                        Pay AED 0 to close your loan
+                    </div>
+
+                    <div class="savings-highlight" id="savingsSection" style="display: none;">
+                        <span id="interestSavings">Save AED 0 in future interest</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculateEarlyClosure() {
+            const principal = parseFloat(document.getElementById('closureLoanAmount').value) || 0;
+            const annualRate = parseFloat(document.getElementById('closureInterestRate').value) || 0;
+            const tenure = parseInt(document.getElementById('closureTenure').value) || 0;
+            const emisPaid = parseInt(document.getElementById('emisPaid').value) || 0;
+            const closureFeeRate = parseFloat(document.getElementById('closureFee').value) || 0;
+            
+            if (principal <= 0 || annualRate <= 0 || tenure <= 0 || emisPaid < 0) {
+                // Reset all values to 0 if invalid input
+                document.getElementById('closureEMI').textContent = 'AED 0';
+                document.getElementById('amountPaid').textContent = 'AED 0';
+                document.getElementById('outstandingPrincipal').textContent = 'AED 0';
+                document.getElementById('closureFeeAmount').textContent = 'AED 0';
+                document.getElementById('totalClosureAmount').textContent = 'AED 0';
+                document.getElementById('closureSummary').textContent = 'Pay AED 0 to close your loan';
+                document.getElementById('savingsSection').style.display = 'none';
+                return;
+            }
+            
+            const monthlyRate = annualRate / 12 / 100;
+            const emi = calculateEMIAmount(principal, monthlyRate, tenure);
+            
+            // Calculate outstanding principal using the reducing balance method
+            const outstanding = calculateOutstandingPrincipal(principal, monthlyRate, emi, tenure, emisPaid);
+            
+            const amountPaid = emi * emisPaid;
+            const closureFeeAmount = outstanding * closureFeeRate / 100;
+            const totalClosureAmount = outstanding + closureFeeAmount;
+            
+            // Calculate interest savings
+            const remainingEMIs = tenure - emisPaid;
+            const futurePayments = remainingEMIs * emi;
+            const interestSavings = futurePayments - outstanding;
+            
+            // Update results
+            document.getElementById('closureEMI').textContent = `AED ${emi.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+            document.getElementById('amountPaid').textContent = `AED ${amountPaid.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+            document.getElementById('outstandingPrincipal').textContent = `AED ${outstanding.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+            document.getElementById('closureFeeAmount').textContent = `AED ${closureFeeAmount.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+            document.getElementById('totalClosureAmount').textContent = `AED ${totalClosureAmount.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+            document.getElementById('closureSummary').textContent = `Pay AED ${totalClosureAmount.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})} to close your loan`;
+            
+            // Show interest savings if applicable
+            if (interestSavings > 0 && remainingEMIs > 0) {
+                document.getElementById('savingsSection').style.display = 'block';
+                document.getElementById('interestSavings').textContent = `Save AED ${interestSavings.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})} in future interest`;
+            } else {
+                document.getElementById('savingsSection').style.display = 'none';
+            }
+        }
+        
+        function calculateEMIAmount(principal, monthlyRate, tenure) {
+            if (monthlyRate === 0) {
+                return principal / tenure;
+            }
+            
+            const factor = Math.pow(1 + monthlyRate, tenure);
+            return Math.round((principal * monthlyRate * factor) / (factor - 1));
+        }
+        
+        function calculateOutstandingPrincipal(principal, monthlyRate, emi, tenure, emisPaid) {
+            if (emisPaid >= tenure) {
+                return 0;
+            }
+            
+            // Using the formula for outstanding principal in reducing balance method
+            const factor1 = Math.pow(1 + monthlyRate, tenure);
+            const factor2 = Math.pow(1 + monthlyRate, emisPaid);
+            
+            return Math.round(principal * (factor1 - factor2) / (factor1 - 1));
+        }
+        
+        // Initialize calculation on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            calculateEarlyClosure();
+        });
+        
+        // Add event listeners for real-time calculation
+        document.getElementById('closureLoanAmount').addEventListener('input', calculateEarlyClosure);
+        document.getElementById('closureInterestRate').addEventListener('input', calculateEarlyClosure);
+        document.getElementById('closureTenure').addEventListener('input', calculateEarlyClosure);
+        document.getElementById('emisPaid').addEventListener('input', calculateEarlyClosure);
+        document.getElementById('closureFee').addEventListener('input', calculateEarlyClosure);
+    </script>
+</body>
+</html>
