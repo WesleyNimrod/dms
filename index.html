@@ -257,7 +257,6 @@
             border-color: #4b5563;
         }
         
-        /* Horizontal tabs at top */
         .layout-container {
             display: flex;
             flex-direction: column;
@@ -325,7 +324,6 @@
             display: block;
         }
         
-        /* Gradient backgrounds */
         .gradient-primary {
             background: linear-gradient(135deg, #5492A8 0%, #38386E 100%);
         }
@@ -338,7 +336,6 @@
             background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
         }
         
-        /* Improved input and button styles */
         input, select, textarea {
             transition: all 0.3s;
         }
@@ -358,7 +355,6 @@
             transform: translateY(-1px);
         }
         
-        /* Compact layout styles */
         .compact-form .grid-cols-3 {
             gap: 0.5rem;
         }
@@ -388,7 +384,6 @@
             border-left: 4px solid #90cdf4;
         }
         
-        /* Authentication modal */
         .auth-modal {
             position: fixed;
             top: 0;
@@ -419,28 +414,6 @@
             border: 1px solid rgba(75, 85, 99, 0.18);
         }
         
-        .screenshot-btn {
-            background: #f3f4f6;
-            border: 1px solid #d1d5db;
-            border-radius: 4px;
-            padding: 6px;
-            transition: all 0.3s;
-        }
-        
-        .screenshot-btn:hover {
-            background: #e5e7eb;
-        }
-        
-        .dark .screenshot-btn {
-            background: #374151;
-            border-color: #4b5563;
-        }
-        
-        .dark .screenshot-btn:hover {
-            background: #4b5563;
-        }
-        
-        /* Theme toggle in tabs */
         .theme-toggle-container {
             display: flex;
             justify-content: center;
@@ -449,7 +422,6 @@
             margin-right: 15px;
         }
         
-        /* Auto-hide feature for tabs */
         @media (max-width: 768px) {
             .horizontal-tabs {
                 flex-wrap: wrap;
@@ -466,7 +438,6 @@
             }
         }
         
-        /* Header profile controls */
         .header-controls {
             background-color: white;
             padding: 15px;
@@ -479,7 +450,6 @@
             background-color: #1f2937;
         }
 
-        /* Google Drive button states */
         .gdrive-connecting {
             background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
         }
@@ -488,7 +458,6 @@
             background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
         }
         
-        /* Quick EMI Modal */
         .quick-emi-modal {
             position: fixed;
             top: 50%;
@@ -518,14 +487,12 @@
             z-index: 59;
         }
         
-        /* Guest mode restricted tabs */
         .guest-mode .tab-btn.restricted {
             opacity: 0.5;
             cursor: not-allowed;
             pointer-events: none;
         }
 
-        /* Loading screen with motion graphics */
         .loading-screen {
             position: fixed;
             top: 0;
@@ -555,7 +522,6 @@
             to { opacity: 1; }
         }
 
-        /* Loading spinner animation */
         .loading-spinner {
             width: 60px;
             height: 60px;
@@ -570,7 +536,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Loading dots animation */
         .loading-dots {
             display: flex;
             gap: 8px;
@@ -595,6 +560,65 @@
             } 40% {
                 transform: scale(1);
             }
+        }
+        
+        /* DBR Toggle Switch Styles */
+        .dbr-toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 24px;
+            margin-left: 10px;
+        }
+        
+        .dbr-toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .dbr-toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .dbr-toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .dbr-toggle-slider {
+            background-color: #5492A8;
+        }
+        
+        input:checked + .dbr-toggle-slider:before {
+            transform: translateX(36px);
+        }
+        
+        .dbr-toggle-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            margin-top: 2px;
+            color: #666;
+        }
+        
+        .dark .dbr-toggle-labels {
+            color: #999;
         }
     </style>
 </head>
@@ -720,6 +744,9 @@
                 <button class="tab-btn text-white/80 font-medium" data-tab="rategrid" title="Rate Grid">
                     <i class="fas fa-table"></i>
                 </button>
+                <button class="tab-btn text-white/80 font-medium" data-tab="closurefee" title="Closure Fee">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </button>
                 <button class="tab-btn text-white/80 font-medium" data-tab="finance" title="Finance">
                     <i class="fas fa-hand-holding-usd"></i>
                 </button>
@@ -835,7 +862,17 @@
                                 <div class="grid grid-cols-3 gap-2 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">DBR %:</label>
                                     <div class="col-span-2 flex items-center">
-                                        <input type="text" id="dbrPercentage" class="w-full border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                                        <input type="text" id="dbrPercentage" class="flex-1 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                                        <div class="ml-2">
+                                            <label class="dbr-toggle-switch">
+                                                <input type="checkbox" id="dbrToggle">
+                                                <span class="dbr-toggle-slider"></span>
+                                            </label>
+                                            <div class="dbr-toggle-labels">
+                                                <span>49%</span>
+                                                <span>49.99%</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 
@@ -934,6 +971,12 @@
                                     </select>
                                 </div>
                                 
+                                <!-- Closure Fee Field (appears for Top-up loans) -->
+                                <div id="closureFeeContainer" class="grid grid-cols-3 gap-2 items-center hidden">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Closure Fee (AED):</label>
+                                    <input type="number" id="closureFee" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" placeholder="Enter closure fee">
+                                </div>
+                                
                                 <div class="grid grid-cols-3 gap-2 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Disbursal Date:</label>
                                     <input type="date" id="disbursalDate" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
@@ -952,7 +995,7 @@
                                 
                                 <div class="grid grid-cols-3 gap-2 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Multiples Of Salary:</label>
-                                    <input type="number" id="multiplesOfSalary" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" placeholder="20">
+                                    <input type="number" id="multiplesOfSalary" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" value="20">
                                 </div>
                                 
                                 <div class="grid grid-cols-3 gap-2 items-center">
@@ -1072,6 +1115,11 @@
                 <!-- Rate Grid Tab -->
                 <div id="tab-rategrid" class="tab-content">
                     <iframe src="rategrid.html" title="Rate Grid" id="rategridIframe"></iframe>
+                </div>
+                
+                <!-- Closure Fee Tab -->
+                <div id="tab-closurefee" class="tab-content">
+                    <iframe src="ecf.html" title="Closure Fee" id="closurefeeIframe"></iframe>
                 </div>
                 
                 <!-- Finance Tab (New) -->
@@ -1343,6 +1391,9 @@
         let settledCards = new Map(); // Store original outstanding values
         let settledLoans = new Set();
         let originalOutstandingValues = new Map(); // Store original outstanding values for ADCB cards
+        
+        // DBR threshold for calculations (default 49%)
+        let dbrThreshold = 49.00;
         
         // ==========================================
         // TAB FUNCTIONALITY
@@ -1926,6 +1977,7 @@
             const grossSalaryInput = document.getElementById('grossSalary');
             const allowedLiabilityInput = document.getElementById('allowedLiability');
             const dbrPercentageInput = document.getElementById('dbrPercentage');
+            const dbrToggle = document.getElementById('dbrToggle');
             const addLoansBtn = document.getElementById('addLoansBtn');
             const removeLoansBtn = document.getElementById('removeLoansBtn');
             const existingLoansContainer = document.getElementById('existingLoansContainer');
@@ -1951,6 +2003,8 @@
             const deleteProfileBtn = document.getElementById('deleteProfileBtn');
             const saveProfileBtn = document.getElementById('saveProfileBtn');
             const loanTypeSelect = document.getElementById('loanType');
+            const closureFeeContainer = document.getElementById('closureFeeContainer');
+            const closureFeeInput = document.getElementById('closureFee');
             const multiplesOfSalaryInput = document.getElementById('multiplesOfSalary');
             const maxLoanEligibilityInput = document.getElementById('maxLoanEligibility');
             const tenureMonthsInput = document.getElementById('tenureMonths');
@@ -2033,6 +2087,75 @@
             let addbackData = {};
             
             // ==========================================
+            // DBR TOGGLE FUNCTIONALITY (Fix 4)
+            // ==========================================
+            
+            // Initialize DBR toggle (default to 49%)
+            dbrToggle.checked = false; // 49%
+            
+            // DBR toggle event listener
+            dbrToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    dbrThreshold = 49.99;
+                } else {
+                    dbrThreshold = 49.00;
+                }
+                // Recalculate everything when threshold changes
+                updateDBRCalculator();
+            });
+            
+            // ==========================================
+            // CLOSURE FEE FUNCTIONALITY (Fix 1)
+            // ==========================================
+            
+            // Show/hide closure fee based on loan type
+            loanTypeSelect.addEventListener('change', function() {
+                const loanType = this.value;
+                if (loanType === 'topup-0-30' || loanType === 'topup-30-60') {
+                    closureFeeContainer.classList.remove('hidden');
+                } else {
+                    closureFeeContainer.classList.add('hidden');
+                    closureFeeInput.value = '';
+                }
+                
+                adjustFirstPaymentDate();
+                validatePaymentDate();
+                updateDaysBetween();
+                updateEMICalculator();
+            });
+            
+            // Closure fee input listener
+            closureFeeInput.addEventListener('input', function() {
+                updateCashInHand();
+            });
+            
+            // ==========================================
+            // WHATSAPP NUMBER INPUT RESTRICTIONS (Fix 3)
+            // ==========================================
+            
+            // Restrict WhatsApp number input
+            whatsappNumberInput.addEventListener('input', function(e) {
+                // Remove all spaces
+                this.value = this.value.replace(/\s/g, '');
+                
+                // Prevent +971 or 0 as prefix
+                if (this.value.startsWith('+971') || this.value.startsWith('0')) {
+                    this.value = this.value.replace(/^(\+971|0)/, '');
+                }
+            });
+            
+            whatsappNumberInput.addEventListener('paste', function(e) {
+                e.preventDefault();
+                let paste = (e.clipboardData || window.clipboardData).getData('text');
+                
+                // Remove spaces and +971/0 prefix
+                paste = paste.replace(/\s/g, '');
+                paste = paste.replace(/^(\+971|0)/, '');
+                
+                this.value = paste;
+            });
+            
+            // ==========================================
             // GOOGLE DRIVE FUNCTIONALITY
             // ==========================================
             
@@ -2072,6 +2195,7 @@
                 const loanAmount = parseFloat(loanAmountInput.value) || 0;
                 const totalOutstanding = parseFloat(totalOutstandingInput.value.replace(/,/g, '')) || 0;
                 const processingFees = parseFloat(processingFeesInput.value.replace(/,/g, '')) || 0;
+                const closureFee = parseFloat(closureFeeInput.value) || 0; // Fix 1: Add closure fee
                 
                 let cashInHand = loanAmount - totalOutstanding;
                 
@@ -2079,6 +2203,9 @@
                 if (netAmountCheckbox.checked) {
                     cashInHand -= processingFees;
                 }
+                
+                // Always subtract closure fee if it exists (Fix 1)
+                cashInHand -= closureFee;
                 
                 cashInHandInput.value = formatNumber(cashInHand.toFixed(2));
             }
@@ -2362,6 +2489,7 @@
                     whatsappNumber: whatsappNumberInput.value,
                     salary: salaryInput.value,
                     loanType: loanTypeSelect.value,
+                    closureFee: closureFeeInput.value, // Fix 1: Save closure fee
                     disbursalDate: disbursalDateInput.value,
                     firstPaymentDate: firstPaymentDateInput.value,
                     multiplesOfSalary: multiplesOfSalaryInput.value,
@@ -2370,6 +2498,7 @@
                     reducingRate: reducingRateInput.value,
                     specialNote: specialNote.value,
                     netAmountChecked: netAmountCheckbox.checked,
+                    dbrThreshold: dbrThreshold, // Save DBR threshold
                     
                     // Credit card data
                     creditCards: Array.from(document.querySelectorAll('.credit-card-entry')).map((entry, index) => {
@@ -2520,6 +2649,7 @@
                     whatsappNumberInput.value = profileData.whatsappNumber || '';
                     salaryInput.value = profileData.salary;
                     loanTypeSelect.value = profileData.loanType;
+                    closureFeeInput.value = profileData.closureFee || ''; // Fix 1: Load closure fee
                     disbursalDateInput.value = profileData.disbursalDate;
                     firstPaymentDateInput.value = profileData.firstPaymentDate;
                     multiplesOfSalaryInput.value = profileData.multiplesOfSalary;
@@ -2528,6 +2658,19 @@
                     reducingRateInput.value = profileData.reducingRate;
                     specialNote.value = profileData.specialNote;
                     netAmountCheckbox.checked = profileData.netAmountChecked !== undefined ? profileData.netAmountChecked : true;
+                    
+                    // Restore DBR threshold
+                    if (profileData.dbrThreshold !== undefined) {
+                        dbrThreshold = profileData.dbrThreshold;
+                        dbrToggle.checked = dbrThreshold === 49.99;
+                    }
+                    
+                    // Show/hide closure fee field based on loan type
+                    if (loanTypeSelect.value === 'topup-0-30' || loanTypeSelect.value === 'topup-30-60') {
+                        closureFeeContainer.classList.remove('hidden');
+                    } else {
+                        closureFeeContainer.classList.add('hidden');
+                    }
                     
                     // Handle credit cards
                     if (profileData.creditCards && profileData.creditCards.length > 0) {
@@ -2876,6 +3019,7 @@
                     whatsappNumber: whatsappNumberInput.value, 
                     salary: salaryInput.value,
                     loanType: loanTypeSelect.value,
+                    closureFee: closureFeeInput.value, // Fix 1: Save closure fee
                     disbursalDate: disbursalDateInput.value,
                     firstPaymentDate: firstPaymentDateInput.value,
                     multiplesOfSalary: multiplesOfSalaryInput.value,
@@ -2884,6 +3028,7 @@
                     reducingRate: reducingRateInput.value,
                     specialNote: specialNote.value,
                     netAmountChecked: netAmountCheckbox.checked,
+                    dbrThreshold: dbrThreshold, // Save DBR threshold
                     
                     // Credit card data
                     creditCards: Array.from(document.querySelectorAll('.credit-card-entry')).map((entry, index) => {
@@ -2927,14 +3072,28 @@
                     whatsappNumberInput.value = tempState.whatsappNumber || '';
                     salaryInput.value = tempState.salary || '';
                     loanTypeSelect.value = tempState.loanType || 'fresh-0-30';
+                    closureFeeInput.value = tempState.closureFee || ''; // Fix 1: Load closure fee
                     disbursalDateInput.value = tempState.disbursalDate || today.toISOString().split('T')[0];
                     firstPaymentDateInput.value = tempState.firstPaymentDate || nextMonth.toISOString().split('T')[0];
-                    multiplesOfSalaryInput.value = tempState.multiplesOfSalary || '';
+                    multiplesOfSalaryInput.value = tempState.multiplesOfSalary || '20'; // Fix 2: Default value
                     tenureMonthsInput.value = tempState.tenureMonths || '48';
                     loanAmountInput.value = tempState.loanAmount || '';
                     reducingRateInput.value = tempState.reducingRate || '10';
                     specialNote.value = tempState.specialNote || '';
                     netAmountCheckbox.checked = tempState.netAmountChecked !== undefined ? tempState.netAmountChecked : true;
+                    
+                    // Restore DBR threshold
+                    if (tempState.dbrThreshold !== undefined) {
+                        dbrThreshold = tempState.dbrThreshold;
+                        dbrToggle.checked = dbrThreshold === 49.99;
+                    }
+                    
+                    // Show/hide closure fee field based on loan type
+                    if (loanTypeSelect.value === 'topup-0-30' || loanTypeSelect.value === 'topup-30-60') {
+                        closureFeeContainer.classList.remove('hidden');
+                    } else {
+                        closureFeeContainer.classList.add('hidden');
+                    }
                     
                     // Handle credit cards
                     if (tempState.creditCards && tempState.creditCards.length > 0) {
@@ -3458,8 +3617,8 @@
                 const dbrPercentage = (newTotalLiabilities / grossSalary) * 100;
                 dbrPercentageInput.value = dbrPercentage.toFixed(2);
                 
-                // Show warning if DBR is high (49.99% or higher)
-                if (dbrPercentage >= 49.99) {
+                // Show warning if DBR is high (using current threshold)
+                if (dbrPercentage >= dbrThreshold) {
                     // Apply red flash warning to the entire calculator sections
                     dbrCalculatorSection.classList.add('dbr-warning-flash');
                     emiCalculatorSection.classList.add('dbr-warning-flash');
@@ -3555,9 +3714,8 @@
                 // Calculate DBR percentage
                 const dbrPercentage = (totalLiabilitiesWithEMI / grossSalary) * 100;
                 
-                // Calculate the ideal loan amount for 49.99% DBR
-                const allowedDBRPercentage = 49.99;
-                const allowedLiability = grossSalary * (allowedDBRPercentage / 100);
+                // Calculate the ideal loan amount for current DBR threshold
+                const allowedLiability = grossSalary * (dbrThreshold / 100);
                 const availableForEMI = allowedLiability - currentLiabilities;
                 
                 // Find the loan amount that would result in this EMI
@@ -3578,8 +3736,8 @@
                     }
                 }
                 
-                // Show error if DBR exceeds 49.99% with message including ideal amount
-                if (dbrPercentage >= 49.99) {
+                // Show error if DBR exceeds threshold with message including ideal amount
+                if (dbrPercentage >= dbrThreshold) {
                     loanAmountError.textContent = `Error: Loan Amount Will Exceed DBR Limit! Ideal amount: AED ${formatNumber(Math.floor(idealLoanAmount))}`;
                     loanAmountError.classList.remove('hidden');
                 } else {
@@ -3619,7 +3777,7 @@
                     }
                 });
                 
-                if (hasADCBOutstandingAlert || dbrPercentage >= 49.99) {
+                if (hasADCBOutstandingAlert || dbrPercentage >= dbrThreshold) {
                     // Switch to SETTLEMENT SUGGESTION
                     suggestionTitle.textContent = 'SETTLEMENT SUGGESTION';
                     
@@ -3629,7 +3787,7 @@
                     } else {
                         // Calculate how much total credit cards need to be reduced
                         const currentNewTotalLiabilities = parseFloat(newTotalLiabilitiesInput.value.replace(/,/g, '')) || 0;
-                        const allowedLiability = grossSalary * 0.4999; // 49.99%
+                        const allowedLiability = grossSalary * (dbrThreshold / 100);
                         const excessLiability = currentNewTotalLiabilities - allowedLiability;
                         
                         if (excessLiability > 0) {
@@ -3672,7 +3830,7 @@
                                 }
                             }
                             
-                            ccSuggestionText.textContent = `Your DBR exceeds 49.99%. To bring it within limit, reduce total credit card limits to AED ${formatNumber(targetCCLimit.toFixed(2))}.${adcbSuggestion}`;
+                            ccSuggestionText.textContent = `Your DBR exceeds ${dbrThreshold}%. To bring it within limit, reduce total credit card limits to AED ${formatNumber(targetCCLimit.toFixed(2))}.${adcbSuggestion}`;
                         } else {
                             ccSuggestionText.textContent = `Your DBR is at the limit. Consider reducing credit card limits or settling outstanding amounts.`;
                         }
@@ -3706,7 +3864,7 @@
                         ccSuggestionContainer.classList.add('hidden');
                     } else if (availableLiability > 0 && optimalCCLimit >= 3000) {
                         ccSuggestionContainer.classList.remove('hidden');
-                        ccSuggestionText.textContent = `Based on your available liability of AED ${formatNumber(availableLiability.toFixed(2))} and current DBR of ${dbrPercentage.toFixed(2)}%, the optimal credit card limit for you would be AED ${formatNumber(optimalCCLimit.toFixed(2))}. This would keep your DBR within the 49.99% limit.`;
+                        ccSuggestionText.textContent = `Based on your available liability of AED ${formatNumber(availableLiability.toFixed(2))} and current DBR of ${dbrPercentage.toFixed(2)}%, the optimal credit card limit for you would be AED ${formatNumber(optimalCCLimit.toFixed(2))}. This would keep your DBR within the ${dbrThreshold}% limit.`;
                         // Add green text styling for credit card suggestion
                         ccSuggestionText.classList.add('cc-suggestion-text');
                         ccSuggestionText.classList.remove('settlement-suggestion-text');
@@ -3715,7 +3873,7 @@
                         ccSuggestionContainer.classList.add('hidden');
                     } else {
                         ccSuggestionContainer.classList.remove('hidden');
-                        ccSuggestionText.textContent = `Your current liabilities exceed or are close to the 49.99% DBR limit. It is not recommended to apply for any credit cards at this time.`;
+                        ccSuggestionText.textContent = `Your current liabilities exceed or are close to the ${dbrThreshold}% DBR limit. It is not recommended to apply for any credit cards at this time.`;
                         // Add green text styling for credit card suggestion
                         ccSuggestionText.classList.add('cc-suggestion-text');
                         ccSuggestionText.classList.remove('settlement-suggestion-text');
@@ -4061,7 +4219,7 @@
             // FIND OPTIMAL LOAN FUNCTION (FIX 1)
             // ==========================================
             
-            // Function to find optimal loan amount for 49.99% DBR (Fixed)
+            // Function to find optimal loan amount for current DBR threshold (Fixed)
             function findOptimalLoanAmount() {
                 const grossSalary = parseFloat(grossSalaryInput.value.replace(/,/g, '')) || 0;
                 const currentDBR = parseFloat(dbrPercentageInput.value) || 0;
@@ -4071,9 +4229,9 @@
                     return;
                 }
                 
-                // Check if DBR is already within 49.99%
-                if (currentDBR <= 49.99) {
-                    showSuccess('Your DBR is already within the 49.99% limit. No optimization needed.');
+                // Check if DBR is already within threshold
+                if (currentDBR <= dbrThreshold) {
+                    showSuccess(`Your DBR is already within the ${dbrThreshold}% limit. No optimization needed.`);
                     return;
                 }
                 
@@ -4087,8 +4245,7 @@
                 }
                 
                 // Use the same calculation logic from checkLoanAmountWithDBR
-                const allowedDBRPercentage = 49.99;
-                const allowedLiability = grossSalary * (allowedDBRPercentage / 100);
+                const allowedLiability = grossSalary * (dbrThreshold / 100);
                 
                 // Get existing loans installments (only for non-settled loans)
                 let totalExistingLoansInstallments = 0;
@@ -4126,7 +4283,7 @@
                 const availableForEMI = allowedLiability - currentLiabilities;
                 
                 if (availableForEMI <= 0) {
-                    showSuccess('Your Current Liabilities Already Exceed The 49.99% DBR Limit. Cannot Calculate Optimal Loan Amount.');
+                    showSuccess(`Your Current Liabilities Already Exceed The ${dbrThreshold}% DBR Limit. Cannot Calculate Optimal Loan Amount.`);
                     return;
                 }
                 
@@ -4151,7 +4308,7 @@
                 loanAmountInput.value = Math.floor(optimalLoanAmount);
                 
                 // Show success message
-                showSuccess(`Optimal loan amount: AED ${formatNumber(Math.floor(optimalLoanAmount))} suggested to keep DBR within 49.99%.`);
+                showSuccess(`Optimal loan amount: AED ${formatNumber(Math.floor(optimalLoanAmount))} suggested to keep DBR within ${dbrThreshold}%.`);
                 
                 // Recalculate everything
                 updateEMICalculator();
@@ -4370,7 +4527,7 @@
                 };
             });
             
-            // Function to prepare WhatsApp message with new layout (Fix 6)
+            // Function to prepare WhatsApp message with new layout (Fix 1 & 6)
             function prepareWhatsAppMessage() {
                 const maxLoanEligibility = parseFloat(maxLoanEligibilityInput.value.replace(/,/g, '')) || 0;
                 const tenureMonths = parseInt(tenureMonthsInput.value) || 0;
@@ -4386,6 +4543,7 @@
                 const daysBetween = daysBetweenInput.value;
                 const customerName = customerNameInput.value.trim();
                 const specialNoteText = specialNote.value;
+                const closureFee = parseFloat(closureFeeInput.value) || 0; // Fix 1: Include closure fee
                 
                 // New WhatsApp message layout (Fix 6)
                 let message = "";
@@ -4405,6 +4563,12 @@
                 message += `Total Payment: AED ${formatNumber(totalPayment.toFixed(2))}\n`;
                 message += `Processing Fees(+VAT): AED ${formatNumber(processingFees.toFixed(2))}\n`;
                 message += `Insurance Fees: AED 0\n`;
+                
+                // Include closure fee if it exists (Fix 1)
+                if (closureFee > 0) {
+                    message += `Closure Fee: AED ${formatNumber(closureFee.toFixed(2))}\n`;
+                }
+                
                 message += `Current Outstanding: AED ${formatNumber(totalOutstanding.toFixed(2))}\n`;
                 message += `Cash In Hand: AED ${formatNumber(cashInHand.toFixed(2))}\n\n`;
                 
@@ -4654,13 +4818,19 @@
                 document.querySelector('.credit-card-outstanding').value = '';
                 document.querySelector('.credit-card-settle-amount').classList.add('hidden');
                 loanTypeSelect.value = 'fresh-0-30';
-                multiplesOfSalaryInput.value = ''; // Fix 4: Set to empty string
+                closureFeeInput.value = ''; // Fix 1: Reset closure fee
+                closureFeeContainer.classList.add('hidden'); // Fix 1: Hide closure fee container
+                multiplesOfSalaryInput.value = '20'; // Fix 2: Default value
                 tenureMonthsInput.value = '48';
                 loanAmountInput.value = '';
                 loanMultiplesInput.value = '';
                 reducingRateInput.value = '10';
                 specialNote.value = '';
                 netAmountCheckbox.checked = true; // Default to checked
+                
+                // Reset DBR threshold to default (49%)
+                dbrThreshold = 49.00;
+                dbrToggle.checked = false;
                 
                 // Clear settled cards and loans
                 settledCards.clear();
@@ -4782,13 +4952,6 @@
                 handleSettleAmountChange(initialCardEntry);
             });
             
-            loanTypeSelect.addEventListener('change', function() {
-                adjustFirstPaymentDate();
-                validatePaymentDate();
-                updateDaysBetween();
-                updateEMICalculator();
-            });
-            
             multiplesOfSalaryInput.addEventListener('input', updateEMICalculator);
             tenureMonthsInput.addEventListener('input', updateEMICalculator);
             loanAmountInput.addEventListener('input', function() {
@@ -4828,7 +4991,7 @@
                 if (!phoneNumber) {
                     showSuccess('Please Enter A Valid WhatsApp Number');
                     return;
-                }
+ }
                 
                 const message = prepareWhatsAppMessage();
                 window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
