@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Performance Indicator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tahoma:wght@400;700&display=swap');
+    
+        body {
+            font-family: 'Tahoma', Geneva, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow-x: hidden;
+            background-color: #f8fafc;
+        }
+        
+        .success-indicator {
+            background: linear-gradient(135deg, #FFD1D1 0%, #59E3FF 100%);
+            color: #333;
+            padding: 8px 12px;
+            border-radius: 4px;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            animation: fadeOut 2s forwards;
+            animation-delay: 1s;
+            z-index: 100;
+            font-weight: 500;
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        .loading-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #1A3A4A;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .text-primary {
+            color: #1A3A4A !important;
+        }
+
+        /* KPI Styles */
+        .kpi-select {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            font-weight: 500;
+            color: #1A3A4A;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .kpi-select:focus {
+            outline: none;
+            border-color: #1A3A4A;
+            box-shadow: 0 0 0 3px rgba(26, 58, 74, 0.1);
+        }
+
+        .kpi-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .kpi-btn-primary {
+            background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
+            color: white;
+        }
+
+        .kpi-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 58, 74, 0.3);
+        }
+
+        .kpi-btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            color: white;
+        }
+
+        .kpi-btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .kpi-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .kpi-table th {
+            background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
+            color: white;
+            text-align: center;
+            padding: 12px 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .kpi-table td {
+            border: 1px solid #e2e8f0;
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: 500;
+            background: #f8fafc;
+        }
+
+        .kpi-chart-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .kpi-info-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .kpi-info-card h6 {
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        /* Responsive KPI adjustments */
+        @media (max-width: 768px) {
+            .kpi-table {
+                font-size: 0.8rem;
+            }
+            
+            .kpi-table th,
+            .kpi-table td {
+                padding: 8px 4px;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 font-tahoma">
+
+<div class="container mx-auto px-4 py-4 max-w-full">
+    <!-- KPI Header -->
+    <div class="bg-white p-4 rounded-lg shadow-md mb-4">
+        <h1 class="text-2xl font-bold text-primary mb-2">Key Performance Indicator Dashboard</h1>
+        <p class="text-gray-600">Monitor and track monthly KPI metrics and performance trends</p>
+    </div>
+
+    <!-- KPI Section -->
+    <div class="bg-white p-4 rounded-lg shadow-md">
+        <!-- KPI Controls -->
+        <div class="flex flex-wrap gap-3 mb-4 items-center">
+            <div class="flex items-center gap-2">
+                <label for="kpiMonth" class="text-sm font-medium text-gray-700">Month:</label>
+                <select id="kpiMonth" class="kpi-select">
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
+            
+            <button id="generateKpiReportBtn" class="kpi-btn kpi-btn-primary">
+                <i class="fas fa-chart-line mr-2"></i> Generate Report
+            </button>
+            
+            <button id="saveKpiDataBtn" class="kpi-btn kpi-btn-success">
+                <i class="fas fa-save mr-2"></i> Save KPI
+            </button>
+        </div>
+        
+        <!-- KPI Report Table -->
+        <div id="kpiReportContainer" class="mb-4 hidden">
+            <h4 class="text-lg font-semibold text-primary mb-2">Monthly KPI Report</h4>
+            <div class="overflow-x-auto">
+                <table class="kpi-table">
+                    <thead>
+                        <tr>
+                            <th>CC Conventional</th>
+                            <th>CC Islamic</th>
+                            <th>CC Achieved %</th>
+                            <th>PIL Conventional</th>
+                            <th>PIL Islamic</th>
+                            <th>PIL Achieved %</th>
+                            <th>MDSA</th>
+                            <th>Aspire</th>
+                            <th>Privilege</th>
+                            <th>Accounts Achieved %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="kpiReportRow">
+                            <td id="kpiCCConventional">0</td>
+                            <td id="kpiCCIslamic">0</td>
+                            <td id="kpiCCAchieved">0%</td>
+                            <td id="kpiPILConventional">AED 0</td>
+                            <td id="kpiPILIslamic">AED 0</td>
+                            <td id="kpiPILAchieved">0%</td>
+                            <td id="kpiMDSA">0</td>
+                            <td id="kpiAspire">0</td>
+                            <td id="kpiPrivilege">0</td>
+                            <td id="kpiAccountsAchieved">0%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- KPI Charts -->
+        <div id="kpiChartsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 hidden">
+            <!-- Monthly Trends Chart -->
+            <div class="kpi-chart-card">
+                <h5 class="text-md font-semibold text-primary mb-2">Monthly Achievement Trends</h5>
+                <canvas id="monthlyTrendsChart" width="400" height="200"></canvas>
+            </div>
+            
+            <!-- Annual Progress Chart -->
+            <div class="kpi-chart-card">
+                <h5 class="text-md font-semibold text-primary mb-2">Annual KPI Progress</h5>
+                <canvas id="annualProgressChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+        
+        <!-- KPI Target Information -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="kpi-info-card">
+                <h6 class="font-semibold text-primary">Monthly Targets</h6>
+                <ul class="text-sm text-gray-600 mt-2">
+                    <li>Credit Cards: 20</li>
+                    <li>Personal Loans: AED 350,000</li>
+                    <li>Accounts: 10</li>
+                </ul>
+            </div>
+            
+            <div class="kpi-info-card">
+                <h6 class="font-semibold text-primary">Annual Targets</h6>
+                <ul class="text-sm text-gray-600 mt-2">
+                    <li>Credit Cards: 240</li>
+                    <li>Personal Loans: AED 4,200,000</li>
+                    <li>Accounts: 120</li>
+                </ul>
+            </div>
+            
+            <div class="kpi-info-card">
+                <h6 class="font-semibold text-primary">Predictive Insights</h6>
+                <div id="kpiPredictions" class="text-sm text-gray-600 mt-2">
+                    <div>Loading trends...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Indicator -->
+<div id="successIndicator" class="success-indicator hidden">
+    <span id="successMessage">Operation successful!</span>
+</div>
+
+<!-- Loading Indicator -->
+<div id="loadingIndicator" class="loading-indicator hidden">
+    <div class="spinner"></div>
+</div>
+
+<script>
+    // KPI Constants
+    const KPI_TARGETS = {
+        monthly: {
+            CC: 20,
+            PIL: 350000,
+            Accounts: 10
+        },
+        annual: {
+            CC: 240,
+            PIL: 4200000,
+            Accounts: 120
+        }
+    };
+
+    // Google Apps Script Web App URL
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwBKFBLV1ayE1-RIsdbr11-dZ0yGcFxnwkyoOJXnQrH-vbtSH1sjTCQzBlJTdyufOeOXA/exec';
+
+    // ==========================================
+    // UTILITY FUNCTIONS
+    // ==========================================
+
+    // Show success indicator
+    function showSuccess(message) {
+        const indicator = document.getElementById('successIndicator');
+        const messageEl = document.getElementById('successMessage');
+        
+        messageEl.textContent = message;
+        indicator.classList.remove('hidden');
+        
+        setTimeout(() => {
+            indicator.classList.add('hidden');
+        }, 3000);
+    }
+
+    // Show loading indicator
+    function showLoading() {
+        document.getElementById('loadingIndicator').classList.remove('hidden');
+    }
+
+    // Hide loading indicator
+    function hideLoading() {
+        document.getElementById('loadingIndicator').classList.add('hidden');
+    }
+
+    // ==========================================
+    // KPI FUNCTIONALITY
+    // ==========================================
+
+    // Set current month by default
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentMonth = new Date().getMonth() + 1;
+        document.getElementById('kpiMonth').value = currentMonth;
+        
+        // Load KPI data on initialization
+        loadKpiTrends();
+    });
+
+    // Generate KPI Report
+    document.getElementById('generateKpiReportBtn').addEventListener('click', async function() {
+        const selectedMonth = parseInt(document.getElementById('kpiMonth').value);
+        const monthName = document.getElementById('kpiMonth').options[selectedMonth - 1].text;
+        
+        showLoading();
+        
+        try {
+            // Get data from Data sheet for the selected month
+            const response = await fetch(`${scriptURL}?action=getAll`);
+            const data = await response.json();
+            
+            if (data.success) {
+                const kpiData = calculateKpiMetrics(data.data, selectedMonth);
+                displayKpiReport(kpiData, monthName);
+                loadKpiCharts();
+                generatePredictiveInsights(selectedMonth);
+            } else {
+                showSuccess('Error fetching data for KPI report');
+            }
+        } catch (error) {
+            console.error('Error generating KPI report:', error);
+            showSuccess('Error generating KPI report');
+        } finally {
+            hideLoading();
+        }
+    });
+
+    // Save KPI Data
+    document.getElementById('saveKpiDataBtn').addEventListener('click', async function() {
+        const selectedMonth = parseInt(document.getElementById('kpiMonth').value);
+        const monthName = document.getElementById('kpiMonth').options[selectedMonth - 1].text;
+        
+        // Get current KPI values from the report
+        const kpiRow = document.getElementById('kpiReportRow');
+        if (!kpiRow || kpiRow.style.display === 'none') {
+            showSuccess('Please generate a report first before saving');
+            return;
+        }
+        
+        const kpiData = {
+            month: monthName,
+            ccConventional: document.getElementById('kpiCCConventional').textContent,
+            ccIslamic: document.getElementById('kpiCCIslamic').textContent,
+            ccAchieved: document.getElementById('kpiCCAchieved').textContent,
+            pilConventional: document.getElementById('kpiPILConventional').textContent.replace('AED ', '').replace(/,/g, ''),
+            pilIslamic: document.getElementById('kpiPILIslamic').textContent.replace('AED ', '').replace(/,/g, ''),
+            pilAchieved: document.getElementById('kpiPILAchieved').textContent,
+            mdsa: document.getElementById('kpiMDSA').textContent,
+            aspire: document.getElementById('kpiAspire').textContent,
+            privilege: document.getElementById('kpiPrivilege').textContent,
+            accountsAchieved: document.getElementById('kpiAccountsAchieved').textContent
+        };
+        
+        showLoading();
+        
+        try {
+            const formData = new FormData();
+            formData.append('action', 'saveKpiData');
+            Object.keys(kpiData).forEach(key => {
+                formData.append(key, kpiData[key]);
+            });
+            
+            const response = await fetch(scriptURL, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showSuccess(`KPI data for ${monthName} saved successfully!`);
+                loadKpiTrends(); // Refresh the trends
+            } else {
+                showSuccess('Error saving KPI data: ' + result.error);
+            }
+        } catch (error) {
+            console.error('Error saving KPI data:', error);
+            showSuccess('Error saving KPI data');
+        } finally {
+            hideLoading();
+        }
+    });
+
+    // Calculate KPI Metrics from Data
+    function calculateKpiMetrics(data, selectedMonth) {
+        const currentYear = new Date().getFullYear();
+        
+        // Filter data for the selected month and current year
+        const monthlyData = data.filter(record => {
+            if (!record.Date) return false;
+            const recordDate = new Date(record.Date);
+            return recordDate.getMonth() + 1 === selectedMonth && recordDate.getFullYear() === currentYear;
+        });
+        
+        let ccConventional = 0, ccIslamic = 0;
+        let pilConventional = 0, pilIslamic = 0;
+        let mdsa = 0, aspire = 0, privilege = 0;
+        
+        monthlyData.forEach(record => {
+            const proposition = record.Proposition || '';
+            const productString = record.Product || '';
+            const loanAmount = parseFloat(record['Loan Amount']) || 0;
+            
+            // Count Credit Cards
+            const ccCount = countCreditCards(productString);
+            if (proposition === 'Conventional') {
+                ccConventional += ccCount;
+            } else if (proposition === 'Islamic') {
+                ccIslamic += ccCount;
+            } else if (proposition === 'Both') {
+                // For 'Both', split evenly or add to both (based on your business logic)
+                ccConventional += Math.ceil(ccCount / 2);
+                ccIslamic += Math.floor(ccCount / 2);
+            }
+            
+            // Count Personal Loans
+            if (loanAmount > 0) {
+                if (proposition === 'Conventional') {
+                    pilConventional += loanAmount;
+                } else if (proposition === 'Islamic') {
+                    pilIslamic += loanAmount;
+                } else if (proposition === 'Both') {
+                    pilConventional += loanAmount / 2;
+                    pilIslamic += loanAmount / 2;
+                }
+            }
+            
+            // Count Accounts
+            if (productString.includes('MDSA')) mdsa++;
+            if (productString.includes('Aspire')) aspire++;
+            if (productString.includes('Privilege')) privilege++;
+        });
+        
+        // Calculate achievement percentages
+        const totalCC = ccConventional + ccIslamic;
+        const totalPIL = pilConventional + pilIslamic;
+        const totalAccounts = mdsa + aspire + privilege;
+        
+        const ccAchievedPercent = Math.round((totalCC / KPI_TARGETS.monthly.CC) * 100);
+        const pilAchievedPercent = Math.round((totalPIL / KPI_TARGETS.monthly.PIL) * 100);
+        const accountsAchievedPercent = Math.round((totalAccounts / KPI_TARGETS.monthly.Accounts) * 100);
+        
+        return {
+            ccConventional,
+            ccIslamic,
+            ccAchievedPercent,
+            pilConventional,
+            pilIslamic,
+            pilAchievedPercent,
+            mdsa,
+            aspire,
+            privilege,
+            accountsAchievedPercent
+        };
+    }
+
+    // Count Credit Cards in product string
+    function countCreditCards(productString) {
+        if (!productString) return 0;
+        
+        const ccKeywords = ['Touchpoints', 'Cashback', 'Talabat', 'Lulu', 'Etihad', 'Shukran', 'All ', 'Traveller', 'Betaqti', 'Emirati'];
+        const products = productString.split(',').map(p => p.trim());
+        
+        let count = 0;
+        products.forEach(product => {
+            if (ccKeywords.some(keyword => product.includes(keyword)) || product === 'CC' || product === '2ndCC') {
+                count++;
+            }
+        });
+        
+        return count;
+    }
+
+    // Display KPI Report
+    function displayKpiReport(kpiData, monthName) {
+        document.getElementById('kpiCCConventional').textContent = kpiData.ccConventional;
+        document.getElementById('kpiCCIslamic').textContent = kpiData.ccIslamic;
+        document.getElementById('kpiCCAchieved').textContent = kpiData.ccAchievedPercent + '%';
+        
+        document.getElementById('kpiPILConventional').textContent = 'AED ' + kpiData.pilConventional.toLocaleString();
+        document.getElementById('kpiPILIslamic').textContent = 'AED ' + kpiData.pilIslamic.toLocaleString();
+        document.getElementById('kpiPILAchieved').textContent = kpiData.pilAchievedPercent + '%';
+        
+        document.getElementById('kpiMDSA').textContent = kpiData.mdsa;
+        document.getElementById('kpiAspire').textContent = kpiData.aspire;
+        document.getElementById('kpiPrivilege').textContent = kpiData.privilege;
+        document.getElementById('kpiAccountsAchieved').textContent = kpiData.accountsAchievedPercent + '%';
+        
+        // Show the report container
+        document.getElementById('kpiReportContainer').classList.remove('hidden');
+        document.getElementById('kpiChartsContainer').classList.remove('hidden');
+    }
+
+    // Load KPI Charts
+    async function loadKpiCharts() {
+        try {
+            const response = await fetch(`${scriptURL}?action=getKpiData`);
+            const data = await response.json();
+            
+            if (data.success && data.data.length > 0) {
+                createMonthlyTrendsChart(data.data);
+                createAnnualProgressChart(data.data);
+            }
+        } catch (error) {
+            console.error('Error loading KPI charts:', error);
+        }
+    }
+
+    // Create Monthly Trends Chart
+    function createMonthlyTrendsChart(kpiData) {
+        const ctx = document.getElementById('monthlyTrendsChart').getContext('2d');
+        
+        // Destroy existing chart if it exists
+        if (window.monthlyTrendsChart) {
+            window.monthlyTrendsChart.destroy();
+        }
+        
+        const months = kpiData.map(item => item.Month);
+        const ccAchieved = kpiData.map(item => parseFloat(item['CC Achieved %']) || 0);
+        const pilAchieved = kpiData.map(item => parseFloat(item['PIL Achieved %']) || 0);
+        const accountsAchieved = kpiData.map(item => parseFloat(item['Accounts Achieved %']) || 0);
+        
+        window.monthlyTrendsChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [
+                    {
+                        label: 'CC Achievement %',
+                        data: ccAchieved,
+                        borderColor: '#1A3A4A',
+                        backgroundColor: 'rgba(26, 58, 74, 0.1)',
+                        tension: 0.4
+                    },
+                    {
+                        label: 'PIL Achievement %',
+                        data: pilAchieved,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Accounts Achievement %',
+                        data: accountsAchieved,
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 150,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+
+    // Create Annual Progress Chart
+    function createAnnualProgressChart(kpiData) {
+        const ctx = document.getElementById('annualProgressChart').getContext('2d');
+        
+        // Destroy existing chart if it exists
+        if (window.annualProgressChart) {
+            window.annualProgressChart.destroy();
+        }
+        
+        // Calculate annual totals
+        const currentYear = new Date().getFullYear();
+        const currentYearData = kpiData.filter(item => item.Year == currentYear || !item.Year);
+        
+        let totalCC = 0, totalPIL = 0, totalAccounts = 0;
+        
+        currentYearData.forEach(item => {
+            totalCC += (parseInt(item['CC Conventional']) || 0) + (parseInt(item['CC Islamic']) || 0);
+            totalPIL += (parseFloat(item['PIL Conventional']) || 0) + (parseFloat(item['PIL Islamic']) || 0);
+            totalAccounts += (parseInt(item.MDSA) || 0) + (parseInt(item.Aspire) || 0) + (parseInt(item.Privilege) || 0);
+        });
+        
+        const ccProgress = Math.min((totalCC / KPI_TARGETS.annual.CC) * 100, 100);
+        const pilProgress = Math.min((totalPIL / KPI_TARGETS.annual.PIL) * 100, 100);
+        const accountsProgress = Math.min((totalAccounts / KPI_TARGETS.annual.Accounts) * 100, 100);
+        
+        window.annualProgressChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Credit Cards', 'Personal Loans', 'Accounts'],
+                datasets: [{
+                    data: [ccProgress, pilProgress, accountsProgress],
+                    backgroundColor: ['#1A3A4A', '#10b981', '#f59e0b'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.parsed.toFixed(1) + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Load KPI Trends for Predictive Analysis
+    async function loadKpiTrends() {
+        try {
+            const response = await fetch(`${scriptURL}?action=getKpiData`);
+            const data = await response.json();
+            
+            if (data.success) {
+                generatePredictiveInsights(null, data.data);
+            }
+        } catch (error) {
+            console.error('Error loading KPI trends:', error);
+            document.getElementById('kpiPredictions').innerHTML = '<div class="text-red-500">Error loading predictions</div>';
+        }
+    }
+
+    // Generate Predictive Insights
+    function generatePredictiveInsights(currentMonth, allKpiData = null) {
+        const predictionsEl = document.getElementById('kpiPredictions');
+        
+        if (!allKpiData || allKpiData.length < 2) {
+            predictionsEl.innerHTML = `
+                <div>• Need more data for predictions</div>
+                <div>• Save monthly KPI data to get insights</div>
+                <div>• Track trends for better forecasting</div>
+            `;
+            return;
+        }
+        
+        // Calculate trends and predictions
+        const recentData = allKpiData.slice(-3); // Last 3 months
+        
+        // Calculate average growth rates
+        let ccTrend = 0, pilTrend = 0, accountsTrend = 0;
+        
+        if (recentData.length >= 2) {
+            const latest = recentData[recentData.length - 1];
+            const previous = recentData[recentData.length - 2];
+            
+            const latestCC = (parseInt(latest['CC Conventional']) || 0) + (parseInt(latest['CC Islamic']) || 0);
+            const previousCC = (parseInt(previous['CC Conventional']) || 0) + (parseInt(previous['CC Islamic']) || 0);
+            
+            const latestPIL = (parseFloat(latest['PIL Conventional']) || 0) + (parseFloat(latest['PIL Islamic']) || 0);
+            const previousPIL = (parseFloat(previous['PIL Conventional']) || 0) + (parseFloat(previous['PIL Islamic']) || 0);
+            
+            const latestAccounts = (parseInt(latest.MDSA) || 0) + (parseInt(latest.Aspire) || 0) + (parseInt(latest.Privilege) || 0);
+            const previousAccounts = (parseInt(previous.MDSA) || 0) + (parseInt(previous.Aspire) || 0) + (parseInt(previous.Privilege) || 0);
+            
+            ccTrend = previousCC > 0 ? ((latestCC - previousCC) / previousCC) * 100 : 0;
+            pilTrend = previousPIL > 0 ? ((latestPIL - previousPIL) / previousPIL) * 100 : 0;
+            accountsTrend = previousAccounts > 0 ? ((latestAccounts - previousAccounts) / previousAccounts) * 100 : 0;
+        }
+        
+        const predictions = [];
+        
+        if (ccTrend > 10) {
+            predictions.push('• CC performance trending upward ↗️');
+        } else if (ccTrend < -10) {
+            predictions.push('• CC performance needs attention ⚠️');
+        } else {
+            predictions.push('• CC performance stable ➡️');
+        }
+        
+        if (pilTrend > 15) {
+            predictions.push('• PIL showing strong growth 📈');
+        } else if (pilTrend < -15) {
+            predictions.push('• PIL requires focus 🎯');
+        } else {
+            predictions.push('• PIL performance steady 📊');
+        }
+        
+        if (accountsTrend > 20) {
+            predictions.push('• Account opening accelerating 🚀');
+        } else if (accountsTrend < -20) {
+            predictions.push('• Account strategy review needed 🔍');
+        } else {
+            predictions.push('• Account performance consistent ✅');
+        }
+        
+        predictionsEl.innerHTML = predictions.join('<br>');
+    }
+</script>
+</body>
+</html>
