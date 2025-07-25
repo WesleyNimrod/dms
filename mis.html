@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tahoma:wght@400;700&display=swap');
     
@@ -271,6 +270,33 @@
         @media (max-width: 768px) {
             .chart-box {
                 width: 100%;
+            }
+            
+            .mobile-input-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .mobile-prefix {
+                border-radius: 4px 4px 0 0 !important;
+                border-right: 1px solid #ddd !important;
+            }
+            
+            .mobile-input-container input {
+                border-radius: 0 0 4px 4px !important;
+                border-left: 1px solid #ddd !important;
+                border-top: none !important;
+            }
+            
+            .input-with-paste {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            
+            .paste-btn {
+                width: 100%;
+                justify-content: center;
             }
         }
         
@@ -585,111 +611,107 @@
             color: #1A3A4A !important;
         }
 
-        /* KPI Styles */
-        .kpi-select {
-            padding: 8px 12px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            font-weight: 500;
-            color: #1A3A4A;
-            transition: all 0.3s ease;
-            min-width: 120px;
-        }
-
-        .kpi-select:focus {
-            outline: none;
-            border-color: #1A3A4A;
-            box-shadow: 0 0 0 3px rgba(26, 58, 74, 0.1);
-        }
-
-        .kpi-btn {
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
+        .input-with-paste {
+            display: flex;
+            gap: 5px;
             align-items: center;
-            text-decoration: none;
         }
 
-        .kpi-btn-primary {
-            background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
+        .input-with-paste input {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .paste-btn {
+            background: #1A3A4A;
             color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+            white-space: nowrap;
         }
 
-        .kpi-btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(26, 58, 74, 0.3);
+        .paste-btn:hover {
+            background: #0f2936;
+            transform: translateY(-1px);
         }
 
-        .kpi-btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-            color: white;
+        .mobile-prefix {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            font-weight: bold;
+            color: #333;
+            border-right: none;
+            font-size: 16px;
         }
 
-        .kpi-btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        .mobile-input-container {
+            display: flex;
+            align-items: stretch;
+            flex: 1;
         }
 
-        .kpi-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        .mobile-input-container input {
+            border-radius: 0 4px 4px 0 !important;
+            border-left: none;
+            flex: 1;
+            font-size: 16px !important;
         }
-
-        .kpi-table th {
-            background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
-            color: white;
-            text-align: center;
-            padding: 12px 8px;
-            font-weight: 600;
-            font-size: 0.85rem;
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
         }
-
-        .kpi-table td {
-            border: 1px solid #e2e8f0;
-            padding: 12px 8px;
-            text-align: center;
-            font-weight: 500;
-            background: #f8fafc;
-        }
-
-        .kpi-chart-card {
-            background: white;
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            border: 1px solid #e2e8f0;
-        }
-
-        .kpi-info-card {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border-radius: 12px;
-            padding: 16px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .kpi-info-card h6 {
-            margin-bottom: 8px;
-            font-size: 1rem;
-        }
-
-        /* Responsive KPI adjustments */
+        
         @media (max-width: 768px) {
-            .kpi-table {
-                font-size: 0.8rem;
+            .form-grid {
+                grid-template-columns: 1fr;
             }
             
-            .kpi-table th,
-            .kpi-table td {
-                padding: 8px 4px;
+            .profile-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .profile-input,
+            .profile-select {
+                min-width: 0;
+                width: 100%;
+            }
+            
+            .profile-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .banking-container,
+            .status-container {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 5px;
+            }
+            
+            .banking-select,
+            .status-select {
+                min-width: 0;
+                width: 100%;
+            }
+            
+            .adcb-checkbox-container,
+            .deduction-checkbox-container {
+                min-width: 0;
+                justify-content: flex-start;
             }
         }
     </style>
@@ -697,22 +719,25 @@
 
 <body class="bg-gray-50 font-tahoma">
 
-<div class="container mx-auto px-1 py-1 max-w-full">
+<div class="container mx-auto px-2 py-2 max-w-full">
 
     <!-- Section Navigation Buttons -->
-    <div class="mb-2 flex justify-center gap-4 flex-wrap">
-        <button id="showSummaryBtn" class="custom-btn text-white py-2 px-6 rounded-md flex items-center">
+    <div class="mb-3 flex justify-center gap-2 flex-wrap">
+        <button id="showSummaryBtn" class="custom-btn text-white py-2 px-4 rounded-md flex items-center text-sm">
             <i class="fas fa-chart-pie mr-2"></i> Summary
         </button>
-        <button id="showEntryBtn" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-6 rounded-md flex items-center">
+        <button id="showEntryBtn" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-md flex items-center text-sm">
             <i class="fas fa-file-alt mr-2"></i> Form
         </button>
-        <button id="showViewBtn" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-6 rounded-md flex items-center">
+        <button id="showViewBtn" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-md flex items-center text-sm">
             <i class="fas fa-table mr-2"></i> View
         </button>
-        <a href="https://docs.google.com/spreadsheets/d/1VfEPU_2EvNqB6g2ldAzD05fvwFigL1yN3L0wLOwZP4o/edit?gid=0#gid=0" target="_blank" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-6 rounded-md flex items-center">
+        <a href="https://docs.google.com/spreadsheets/d/1VfEPU_2EvNqB6g2ldAzD05fvwFigL1yN3L0wLOwZP4o/edit?gid=0#gid=0" target="_blank" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-md flex items-center text-sm">
             <i class="fas fa-file-excel mr-2"></i> Sheet
         </a>
+        <button id="showKPIBtn" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-md flex items-center text-sm">
+            <i class="fas fa-chart-line mr-2"></i> KPI
+        </button>
     </div>
     
     <!-- Section Content Containers -->
@@ -746,7 +771,7 @@
             </div>
             
             <!-- Progress Cards - 2-column layout -->
-            <div class="grid grid-cols-2 gap-2 mb-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
                 <!-- In Progress Card -->
                 <div class="summary-card mb-0">
                     <h3 class="mb-1">In Progress</h3>
@@ -795,7 +820,7 @@
             </div>
             
             <!-- Effort & Target Cards - 2-column layout -->
-            <div class="grid grid-cols-2 gap-2 mb-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
                 <!-- Total Submissions Card -->
                 <div class="summary-card mb-0">
                     <h3 class="mb-1">Total Submissions</h3>
@@ -937,124 +962,6 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- KPI Section -->
-            <div class="border rounded-lg mb-2">
-                <div class="visualizations-header">
-                    Key Performance Indicator
-                </div>
-                
-                <div class="p-3">
-                    <!-- KPI Controls -->
-                    <div class="flex flex-wrap gap-3 mb-4 items-center">
-                        <div class="flex items-center gap-2">
-                            <label for="kpiMonth" class="text-sm font-medium text-gray-700">Month:</label>
-                            <select id="kpiMonth" class="kpi-select">
-                                <option value="1">January</option>
-                                <option value="2">February</option>
-                                <option value="3">March</option>
-                                <option value="4">April</option>
-                                <option value="5">May</option>
-                                <option value="6">June</option>
-                                <option value="7">July</option>
-                                <option value="8">August</option>
-                                <option value="9">September</option>
-                                <option value="10">October</option>
-                                <option value="11">November</option>
-                                <option value="12">December</option>
-                            </select>
-                        </div>
-                        
-                        <button id="generateKpiReportBtn" class="kpi-btn kpi-btn-primary">
-                            <i class="fas fa-chart-line mr-2"></i> Generate Report
-                        </button>
-                        
-                        <button id="saveKpiDataBtn" class="kpi-btn kpi-btn-success">
-                            <i class="fas fa-save mr-2"></i> Save KPI
-                        </button>
-                    </div>
-                    
-                    <!-- KPI Report Table -->
-                    <div id="kpiReportContainer" class="mb-4 hidden">
-                        <h4 class="text-lg font-semibold text-primary mb-2">Monthly KPI Report</h4>
-                        <div class="overflow-x-auto">
-                            <table class="kpi-table">
-                                <thead>
-                                    <tr>
-                                        <th>CC Conventional</th>
-                                        <th>CC Islamic</th>
-                                        <th>CC Achieved %</th>
-                                        <th>PIL Conventional</th>
-                                        <th>PIL Islamic</th>
-                                        <th>PIL Achieved %</th>
-                                        <th>MDSA</th>
-                                        <th>Aspire</th>
-                                        <th>Privilege</th>
-                                        <th>Accounts Achieved %</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr id="kpiReportRow">
-                                        <td id="kpiCCConventional">0</td>
-                                        <td id="kpiCCIslamic">0</td>
-                                        <td id="kpiCCAchieved">0%</td>
-                                        <td id="kpiPILConventional">AED 0</td>
-                                        <td id="kpiPILIslamic">AED 0</td>
-                                        <td id="kpiPILAchieved">0%</td>
-                                        <td id="kpiMDSA">0</td>
-                                        <td id="kpiAspire">0</td>
-                                        <td id="kpiPrivilege">0</td>
-                                        <td id="kpiAccountsAchieved">0%</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <!-- KPI Charts -->
-                    <div id="kpiChartsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 hidden">
-                        <!-- Monthly Trends Chart -->
-                        <div class="kpi-chart-card">
-                            <h5 class="text-md font-semibold text-primary mb-2">Monthly Achievement Trends</h5>
-                            <canvas id="monthlyTrendsChart" width="400" height="200"></canvas>
-                        </div>
-                        
-                        <!-- Annual Progress Chart -->
-                        <div class="kpi-chart-card">
-                            <h5 class="text-md font-semibold text-primary mb-2">Annual KPI Progress</h5>
-                            <canvas id="annualProgressChart" width="400" height="200"></canvas>
-                        </div>
-                    </div>
-                    
-                    <!-- KPI Target Information -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="kpi-info-card">
-                            <h6 class="font-semibold text-primary">Monthly Targets</h6>
-                            <ul class="text-sm text-gray-600 mt-2">
-                                <li>Credit Cards: 20</li>
-                                <li>Personal Loans: AED 350,000</li>
-                                <li>Accounts: 10</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="kpi-info-card">
-                            <h6 class="font-semibold text-primary">Annual Targets</h6>
-                            <ul class="text-sm text-gray-600 mt-2">
-                                <li>Credit Cards: 240</li>
-                                <li>Personal Loans: AED 4,200,000</li>
-                                <li>Accounts: 120</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="kpi-info-card">
-                            <h6 class="font-semibold text-primary">Predictive Insights</h6>
-                            <div id="kpiPredictions" class="text-sm text-gray-600 mt-2">
-                                <div>Loading trends...</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
     
@@ -1064,25 +971,35 @@
             <h2 class="text-xl font-bold text-primary mb-4">Customer Data Entry</h2>
             
             <form id="entryForm" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="form-grid">
                     <!-- Left Column -->
                     <div class="space-y-4">
-                        <!-- CID -->
+                        <!-- CID with Paste Button -->
                         <div>
-                            <label for="cid" class="block text-gray-700 font-medium">CID (Optional)</label>
-                            <input type="number" id="cid" name="cid" class="w-full border rounded-md p-2 text-base">
+                            <label for="cid" class="block text-gray-700 font-medium mb-1">CID (Optional)</label>
+                            <div class="input-with-paste">
+                                <input type="text" id="cid" name="cid" class="w-full border rounded-md p-2 text-base" pattern="[0-9]*" inputmode="numeric">
+                                <button type="button" class="paste-btn" onclick="pasteToField('cid')">
+                                    <i class="fas fa-paste"></i> Paste
+                                </button>
+                            </div>
                         </div>
                         
-                        <!-- App ID -->
+                        <!-- App ID with Paste Button -->
                         <div>
-                            <label for="appId" class="block text-gray-700 font-medium">App ID</label>
-                            <input type="text" id="appId" name="appId" class="w-full border rounded-md p-2 text-base">
+                            <label for="appId" class="block text-gray-700 font-medium mb-1">App ID</label>
+                            <div class="input-with-paste">
+                                <input type="text" id="appId" name="appId" class="w-full border rounded-md p-2 text-base" pattern="[0-9]*" inputmode="numeric">
+                                <button type="button" class="paste-btn" onclick="pasteToField('appId')">
+                                    <i class="fas fa-paste"></i> Paste
+                                </button>
+                            </div>
                         </div>
                         
                         <!-- Proposition -->
                         <div>
-                            <label class="block text-gray-700 font-medium required">Proposition</label>
-                            <div class="flex space-x-4 mt-2">
+                            <label class="block text-gray-700 font-medium required mb-1">Proposition</label>
+                            <div class="flex flex-wrap gap-3 mt-2">
                                 <label class="inline-flex items-center">
                                     <input type="radio" name="proposition" value="Conventional" class="form-radio" checked>
                                     <span class="ml-2 text-gray-700">Conventional</span>
@@ -1100,34 +1017,52 @@
                         
                         <!-- Date -->
                         <div>
-                            <label for="date" class="block text-gray-700 font-medium required">Date</label>
+                            <label for="date" class="block text-gray-700 font-medium required mb-1">Date</label>
                             <input type="date" id="date" name="date" class="w-full border rounded-md p-2 text-base" required>
                         </div>
                         
                         <!-- Salary -->
                         <div>
-                            <label for="salary" class="block text-gray-700 font-medium required">Salary</label>
+                            <label for="salary" class="block text-gray-700 font-medium required mb-1">Salary</label>
                             <input type="number" id="salary" name="salary" class="w-full border rounded-md p-2 text-base" required>
                         </div>
                         
-                        <!-- Customer Name -->
+                        <!-- Customer Name with Paste Button -->
                         <div>
-                            <label for="customerName" class="block text-gray-700 font-medium required">Customer Name</label>
-                            <input type="text" id="customerName" name="customerName" class="w-full border rounded-md p-2 text-base" required>
+                            <label for="customerName" class="block text-gray-700 font-medium required mb-1">Customer Name</label>
+                            <div class="input-with-paste">
+                                <input type="text" id="customerName" name="customerName" class="w-full border rounded-md p-2 text-base" required style="text-transform: uppercase;">
+                                <button type="button" class="paste-btn" onclick="pasteToField('customerName')">
+                                    <i class="fas fa-paste"></i> Paste
+                                </button>
+                            </div>
                             <p id="nameError" class="text-red-500 text-sm hidden">Customer name must be unique</p>
                         </div>
                         
-                        <!-- Mobile -->
+                        <!-- Mobile with Paste Button -->
                         <div>
-                            <label for="mobile" class="block text-gray-700 font-medium required">Mobile</label>
-                            <input type="number" id="mobile" name="mobile" class="w-full border rounded-md p-2 text-base" required>
+                            <label for="mobile" class="block text-gray-700 font-medium required mb-1">Mobile</label>
+                            <div class="input-with-paste">
+                                <div class="mobile-input-container">
+                                    <div class="mobile-prefix">971</div>
+                                    <input type="text" id="mobile" name="mobile" class="w-full border rounded-md p-2 text-base" required pattern="[0-9]*" inputmode="numeric" placeholder="Enter 9 digits">
+                                </div>
+                                <button type="button" class="paste-btn" onclick="pasteToField('mobile')">
+                                    <i class="fas fa-paste"></i> Paste
+                                </button>
+                            </div>
                             <p id="mobileError" class="text-red-500 text-sm hidden">Mobile number must be unique</p>
                         </div>
                         
-                        <!-- Company Name -->
+                        <!-- Company Name with Paste Button -->
                         <div>
-                            <label for="companyName" class="block text-gray-700 font-medium">Company Name</label>
-                            <input type="text" id="companyName" name="companyName" class="w-full border rounded-md p-2 text-base">
+                            <label for="companyName" class="block text-gray-700 font-medium mb-1">Company Name</label>
+                            <div class="input-with-paste">
+                                <input type="text" id="companyName" name="companyName" class="w-full border rounded-md p-2 text-base" style="text-transform: uppercase;">
+                                <button type="button" class="paste-btn" onclick="pasteToField('companyName')">
+                                    <i class="fas fa-paste"></i> Paste
+                                </button>
+                            </div>
                         </div>
                     </div>
                     
@@ -1135,7 +1070,7 @@
                     <div class="space-y-4">
                         <!-- Products -->
                         <div>
-                            <label class="block text-gray-700 font-medium required">Products</label>
+                            <label class="block text-gray-700 font-medium required mb-1">Products</label>
                             <div class="grid grid-cols-2 gap-2 mt-2">
                                 <label class="inline-flex items-center">
                                     <input type="checkbox" name="products" value="ACC" class="form-checkbox" id="productACC">
@@ -1180,19 +1115,19 @@
                         
                         <!-- Loan Amount (Only shown for PL) -->
                         <div id="loanAmountSection" class="hidden">
-                            <label for="loanAmount" class="block text-gray-700 font-medium">Loan Amount</label>
+                            <label for="loanAmount" class="block text-gray-700 font-medium mb-1">Loan Amount</label>
                             <input type="number" id="loanAmount" name="loanAmount" class="w-full border rounded-md p-2 text-base">
                         </div>
                         
                         <!-- Other Points (Only shown for Other product) -->
                         <div id="otherPointsSection" class="hidden">
-                            <label for="otherPoints" class="block text-gray-700 font-medium">Other Points (Miscellaneous)</label>
+                            <label for="otherPoints" class="block text-gray-700 font-medium mb-1">Other Points (Miscellaneous)</label>
                             <input type="number" id="otherPoints" name="otherPoints" class="w-full border rounded-md p-2 text-base" placeholder="Enter other points">
                         </div>
                         
                         <!-- Banking with ADCB checkbox -->
                         <div>
-                            <label class="block text-gray-700 font-medium">Banking</label>
+                            <label class="block text-gray-700 font-medium mb-1">Banking</label>
                             <div class="banking-container mt-2">
                                 <select id="banking" name="banking" class="banking-select border rounded-md p-2 text-base">
                                     <option value="SELECT">SELECT</option>
@@ -1221,8 +1156,8 @@
                         
                         <!-- Scheme -->
                         <div>
-                            <label class="block text-gray-700 font-medium required">Scheme</label>
-                            <div class="flex flex-wrap gap-4 mt-2">
+                            <label class="block text-gray-700 font-medium required mb-1">Scheme</label>
+                            <div class="flex flex-wrap gap-3 mt-2">
                                 <label class="inline-flex items-center">
                                     <input type="radio" name="scheme" value="TML ALL" class="form-radio" checked>
                                     <span class="ml-2 text-gray-700">TML ALL</span>
@@ -1244,7 +1179,7 @@
                         
                         <!-- Status with 40% Deduction checkbox -->
                         <div>
-                            <label for="status" class="block text-gray-700 font-medium required">Status</label>
+                            <label for="status" class="block text-gray-700 font-medium required mb-1">Status</label>
                             <div class="status-container mt-2">
                                 <select id="status" name="status" class="status-select border rounded-md p-2 text-base" required>
                                     <option value="">Select Status</option>
@@ -1269,8 +1204,8 @@
                         
                         <!-- Activation -->
                         <div>
-                            <label class="block text-gray-700 font-medium required">Activation</label>
-                            <div class="flex space-x-4 mt-2">
+                            <label class="block text-gray-700 font-medium required mb-1">Activation</label>
+                            <div class="flex flex-wrap gap-3 mt-2">
                                 <label class="inline-flex items-center">
                                     <input type="radio" name="activation" value="Non Activated" class="form-radio" checked>
                                     <span class="ml-2 text-gray-700">Non Activated</span>
@@ -1284,14 +1219,14 @@
                         
                         <!-- Points (System Generated) -->
                         <div>
-                            <label for="points" class="block text-gray-700 font-medium">Points (System Generated)</label>
+                            <label for="points" class="block text-gray-700 font-medium mb-1">Points (System Generated)</label>
                             <input type="text" id="points" name="points" class="w-full border rounded-md p-2 text-base bg-gray-100" readonly>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Form Action Buttons -->
-                <div class="flex justify-center gap-4 mt-6">
+                <div class="flex justify-center gap-3 mt-6 flex-wrap">
                     <button type="submit" id="submitBtn" class="custom-btn text-white py-2 px-6 rounded-md flex items-center">
                         <i class="fas fa-save mr-2"></i> Save Data
                     </button>
@@ -1367,7 +1302,7 @@
                     </div>
                 </div>
                 
-                <div class="flex justify-center gap-2 mb-4">
+                <div class="flex justify-center gap-2 mb-4 flex-wrap">
                     <button id="fetchAllBtn" class="custom-btn text-white py-2 px-6 rounded-md flex items-center">
                         <i class="fas fa-download mr-2"></i> Fetch All
                     </button>
@@ -1492,23 +1427,22 @@
     </div>
 </div>
 
+<!-- KPI Modal -->
+<div id="kpiModal" class="modal">
+    <div class="modal-content" style="max-width: 95%; max-height: 95%; margin: 20px auto;">
+        <div class="modal-header">
+            <h2 class="text-lg font-bold text-primary">Key Performance Indicator</h2>
+            <span class="close-modal" id="closeKPIModal">&times;</span>
+        </div>
+        <div class="modal-body">
+            <iframe id="kpiIframe" src="kpi.html" style="width: 100%; height: 70vh; border: none; border-radius: 8px;"></iframe>
+        </div>
+    </div>
+</div>
+
 <script>
     // Initialize jsPDF
     window.jsPDF = window.jspdf.jsPDF;
-
-    // KPI Constants
-    const KPI_TARGETS = {
-        monthly: {
-            CC: 20,
-            PIL: 350000,
-            Accounts: 10
-        },
-        annual: {
-            CC: 240,
-            PIL: 4200000,
-            Accounts: 120
-        }
-    };
 
     // Google Apps Script Web App URL
     const scriptURL = 'https://script.google.com/macros/s/AKfycbwBKFBLV1ayE1-RIsdbr11-dZ0yGcFxnwkyoOJXnQrH-vbtSH1sjTCQzBlJTdyufOeOXA/exec';
@@ -1528,6 +1462,126 @@
     let editingFromMaster = false;
 
     // ==========================================
+    // PASTE FUNCTIONALITY
+    // ==========================================
+
+    async function pasteToField(fieldId) {
+        try {
+            const text = await navigator.clipboard.readText();
+            const field = document.getElementById(fieldId);
+            
+            if (!field) return;
+            
+            let processedText = text.trim();
+            
+            // Process based on field type
+            switch(fieldId) {
+                case 'cid':
+                case 'appId':
+                    // Only allow numbers
+                    processedText = processedText.replace(/\D/g, '');
+                    break;
+                    
+                case 'customerName':
+                case 'companyName':
+                    // Convert to uppercase
+                    processedText = processedText.toUpperCase();
+                    break;
+                    
+                case 'mobile':
+                    // Remove non-digits and handle prefixes
+                    processedText = processedText.replace(/\D/g, '');
+                    
+                    // Remove leading zeros and + signs
+                    if (processedText.startsWith('0')) {
+                        processedText = processedText.substring(1);
+                    }
+                    if (processedText.startsWith('971')) {
+                        processedText = processedText.substring(3);
+                    }
+                    
+                    // Ensure it's 9 digits max
+                    if (processedText.length > 9) {
+                        processedText = processedText.substring(0, 9);
+                    }
+                    break;
+            }
+            
+            field.value = processedText;
+            
+            // Trigger change event for validation
+            const event = new Event('input', { bubbles: true });
+            field.dispatchEvent(event);
+            
+            // Show feedback
+            showSuccess(`Pasted to ${fieldId.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+            
+        } catch (err) {
+            console.error('Failed to read clipboard contents: ', err);
+            showSuccess('Failed to paste. Please try copying the text again.');
+        }
+    }
+
+    // ==========================================
+    // INPUT VALIDATION
+    // ==========================================
+
+    // Add input validation for number-only fields
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set current date by default
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').value = today;
+        
+        // CID - numbers only
+        document.getElementById('cid').addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '');
+        });
+        
+        // App ID - numbers only
+        document.getElementById('appId').addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '');
+        });
+        
+        // Customer Name - uppercase
+        document.getElementById('customerName').addEventListener('input', function(e) {
+            this.value = this.value.toUpperCase();
+        });
+        
+        // Company Name - uppercase
+        document.getElementById('companyName').addEventListener('input', function(e) {
+            this.value = this.value.toUpperCase();
+        });
+        
+        // Mobile - numbers only, handle prefixes
+        document.getElementById('mobile').addEventListener('input', function(e) {
+            let value = this.value.replace(/\D/g, '');
+            
+            // Remove leading zeros and 971 prefix if pasted
+            if (value.startsWith('0')) {
+                value = value.substring(1);
+            }
+            if (value.startsWith('971')) {
+                value = value.substring(3);
+            }
+            
+            // Limit to 9 digits
+            if (value.length > 9) {
+                value = value.substring(0, 9);
+            }
+            
+            this.value = value;
+        });
+        
+        // Initialize other functionality
+        document.getElementById('product2ndCC').disabled = true;
+        document.getElementById('product2ndACC').disabled = true;
+        document.getElementById('productSTL').disabled = true;
+        
+        showSection('summary');
+        loadProfiles();
+    });
+
+    // ==========================================
     // THEME AND UI FUNCTIONALITY
     // ==========================================
 
@@ -1535,6 +1589,7 @@
     const showEntryBtn = document.getElementById('showEntryBtn');
     const showViewBtn = document.getElementById('showViewBtn');
     const showSummaryBtn = document.getElementById('showSummaryBtn');
+    const showKPIBtn = document.getElementById('showKPIBtn');
     
     const entrySection = document.getElementById('entrySection');
     const viewSection = document.getElementById('viewSection');
@@ -1550,10 +1605,12 @@
         showEntryBtn.classList.remove('custom-btn');
         showViewBtn.classList.remove('custom-btn');
         showSummaryBtn.classList.remove('custom-btn');
+        showKPIBtn.classList.remove('custom-btn');
         
         showEntryBtn.classList.add('bg-gray-500', 'hover:bg-gray-600');
         showViewBtn.classList.add('bg-gray-500', 'hover:bg-gray-600');
         showSummaryBtn.classList.add('bg-gray-500', 'hover:bg-gray-600');
+        showKPIBtn.classList.add('bg-gray-500', 'hover:bg-gray-600');
         
         // Show selected section and highlight button
         if (section === 'entry') {
@@ -1577,6 +1634,30 @@
     showViewBtn.addEventListener('click', () => showSection('view'));
     showSummaryBtn.addEventListener('click', () => showSection('summary'));
 
+    // KPI Modal functionality
+    const kpiModal = document.getElementById('kpiModal');
+    const closeKPIModal = document.getElementById('closeKPIModal');
+    
+    showKPIBtn.addEventListener('click', function() {
+        kpiModal.style.display = 'block';
+        showKPIBtn.classList.remove('bg-gray-500', 'hover:bg-gray-600');
+        showKPIBtn.classList.add('custom-btn');
+    });
+    
+    closeKPIModal.addEventListener('click', function() {
+        kpiModal.style.display = 'none';
+        showKPIBtn.classList.remove('custom-btn');
+        showKPIBtn.classList.add('bg-gray-500', 'hover:bg-gray-600');
+    });
+    
+    window.addEventListener('click', function(event) {
+        if (event.target === kpiModal) {
+            kpiModal.style.display = 'none';
+            showKPIBtn.classList.remove('custom-btn');
+            showKPIBtn.classList.add('bg-gray-500', 'hover:bg-gray-600');
+        }
+    });
+
     // Show success indicator
     function showSuccess(message) {
         const indicator = document.getElementById('successIndicator');
@@ -1598,440 +1679,6 @@
     // Hide loading indicator
     function hideLoading() {
         document.getElementById('loadingIndicator').classList.add('hidden');
-    }
-
-    // ==========================================
-    // KPI FUNCTIONALITY
-    // ==========================================
-
-    // Set current month by default
-    document.addEventListener('DOMContentLoaded', function() {
-        const currentMonth = new Date().getMonth() + 1;
-        document.getElementById('kpiMonth').value = currentMonth;
-        
-        // Initialize other functionality
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('date').value = today;
-        
-        document.getElementById('product2ndCC').disabled = true;
-        document.getElementById('product2ndACC').disabled = true;
-        document.getElementById('productSTL').disabled = true;
-        
-        showSection('summary');
-        loadProfiles();
-        
-        // Load KPI data on initialization
-        loadKpiTrends();
-    });
-
-    // Generate KPI Report
-    document.getElementById('generateKpiReportBtn').addEventListener('click', async function() {
-        const selectedMonth = parseInt(document.getElementById('kpiMonth').value);
-        const monthName = document.getElementById('kpiMonth').options[selectedMonth - 1].text;
-        
-        showLoading();
-        
-        try {
-            // Get data from Data sheet for the selected month
-            const response = await fetch(`${scriptURL}?action=getAll`);
-            const data = await response.json();
-            
-            if (data.success) {
-                const kpiData = calculateKpiMetrics(data.data, selectedMonth);
-                displayKpiReport(kpiData, monthName);
-                loadKpiCharts();
-                generatePredictiveInsights(selectedMonth);
-            } else {
-                showSuccess('Error fetching data for KPI report');
-            }
-        } catch (error) {
-            console.error('Error generating KPI report:', error);
-            showSuccess('Error generating KPI report');
-        } finally {
-            hideLoading();
-        }
-    });
-
-    // Save KPI Data
-    document.getElementById('saveKpiDataBtn').addEventListener('click', async function() {
-        const selectedMonth = parseInt(document.getElementById('kpiMonth').value);
-        const monthName = document.getElementById('kpiMonth').options[selectedMonth - 1].text;
-        
-        // Get current KPI values from the report
-        const kpiRow = document.getElementById('kpiReportRow');
-        if (!kpiRow || kpiRow.style.display === 'none') {
-            showSuccess('Please generate a report first before saving');
-            return;
-        }
-        
-        const kpiData = {
-            month: monthName,
-            ccConventional: document.getElementById('kpiCCConventional').textContent,
-            ccIslamic: document.getElementById('kpiCCIslamic').textContent,
-            ccAchieved: document.getElementById('kpiCCAchieved').textContent,
-            pilConventional: document.getElementById('kpiPILConventional').textContent.replace('AED ', '').replace(/,/g, ''),
-            pilIslamic: document.getElementById('kpiPILIslamic').textContent.replace('AED ', '').replace(/,/g, ''),
-            pilAchieved: document.getElementById('kpiPILAchieved').textContent,
-            mdsa: document.getElementById('kpiMDSA').textContent,
-            aspire: document.getElementById('kpiAspire').textContent,
-            privilege: document.getElementById('kpiPrivilege').textContent,
-            accountsAchieved: document.getElementById('kpiAccountsAchieved').textContent
-        };
-        
-        showLoading();
-        
-        try {
-            const formData = new FormData();
-            formData.append('action', 'saveKpiData');
-            Object.keys(kpiData).forEach(key => {
-                formData.append(key, kpiData[key]);
-            });
-            
-            const response = await fetch(scriptURL, {
-                method: 'POST',
-                body: formData
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                showSuccess(`KPI data for ${monthName} saved successfully!`);
-                loadKpiTrends(); // Refresh the trends
-            } else {
-                showSuccess('Error saving KPI data: ' + result.error);
-            }
-        } catch (error) {
-            console.error('Error saving KPI data:', error);
-            showSuccess('Error saving KPI data');
-        } finally {
-            hideLoading();
-        }
-    });
-
-    // Calculate KPI Metrics from Data
-    function calculateKpiMetrics(data, selectedMonth) {
-        const currentYear = new Date().getFullYear();
-        
-        // Filter data for the selected month and current year
-        const monthlyData = data.filter(record => {
-            if (!record.Date) return false;
-            const recordDate = new Date(record.Date);
-            return recordDate.getMonth() + 1 === selectedMonth && recordDate.getFullYear() === currentYear;
-        });
-        
-        let ccConventional = 0, ccIslamic = 0;
-        let pilConventional = 0, pilIslamic = 0;
-        let mdsa = 0, aspire = 0, privilege = 0;
-        
-        monthlyData.forEach(record => {
-            const proposition = record.Proposition || '';
-            const productString = record.Product || '';
-            const loanAmount = parseFloat(record['Loan Amount']) || 0;
-            
-            // Count Credit Cards
-            const ccCount = countCreditCards(productString);
-            if (proposition === 'Conventional') {
-                ccConventional += ccCount;
-            } else if (proposition === 'Islamic') {
-                ccIslamic += ccCount;
-            } else if (proposition === 'Both') {
-                // For 'Both', split evenly or add to both (based on your business logic)
-                ccConventional += Math.ceil(ccCount / 2);
-                ccIslamic += Math.floor(ccCount / 2);
-            }
-            
-            // Count Personal Loans
-            if (loanAmount > 0) {
-                if (proposition === 'Conventional') {
-                    pilConventional += loanAmount;
-                } else if (proposition === 'Islamic') {
-                    pilIslamic += loanAmount;
-                } else if (proposition === 'Both') {
-                    pilConventional += loanAmount / 2;
-                    pilIslamic += loanAmount / 2;
-                }
-            }
-            
-            // Count Accounts
-            if (productString.includes('MDSA')) mdsa++;
-            if (productString.includes('Aspire')) aspire++;
-            if (productString.includes('Privilege')) privilege++;
-        });
-        
-        // Calculate achievement percentages
-        const totalCC = ccConventional + ccIslamic;
-        const totalPIL = pilConventional + pilIslamic;
-        const totalAccounts = mdsa + aspire + privilege;
-        
-        const ccAchievedPercent = Math.round((totalCC / KPI_TARGETS.monthly.CC) * 100);
-        const pilAchievedPercent = Math.round((totalPIL / KPI_TARGETS.monthly.PIL) * 100);
-        const accountsAchievedPercent = Math.round((totalAccounts / KPI_TARGETS.monthly.Accounts) * 100);
-        
-        return {
-            ccConventional,
-            ccIslamic,
-            ccAchievedPercent,
-            pilConventional,
-            pilIslamic,
-            pilAchievedPercent,
-            mdsa,
-            aspire,
-            privilege,
-            accountsAchievedPercent
-        };
-    }
-
-    // Count Credit Cards in product string
-    function countCreditCards(productString) {
-        if (!productString) return 0;
-        
-        const ccKeywords = ['Touchpoints', 'Cashback', 'Talabat', 'Lulu', 'Etihad', 'Shukran', 'All ', 'Traveller', 'Betaqti', 'Emirati'];
-        const products = productString.split(',').map(p => p.trim());
-        
-        let count = 0;
-        products.forEach(product => {
-            if (ccKeywords.some(keyword => product.includes(keyword)) || product === 'CC' || product === '2ndCC') {
-                count++;
-            }
-        });
-        
-        return count;
-    }
-
-    // Display KPI Report
-    function displayKpiReport(kpiData, monthName) {
-        document.getElementById('kpiCCConventional').textContent = kpiData.ccConventional;
-        document.getElementById('kpiCCIslamic').textContent = kpiData.ccIslamic;
-        document.getElementById('kpiCCAchieved').textContent = kpiData.ccAchievedPercent + '%';
-        
-        document.getElementById('kpiPILConventional').textContent = 'AED ' + kpiData.pilConventional.toLocaleString();
-        document.getElementById('kpiPILIslamic').textContent = 'AED ' + kpiData.pilIslamic.toLocaleString();
-        document.getElementById('kpiPILAchieved').textContent = kpiData.pilAchievedPercent + '%';
-        
-        document.getElementById('kpiMDSA').textContent = kpiData.mdsa;
-        document.getElementById('kpiAspire').textContent = kpiData.aspire;
-        document.getElementById('kpiPrivilege').textContent = kpiData.privilege;
-        document.getElementById('kpiAccountsAchieved').textContent = kpiData.accountsAchievedPercent + '%';
-        
-        // Show the report container
-        document.getElementById('kpiReportContainer').classList.remove('hidden');
-        document.getElementById('kpiChartsContainer').classList.remove('hidden');
-    }
-
-    // Load KPI Charts
-    async function loadKpiCharts() {
-        try {
-            const response = await fetch(`${scriptURL}?action=getKpiData`);
-            const data = await response.json();
-            
-            if (data.success && data.data.length > 0) {
-                createMonthlyTrendsChart(data.data);
-                createAnnualProgressChart(data.data);
-            }
-        } catch (error) {
-            console.error('Error loading KPI charts:', error);
-        }
-    }
-
-    // Create Monthly Trends Chart
-    function createMonthlyTrendsChart(kpiData) {
-        const ctx = document.getElementById('monthlyTrendsChart').getContext('2d');
-        
-        // Destroy existing chart if it exists
-        if (window.monthlyTrendsChart) {
-            window.monthlyTrendsChart.destroy();
-        }
-        
-        const months = kpiData.map(item => item.Month);
-        const ccAchieved = kpiData.map(item => parseFloat(item['CC Achieved %']) || 0);
-        const pilAchieved = kpiData.map(item => parseFloat(item['PIL Achieved %']) || 0);
-        const accountsAchieved = kpiData.map(item => parseFloat(item['Accounts Achieved %']) || 0);
-        
-        window.monthlyTrendsChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: months,
-                datasets: [
-                    {
-                        label: 'CC Achievement %',
-                        data: ccAchieved,
-                        borderColor: '#1A3A4A',
-                        backgroundColor: 'rgba(26, 58, 74, 0.1)',
-                        tension: 0.4
-                    },
-                    {
-                        label: 'PIL Achievement %',
-                        data: pilAchieved,
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        tension: 0.4
-                    },
-                    {
-                        label: 'Accounts Achievement %',
-                        data: accountsAchieved,
-                        borderColor: '#f59e0b',
-                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                        tension: 0.4
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 150,
-                        ticks: {
-                            callback: function(value) {
-                                return value + '%';
-                            }
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }
-        });
-    }
-
-    // Create Annual Progress Chart
-    function createAnnualProgressChart(kpiData) {
-        const ctx = document.getElementById('annualProgressChart').getContext('2d');
-        
-        // Destroy existing chart if it exists
-        if (window.annualProgressChart) {
-            window.annualProgressChart.destroy();
-        }
-        
-        // Calculate annual totals
-        const currentYear = new Date().getFullYear();
-        const currentYearData = kpiData.filter(item => item.Year == currentYear || !item.Year);
-        
-        let totalCC = 0, totalPIL = 0, totalAccounts = 0;
-        
-        currentYearData.forEach(item => {
-            totalCC += (parseInt(item['CC Conventional']) || 0) + (parseInt(item['CC Islamic']) || 0);
-            totalPIL += (parseFloat(item['PIL Conventional']) || 0) + (parseFloat(item['PIL Islamic']) || 0);
-            totalAccounts += (parseInt(item.MDSA) || 0) + (parseInt(item.Aspire) || 0) + (parseInt(item.Privilege) || 0);
-        });
-        
-        const ccProgress = Math.min((totalCC / KPI_TARGETS.annual.CC) * 100, 100);
-        const pilProgress = Math.min((totalPIL / KPI_TARGETS.annual.PIL) * 100, 100);
-        const accountsProgress = Math.min((totalAccounts / KPI_TARGETS.annual.Accounts) * 100, 100);
-        
-        window.annualProgressChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Credit Cards', 'Personal Loans', 'Accounts'],
-                datasets: [{
-                    data: [ccProgress, pilProgress, accountsProgress],
-                    backgroundColor: ['#1A3A4A', '#10b981', '#f59e0b'],
-                    borderWidth: 2,
-                    borderColor: '#fff'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.label + ': ' + context.parsed.toFixed(1) + '%';
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    // Load KPI Trends for Predictive Analysis
-    async function loadKpiTrends() {
-        try {
-            const response = await fetch(`${scriptURL}?action=getKpiData`);
-            const data = await response.json();
-            
-            if (data.success) {
-                generatePredictiveInsights(null, data.data);
-            }
-        } catch (error) {
-            console.error('Error loading KPI trends:', error);
-            document.getElementById('kpiPredictions').innerHTML = '<div class="text-red-500">Error loading predictions</div>';
-        }
-    }
-
-    // Generate Predictive Insights
-    function generatePredictiveInsights(currentMonth, allKpiData = null) {
-        const predictionsEl = document.getElementById('kpiPredictions');
-        
-        if (!allKpiData || allKpiData.length < 2) {
-            predictionsEl.innerHTML = `
-                <div>• Need more data for predictions</div>
-                <div>• Save monthly KPI data to get insights</div>
-                <div>• Track trends for better forecasting</div>
-            `;
-            return;
-        }
-        
-        // Calculate trends and predictions
-        const recentData = allKpiData.slice(-3); // Last 3 months
-        
-        // Calculate average growth rates
-        let ccTrend = 0, pilTrend = 0, accountsTrend = 0;
-        
-        if (recentData.length >= 2) {
-            const latest = recentData[recentData.length - 1];
-            const previous = recentData[recentData.length - 2];
-            
-            const latestCC = (parseInt(latest['CC Conventional']) || 0) + (parseInt(latest['CC Islamic']) || 0);
-            const previousCC = (parseInt(previous['CC Conventional']) || 0) + (parseInt(previous['CC Islamic']) || 0);
-            
-            const latestPIL = (parseFloat(latest['PIL Conventional']) || 0) + (parseFloat(latest['PIL Islamic']) || 0);
-            const previousPIL = (parseFloat(previous['PIL Conventional']) || 0) + (parseFloat(previous['PIL Islamic']) || 0);
-            
-            const latestAccounts = (parseInt(latest.MDSA) || 0) + (parseInt(latest.Aspire) || 0) + (parseInt(latest.Privilege) || 0);
-            const previousAccounts = (parseInt(previous.MDSA) || 0) + (parseInt(previous.Aspire) || 0) + (parseInt(previous.Privilege) || 0);
-            
-            ccTrend = previousCC > 0 ? ((latestCC - previousCC) / previousCC) * 100 : 0;
-            pilTrend = previousPIL > 0 ? ((latestPIL - previousPIL) / previousPIL) * 100 : 0;
-            accountsTrend = previousAccounts > 0 ? ((latestAccounts - previousAccounts) / previousAccounts) * 100 : 0;
-        }
-        
-        const predictions = [];
-        
-        if (ccTrend > 10) {
-            predictions.push('• CC performance trending upward ↗️');
-        } else if (ccTrend < -10) {
-            predictions.push('• CC performance needs attention ⚠️');
-        } else {
-            predictions.push('• CC performance stable ➡️');
-        }
-        
-        if (pilTrend > 15) {
-            predictions.push('• PIL showing strong growth 📈');
-        } else if (pilTrend < -15) {
-            predictions.push('• PIL requires focus 🎯');
-        } else {
-            predictions.push('• PIL performance steady 📊');
-        }
-        
-        if (accountsTrend > 20) {
-            predictions.push('• Account opening accelerating 🚀');
-        } else if (accountsTrend < -20) {
-            predictions.push('• Account strategy review needed 🔍');
-        } else {
-            predictions.push('• Account performance consistent ✅');
-        }
-        
-        predictionsEl.innerHTML = predictions.join('<br>');
     }
 
     // ==========================================
@@ -2113,6 +1760,10 @@
         
         adcbOverrideCheckbox.checked = false;
         ccDeductionOverrideCheckbox.checked = false;
+        
+        // Reset date to current date
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').value = today;
     }
 
     // Banking select change event
@@ -2597,7 +2248,7 @@
         });
         
         div.innerHTML = `
-            <label for="${id}" class="block text-gray-700 font-medium">${label}</label>
+            <label for="${id}" class="block text-gray-700 font-medium mb-1">${label}</label>
             <select id="${id}" class="w-full border rounded-md p-2 text-base" data-product="${productType}">
                 ${optionsHtml}
             </select>
@@ -2700,18 +2351,15 @@
         let totalPoints = 0;
         const isAccCompletedUnderReview = statusSelect.value === 'ACC Completed, Under Review';
         
-        // Handle ACC Completed, Under Review special case
+        // Handle ACC Completed, Under Review special case - now counts points like other statuses except Rejected
         if (isAccCompletedUnderReview) {
-            // Only count ACC points if ACC or 2nd ACC with STL is checked
+            // Count ACC points if ACC or 2nd ACC is checked
             if (productACC.checked) {
                 const accSelect = document.getElementById('ACCSelect');
                 if (accSelect && accSelect.value) {
                     const selectedOption = accSelect.options[accSelect.selectedIndex];
                     const accPoints = parseInt(selectedOption.dataset.points) || 0;
-                    
-                    if (productSTL.checked && !productSTL.disabled) {
-                        totalPoints += accPoints;
-                    }
+                    totalPoints += accPoints;
                 }
             }
             
@@ -2720,19 +2368,72 @@
                 if (acc2Select && acc2Select.value) {
                     const selectedOption = acc2Select.options[acc2Select.selectedIndex];
                     const acc2Points = parseInt(selectedOption.dataset.points) || 0;
+                    totalPoints += acc2Points;
+                }
+            }
+            
+            // Count CC points as well
+            if (productCC.checked) {
+                const ccSelect = document.getElementById('CCSelect');
+                if (ccSelect && ccSelect.value) {
+                    const selectedOption = ccSelect.options[ccSelect.selectedIndex];
+                    let ccPoints = parseInt(selectedOption.dataset.points) || 0;
                     
-                    if (productSTL.checked && !productSTL.disabled) {
-                        totalPoints += acc2Points;
+                    if (!productACC.checked) {
+                        if (!adcbOverrideCheckbox.checked && bankingSelect.value !== 'ADCB') {
+                            ccPoints = Math.round(ccPoints * 0.7);
+                        }
+                    }
+                    
+                    if (ccDeductionOverrideCheckbox.checked) {
+                        ccPoints = Math.round(ccPoints * 0.6);
+                    }
+                    
+                    totalPoints += ccPoints;
+                    
+                    if (product2ndCC.checked) {
+                        const cc2Select = document.getElementById('CCSelect2');
+                        if (cc2Select && cc2Select.value) {
+                            const selectedOption2 = cc2Select.options[cc2Select.selectedIndex];
+                            const isPaid = selectedOption2.dataset.paid === "true";
+                            
+                            totalPoints += isPaid ? 250 : 80;
+                        }
                     }
                 }
             }
             
-            // Don't count other products
+            // Count other products too
+            if (productBTCCL.checked) {
+                totalPoints += 100;
+            }
+            
+            if (productOther.checked) {
+                const otherPointsValue = parseFloat(otherPointsInput.value) || 0;
+                totalPoints += otherPointsValue;
+            }
+            
+            if (productPL.checked) {
+                const plSelect = document.getElementById('PLSelect');
+                const loanAmount = parseFloat(loanAmountInput.value) || 0;
+                
+                if (plSelect && plSelect.value && loanAmount > 0) {
+                    const selectedOption = plSelect.options[plSelect.selectedIndex];
+                    const pointsPercentage = selectedOption.dataset.points;
+                    
+                    if (pointsPercentage === "0.50%") {
+                        totalPoints += loanAmount * 0.005;
+                    } else if (pointsPercentage === "0.25%") {
+                        totalPoints += loanAmount * 0.0025;
+                    }
+                }
+            }
+            
             pointsInput.value = totalPoints.toFixed(2);
             return;
         }
         
-        // Regular point calculation
+        // Regular point calculation for all other statuses
         if (productACC.checked) {
             const accSelect = document.getElementById('ACCSelect');
             if (accSelect && accSelect.value) {
@@ -3395,11 +3096,27 @@ Accounts: ${progressACC}`;
             const appIdValue = row['App ID'] || '';
             const customerNameValue = row['Customer Name'] || '';
             
+            // Format mobile number for display and calling
+            let displayMobile = mobileNumber;
+            let callMobile = mobileNumber;
+            
+            if (mobileNumber) {
+                // For display, show without spaces
+                displayMobile = mobileNumber.replace(/\s+/g, '');
+                
+                // For calling, ensure it starts with 971
+                if (!mobileNumber.startsWith('971')) {
+                    callMobile = '971' + mobileNumber.replace(/\s+/g, '');
+                } else {
+                    callMobile = mobileNumber.replace(/\s+/g, '');
+                }
+            }
+            
             let actionsHtml = '';
             if (!isMasterSearch) {
                 actionsHtml = `
                     <td class="action-column">
-                        <a href="tel:+${mobileNumber}" class="action-btn bg-green-600 text-white p-1 rounded inline-block" title="Call ${row['Customer Name']}" role="button">
+                        <a href="tel:+${callMobile}" class="action-btn bg-green-600 text-white p-1 rounded inline-block" title="Call ${row['Customer Name']}" role="button">
                             <i class="fas fa-phone"></i>
                         </a>
                         <button class="delete-btn action-btn bg-red-600 text-white p-1 rounded" data-cid="${row.CID}" data-sheet="${sheetType}" title="Delete">
@@ -3410,7 +3127,7 @@ Accounts: ${progressACC}`;
             } else if (isMasterFetch) {
                 actionsHtml = `
                     <td class="action-column">
-                        <a href="tel:+${mobileNumber}" class="action-btn bg-green-600 text-white p-1 rounded inline-block" title="Call ${row['Customer Name']}" role="button">
+                        <a href="tel:+${callMobile}" class="action-btn bg-green-600 text-white p-1 rounded inline-block" title="Call ${row['Customer Name']}" role="button">
                             <i class="fas fa-phone"></i>
                         </a>
                         <button class="delete-btn action-btn bg-red-600 text-white p-1 rounded" data-cid="${row.CID}" data-sheet="${sheetType}" title="Delete">
@@ -3421,7 +3138,7 @@ Accounts: ${progressACC}`;
             } else {
                 actionsHtml = `
                     <td class="action-column">
-                        <a href="tel:+${mobileNumber}" class="action-btn bg-green-600 text-white p-1 rounded inline-block" title="Call ${row['Customer Name']}" role="button">
+                        <a href="tel:+${callMobile}" class="action-btn bg-green-600 text-white p-1 rounded inline-block" title="Call ${row['Customer Name']}" role="button">
                             <i class="fas fa-phone"></i>
                         </a>
                     </td>
@@ -3432,7 +3149,7 @@ Accounts: ${progressACC}`;
                 <td class="copyable" data-value="${cidValue}">${cidValue}</td>
                 <td class="copyable" data-value="${appIdValue}">${appIdValue}</td>
                 <td class="copyable" data-value="${customerNameValue}">${customerNameValue}</td>
-                <td class="copyable" data-value="${mobileNumber}">${mobileNumber}</td>
+                <td class="copyable" data-value="${displayMobile}">${displayMobile}</td>
                 <td>${row.Product || ''}</td>
                 <td>${row.Status || ''}</td>
                 <td data-cid="${cidValue}" data-sheet="${sheetType}" style="cursor: pointer; color: #1A3A4A; font-weight: bold;">${row.Points || ''}</td>
@@ -3802,7 +3519,16 @@ Accounts: ${progressACC}`;
         
         salaryInput.value = data.Salary || '';
         customerNameInput.value = data['Customer Name'] || '';
-        mobileInput.value = data.Mobile || '';
+        
+        // Handle mobile number - remove 971 prefix if present for display and remove spaces
+        let mobileValue = data.Mobile || '';
+        if (mobileValue.startsWith('971')) {
+            mobileValue = mobileValue.substring(3);
+        }
+        // Remove any spaces
+        mobileValue = mobileValue.replace(/\s+/g, '');
+        mobileInput.value = mobileValue;
+        
         companyNameInput.value = data['Company Name'] || '';
         
         const productString = data.Product || '';
@@ -3997,7 +3723,7 @@ Accounts: ${progressACC}`;
                 const uniquenessCheck = await checkUniqueness(
                     '',
                     customerNameInput.value.trim(),
-                    mobileInput.value.trim()
+                    '971' + mobileInput.value.trim()
                 );
                 hideLoading();
                 
@@ -4035,7 +3761,11 @@ Accounts: ${progressACC}`;
         formData.append('date', dateInput.value);
         formData.append('salary', salaryInput.value);
         formData.append('customerName', customerNameInput.value);
-        formData.append('mobile', mobileInput.value);
+        
+        // Always prepend 971 to mobile number for storage and remove spaces
+        const mobileValue = mobileInput.value.trim().replace(/\s+/g, '');
+        const fullMobile = mobileValue.startsWith('971') ? mobileValue : '971' + mobileValue;
+        formData.append('mobile', fullMobile);
         
         let bankingValue = bankingSelect.value;
         if (bankingValue === 'Other') {
@@ -4283,8 +4013,8 @@ Accounts: ${progressACC}`;
             const allCheckboxes = document.querySelectorAll('#exportTableBody .row-checkbox');
             const checkedCheckboxes = document.querySelectorAll('#exportTableBody .row-checkbox:checked');
             
-            selectAllRows.checked = allCheckboxes.length === checkedCheckboxes.length;
-            selectAllHeader.checked = allCheckboxes.length === checkedCheckboxes.length;
+            selectAllRows.checked = allCheckboxes.length === checkedCheckboxes.length && allCheckboxes.length > 0;
+            selectAllHeader.checked = allCheckboxes.length === checkedCheckboxes.length && allCheckboxes.length > 0;
             
             updateSelectedRowsCount();
         }
