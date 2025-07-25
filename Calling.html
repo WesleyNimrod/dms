@@ -9,13 +9,31 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tahoma:wght@400;700&display=swap');
         
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
         body {
             font-family: 'Tahoma', Geneva, sans-serif;
             background-color: #f5f5f5;
             color: #333;
+        }
+        
+        .main-container {
             width: 100%;
-            max-width: 100%;
-            overflow-x: hidden;
+            min-height: 100vh;
+            padding: 8px 8px 8px 8px;
+            margin: 0;
         }
         
         .custom-btn {
@@ -171,17 +189,32 @@
             100% { opacity: 0; }
         }
 
+        /* Draggable styling */
+        .draggable {
+            cursor: grab;
+        }
+
+        .draggable.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        .drop-zone {
+            background-color: rgba(111, 44, 79, 0.1);
+            border: 2px dashed #6F2C4F;
+        }
+
         /* Filter inputs */
         .filter-container {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 15px;
             flex-wrap: wrap;
         }
 
         .filter-item {
             flex: 1;
-            min-width: 150px;
+            min-width: 120px;
         }
 
         /* Scrollable table container */
@@ -189,6 +222,7 @@
             overflow-x: auto;
             max-height: 600px;
             overflow-y: auto;
+            width: 100%;
         }
 
         /* Call buttons */
@@ -259,6 +293,8 @@
         .btn-delete { background-color: #ef4444; }
         .btn-duplicate { background-color: #f59e0b; }
         .btn-duplicate.active { background-color: #d97706; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); }
+        .btn-filter { background-color: #8b5cf6; }
+        .btn-filter.active { background-color: #7c3aed; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); }
 
         /* Result dropdown styling */
         .result-dropdown {
@@ -277,6 +313,31 @@
             position: sticky;
             top: 0;
             z-index: 10;
+        }
+
+        /* Salary sorting buttons */
+        .salary-sort {
+            display: flex;
+            flex-direction: column;
+            margin-left: 5px;
+        }
+
+        .salary-sort button {
+            background: #6F2C4F;
+            color: white;
+            border: none;
+            padding: 2px 4px;
+            cursor: pointer;
+            font-size: 10px;
+            margin: 1px 0;
+        }
+
+        .salary-sort button:hover {
+            background: #5a2340;
+        }
+
+        .salary-sort button.active {
+            background: #8b5cf6;
         }
         
         /* Error message */
@@ -466,6 +527,34 @@
             box-shadow: 0 0 0 2px rgba(111, 44, 79, 0.2);
         }
 
+        /* Input with button */
+        .input-with-button {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .input-with-button input {
+            flex: 1;
+        }
+
+        .paste-btn {
+            background-color: #6F2C4F;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .paste-btn:hover {
+            background-color: #5a2340;
+        }
+
         /* Comment toggle */
         .comment-mode-toggle {
             margin-top: 10px;
@@ -550,12 +639,32 @@
             justify-content: center;
             margin-top: 20px;
         }
+
+        /* Filter visibility toggle */
+        .filters-hidden {
+            display: none !important;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 4px 4px 4px 4px;
+            }
+            
+            .filter-container {
+                gap: 4px;
+            }
+            
+            .filter-item {
+                min-width: 100px;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-tahoma">
-    <div class="container mx-auto px-3 py-4 w-full">
+    <div class="main-container">
         
-        <div class="bg-white p-4 rounded-lg shadow-md mb-4">
+        <div class="bg-white p-3 rounded-lg shadow-md mb-3">
             <div class="flex flex-wrap justify-between items-center mb-4">
                 <div class="section-header flex items-center">
                     <h2 class="text-xl font-bold text-[#6F2C4F]">Calling List</h2>
@@ -565,10 +674,14 @@
                     </div>
                     <p class="text-gray-600 text-sm ml-4" id="recordsInfo">Showing 0 records</p>
                 </div>
-                <div class="flex gap-2">
+                <div class="flex gap-2 flex-wrap">
                     <button id="refreshBtn" class="icon-btn btn-refresh tooltip" title="Refresh Data">
                         <i class="fas fa-sync-alt"></i>
                         <span class="tooltip-text">Refresh Data</span>
+                    </button>
+                    <button id="showMoreBtn" class="icon-btn btn-show-more tooltip hidden" title="Show More">
+                        <i class="fas fa-expand-alt"></i>
+                        <span class="tooltip-text">Show More</span>
                     </button>
                     <a href="https://docs.google.com/spreadsheets/d/1VfEPU_2EvNqB6g2ldAzD05fvwFigL1yN3L0wLOwZP4o/edit?gid=276425933#gid=276425933" target="_blank" class="icon-btn btn-sheet tooltip" title="Open Sheet">
                         <i class="fas fa-file-excel"></i>
@@ -577,10 +690,6 @@
                     <button id="undoBtn" class="icon-btn btn-undo tooltip" title="Undo">
                         <i class="fas fa-undo"></i>
                         <span class="tooltip-text">Undo last change</span>
-                    </button>
-                    <button id="showMoreBtn" class="icon-btn btn-show-more tooltip hidden" title="Show More">
-                        <i class="fas fa-expand-alt"></i>
-                        <span class="tooltip-text">Show More</span>
                     </button>
                     <button id="addNewBtn" class="icon-btn btn-add-new tooltip" title="Add New Record">
                         <i class="fas fa-plus"></i>
@@ -598,6 +707,10 @@
                         <i class="fas fa-clone"></i>
                         <span class="tooltip-text">Show Duplicates</span>
                     </button>
+                    <button id="filterBtn" class="icon-btn btn-filter tooltip" title="Filter Mode">
+                        <i class="fas fa-search"></i>
+                        <span class="tooltip-text">Contains Search</span>
+                    </button>
                 </div>
             </div>
             
@@ -605,7 +718,7 @@
                 <span id="selectionCount">0</span> rows selected
             </div>
 
-            <div class="mb-4">
+            <div class="mb-4" id="filtersContainer">
                 <div class="flex justify-between items-center">
                     <h3 class="font-semibold text-lg mb-2 text-[#6F2C4F]">Filters</h3>
                     <button id="clearFiltersBtn" class="text-sm text-blue-600">Clear All</button>
@@ -614,16 +727,26 @@
                     <div class="filter-item">
                         <select id="resultFilter" class="w-full border rounded-md p-2 text-base">
                             <option value="">All Results</option>
+                            <option value="To Call">To Call</option>
+                            <option value="No Answer">No Answer</option>
+                            <option value="Busy">Busy</option>
                             <option value="DNCR">DNCR</option>
                             <option value="Not Interested">Not Interested</option>
                             <option value="Interested">Interested</option>
-                            <option value="Call Back">Call Back</option>
+                            <option value="ROI Inquired">ROI Inquired</option>
+                            <option value="Call back">Call back</option>
+                            <option value="On Hold">On Hold</option>
+                            <option value="In Future, Shared details">In Future, Shared details</option>
                             <option value="Switched off">Switched off</option>
-                            <option value="No answer">No answer</option>
-                            <option value="Applied">Applied</option>
+                            <option value="Referal">Referal</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Rejected">Rejected</option>
                             <option value="Option 1">Option 1</option>
                             <option value="Option 2">Option 2</option>
                         </select>
+                    </div>
+                    <div class="filter-item">
+                        <input type="text" id="mobileFilter" placeholder="Filter by mobile" class="w-full border rounded-md p-2 text-base">
                     </div>
                     <div class="filter-item">
                         <input type="text" id="nameFilter" placeholder="Filter by name" class="w-full border rounded-md p-2 text-base">
@@ -643,7 +766,7 @@
                 </div>
             </div>
         </div>
-        <div class="bg-white p-4 rounded-lg shadow-md">
+        <div class="bg-white p-3 rounded-lg shadow-md">
             <div class="table-container">
                 <table id="callingTable" class="calling-table" style="border-spacing: 0;">
                     <thead>
@@ -658,7 +781,15 @@
                             <th>Company</th>
                             <th>Scheme</th>
                             <th>Bank</th>
-                            <th style="width: 100px;">Salary</th>
+                            <th style="width: 100px;">
+                                <div style="display: flex; align-items: center;">
+                                    Salary
+                                    <div class="salary-sort">
+                                        <button id="sortSalaryAsc" title="Sort Ascending">▲</button>
+                                        <button id="sortSalaryDesc" title="Sort Descending">▼</button>
+                                    </div>
+                                </div>
+                            </th>
                         </tr>
                     </thead>
                     <tbody id="callingTableBody">
@@ -703,20 +834,27 @@
                 <form id="addNewForm">
                     <div class="form-group">
                         <label class="form-label" for="newDate">Date</label>
-                        <input type="date" id="newDate" class="form-input">
+                        <input type="date" id="newDate" class="form-input" tabindex="1">
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label" for="newResult">Result *</label>
-                        <select id="newResult" class="form-select" required>
+                        <select id="newResult" class="form-select" required tabindex="2">
                             <option value="">Select Result</option>
+                            <option value="To Call">To Call</option>
+                            <option value="No Answer">No Answer</option>
+                            <option value="Busy">Busy</option>
                             <option value="DNCR">DNCR</option>
                             <option value="Not Interested">Not Interested</option>
                             <option value="Interested">Interested</option>
-                            <option value="Call Back">Call Back</option>
+                            <option value="ROI Inquired">ROI Inquired</option>
+                            <option value="Call back">Call back</option>
+                            <option value="On Hold">On Hold</option>
+                            <option value="In Future, Shared details">In Future, Shared details</option>
                             <option value="Switched off">Switched off</option>
-                            <option value="No answer">No answer</option>
-                            <option value="Applied">Applied</option>
+                            <option value="Referal">Referal</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Rejected">Rejected</option>
                             <option value="Option 1">Option 1</option>
                             <option value="Option 2">Option 2</option>
                         </select>
@@ -724,38 +862,53 @@
                     
                     <div class="form-group">
                         <label class="form-label" for="newMobile">Mobile *</label>
-                        <input type="text" id="newMobile" class="form-input" required>
+                        <div class="input-with-button">
+                            <input type="text" id="newMobile" class="form-input" required pattern="[0-9]*" title="Only numbers allowed" tabindex="3">
+                            <button type="button" class="paste-btn" id="pasteMobileBtn" tabindex="-1">
+                                <i class="fas fa-paste"></i> Paste
+                            </button>
+                        </div>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label" for="newCmName">CM Name</label>
-                        <input type="text" id="newCmName" class="form-input">
+                        <div class="input-with-button">
+                            <input type="text" id="newCmName" class="form-input" tabindex="4">
+                            <button type="button" class="paste-btn" id="pasteCmNameBtn" tabindex="-1">
+                                <i class="fas fa-paste"></i> Paste
+                            </button>
+                        </div>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label" for="newCompanyName">Company Name *</label>
-                        <input type="text" id="newCompanyName" class="form-input" required>
+                        <div class="input-with-button">
+                            <input type="text" id="newCompanyName" class="form-input" required style="text-transform: uppercase;" tabindex="5">
+                            <button type="button" class="paste-btn" id="pasteCompanyNameBtn" tabindex="-1">
+                                <i class="fas fa-paste"></i> Paste
+                            </button>
+                        </div>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label" for="newScheme">Scheme</label>
-                        <input type="text" id="newScheme" class="form-input">
+                        <input type="text" id="newScheme" class="form-input" style="text-transform: uppercase;" tabindex="6">
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label" for="newBanking">Banking</label>
-                        <input type="text" id="newBanking" class="form-input">
+                        <input type="text" id="newBanking" class="form-input" style="text-transform: uppercase;" tabindex="7">
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label" for="newSalary">Salary</label>
-                        <input type="number" id="newSalary" class="form-input">
+                        <input type="text" id="newSalary" class="form-input" pattern="[0-9]*" title="Only numbers allowed" tabindex="8">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="cancelAddNewBtn" class="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400">Cancel</button>
-                <button id="saveAddNewBtn" class="custom-btn text-white py-2 px-4 rounded-md">Save Record</button>
+                <button type="button" id="cancelAddNewBtn" class="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400" tabindex="10">Cancel</button>
+                <button type="button" id="saveAddNewBtn" class="custom-btn text-white py-2 px-4 rounded-md" tabindex="9">Save Record</button>
             </div>
         </div>
     </div>
@@ -803,7 +956,7 @@
 
     <script>
         // *** IMPORTANT: Replace 'YOUR_WEB_APP_URL_HERE' with your actual Google Apps Script Web App URL ***
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwngb8Ka97Re88mDNaT60W-b_Ts4VQTf0DKSrJVUXra1Za8OtdNbG4gmrWIwfSSXaz9Rg/exec'; 
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwBKFBLV1ayE1-RIsdbr11-dZ0yGcFxnwkyoOJXnQrH-vbtSH1sjTCQzBlJTdyufOeOXA/exec'; 
         const BATCH_SIZE = 50; // Number of records to load initially / per "Show More" click
         let allData = [];
         let displayedData = [];
@@ -812,10 +965,14 @@
         const columnNames = ["Select", "Actions", "Result", "Mobile", "Name", "Company", "Scheme", "Bank", "Salary"];
         let callCount = 0;
         let longPressTimer;
-        let priorityResultOptions = ["To Call", "No Answer", "Interested", "Busy"];
+        let priorityResultOptions = ["To Call", "Interested", "Referal", "Option 1", "Option 2", "No Answer", "Busy"];
         let changedRows = {}; // Track which rows have been changed today
         let selectedRows = new Set();
         let isDuplicateMode = false;
+        let isExactSearch = false; // Filter mode toggle
+        let currentSalarySortOrder = 'none'; // none, asc, desc
+        let draggedElement = null;
+        let dragSourceRowIndex = null;
 
         document.addEventListener('DOMContentLoaded', function() {
             // Load call count and changed rows from localStorage if available
@@ -823,6 +980,9 @@
             
             // Check if we need to reset the call counter (new day)
             checkAndResetDailyCounter();
+            
+            // Set current date as default
+            document.getElementById('newDate').value = new Date().toISOString().split('T')[0];
             
             // Initial data load
             fetchCallingData();
@@ -839,6 +999,11 @@
             document.getElementById('deleteBtn').addEventListener('click', deleteSelectedRows);
             document.getElementById('duplicateBtn').addEventListener('click', toggleDuplicateMode);
             document.getElementById('selectAllCheckbox').addEventListener('change', toggleSelectAll);
+            document.getElementById('filterBtn').addEventListener('click', toggleFilterMode);
+
+            // Salary sorting listeners
+            document.getElementById('sortSalaryAsc').addEventListener('click', () => sortBySalary('asc'));
+            document.getElementById('sortSalaryDesc').addEventListener('click', () => sortBySalary('desc'));
 
             // Add New Record Modal listeners
             document.getElementById('addNewBtn').addEventListener('click', showAddNewModal);
@@ -846,17 +1011,150 @@
             document.getElementById('cancelAddNewBtn').addEventListener('click', hideAddNewModal);
             document.getElementById('saveAddNewBtn').addEventListener('click', saveNewRecord);
 
+            // Paste button listeners
+            document.getElementById('pasteMobileBtn').addEventListener('click', () => pasteToField('newMobile'));
+            document.getElementById('pasteCmNameBtn').addEventListener('click', () => pasteToField('newCmName'));
+            document.getElementById('pasteCompanyNameBtn').addEventListener('click', () => pasteToField('newCompanyName'));
+
             // Confirm dialog listeners
             document.getElementById('confirmCancel').addEventListener('click', hideConfirmDialog);
             document.getElementById('confirmOk').addEventListener('click', executeConfirmedAction);
 
             // Filter listeners
             document.getElementById('resultFilter').addEventListener('change', applyFilters);
+            document.getElementById('mobileFilter').addEventListener('input', applyFilters);
             document.getElementById('nameFilter').addEventListener('input', applyFilters);
             document.getElementById('companyFilter').addEventListener('input', applyFilters);
             document.getElementById('schemeFilter').addEventListener('input', applyFilters);
             document.getElementById('bankFilter').addEventListener('input', applyFilters);
             document.getElementById('salaryFilter').addEventListener('input', applyFilters);
+
+            // Mobile number validation
+            document.getElementById('newMobile').addEventListener('input', function(e) {
+                let value = e.target.value;
+                // Remove any non-digit characters
+                value = value.replace(/\D/g, '');
+                // Remove prefixes
+                if (value.startsWith('971') || value.startsWith('0')) {
+                    if (value.startsWith('971')) {
+                        value = value.substring(3);
+                    } else if (value.startsWith('0')) {
+                        value = value.substring(1);
+                    }
+                }
+                e.target.value = value;
+            });
+
+            // Salary validation
+            document.getElementById('newSalary').addEventListener('input', function(e) {
+                let value = e.target.value;
+                // Remove any non-digit characters and spaces
+                value = value.replace(/[^\d]/g, '');
+                e.target.value = value;
+            });
+
+            // Title case transformation for CM Name
+            document.getElementById('newCmName').addEventListener('input', function(e) {
+                this.value = toTitleCase(this.value);
+            });
+
+            // Add keyboard navigation for modal form
+            const formFields = ['newDate', 'newResult', 'newMobile', 'newCmName', 'newCompanyName', 'newScheme', 'newBanking', 'newSalary'];
+            
+            formFields.forEach((fieldId, index) => {
+                const field = document.getElementById(fieldId);
+                field.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === 'Tab') {
+                        e.preventDefault();
+                        const nextIndex = (index + 1) % formFields.length;
+                        if (nextIndex === 0) {
+                            // Focus on Save button after last field
+                            document.getElementById('saveAddNewBtn').focus();
+                        } else {
+                            document.getElementById(formFields[nextIndex]).focus();
+                        }
+                    }
+                });
+            });
+
+            // Title case function
+            function toTitleCase(str) {
+                return str.replace(/\w\S*/g, function(txt) {
+                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                });
+            }
+
+            // Sort by salary
+            function sortBySalary(order) {
+                // Update button states
+                document.getElementById('sortSalaryAsc').classList.remove('active');
+                document.getElementById('sortSalaryDesc').classList.remove('active');
+                
+                if (order === 'asc') {
+                    document.getElementById('sortSalaryAsc').classList.add('active');
+                    currentSalarySortOrder = 'asc';
+                } else {
+                    document.getElementById('sortSalaryDesc').classList.add('active');
+                    currentSalarySortOrder = 'desc';
+                }
+
+                displayedData.sort((a, b) => {
+                    const salaryA = parseFloat(a.Salary || 0);
+                    const salaryB = parseFloat(b.Salary || 0);
+                    
+                    if (order === 'asc') {
+                        return salaryA - salaryB;
+                    } else {
+                        return salaryB - salaryA;
+                    }
+                });
+
+                currentIndex = 0;
+                populateTable(true);
+            }
+
+            // Paste function
+            async function pasteToField(fieldId) {
+                try {
+                    const text = await navigator.clipboard.readText();
+                    const field = document.getElementById(fieldId);
+                    if (fieldId === 'newMobile') {
+                        // Clean mobile number
+                        let cleanMobile = text.replace(/\D/g, '');
+                        if (cleanMobile.startsWith('971')) {
+                            cleanMobile = cleanMobile.substring(3);
+                        } else if (cleanMobile.startsWith('0')) {
+                            cleanMobile = cleanMobile.substring(1);
+                        }
+                        field.value = cleanMobile;
+                    } else if (fieldId === 'newCmName') {
+                        field.value = toTitleCase(text);
+                    } else {
+                        field.value = text;
+                    }
+                    field.focus();
+                } catch (err) {
+                    showError('Failed to paste from clipboard');
+                }
+            }
+
+            // Toggle filter mode
+            function toggleFilterMode() {
+                isExactSearch = !isExactSearch;
+                const btn = document.getElementById('filterBtn');
+                
+                if (isExactSearch) {
+                    btn.classList.add('active');
+                    btn.title = 'Exact Search Mode';
+                    btn.querySelector('.tooltip-text').textContent = 'Exact Search';
+                } else {
+                    btn.classList.remove('active');
+                    btn.title = 'Contains Search Mode';
+                    btn.querySelector('.tooltip-text').textContent = 'Contains Search';
+                }
+                
+                applyFilters();
+            }
 
             // Format phone number with country code
             function formatPhoneWithCountryCode(phone) {
@@ -877,6 +1175,12 @@
                 
                 // Otherwise, just add 971 as prefix
                 return '971' + digits;
+            }
+
+            // Get result priority order
+            function getResultPriority(result) {
+                const priority = priorityResultOptions.indexOf(result);
+                return priority === -1 ? 999 : priority;
             }
 
             // Fetch data from Google Sheet
@@ -907,8 +1211,11 @@
             // Show Add New Modal
             function showAddNewModal() {
                 document.getElementById('addNewModal').style.display = 'flex';
-                // Reset form
+                // Reset form and set current date
                 document.getElementById('addNewForm').reset();
+                document.getElementById('newDate').value = new Date().toISOString().split('T')[0];
+                // Focus on first field
+                document.getElementById('newDate').focus();
             }
 
             // Hide Add New Modal
@@ -919,16 +1226,12 @@
             // Save new record
             async function saveNewRecord() {
                 const formData = {
-                    date: document.getElementById('newDate').value || '',
+                    action: 'addCallingRecord',
+                    date: document.getElementById('newDate').value || new Date().toISOString().split('T')[0],
                     result: document.getElementById('newResult').value,
                     mobile: document.getElementById('newMobile').value,
                     cmName: document.getElementById('newCmName').value || '',
-                    seName: '',
-                    status: '',
-                    ccProduct: '',
                     companyName: document.getElementById('newCompanyName').value,
-                    companyLandline: '',
-                    designation: '',
                     scheme: document.getElementById('newScheme').value || '',
                     banking: document.getElementById('newBanking').value || '',
                     salary: document.getElementById('newSalary').value || ''
@@ -942,7 +1245,7 @@
 
                 showLoadingIndicator();
                 try {
-                    const response = await fetch(`${WEB_APP_URL}?action=addCallingRecord`, {
+                    const response = await fetch(WEB_APP_URL, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
@@ -970,6 +1273,7 @@
             // Apply filters and populate table
             function applyFilters() {
                 const resultFilter = document.getElementById('resultFilter').value.toLowerCase();
+                const mobileFilter = document.getElementById('mobileFilter').value.toLowerCase();
                 const nameFilter = document.getElementById('nameFilter').value.toLowerCase();
                 const companyFilter = document.getElementById('companyFilter').value.toLowerCase();
                 const schemeFilter = document.getElementById('schemeFilter').value.toLowerCase();
@@ -978,19 +1282,39 @@
 
                 // Filter data
                 let filteredData = allData.filter(record => {
-                    const matchesResult = resultFilter === "" || (record.Result && record.Result.toLowerCase().includes(resultFilter));
-                    const matchesName = nameFilter === "" || (record.Name && record.Name.toLowerCase().includes(nameFilter));
-                    const matchesCompany = companyFilter === "" || (record.Company && record.Company.toLowerCase().includes(companyFilter));
-                    const matchesScheme = schemeFilter === "" || (record.Scheme && record.Scheme.toLowerCase().includes(schemeFilter));
-                    const matchesBank = bankFilter === "" || (record.Bank && record.Bank.toLowerCase().includes(bankFilter));
+                    let matchesResult, matchesMobile, matchesName, matchesCompany, matchesScheme, matchesBank;
+                    
+                    if (isExactSearch) {
+                        // Exact search mode
+                        matchesResult = resultFilter === "" || (record.Result && record.Result.toLowerCase() === resultFilter);
+                        matchesMobile = mobileFilter === "" || (record.Mobile && record.Mobile.toString().toLowerCase() === mobileFilter);
+                        matchesName = nameFilter === "" || (record.Name && record.Name.toLowerCase() === nameFilter);
+                        matchesCompany = companyFilter === "" || (record.Company && record.Company.toLowerCase() === companyFilter);
+                        matchesScheme = schemeFilter === "" || (record.Scheme && record.Scheme.toLowerCase() === schemeFilter);
+                        matchesBank = bankFilter === "" || (record.Bank && record.Bank.toLowerCase() === bankFilter);
+                    } else {
+                        // Contains search mode (default)
+                        matchesResult = resultFilter === "" || (record.Result && record.Result.toLowerCase().includes(resultFilter));
+                        matchesMobile = mobileFilter === "" || (record.Mobile && record.Mobile.toString().toLowerCase().includes(mobileFilter));
+                        matchesName = nameFilter === "" || (record.Name && record.Name.toLowerCase().includes(nameFilter));
+                        matchesCompany = companyFilter === "" || (record.Company && record.Company.toLowerCase().includes(companyFilter));
+                        matchesScheme = schemeFilter === "" || (record.Scheme && record.Scheme.toLowerCase().includes(schemeFilter));
+                        matchesBank = bankFilter === "" || (record.Bank && record.Bank.toLowerCase().includes(bankFilter));
+                    }
+                    
                     const matchesSalary = isNaN(salaryFilter) || parseFloat(record.Salary || 0) >= salaryFilter;
                     
-                    return matchesResult && matchesName && matchesCompany && matchesScheme && matchesBank && matchesSalary;
+                    return matchesResult && matchesMobile && matchesName && matchesCompany && matchesScheme && matchesBank && matchesSalary;
                 });
 
                 // If in duplicate mode, filter to show only duplicates
                 if (isDuplicateMode) {
                     filteredData = filterDuplicates(filteredData);
+                }
+
+                // Apply default priority sorting if no filters applied
+                if (!resultFilter && !mobileFilter && !nameFilter && !companyFilter && !schemeFilter && !bankFilter && isNaN(salaryFilter) && !isDuplicateMode) {
+                    filteredData.sort((a, b) => getResultPriority(a.Result) - getResultPriority(b.Result));
                 }
 
                 displayedData = filteredData;
@@ -1055,6 +1379,55 @@
                 }
                 
                 applyFilters();
+            }
+
+            // Handle drag and drop
+            function handleDragStart(e, element, rowIndex, columnName, value) {
+                draggedElement = element;
+                dragSourceRowIndex = rowIndex;
+                element.classList.add('dragging');
+                e.dataTransfer.setData('text/plain', value);
+                e.dataTransfer.setData('application/json', JSON.stringify({
+                    rowIndex: rowIndex,
+                    columnName: columnName,
+                    value: value
+                }));
+            }
+
+            function handleDragEnd(e, element) {
+                element.classList.remove('dragging');
+                draggedElement = null;
+                dragSourceRowIndex = null;
+                // Remove all drop zones
+                document.querySelectorAll('.drop-zone').forEach(el => el.classList.remove('drop-zone'));
+            }
+
+            function handleDragOver(e) {
+                e.preventDefault();
+            }
+
+            function handleDragEnter(e, element) {
+                if (draggedElement && element !== draggedElement) {
+                    element.classList.add('drop-zone');
+                }
+            }
+
+            function handleDragLeave(e, element) {
+                element.classList.remove('drop-zone');
+            }
+
+            function handleDrop(e, element, targetRowIndex, targetColumnName) {
+                e.preventDefault();
+                element.classList.remove('drop-zone');
+                
+                if (draggedElement && targetRowIndex !== dragSourceRowIndex) {
+                    const sourceData = JSON.parse(e.dataTransfer.getData('application/json'));
+                    const targetValue = element.textContent;
+                    
+                    // Swap values
+                    updateCell(sourceData.rowIndex, sourceData.columnName, targetValue, sourceData.value);
+                    updateCell(targetRowIndex, targetColumnName, sourceData.value, targetValue);
+                }
             }
 
             // Populate table with data
@@ -1144,7 +1517,7 @@
                         const value = record[colName] || '';
                         
                         if (colName === 'Result') {
-                            // Result dropdown with actual values from Google Sheet
+                            // Result dropdown with updated values
                             const select = document.createElement('select');
                             select.className = 'result-dropdown';
                             
@@ -1154,10 +1527,12 @@
                             emptyOption.textContent = 'Select Result';
                             select.appendChild(emptyOption);
                             
-                            // All possible result options
+                            // All possible result options (updated)
                             const resultOptions = [
-                                'DNCR', 'Not Interested', 'Interested', 'Call Back', 
-                                'Switched off', 'No answer', 'Applied', 'Option 1', 'Option 2'
+                                'To Call', 'No Answer', 'Busy', 'DNCR', 'Not Interested', 
+                                'Interested', 'ROI Inquired', 'Call back', 'On Hold',
+                                'In Future, Shared details', 'Switched off', 'Referal',
+                                'Completed', 'Rejected', 'Option 1', 'Option 2'
                             ];
                             
                             // Add all result options
@@ -1181,47 +1556,242 @@
                             });
                             cell.appendChild(select);
                         } else if (colName === 'Mobile') {
+                            // Click to copy, long press to edit, drag to move
                             cell.textContent = value;
-                            cell.classList.add('copyable');
-                            cell.addEventListener('click', function() {
-                                copyToClipboard(this.textContent, this);
-                            });
-                        } else {
-                            // Make all other columns editable on long press
-                            cell.textContent = value;
-                            cell.classList.add('editable-cell');
+                            cell.classList.add('copyable', 'editable-cell', 'draggable');
+                            cell.draggable = true;
                             
-                            // Set up long press handling
+                            // Click to copy
+                            cell.addEventListener('click', function(e) {
+                                if (!longPressTimer) {
+                                    copyToClipboard(this.textContent, this);
+                                }
+                            });
+                            
+                            // Long press to edit
                             cell.addEventListener('mousedown', function(e) {
                                 const element = this;
                                 longPressTimer = setTimeout(function() {
                                     makeEditable(element, record.rowIndex, colName, value);
-                                }, 1000); // 1000ms = 1 second
+                                    longPressTimer = null;
+                                }, 1000);
                             });
                             
                             cell.addEventListener('mouseup', function() {
-                                clearTimeout(longPressTimer);
+                                if (longPressTimer) {
+                                    clearTimeout(longPressTimer);
+                                    longPressTimer = null;
+                                }
                             });
                             
                             cell.addEventListener('mouseleave', function() {
-                                clearTimeout(longPressTimer);
+                                if (longPressTimer) {
+                                    clearTimeout(longPressTimer);
+                                    longPressTimer = null;
+                                }
                             });
                             
-                            // For touch devices
+                            // Touch events
                             cell.addEventListener('touchstart', function(e) {
                                 const element = this;
                                 longPressTimer = setTimeout(function() {
                                     makeEditable(element, record.rowIndex, colName, value);
+                                    longPressTimer = null;
                                 }, 1000);
                             });
                             
                             cell.addEventListener('touchend', function() {
-                                clearTimeout(longPressTimer);
+                                if (longPressTimer) {
+                                    clearTimeout(longPressTimer);
+                                    longPressTimer = null;
+                                }
                             });
                             
-                            cell.addEventListener('touchcancel', function() {
-                                clearTimeout(longPressTimer);
+                            // Drag events
+                            cell.addEventListener('dragstart', (e) => handleDragStart(e, cell, record.rowIndex, colName, value));
+                            cell.addEventListener('dragend', (e) => handleDragEnd(e, cell));
+                            cell.addEventListener('dragover', handleDragOver);
+                            cell.addEventListener('dragenter', (e) => handleDragEnter(e, cell));
+                            cell.addEventListener('dragleave', (e) => handleDragLeave(e, cell));
+                            cell.addEventListener('drop', (e) => handleDrop(e, cell, record.rowIndex, colName));
+                            
+                        } else if (colName === 'Name') {
+                            // Click to copy, long press to edit (title case), drag to move
+                            cell.textContent = value;
+                            cell.classList.add('copyable', 'editable-cell', 'draggable');
+                            cell.draggable = true;
+                            
+                            // Click to copy
+                            cell.addEventListener('click', function(e) {
+                                if (!longPressTimer) {
+                                    copyToClipboard(this.textContent, this);
+                                }
                             });
+                            
+                            // Long press to edit
+                            cell.addEventListener('mousedown', function(e) {
+                                const element = this;
+                                longPressTimer = setTimeout(function() {
+                                    makeEditableTitleCase(element, record.rowIndex, colName, value);
+                                    longPressTimer = null;
+                                }, 1000);
+                            });
+                            
+                            cell.addEventListener('mouseup', function() {
+                                if (longPressTimer) {
+                                    clearTimeout(longPressTimer);
+                                    longPressTimer = null;
+                                }
+                            });
+                            
+                            cell.addEventListener('mouseleave', function() {
+                                if (longPressTimer) {
+                                    clearTimeout(longPressTimer);
+                                    longPressTimer = null;
+                                }
+                            });
+                            
+                            // Touch events
+                            cell.addEventListener('touchstart', function(e) {
+                                const element = this;
+                                longPressTimer = setTimeout(function() {
+                                    makeEditableTitleCase(element, record.rowIndex, colName, value);
+                                    longPressTimer = null;
+                                }, 1000);
+                            });
+                            
+                            cell.addEventListener('touchend', function() {
+                                if (longPressTimer) {
+                                    clearTimeout(longPressTimer);
+                                    longPressTimer = null;
+                                }
+                            });
+                            
+                            // Drag events
+                            cell.addEventListener('dragstart', (e) => handleDragStart(e, cell, record.rowIndex, colName, value));
+                            cell.addEventListener('dragend', (e) => handleDragEnd(e, cell));
+                            cell.addEventListener('dragover', handleDragOver);
+                            cell.addEventListener('dragenter', (e) => handleDragEnter(e, cell));
+                            cell.addEventListener('dragleave', (e) => handleDragLeave(e, cell));
+                            cell.addEventListener('drop', (e) => handleDrop(e, cell, record.rowIndex, colName));
+                            
+                        } else if (colName === 'Company' || colName === 'Bank' || colName === 'Scheme') {
+                            // Click to copy for Company, long press to edit (uppercase), drag to move
+                            cell.textContent = value;
+                            cell.classList.add('editable-cell', 'draggable');
+                            if (colName === 'Company') {
+                                cell.classList.add('copyable');
+                            }
+                            cell.draggable = true;
+                            
+                            // Click to copy for Company only
+                            if (colName === 'Company') {
+                                cell.addEventListener('click', function(e) {
+                                    if (!longPressTimer) {
+                                        copyToClipboard(this.textContent, this);
+                                    }
+                                });
+                            }
+                            
+                            // Long press to edit
+                            cell.addEventListener('mousedown', function(e) {
+                                const element = this;
+                                longPressTimer = setTimeout(function() {
+                                    makeEditableUppercase(element, record.rowIndex, colName, value);
+                                    longPressTimer = null;
+                                }, 1000);
+                            });
+                            
+                            cell.addEventListener('mouseup', function() {
+                                if (longPressTimer) {
+                                    clearTimeout(longPressTimer);
+                                    longPressTimer = null;
+                                }
+                            });
+                            
+                            cell.addEventListener('mouseleave', function() {
+                                if (longPressTimer) {
+                                    clearTimeout(longPressTimer);
+                                    longPressTimer = null;
+                                }
+                            });
+                            
+                            // Touch events
+                            cell.addEventListener('touchstart', function(e) {
+                                const element = this;
+                                longPressTimer = setTimeout(function() {
+                                    makeEditableUppercase(element, record.rowIndex, colName, value);
+                                    longPressTimer = null;
+                                }, 1000);
+                            });
+                            
+                            cell.addEventListener('touchend', function() {
+                                if (longPressTimer) {
+                                    clearTimeout(longPressTimer);
+                                    longPressTimer = null;
+                                }
+                            });
+                            
+                            // Drag events
+                            cell.addEventListener('dragstart', (e) => handleDragStart(e, cell, record.rowIndex, colName, value));
+                            cell.addEventListener('dragend', (e) => handleDragEnd(e, cell));
+                            cell.addEventListener('dragover', handleDragOver);
+                            cell.addEventListener('dragenter', (e) => handleDragEnter(e, cell));
+                            cell.addEventListener('dragleave', (e) => handleDragLeave(e, cell));
+                            cell.addEventListener('drop', (e) => handleDrop(e, cell, record.rowIndex, colName));
+                            
+                        } else if (colName === 'Salary') {
+                            // Long press to edit, drag to move
+                            cell.textContent = value;
+                            cell.classList.add('editable-cell', 'draggable');
+                            cell.draggable = true;
+                            
+                            // Long press to edit
+                            cell.addEventListener('mousedown', function(e) {
+                                const element = this;
+                                longPressTimer = setTimeout(function() {
+                                    makeEditable(element, record.rowIndex, colName, value);
+                                    longPressTimer = null;
+                                }, 1000);
+                            });
+                            
+                            cell.addEventListener('mouseup', function() {
+                                if (longPressTimer) {
+                                    clearTimeout(longPressTimer);
+                                    longPressTimer = null;
+                                }
+                            });
+                            
+                            cell.addEventListener('mouseleave', function() {
+                                if (longPressTimer) {
+                                    clearTimeout(longPressTimer);
+                                    longPressTimer = null;
+                                }
+                            });
+                            
+                            // Touch events
+                            cell.addEventListener('touchstart', function(e) {
+                                const element = this;
+                                longPressTimer = setTimeout(function() {
+                                    makeEditable(element, record.rowIndex, colName, value);
+                                    longPressTimer = null;
+                                }, 1000);
+                            });
+                            
+                            cell.addEventListener('touchend', function() {
+                                if (longPressTimer) {
+                                    clearTimeout(longPressTimer);
+                                    longPressTimer = null;
+                                }
+                            });
+                            
+                            // Drag events
+                            cell.addEventListener('dragstart', (e) => handleDragStart(e, cell, record.rowIndex, colName, value));
+                            cell.addEventListener('dragend', (e) => handleDragEnd(e, cell));
+                            cell.addEventListener('dragover', handleDragOver);
+                            cell.addEventListener('dragenter', (e) => handleDragEnter(e, cell));
+                            cell.addEventListener('dragleave', (e) => handleDragLeave(e, cell));
+                            cell.addEventListener('drop', (e) => handleDrop(e, cell, record.rowIndex, colName));
                         }
                         row.appendChild(cell);
                     });
@@ -1236,6 +1806,73 @@
 
                 updateRecordsInfo();
                 updateSelectAllCheckbox();
+            }
+
+            // Make a cell editable with uppercase transformation
+            function makeEditableUppercase(cell, rowIndex, columnName, currentValue) {
+                cell.classList.add('editing');
+                cell.innerHTML = '';
+                
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = currentValue;
+                input.style.textTransform = 'uppercase';
+                input.classList.add('edit-input');
+                
+                // Force uppercase as user types
+                input.addEventListener('input', function() {
+                    this.value = this.value.toUpperCase();
+                });
+                
+                cell.appendChild(input);
+                input.focus();
+                
+                // Handle saving on blur or Enter key
+                input.addEventListener('blur', function() {
+                    saveEditedCell(cell, rowIndex, columnName, this.value.toUpperCase(), currentValue);
+                });
+                
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        saveEditedCell(cell, rowIndex, columnName, this.value.toUpperCase(), currentValue);
+                    } else if (e.key === 'Escape') {
+                        cell.innerHTML = currentValue;
+                        cell.classList.remove('editing');
+                    }
+                });
+            }
+
+            // Make a cell editable with title case transformation
+            function makeEditableTitleCase(cell, rowIndex, columnName, currentValue) {
+                cell.classList.add('editing');
+                cell.innerHTML = '';
+                
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = currentValue;
+                input.classList.add('edit-input');
+                
+                // Force title case as user types
+                input.addEventListener('input', function() {
+                    this.value = toTitleCase(this.value);
+                });
+                
+                cell.appendChild(input);
+                input.focus();
+                
+                // Handle saving on blur or Enter key
+                input.addEventListener('blur', function() {
+                    saveEditedCell(cell, rowIndex, columnName, toTitleCase(this.value), currentValue);
+                });
+                
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        saveEditedCell(cell, rowIndex, columnName, toTitleCase(this.value), currentValue);
+                    } else if (e.key === 'Escape') {
+                        cell.innerHTML = currentValue;
+                        cell.classList.remove('editing');
+                    }
+                });
             }
 
             // Handle row selection
@@ -1420,12 +2057,13 @@
             function updateRecordsInfo() {
                 const recordsInfo = document.getElementById('recordsInfo');
                 if (isDuplicateMode) {
-                    recordsInfo.textContent = `Showing ${displayedData.length} duplicate records`;
+                    recordsInfo.textContent = `Showing ${Math.min(currentIndex, displayedData.length)} of ${displayedData.length} duplicate records`;
                 } else {
-                    recordsInfo.textContent = `Showing ${displayedData.length} records`;
+                    recordsInfo.textContent = `Showing ${Math.min(currentIndex, displayedData.length)} of ${displayedData.length} records`;
                 }
 
                 const showMoreBtn = document.getElementById('showMoreBtn');
+                
                 if (currentIndex < displayedData.length) {
                     showMoreBtn.classList.remove('hidden');
                 } else {
@@ -1436,6 +2074,7 @@
             // Clear filter inputs
             function clearFilters() {
                 document.getElementById('resultFilter').value = "";
+                document.getElementById('mobileFilter').value = "";
                 document.getElementById('nameFilter').value = "";
                 document.getElementById('companyFilter').value = "";
                 document.getElementById('schemeFilter').value = "";
@@ -1781,21 +2420,18 @@
                 });
             }
 
-            // Close modal if clicked outside
+            // Close modal if clicked outside (disabled for Add New Modal)
             window.addEventListener('click', function(event) {
                 const commentModal = document.getElementById('commentModal');
-                const addNewModal = document.getElementById('addNewModal');
                 const confirmDialog = document.getElementById('confirmDialog');
                 
                 if (event.target === commentModal) {
                     hideCommentModal();
                 }
-                if (event.target === addNewModal) {
-                    hideAddNewModal();
-                }
                 if (event.target === confirmDialog) {
                     hideConfirmDialog();
                 }
+                // Note: Add New Modal doesn't close on outside click as requested
             });
         });
     </script>
