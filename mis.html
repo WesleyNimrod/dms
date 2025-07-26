@@ -267,39 +267,6 @@
             box-shadow: 0 3px 8px rgba(0,0,0,0.1);
         }
         
-        @media (max-width: 768px) {
-            .chart-box {
-                width: 100%;
-            }
-            
-            .mobile-input-container {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .mobile-prefix {
-                border-radius: 4px 4px 0 0 !important;
-                border-right: 1px solid #ddd !important;
-            }
-            
-            .mobile-input-container input {
-                border-radius: 0 0 4px 4px !important;
-                border-left: 1px solid #ddd !important;
-                border-top: none !important;
-            }
-            
-            .input-with-paste {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 8px;
-            }
-            
-            .paste-btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-        
         .chart-title {
             font-weight: bold;
             color: #1A3A4A;
@@ -586,6 +553,7 @@
             align-items: center;
             gap: 5px;
             min-width: 120px;
+            justify-content: flex-end;
         }
 
         .status-container {
@@ -605,6 +573,19 @@
             align-items: center;
             gap: 5px;
             min-width: 80px;
+            justify-content: flex-end;
+        }
+
+        .points-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .points-input {
+            flex: 1;
+            min-width: 200px;
         }
 
         .text-primary {
@@ -612,34 +593,30 @@
         }
 
         .input-with-paste {
+            position: relative;
             display: flex;
-            gap: 5px;
             align-items: center;
         }
 
         .input-with-paste input {
-            flex: 1;
-            min-width: 0;
+            width: 100%;
+            padding-right: 45px;
         }
 
-        .paste-btn {
-            background: #1A3A4A;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
+        .paste-icon {
+            position: absolute;
+            right: 10px;
+            color: #1A3A4A;
             cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            font-size: 16px;
+            z-index: 10;
+            padding: 5px;
             transition: all 0.2s;
-            white-space: nowrap;
         }
 
-        .paste-btn:hover {
-            background: #0f2936;
-            transform: translateY(-1px);
+        .paste-icon:hover {
+            color: #0f2936;
+            transform: scale(1.1);
         }
 
         .mobile-prefix {
@@ -659,6 +636,7 @@
             display: flex;
             align-items: stretch;
             flex: 1;
+            position: relative;
         }
 
         .mobile-input-container input {
@@ -666,6 +644,25 @@
             border-left: none;
             flex: 1;
             font-size: 16px !important;
+            padding-right: 45px;
+        }
+
+        .mobile-paste-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #1A3A4A;
+            cursor: pointer;
+            font-size: 16px;
+            z-index: 10;
+            padding: 5px;
+            transition: all 0.2s;
+        }
+
+        .mobile-paste-icon:hover {
+            color: #0f2936;
+            transform: translateY(-50%) scale(1.1);
         }
         
         .form-grid {
@@ -673,10 +670,29 @@
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
         }
+
+        /* Fix 7: Summary Dashboard alignment fixes */
+        .summary-progress-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 2px;
+            margin-bottom: 2px;
+        }
+
+        .summary-target-grid {
+            display: grid;
+            grid-template-columns: 30fr 70fr;
+            gap: 2px;
+            margin-bottom: 2px;
+        }
         
         @media (max-width: 768px) {
             .form-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .chart-box {
+                width: 100%;
             }
             
             .profile-container {
@@ -712,6 +728,14 @@
             .deduction-checkbox-container {
                 min-width: 0;
                 justify-content: flex-start;
+            }
+
+            .summary-progress-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-target-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -770,8 +794,8 @@
                 </div>
             </div>
             
-            <!-- Progress Cards - 2-column layout -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
+            <!-- Progress Cards - Fixed layout alignment -->
+            <div class="summary-progress-grid mb-2">
                 <!-- In Progress Card -->
                 <div class="summary-card mb-0">
                     <h3 class="mb-1">In Progress</h3>
@@ -817,10 +841,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Effort & Target Cards - 2-column layout -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
+
                 <!-- Total Submissions Card -->
                 <div class="summary-card mb-0">
                     <h3 class="mb-1">Total Submissions</h3>
@@ -836,6 +857,28 @@
                         <div class="flex justify-between items-center">
                             <p class="font-medium text-gray-600 text-sm">Accounts:</p>
                             <p class="text-base font-bold text-blue-600" id="summaryTotalAccounts">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Account Funding & Target Cards - Fixed layout alignment -->
+            <div class="summary-target-grid mb-2">
+                <!-- Account Funding Card -->
+                <div class="summary-card mb-0">
+                    <h3 class="mb-1">Account Funding</h3>
+                    <div class="space-y-1">
+                        <div class="flex justify-between items-center">
+                            <p class="font-medium text-gray-600 text-sm">MDSA:</p>
+                            <p class="text-base font-bold text-orange-600" id="summaryFundingMDSA">0 (0 pts)</p>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <p class="font-medium text-gray-600 text-sm">Aspire:</p>
+                            <p class="text-base font-bold text-orange-600" id="summaryFundingAspire">0 (0 pts)</p>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <p class="font-medium text-gray-600 text-sm">Privilege:</p>
+                            <p class="text-base font-bold text-orange-600" id="summaryFundingPrivilege">0 (0 pts)</p>
                         </div>
                     </div>
                 </div>
@@ -937,7 +980,7 @@
                     
                     <!-- Scheme Distribution Chart -->
                     <div class="chart-box">
-                        <div class="chart-title">Scheme Distribution (Completed)</div>
+                        <div class="chart-title">Scheme Distribution</div>
                         <div class="scheme-chart">
                             <div class="donut-hole"></div>
                         </div>
@@ -974,25 +1017,59 @@
                 <div class="form-grid">
                     <!-- Left Column -->
                     <div class="space-y-4">
-                        <!-- CID with Paste Button -->
+                        <!-- CID with Paste Icon -->
                         <div>
                             <label for="cid" class="block text-gray-700 font-medium mb-1">CID (Optional)</label>
                             <div class="input-with-paste">
-                                <input type="text" id="cid" name="cid" class="w-full border rounded-md p-2 text-base" pattern="[0-9]*" inputmode="numeric">
-                                <button type="button" class="paste-btn" onclick="pasteToField('cid')">
-                                    <i class="fas fa-paste"></i> Paste
-                                </button>
+                                <input type="text" id="cid" name="cid" class="w-full border rounded-md p-2 text-base" pattern="[0-9]*" inputmode="numeric" tabindex="1">
+                                <i class="fas fa-paste paste-icon" onclick="pasteToField('cid')" title="Paste"></i>
                             </div>
                         </div>
                         
-                        <!-- App ID with Paste Button -->
+                        <!-- App ID with Paste Icon -->
                         <div>
                             <label for="appId" class="block text-gray-700 font-medium mb-1">App ID</label>
                             <div class="input-with-paste">
-                                <input type="text" id="appId" name="appId" class="w-full border rounded-md p-2 text-base" pattern="[0-9]*" inputmode="numeric">
-                                <button type="button" class="paste-btn" onclick="pasteToField('appId')">
-                                    <i class="fas fa-paste"></i> Paste
-                                </button>
+                                <input type="text" id="appId" name="appId" class="w-full border rounded-md p-2 text-base" pattern="[0-9]*" inputmode="numeric" tabindex="2">
+                                <i class="fas fa-paste paste-icon" onclick="pasteToField('appId')" title="Paste"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Salary -->
+                        <div>
+                            <label for="salary" class="block text-gray-700 font-medium required mb-1">Salary</label>
+                            <input type="number" id="salary" name="salary" class="w-full border rounded-md p-2 text-base" required tabindex="3">
+                        </div>
+                        
+                        <!-- Customer Name with Paste Icon -->
+                        <div>
+                            <label for="customerName" class="block text-gray-700 font-medium required mb-1">Customer Name</label>
+                            <div class="input-with-paste">
+                                <input type="text" id="customerName" name="customerName" class="w-full border rounded-md p-2 text-base" required style="text-transform: uppercase;" tabindex="4">
+                                <i class="fas fa-paste paste-icon" onclick="pasteToField('customerName')" title="Paste"></i>
+                            </div>
+                            <p id="nameError" class="text-red-500 text-sm hidden">Customer name must be unique</p>
+                        </div>
+                        
+                        <!-- Mobile with Paste Icon -->
+                        <div>
+                            <label for="mobile" class="block text-gray-700 font-medium required mb-1">Mobile</label>
+                            <div class="input-with-paste">
+                                <div class="mobile-input-container">
+                                    <div class="mobile-prefix">971</div>
+                                    <input type="text" id="mobile" name="mobile" class="w-full border rounded-md p-2 text-base" required pattern="[0-9]*" inputmode="numeric" placeholder="Enter 9 digits" tabindex="5">
+                                    <i class="fas fa-paste mobile-paste-icon" onclick="pasteToField('mobile')" title="Paste"></i>
+                                </div>
+                            </div>
+                            <p id="mobileError" class="text-red-500 text-sm hidden">Mobile number must be unique</p>
+                        </div>
+                        
+                        <!-- Company Name with Paste Icon -->
+                        <div>
+                            <label for="companyName" class="block text-gray-700 font-medium mb-1">Company Name</label>
+                            <div class="input-with-paste">
+                                <input type="text" id="companyName" name="companyName" class="w-full border rounded-md p-2 text-base" style="text-transform: uppercase;" tabindex="6">
+                                <i class="fas fa-paste paste-icon" onclick="pasteToField('companyName')" title="Paste"></i>
                             </div>
                         </div>
                         
@@ -1019,50 +1096,6 @@
                         <div>
                             <label for="date" class="block text-gray-700 font-medium required mb-1">Date</label>
                             <input type="date" id="date" name="date" class="w-full border rounded-md p-2 text-base" required>
-                        </div>
-                        
-                        <!-- Salary -->
-                        <div>
-                            <label for="salary" class="block text-gray-700 font-medium required mb-1">Salary</label>
-                            <input type="number" id="salary" name="salary" class="w-full border rounded-md p-2 text-base" required>
-                        </div>
-                        
-                        <!-- Customer Name with Paste Button -->
-                        <div>
-                            <label for="customerName" class="block text-gray-700 font-medium required mb-1">Customer Name</label>
-                            <div class="input-with-paste">
-                                <input type="text" id="customerName" name="customerName" class="w-full border rounded-md p-2 text-base" required style="text-transform: uppercase;">
-                                <button type="button" class="paste-btn" onclick="pasteToField('customerName')">
-                                    <i class="fas fa-paste"></i> Paste
-                                </button>
-                            </div>
-                            <p id="nameError" class="text-red-500 text-sm hidden">Customer name must be unique</p>
-                        </div>
-                        
-                        <!-- Mobile with Paste Button -->
-                        <div>
-                            <label for="mobile" class="block text-gray-700 font-medium required mb-1">Mobile</label>
-                            <div class="input-with-paste">
-                                <div class="mobile-input-container">
-                                    <div class="mobile-prefix">971</div>
-                                    <input type="text" id="mobile" name="mobile" class="w-full border rounded-md p-2 text-base" required pattern="[0-9]*" inputmode="numeric" placeholder="Enter 9 digits">
-                                </div>
-                                <button type="button" class="paste-btn" onclick="pasteToField('mobile')">
-                                    <i class="fas fa-paste"></i> Paste
-                                </button>
-                            </div>
-                            <p id="mobileError" class="text-red-500 text-sm hidden">Mobile number must be unique</p>
-                        </div>
-                        
-                        <!-- Company Name with Paste Button -->
-                        <div>
-                            <label for="companyName" class="block text-gray-700 font-medium mb-1">Company Name</label>
-                            <div class="input-with-paste">
-                                <input type="text" id="companyName" name="companyName" class="w-full border rounded-md p-2 text-base" style="text-transform: uppercase;">
-                                <button type="button" class="paste-btn" onclick="pasteToField('companyName')">
-                                    <i class="fas fa-paste"></i> Paste
-                                </button>
-                            </div>
                         </div>
                     </div>
                     
@@ -1129,7 +1162,7 @@
                         <div>
                             <label class="block text-gray-700 font-medium mb-1">Banking</label>
                             <div class="banking-container mt-2">
-                                <select id="banking" name="banking" class="banking-select border rounded-md p-2 text-base">
+                                <select id="banking" name="banking" class="banking-select border rounded-md p-2 text-base" tabindex="7">
                                     <option value="SELECT">SELECT</option>
                                     <option value="ADCB">ADCB</option>
                                     <option value="ENBD">ENBD</option>
@@ -1181,7 +1214,7 @@
                         <div>
                             <label for="status" class="block text-gray-700 font-medium required mb-1">Status</label>
                             <div class="status-container mt-2">
-                                <select id="status" name="status" class="status-select border rounded-md p-2 text-base" required>
+                                <select id="status" name="status" class="status-select border rounded-md p-2 text-base" required tabindex="8">
                                     <option value="">Select Status</option>
                                     <option value="Draft">Draft</option>
                                     <option value="Under Review">Under Review</option>
@@ -1220,14 +1253,16 @@
                         <!-- Points (System Generated) -->
                         <div>
                             <label for="points" class="block text-gray-700 font-medium mb-1">Points (System Generated)</label>
-                            <input type="text" id="points" name="points" class="w-full border rounded-md p-2 text-base bg-gray-100" readonly>
+                            <div class="points-container mt-2">
+                                <input type="text" id="points" name="points" class="points-input border rounded-md p-2 text-base bg-gray-100" readonly>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Form Action Buttons -->
                 <div class="flex justify-center gap-3 mt-6 flex-wrap">
-                    <button type="submit" id="submitBtn" class="custom-btn text-white py-2 px-6 rounded-md flex items-center">
+                    <button type="submit" id="submitBtn" class="custom-btn text-white py-2 px-6 rounded-md flex items-center" tabindex="9">
                         <i class="fas fa-save mr-2"></i> Save Data
                     </button>
                     <button type="button" id="updateBtn" class="custom-btn bg-blue-600 text-white py-2 px-6 rounded-md flex items-center hidden">
@@ -1248,7 +1283,7 @@
     <div id="viewSection" class="section">
         <div class="bg-white p-4 rounded-lg shadow-md">
             <div class="flex flex-wrap justify-between items-center mb-4">
-                <h2 class="text-xl font-bold text-primary">View All Records (Data Sheet)</h2>
+                <h2 class="text-xl font-bold text-primary">View All Records</h2>
                 <div class="flex flex-wrap gap-2 mt-2 sm:mt-0">
                     <button id="earnPointsBtn" class="points-btn earned">
                         <i class="fas fa-check-circle mr-2"></i><span id="earnedPointsTotal">0</span></button>
@@ -1285,7 +1320,7 @@
             
             <!-- Search Container -->
             <div class="search-container">
-                <h3 class="text-lg font-semibold text-primary mb-3">Find Records (Master Sheet)</h3>
+                <h3 class="text-lg font-semibold text-primary mb-3">Find Records</h3>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                     <div>
@@ -1492,7 +1527,7 @@
                     // Remove non-digits and handle prefixes
                     processedText = processedText.replace(/\D/g, '');
                     
-                    // Remove leading zeros and + signs
+                    // Remove leading zeros
                     if (processedText.startsWith('0')) {
                         processedText = processedText.substring(1);
                     }
@@ -1577,9 +1612,45 @@
         document.getElementById('product2ndACC').disabled = true;
         document.getElementById('productSTL').disabled = true;
         
+        // Fix 4: Add keyboard navigation
+        setupKeyboardNavigation();
+        
         showSection('summary');
         loadProfiles();
     });
+
+    // Fix 4: Keyboard navigation for form fields
+    function setupKeyboardNavigation() {
+        const formFields = [
+            'cid', 'appId', 'salary', 'customerName', 'mobile', 
+            'companyName', 'banking', 'status', 'submitBtn'
+        ];
+        
+        formFields.forEach((fieldId, index) => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === 'Tab') {
+                        e.preventDefault();
+                        
+                        if (fieldId === 'submitBtn') {
+                            // Trigger save button click
+                            field.click();
+                        } else {
+                            // Move to next field
+                            const nextIndex = index + 1;
+                            if (nextIndex < formFields.length) {
+                                const nextField = document.getElementById(formFields[nextIndex]);
+                                if (nextField) {
+                                    nextField.focus();
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    }
 
     // ==========================================
     // THEME AND UI FUNCTIONALITY
@@ -2069,7 +2140,7 @@
         calculateTotalPoints();
     }
     
-    // Improved helper functions to set dropdown values correctly based on saved product string
+    // Fix 1: Improved helper functions to set dropdown values correctly based on saved product string
     function setAccDropdownFromString(accSelect, productString, accIndex = 0) {
         if (!accSelect || !productString) return;
         
@@ -2086,14 +2157,14 @@
             const targetProduct = accProducts[accIndex];
             console.log('Setting ACC dropdown to:', targetProduct);
             
-            // Improved matching logic
+            // Enhanced matching logic for ACC products
             for (let option of accSelect.options) {
                 const optionValue = option.value;
                 const optionText = option.text;
                 
                 console.log('Checking option:', optionValue, optionText);
                 
-                // Direct matches
+                // Direct matches with improved logic
                 if (targetProduct === 'MDSA' && optionValue === 'MDSA') {
                     accSelect.value = optionValue;
                     console.log('Set MDSA');
@@ -2517,7 +2588,7 @@
     }
 
     // ==========================================
-    // GOOGLE SHEETS INTEGRATION
+    // GOOGLE SHEETS INTEGRATION - FIXED
     // ==========================================
 
     // Fetch all data from Google Sheets Data sheet
@@ -2528,11 +2599,7 @@
             const data = await response.json();
             
             if (data.success) {
-                allRecordsData = data.data;
-                
-                if (!allRecordsData || allRecordsData.length === 0) {
-                    allRecordsData = [];
-                }
+                allRecordsData = data.data || [];
                 
                 isShowingAllRecords = false;
                 const displayData = allRecordsData.slice(-maxInitialRecords);
@@ -2540,10 +2607,12 @@
                 calculatePointsTotals(allRecordsData);
             } else {
                 showSuccess(`Error: ${data.error}`);
+                document.getElementById('dataTableBody').innerHTML = '<tr><td colspan="8" class="text-center py-4">Error loading data from server</td></tr>';
             }
         } catch (error) {
             console.error('Error fetching data:', error);
             showSuccess('Error fetching data from server.');
+            document.getElementById('dataTableBody').innerHTML = '<tr><td colspan="8" class="text-center py-4">Error connecting to server</td></tr>';
         } finally {
             hideLoading();
         }
@@ -2553,12 +2622,12 @@
         if (!isShowingAllRecords && allRecordsData.length > 0) {
             displayDataInTable(allRecordsData, 'dataTableBody', false, false, 'data');
             isShowingAllRecords = true;
-            this.innerHTML = '<i class="fas fa-list-alt mr-2"></i> Show Last 10 Records';
+            this.innerHTML = '<i class="fas fa-list-alt mr-2"></i>';
         } else {
             const displayData = allRecordsData.slice(-maxInitialRecords);
             displayDataInTable(displayData, 'dataTableBody', false, false, 'data');
             isShowingAllRecords = false;
-            this.innerHTML = '<i class="fas fa-list mr-2"></i> Show All Records';
+            this.innerHTML = '<i class="fas fa-list mr-2"></i>';
         }
     });
 
@@ -2586,7 +2655,7 @@
             const data = await response.json();
             
             if (data.success) {
-                populateSummaryData(data.data);
+                populateSummaryData(data.data || []);
             } else {
                 showSuccess(`Error: ${data.error}`);
             }
@@ -2617,6 +2686,11 @@
             document.getElementById('summaryTotalCC').textContent = "0";
             document.getElementById('summaryTotalPL').textContent = "AED 0";
             document.getElementById('summaryTotalAccounts').textContent = "0";
+            
+            // Account Funding defaults
+            document.getElementById('summaryFundingMDSA').textContent = "0 (0 pts)";
+            document.getElementById('summaryFundingAspire').textContent = "0 (0 pts)";
+            document.getElementById('summaryFundingPrivilege').textContent = "0 (0 pts)";
             return;
         }
         
@@ -2628,6 +2702,11 @@
         let conventionalCount = 0, islamicCount = 0, bothCount = 0;
         let aspireCount = 0, privilegeCount = 0, mdsaCount = 0;
         let tmlAllCount = 0, tmlCCCount = 0, tmSelectCount = 0, ntmlCount = 0;
+        
+        // Fix 6: Account Funding calculations - updated logic
+        let fundingMDSACount = 0, fundingMDSAPoints = 0;
+        let fundingAspireCount = 0, fundingAspirePoints = 0;
+        let fundingPrivilegeCount = 0, fundingPrivilegePoints = 0;
         
         data.forEach(record => {
             const points = parseFloat(record.Points) || 0;
@@ -2642,6 +2721,32 @@
                 earnedPoints += points;
             } else if (!isRejected) {
                 pendingPoints += points;
+            }
+            
+            // Fix 6: Updated Account Funding logic - check product string without STL
+            if (!isRejected && !productString.includes('STL')) {
+                if (productString.includes('MDSA')) {
+                    fundingMDSACount++;
+                    fundingMDSAPoints += 175; // MDSA points value
+                } 
+                
+                if (productString.includes('Aspire 5K-10K') || productString.includes('Aspire 10K-20K')) {
+                    fundingAspireCount++;
+                    if (productString.includes('Aspire 5K-10K')) {
+                        fundingAspirePoints += 150; // Aspire 5K-10K points
+                    } else if (productString.includes('Aspire 10K-20K')) {
+                        fundingAspirePoints += 400; // Aspire 10K-20K points
+                    }
+                }
+                
+                if (productString.includes('Privilege 20K-40K') || productString.includes('Privilege 40K')) {
+                    fundingPrivilegeCount++;
+                    if (productString.includes('Privilege 20K-40K')) {
+                        fundingPrivilegePoints += 550; // Privilege 20K-40K points
+                    } else if (productString.includes('Privilege 40K')) {
+                        fundingPrivilegePoints += 800; // Privilege 40K+ points
+                    }
+                }
             }
             
             let ccCount = 0;
@@ -2743,6 +2848,11 @@
         document.getElementById('summaryTotalPL').textContent = formatCurrency(totalLoanAmount > 0 ? totalLoanAmount : 0);
         document.getElementById('summaryTotalAccounts').textContent = totalAccounts > 0 ? totalAccounts : "0";
         
+        // Update Account Funding section
+        document.getElementById('summaryFundingMDSA').textContent = `${fundingMDSACount} (${fundingMDSAPoints} pts)`;
+        document.getElementById('summaryFundingAspire').textContent = `${fundingAspireCount} (${fundingAspirePoints} pts)`;
+        document.getElementById('summaryFundingPrivilege').textContent = `${fundingPrivilegeCount} (${fundingPrivilegePoints} pts)`;
+        
         updateTargetProgress('CC', completedCC);
         updateTargetProgress('PL', completedLoanAmount);
         updateTargetProgress('ACC', totalAccounts);
@@ -2835,12 +2945,17 @@
         const totalPL = document.getElementById('summaryTotalPL').textContent;
         const totalAccounts = document.getElementById('summaryTotalAccounts').textContent;
         
+        const fundingMDSA = document.getElementById('summaryFundingMDSA').textContent;
+        const fundingAspire = document.getElementById('summaryFundingAspire').textContent;
+        const fundingPrivilege = document.getElementById('summaryFundingPrivilege').textContent;
+        
         const progressCC = document.getElementById('progressCC').textContent;
         const progressPL = document.getElementById('progressPL').textContent;
         const progressACC = document.getElementById('progressACC').textContent;
         
         const now = new Date();
-        const dateStr = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
+        // Fix 3: Date format DD/MM/YYYY
+        const dateStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
         const timeStr = now.toLocaleTimeString();
         
         const summaryText = `SUMMARY REPORT [Generated on: ${dateStr} at ${timeStr}]
@@ -2861,6 +2976,11 @@ TOTAL SUBMISSIONS
 Credit Cards: ${totalCC}
 Personal Loans: ${totalPL}
 Accounts: ${totalAccounts}
+
+ACCOUNT FUNDING
+MDSA: ${fundingMDSA}
+Aspire: ${fundingAspire}
+Privilege: ${fundingPrivilege}
 
 TARGET PROGRESS
 Credit Cards: ${progressCC}
@@ -3096,19 +3216,18 @@ Accounts: ${progressACC}`;
             const appIdValue = row['App ID'] || '';
             const customerNameValue = row['Customer Name'] || '';
             
-            // Format mobile number for display and calling
+            // Format mobile number for display and calling - FIXED
             let displayMobile = mobileNumber;
             let callMobile = mobileNumber;
             
             if (mobileNumber) {
-                // For display, show without spaces
-                displayMobile = mobileNumber.replace(/\s+/g, '');
-                
-                // For calling, ensure it starts with 971
-                if (!mobileNumber.startsWith('971')) {
-                    callMobile = '971' + mobileNumber.replace(/\s+/g, '');
+                // For display, show with proper formatting if it contains 971 prefix
+                if (mobileNumber.toString().startsWith('971')) {
+                    displayMobile = mobileNumber.toString();
+                    callMobile = mobileNumber.toString();
                 } else {
-                    callMobile = mobileNumber.replace(/\s+/g, '');
+                    displayMobile = mobileNumber.toString();
+                    callMobile = '971' + mobileNumber.toString();
                 }
             }
             
@@ -3522,11 +3641,11 @@ Accounts: ${progressACC}`;
         
         // Handle mobile number - remove 971 prefix if present for display and remove spaces
         let mobileValue = data.Mobile || '';
-        if (mobileValue.startsWith('971')) {
-            mobileValue = mobileValue.substring(3);
+        if (mobileValue.toString().startsWith('971')) {
+            mobileValue = mobileValue.toString().substring(3);
         }
         // Remove any spaces
-        mobileValue = mobileValue.replace(/\s+/g, '');
+        mobileValue = mobileValue.toString().replace(/\s+/g, '');
         mobileInput.value = mobileValue;
         
         companyNameInput.value = data['Company Name'] || '';
@@ -3924,7 +4043,15 @@ Accounts: ${progressACC}`;
             const tr = document.createElement('tr');
             tr.setAttribute('data-cid', record.CID || '');
             
-            const date = record.Date ? new Date(record.Date).toLocaleDateString() : '';
+            // Fix 3: Date format DD/MM/YYYY
+            let date = '';
+            if (record.Date) {
+                const dateObj = new Date(record.Date);
+                if (!isNaN(dateObj.getTime())) {
+                    date = `${String(dateObj.getDate()).padStart(2, '0')}/${String(dateObj.getMonth() + 1).padStart(2, '0')}/${dateObj.getFullYear()}`;
+                }
+            }
+            
             const productType = categorizeProductType(record.Product);
             
             let productDisplay = productType;
@@ -4099,7 +4226,10 @@ Accounts: ${progressACC}`;
             
             doc.setFontSize(10);
             doc.setTextColor(0, 0, 0);
-            doc.text(`Generated on: ${new Date().toLocaleDateString()}`, margin, 28);
+            // Fix 3: Date format DD/MM/YYYY in PDF
+            const now = new Date();
+            const dateStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
+            doc.text(`Generated on: ${dateStr}`, margin, 28);
             
             // Calculate column widths based on specified percentages
             const columnPercentages = {
