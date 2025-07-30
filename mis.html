@@ -18,18 +18,15 @@
             width: 100vw;
             height: 100vh;
             overflow-x: hidden;
-        }
-        
+        }     
         .custom-btn {
             background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
             transition: all 0.3s;
         }
-        
         .custom-btn:hover {
             opacity: 0.9;
             transform: translateY(-1px);
         }
-        
         .gradient-primary {
             background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
         }
@@ -671,7 +668,6 @@
             gap: 1rem;
         }
 
-        /* Fix 7: Summary Dashboard alignment fixes */
         .summary-progress-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -679,11 +675,79 @@
             margin-bottom: 2px;
         }
 
-        .summary-target-grid {
+        .hidden-column {
+            display: none;
+        }
+
+        /* Fix 1: Account Funding and Target layout - 30% and 70% */
+        .funding-target-container {
             display: grid;
             grid-template-columns: 30fr 70fr;
-            gap: 2px;
-            margin-bottom: 2px;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .account-funding-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .account-funding-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .account-funding-title {
+            color: #1A3A4A;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .account-funding-total {
+            color: #ff8c00;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .account-funding-items {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 0.8rem;
+        }
+
+        .account-funding-item {
+            color: #333;
+        }
+
+        .funding-count {
+            color: #ff8c00;
+            font-weight: bold;
+        }
+
+        .funding-points {
+            color: #666;
+        }
+
+        .target-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .target-card h3 {
+            color: #1A3A4A;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #f3f3f3;
         }
         
         @media (max-width: 768px) {
@@ -693,24 +757,20 @@
             
             .chart-box {
                 width: 100%;
-            }
-            
+            }            
             .profile-container {
                 flex-direction: column;
                 align-items: stretch;
-            }
-            
+            }       
             .profile-input,
             .profile-select {
                 min-width: 0;
                 width: 100%;
-            }
-            
+            }         
             .profile-btn {
                 width: 100%;
                 justify-content: center;
-            }
-            
+            }            
             .banking-container,
             .status-container {
                 flex-direction: column;
@@ -734,17 +794,24 @@
                 grid-template-columns: 1fr;
             }
 
-            .summary-target-grid {
+            .funding-target-container {
                 grid-template-columns: 1fr;
+            }
+
+            .account-funding-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            .account-funding-items {
+                flex-direction: column;
+                gap: 3px;
             }
         }
     </style>
 </head>
-
 <body class="bg-gray-50 font-tahoma">
-
 <div class="container mx-auto px-2 py-2 max-w-full">
-
     <!-- Section Navigation Buttons -->
     <div class="mb-3 flex justify-center gap-2 flex-wrap">
         <button id="showSummaryBtn" class="custom-btn text-white py-2 px-4 rounded-md flex items-center text-sm">
@@ -768,7 +835,7 @@
     <!-- Summary Section -->
     <div id="summarySection" class="section active">
         <div class="bg-white p-3 rounded-lg shadow-md">
-            <div class="flex justify-between items-center mb-3">
+            <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-bold text-primary">Summary Dashboard</h2>
                 <button id="copySummaryBtn" class="bg-gray-600 text-white p-2 rounded-md hover:bg-gray-700 no-print">
                     <i class="fas fa-copy"></i>
@@ -862,29 +929,29 @@
                 </div>
             </div>
             
-            <!-- Account Funding & Target Cards - Fixed layout alignment -->
-            <div class="summary-target-grid mb-2">
-                <!-- Account Funding Card -->
-                <div class="summary-card mb-0">
-                    <h3 class="mb-1">Account Funding</h3>
-                    <div class="space-y-1">
-                        <div class="flex justify-between items-center">
-                            <p class="font-medium text-gray-600 text-sm">MDSA:</p>
-                            <p class="text-base font-bold text-orange-600" id="summaryFundingMDSA">0 (0 pts)</p>
+            <!-- Fix 1: Account Funding and Target in one line (30% - 70%) -->
+            <div class="funding-target-container">
+                <!-- Account Funding Card (30%) -->
+                <div class="account-funding-card">
+                    <div class="account-funding-header">
+                        <span class="account-funding-title">Account Funding</span>
+                        <span class="account-funding-total" id="fundingTotal">14 (3050 pts)</span>
+                    </div>
+                    <div class="account-funding-items">
+                        <div class="account-funding-item">
+                            MDSA: <span class="funding-count" id="fundingMDSACount">6</span> <span class="funding-points" id="fundingMDSAPoints">(1050 pts)</span>
                         </div>
-                        <div class="flex justify-between items-center">
-                            <p class="font-medium text-gray-600 text-sm">Aspire:</p>
-                            <p class="text-base font-bold text-orange-600" id="summaryFundingAspire">0 (0 pts)</p>
+                        <div class="account-funding-item">
+                            Aspire: <span class="funding-count" id="fundingAspireCount">6</span> <span class="funding-points" id="fundingAspirePoints">(900 pts)</span>
                         </div>
-                        <div class="flex justify-between items-center">
-                            <p class="font-medium text-gray-600 text-sm">Privilege:</p>
-                            <p class="text-base font-bold text-orange-600" id="summaryFundingPrivilege">0 (0 pts)</p>
+                        <div class="account-funding-item">
+                            Privilege: <span class="funding-count" id="fundingPrivilegeCount">2</span> <span class="funding-points" id="fundingPrivilegePoints">(1100 pts)</span>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Target Card -->
-                <div class="summary-card mb-0">
+                <!-- Target Card (70%) -->
+                <div class="target-card">
                     <h3 class="mb-1">Target</h3>
                     <div class="space-y-2">
                         <div>
@@ -1030,7 +1097,7 @@
                         <div>
                             <label for="appId" class="block text-gray-700 font-medium mb-1">App ID</label>
                             <div class="input-with-paste">
-                                <input type="text" id="appId" name="appId" class="w-full border rounded-md p-2 text-base" pattern="[0-9]*" inputmode="numeric" tabindex="2">
+                                <input type="text" id="appId" name="appId" class="w-full border rounded-md p-2 text-base" tabindex="2">
                                 <i class="fas fa-paste paste-icon" onclick="pasteToField('appId')" title="Paste"></i>
                             </div>
                         </div>
@@ -1289,6 +1356,8 @@
                         <i class="fas fa-check-circle mr-2"></i><span id="earnedPointsTotal">0</span></button>
                     <button id="pendingPointsBtn" class="points-btn pending">
                         <i class="fas fa-hourglass-half mr-2"></i> <span id="pendingPointsTotal">0</span></button>
+                    <button id="expandBtn" class="bg-gray-600 text-white py-2 px-3 rounded-md hover:bg-gray-700" title="Expand/Collapse Columns">
+                        <i class="fas fa-expand-alt"></i></button>
                     <button id="exportDataBtn" class="custom-btn text-white py-2 px-4 rounded-md flex items-center">
                         <i class="fas fa-file-export mr-2"></i></button>
                     <button id="refreshDataBtn" class="custom-btn text-white py-2 px-4 rounded-md flex items-center">
@@ -1302,14 +1371,14 @@
                 <table id="dataTable" class="data-table">
                     <thead>
                         <tr>
-                            <th>CID</th>
-                            <th>App ID</th>
+                            <th class="cid-column hidden-column">CID</th>
+                            <th class="appid-column hidden-column">App ID</th>
                             <th>Customer Name</th>
                             <th>Mobile</th>
                             <th>Products</th>
                             <th>Status</th>
                             <th>Points</th>
-                            <th class="w-20">Actions</th>
+                            <th class="action-column hidden-column w-20">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="dataTableBody">
@@ -1353,14 +1422,14 @@
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>CID</th>
-                                <th>App ID</th>
+                                <th class="search-cid-column hidden-column">CID</th>
+                                <th class="search-appid-column hidden-column">App ID</th>
                                 <th>Customer Name</th>
                                 <th>Mobile</th>
                                 <th>Products</th>
                                 <th>Status</th>
                                 <th>Points</th>
-                                <th class="w-20">Actions</th>
+                                <th class="search-action-column hidden-column w-20">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="searchResultsBody">
@@ -1495,6 +1564,8 @@
     let editingData = null;
     let editingProductString = "";
     let editingFromMaster = false;
+    let isExpanded = false;
+    let appInitialized = false;
 
     // ==========================================
     // PASTE FUNCTIONALITY
@@ -1512,9 +1583,13 @@
             // Process based on field type
             switch(fieldId) {
                 case 'cid':
-                case 'appId':
                     // Only allow numbers
                     processedText = processedText.replace(/\D/g, '');
+                    break;
+                    
+                case 'appId':
+                    // Allow text but no spaces
+                    processedText = processedText.replace(/\s/g, '');
                     break;
                     
                 case 'customerName':
@@ -1561,8 +1636,10 @@
     // INPUT VALIDATION
     // ==========================================
 
-    // Add input validation for number-only fields
+    // Fix 2: Enhanced DOM loaded initialization with proper 2nd ACC and Other handling
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM Content Loaded - Initializing app...');
+        
         // Set current date by default
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('date').value = today;
@@ -1572,9 +1649,9 @@
             this.value = this.value.replace(/\D/g, '');
         });
         
-        // App ID - numbers only
+        // App ID - allow text but no spaces
         document.getElementById('appId').addEventListener('input', function(e) {
-            this.value = this.value.replace(/\D/g, '');
+            this.value = this.value.replace(/\s/g, '');
         });
         
         // Customer Name - uppercase
@@ -1612,14 +1689,130 @@
         document.getElementById('product2ndACC').disabled = true;
         document.getElementById('productSTL').disabled = true;
         
-        // Fix 4: Add keyboard navigation
         setupKeyboardNavigation();
+        setupProductEventListeners();
+        
+        // Mark app as initialized with a delay to ensure everything is ready
+        setTimeout(() => {
+            appInitialized = true;
+            console.log('App initialization complete');
+        }, 100);
         
         showSection('summary');
         loadProfiles();
     });
 
-    // Fix 4: Keyboard navigation for form fields
+    // Fix 2: Enhanced product event listeners setup with specific 2nd ACC and Other handling
+    function setupProductEventListeners() {
+        console.log('Setting up product event listeners...');
+        
+        // Product checkbox change events
+        document.getElementById('productACC').addEventListener('change', function() {
+            const product2ndACC = document.getElementById('product2ndACC');
+            const productSTL = document.getElementById('productSTL');
+            
+            product2ndACC.disabled = !this.checked;
+            productSTL.disabled = !this.checked;
+            
+            if (!this.checked) {
+                product2ndACC.checked = false;
+                productSTL.checked = false;
+            }
+            
+            if (appInitialized) {
+                updateProductOptions();
+            }
+        });
+
+        // Fix 2: Enhanced 2nd ACC handling with proper delay
+        document.getElementById('product2ndACC').addEventListener('change', function() {
+            console.log('2nd ACC checkbox changed:', this.checked);
+            if (appInitialized) {
+                // Add delay specifically for 2nd ACC to ensure proper initialization
+                setTimeout(() => {
+                    updateProductOptions();
+                }, 100);
+            }
+        });
+
+        document.getElementById('productSTL').addEventListener('change', function() {
+            calculateTotalPoints();
+        });
+
+        document.getElementById('productPL').addEventListener('change', function() {
+            const loanAmountSection = document.getElementById('loanAmountSection');
+            const loanAmountInput = document.getElementById('loanAmount');
+            
+            if (this.checked) {
+                loanAmountSection.classList.remove('hidden');
+            } else {
+                loanAmountSection.classList.add('hidden');
+                loanAmountInput.value = '';
+            }
+            
+            if (appInitialized) {
+                updateProductOptions();
+            }
+        });
+
+        document.getElementById('productCC').addEventListener('change', function() {
+            const product2ndCC = document.getElementById('product2ndCC');
+            product2ndCC.disabled = !this.checked;
+            
+            if (!this.checked) {
+                product2ndCC.checked = false;
+            }
+            
+            if (appInitialized) {
+                updateProductOptions();
+            }
+        });
+
+        document.getElementById('product2ndCC').addEventListener('change', function() {
+            if (appInitialized) {
+                updateProductOptions();
+            }
+        });
+
+        document.getElementById('productBTCCL').addEventListener('change', function() {
+            calculateTotalPoints();
+        });
+
+        // Fix 2: Enhanced Other product handling
+        document.getElementById('productOther').addEventListener('change', function() {
+            const otherPointsSection = document.getElementById('otherPointsSection');
+            const otherPointsInput = document.getElementById('otherPoints');
+            
+            if (this.checked) {
+                otherPointsSection.classList.remove('hidden');
+            } else {
+                otherPointsSection.classList.add('hidden');
+                otherPointsInput.value = '';
+            }
+            calculateTotalPoints();
+        });
+
+        document.getElementById('otherPoints').addEventListener('input', function() {
+            calculateTotalPoints();
+        });
+
+        document.querySelectorAll('input[name="proposition"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (appInitialized) {
+                    updateProductOptions();
+                }
+            });
+        });
+
+        document.getElementById('salary').addEventListener('input', function() {
+            if (appInitialized) {
+                updateProductOptions();
+            }
+        });
+
+        console.log('Product event listeners setup complete');
+    }
+
     function setupKeyboardNavigation() {
         const formFields = [
             'cid', 'appId', 'salary', 'customerName', 'mobile', 
@@ -1704,6 +1897,40 @@
     showEntryBtn.addEventListener('click', () => showSection('entry'));
     showViewBtn.addEventListener('click', () => showSection('view'));
     showSummaryBtn.addEventListener('click', () => showSection('summary'));
+
+    // Expand button functionality
+    document.getElementById('expandBtn').addEventListener('click', function() {
+        isExpanded = !isExpanded;
+        toggleColumnVisibility();
+        
+        // Update button icon
+        const icon = this.querySelector('i');
+        if (isExpanded) {
+            icon.className = 'fas fa-compress-alt';
+            this.title = 'Collapse Columns';
+        } else {
+            icon.className = 'fas fa-expand-alt';
+            this.title = 'Expand Columns';
+        }
+    });
+
+    function toggleColumnVisibility() {
+        const hiddenColumns = [
+            '.cid-column', '.appid-column', '.action-column',
+            '.search-cid-column', '.search-appid-column', '.search-action-column'
+        ];
+        
+        hiddenColumns.forEach(selector => {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(element => {
+                if (isExpanded) {
+                    element.classList.remove('hidden-column');
+                } else {
+                    element.classList.add('hidden-column');
+                }
+            });
+        });
+    }
 
     // KPI Modal functionality
     const kpiModal = document.getElementById('kpiModal');
@@ -1869,77 +2096,15 @@
         }
     });
 
-    // Product checkbox change events
-    productACC.addEventListener('change', function() {
-        productSTL.disabled = !this.checked;
-        product2ndACC.disabled = !this.checked;
-        if (!this.checked) {
-            productSTL.checked = false;
-            product2ndACC.checked = false;
-        }
-        updateProductOptions();
-    });
-
-    product2ndACC.addEventListener('change', function() {
-        updateProductOptions();
-    });
-
-    productSTL.addEventListener('change', function() {
-        calculateTotalPoints();
-    });
-
-    productPL.addEventListener('change', function() {
-        if (this.checked) {
-            loanAmountSection.classList.remove('hidden');
-        } else {
-            loanAmountSection.classList.add('hidden');
-            loanAmountInput.value = '';
-        }
-        updateProductOptions();
-    });
-
-    productCC.addEventListener('change', function() {
-        updateProductOptions();
-        product2ndCC.disabled = !this.checked;
-        if (!this.checked) {
-            product2ndCC.checked = false;
-        }
-    });
-
-    product2ndCC.addEventListener('change', function() {
-        updateProductOptions();
-    });
-
-    productBTCCL.addEventListener('change', function() {
-        calculateTotalPoints();
-    });
-
-    productOther.addEventListener('change', function() {
-        if (this.checked) {
-            otherPointsSection.classList.remove('hidden');
-        } else {
-            otherPointsSection.classList.add('hidden');
-            otherPointsInput.value = '';
-        }
-        calculateTotalPoints();
-    });
-
-    otherPointsInput.addEventListener('input', function() {
-        calculateTotalPoints();
-    });
-
-    document.querySelectorAll('input[name="proposition"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            updateProductOptions();
-        });
-    });
-
-    salaryInput.addEventListener('input', function() {
-        updateProductOptions();
-    });
-
     // Initialize product options when proposition or products change
     function updateProductOptions() {
+        if (!appInitialized) {
+            console.log('App not initialized yet, skipping product options update');
+            return;
+        }
+        
+        console.log('Updating product options...');
+        
         // Save current dropdown selections before updating
         const accSelect = document.getElementById('ACCSelect');
         const acc2Select = document.getElementById('ACC2Select');
@@ -1956,6 +2121,7 @@
         productOptionsContainer.innerHTML = '';
         
         if (editingData) {
+            console.log('In editing mode, using initializeProductOptions');
             initializeProductOptions();
             return;
         }
@@ -1979,7 +2145,9 @@
                 }
             }
             
+            // Fix 2: Enhanced 2nd ACC handling with proper checkbox check and delay
             if (product2ndACC.checked) {
+                console.log('Creating 2nd ACC dropdown');
                 const accOptions = getACCOptions(proposition, salary);
                 if (accOptions.length > 0) {
                     const acc2Div = createProductOptionDiv('ACC2', accOptions, '2nd ACC');
@@ -1990,9 +2158,13 @@
                         calculateTotalPoints();
                     });
                     
-                    if (currentSelections.ACC2 && newAcc2Select.querySelector(`option[value="${currentSelections.ACC2}"]`)) {
-                        newAcc2Select.value = currentSelections.ACC2;
-                    }
+                    // Add delay for 2nd ACC selection restoration
+                    setTimeout(() => {
+                        if (currentSelections.ACC2 && newAcc2Select.querySelector(`option[value="${currentSelections.ACC2}"]`)) {
+                            newAcc2Select.value = currentSelections.ACC2;
+                            console.log('Restored 2nd ACC selection:', currentSelections.ACC2);
+                        }
+                    }, 50);
                 }
             }
         }
@@ -2047,12 +2219,22 @@
         calculateTotalPoints();
     }
 
-    // Function to initialize product options based on edit data
+    // Fix 2: Enhanced function to initialize product options with specific 2nd ACC handling
     function initializeProductOptions() {
-        if (!editingData) return;
+        if (!editingData) {
+            console.log('No editing data available');
+            return;
+        }
+        
+        console.log('Initializing product options for editing data');
+        console.log('Product string:', editingProductString);
+        console.log('2nd ACC checked:', product2ndACC.checked);
         
         const proposition = document.querySelector('input[name="proposition"]:checked').value;
         const salary = parseFloat(salaryInput.value) || 0;
+        
+        // Clear existing product options
+        productOptionsContainer.innerHTML = '';
         
         if (productACC.checked) {
             const accOptions = getACCOptions(proposition, salary);
@@ -2067,25 +2249,37 @@
                         calculateTotalPoints();
                     });
                     
-                    setAccDropdownFromString(accSelect, editingProductString, 0);
+                    // Set value from saved data
+                    setTimeout(() => {
+                        setAccDropdownFromString(accSelect, editingProductString, 0);
+                    }, 10);
                 }
             }
             
+            // Fix 2: Enhanced 2nd ACC initialization with longer delay and better checking
             if (product2ndACC.checked) {
+                console.log('Initializing 2nd ACC dropdown for editing');
                 const accOptions = getACCOptions(proposition, salary);
                 
                 if (accOptions.length > 0) {
-                    const acc2Div = createProductOptionDiv('ACC2', accOptions, '2nd ACC');
-                    productOptionsContainer.appendChild(acc2Div);
-                    
-                    const acc2Select = document.getElementById('ACC2Select');
-                    if (acc2Select) {
-                        acc2Select.addEventListener('change', function() {
-                            calculateTotalPoints();
-                        });
+                    // Add longer delay specifically for 2nd ACC during editing
+                    setTimeout(() => {
+                        const acc2Div = createProductOptionDiv('ACC2', accOptions, '2nd ACC');
+                        productOptionsContainer.appendChild(acc2Div);
                         
-                        setAccDropdownFromString(acc2Select, editingProductString, 1);
-                    }
+                        const acc2Select = document.getElementById('ACC2Select');
+                        if (acc2Select) {
+                            acc2Select.addEventListener('change', function() {
+                                calculateTotalPoints();
+                            });
+                            
+                            // Set value from saved data with additional delay
+                            setTimeout(() => {
+                                setAccDropdownFromString(acc2Select, editingProductString, 1);
+                                console.log('Set 2nd ACC dropdown value');
+                            }, 100);
+                        }
+                    }, 200);
                 }
             }
         }
@@ -2100,7 +2294,11 @@
                 const ccSelect = document.getElementById('CCSelect');
                 if (ccSelect) {
                     ccSelect.addEventListener('change', calculateTotalPoints);
-                    setCcDropdownFromString(ccSelect, editingProductString, 0);
+                    
+                    // Set value from saved data
+                    setTimeout(() => {
+                        setCcDropdownFromString(ccSelect, editingProductString, 0);
+                    }, 10);
                 }
             }
             
@@ -2114,7 +2312,11 @@
                     const cc2Select = document.getElementById('CCSelect2');
                     if (cc2Select) {
                         cc2Select.addEventListener('change', calculateTotalPoints);
-                        setCcDropdownFromString(cc2Select, editingProductString, 1);
+                        
+                        // Set value from saved data
+                        setTimeout(() => {
+                            setCcDropdownFromString(cc2Select, editingProductString, 1);
+                        }, 10);
                     }
                 }
             }
@@ -2130,17 +2332,24 @@
                 const plSelect = document.getElementById('PLSelect');
                 if (plSelect) {
                     plSelect.addEventListener('change', calculateTotalPoints);
-                    setPlDropdownFromString(plSelect, editingProductString);
+                    
+                    // Set value from saved data
+                    setTimeout(() => {
+                        setPlDropdownFromString(plSelect, editingProductString);
+                    }, 10);
                 }
                 
                 loanAmountInput.addEventListener('input', calculateTotalPoints);
             }
         }
         
-        calculateTotalPoints();
+        // Calculate points after initialization with longer delay
+        setTimeout(() => {
+            calculateTotalPoints();
+        }, 300);
     }
     
-    // Fix 1: Improved helper functions to set dropdown values correctly based on saved product string
+    // Helper functions to set dropdown values correctly based on saved product string
     function setAccDropdownFromString(accSelect, productString, accIndex = 0) {
         if (!accSelect || !productString) return;
         
@@ -2340,8 +2549,8 @@
             options.push({ 
                 value: "MDSA", 
                 text: "MDSA", 
-                points: 175,
-                minSalary: 5000,
+                points: 110,
+                minSalary: 3000,
                 maxSalary: Infinity,
                 disableSTL: false
             });
@@ -2588,7 +2797,7 @@
     }
 
     // ==========================================
-    // GOOGLE SHEETS INTEGRATION - FIXED
+    // GOOGLE SHEETS INTEGRATION
     // ==========================================
 
     // Fetch all data from Google Sheets Data sheet
@@ -2687,10 +2896,14 @@
             document.getElementById('summaryTotalPL').textContent = "AED 0";
             document.getElementById('summaryTotalAccounts').textContent = "0";
             
-            // Account Funding defaults
-            document.getElementById('summaryFundingMDSA').textContent = "0 (0 pts)";
-            document.getElementById('summaryFundingAspire').textContent = "0 (0 pts)";
-            document.getElementById('summaryFundingPrivilege').textContent = "0 (0 pts)";
+            // Fix 1: Account Funding defaults in fixed format
+            document.getElementById('fundingTotal').textContent = "0 (0 pts)";
+            document.getElementById('fundingMDSACount').textContent = "0";
+            document.getElementById('fundingMDSAPoints').textContent = "(0 pts)";
+            document.getElementById('fundingAspireCount').textContent = "0";
+            document.getElementById('fundingAspirePoints').textContent = "(0 pts)";
+            document.getElementById('fundingPrivilegeCount').textContent = "0";
+            document.getElementById('fundingPrivilegePoints').textContent = "(0 pts)";
             return;
         }
         
@@ -2703,7 +2916,7 @@
         let aspireCount = 0, privilegeCount = 0, mdsaCount = 0;
         let tmlAllCount = 0, tmlCCCount = 0, tmSelectCount = 0, ntmlCount = 0;
         
-        // Fix 6: Account Funding calculations - updated logic
+        // Fix 1: Account Funding calculations in fixed format
         let fundingMDSACount = 0, fundingMDSAPoints = 0;
         let fundingAspireCount = 0, fundingAspirePoints = 0;
         let fundingPrivilegeCount = 0, fundingPrivilegePoints = 0;
@@ -2723,7 +2936,7 @@
                 pendingPoints += points;
             }
             
-            // Fix 6: Updated Account Funding logic - check product string without STL
+            // Fix 1: Account Funding logic - check product string without STL
             if (!isRejected && !productString.includes('STL')) {
                 if (productString.includes('MDSA')) {
                     fundingMDSACount++;
@@ -2848,10 +3061,17 @@
         document.getElementById('summaryTotalPL').textContent = formatCurrency(totalLoanAmount > 0 ? totalLoanAmount : 0);
         document.getElementById('summaryTotalAccounts').textContent = totalAccounts > 0 ? totalAccounts : "0";
         
-        // Update Account Funding section
-        document.getElementById('summaryFundingMDSA').textContent = `${fundingMDSACount} (${fundingMDSAPoints} pts)`;
-        document.getElementById('summaryFundingAspire').textContent = `${fundingAspireCount} (${fundingAspirePoints} pts)`;
-        document.getElementById('summaryFundingPrivilege').textContent = `${fundingPrivilegeCount} (${fundingPrivilegePoints} pts)`;
+        // Fix 1: Update Account Funding section in fixed format
+        const totalFundingCount = fundingMDSACount + fundingAspireCount + fundingPrivilegeCount;
+        const totalFundingPoints = fundingMDSAPoints + fundingAspirePoints + fundingPrivilegePoints;
+        
+        document.getElementById('fundingTotal').textContent = `${totalFundingCount} (${totalFundingPoints} pts)`;
+        document.getElementById('fundingMDSACount').textContent = `${fundingMDSACount}`;
+        document.getElementById('fundingMDSAPoints').textContent = `(${fundingMDSAPoints} pts)`;
+        document.getElementById('fundingAspireCount').textContent = `${fundingAspireCount}`;
+        document.getElementById('fundingAspirePoints').textContent = `(${fundingAspirePoints} pts)`;
+        document.getElementById('fundingPrivilegeCount').textContent = `${fundingPrivilegeCount}`;
+        document.getElementById('fundingPrivilegePoints').textContent = `(${fundingPrivilegePoints} pts)`;
         
         updateTargetProgress('CC', completedCC);
         updateTargetProgress('PL', completedLoanAmount);
@@ -2905,10 +3125,10 @@
         
         const target = parseInt(targetInput.value) || 0;
         const remaining = Math.max(0, target - completed);
-        const percentage = target > 0 ? Math.min(100, Math.round((completed / target) * 100)) : 0;
+        const percentage = target > 0 ? Math.round((completed / target) * 100) : 0;
         
         remainingEl.textContent = type === 'PL' ? remaining.toLocaleString('en-US') : remaining;
-        progressEl.style.width = `${percentage}%`;
+        progressEl.style.width = `${Math.min(100, percentage)}%`;
         progressEl.textContent = `${percentage}%`;
         
         targetInput.addEventListener('change', function() {
@@ -2945,16 +3165,16 @@
         const totalPL = document.getElementById('summaryTotalPL').textContent;
         const totalAccounts = document.getElementById('summaryTotalAccounts').textContent;
         
-        const fundingMDSA = document.getElementById('summaryFundingMDSA').textContent;
-        const fundingAspire = document.getElementById('summaryFundingAspire').textContent;
-        const fundingPrivilege = document.getElementById('summaryFundingPrivilege').textContent;
+        const fundingTotal = document.getElementById('fundingTotal').textContent;
+        const fundingMDSA = `${document.getElementById('fundingMDSACount').textContent} ${document.getElementById('fundingMDSAPoints').textContent}`;
+        const fundingAspire = `${document.getElementById('fundingAspireCount').textContent} ${document.getElementById('fundingAspirePoints').textContent}`;
+        const fundingPrivilege = `${document.getElementById('fundingPrivilegeCount').textContent} ${document.getElementById('fundingPrivilegePoints').textContent}`;
         
         const progressCC = document.getElementById('progressCC').textContent;
         const progressPL = document.getElementById('progressPL').textContent;
         const progressACC = document.getElementById('progressACC').textContent;
         
         const now = new Date();
-        // Fix 3: Date format DD/MM/YYYY
         const dateStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
         const timeStr = now.toLocaleTimeString();
         
@@ -2977,7 +3197,7 @@ Credit Cards: ${totalCC}
 Personal Loans: ${totalPL}
 Accounts: ${totalAccounts}
 
-ACCOUNT FUNDING
+ACCOUNT FUNDING: ${fundingTotal}
 MDSA: ${fundingMDSA}
 Aspire: ${fundingAspire}
 Privilege: ${fundingPrivilege}
@@ -2990,34 +3210,39 @@ Accounts: ${progressACC}`;
         return summaryText;
     }
 
+    // Enhanced product grouping for export
     function categorizeProductType(productString) {
         if (!productString) return "Unknown";
         
+        // Check for PL products first and return with amount if applicable
+        if (productString.includes("Cat A & B") || 
+            productString.includes("Cat C & Below") ||
+            productString.includes("PL")) {
+            return "PL";
+        }
+        
+        // Group ACC types together (ACC & 2nd ACC)
         if (productString.includes("MDSA") || 
             productString.includes("Aspire") || 
-            productString.includes("Privilege")) {
+            productString.includes("Privilege") ||
+            productString.includes("ACC") ||
+            productString.includes("2nd ACC")) {
             return "ACC";
         }
         
+        // Group CC types together (CC & 2nd CC)
         if (productString.includes("Touchpoints") || 
             productString.includes("Cashback") ||
             productString.includes("Talabat") ||
             productString.includes("Visa") ||
             productString.includes("MC") ||
-            productString.includes("Guest")) {
+            productString.includes("Guest") ||
+            productString.includes("CC") ||
+            productString.includes("2ndCC")) {
             return "CC";
         }
         
-        if (productString.includes("Cat A & B") || 
-            productString.includes("Cat C & Below")) {
-            return "PL";
-        }
-        
-        if (productString.includes("ACC")) return "ACC";
-        if (productString.includes("CC")) return "CC";
-        if (productString.includes("2ndCC")) return "CC";
         if (productString.includes("BT/CCL")) return "BT/CCL";
-        if (productString.includes("PL")) return "PL";
         if (productString.includes("STL")) return "STL";
         
         return "Unknown";
@@ -3216,7 +3441,7 @@ Accounts: ${progressACC}`;
             const appIdValue = row['App ID'] || '';
             const customerNameValue = row['Customer Name'] || '';
             
-            // Format mobile number for display and calling - FIXED
+            // Format mobile number for display and calling
             let displayMobile = mobileNumber;
             let callMobile = mobileNumber;
             
@@ -3234,7 +3459,7 @@ Accounts: ${progressACC}`;
             let actionsHtml = '';
             if (!isMasterSearch) {
                 actionsHtml = `
-                    <td class="action-column">
+                    <td class="action-column ${!isExpanded ? 'hidden-column' : ''}">
                         <a href="tel:+${callMobile}" class="action-btn bg-green-600 text-white p-1 rounded inline-block" title="Call ${row['Customer Name']}" role="button">
                             <i class="fas fa-phone"></i>
                         </a>
@@ -3245,7 +3470,7 @@ Accounts: ${progressACC}`;
                 `;
             } else if (isMasterFetch) {
                 actionsHtml = `
-                    <td class="action-column">
+                    <td class="action-column ${!isExpanded ? 'hidden-column' : ''}">
                         <a href="tel:+${callMobile}" class="action-btn bg-green-600 text-white p-1 rounded inline-block" title="Call ${row['Customer Name']}" role="button">
                             <i class="fas fa-phone"></i>
                         </a>
@@ -3256,7 +3481,7 @@ Accounts: ${progressACC}`;
                 `;
             } else {
                 actionsHtml = `
-                    <td class="action-column">
+                    <td class="action-column ${!isExpanded ? 'hidden-column' : ''}">
                         <a href="tel:+${callMobile}" class="action-btn bg-green-600 text-white p-1 rounded inline-block" title="Call ${row['Customer Name']}" role="button">
                             <i class="fas fa-phone"></i>
                         </a>
@@ -3264,9 +3489,13 @@ Accounts: ${progressACC}`;
                 `;
             }
             
+            // Apply column visibility based on expansion state
+            const cidClass = targetTableId === 'dataTableBody' ? 'cid-column' : 'search-cid-column';
+            const appIdClass = targetTableId === 'dataTableBody' ? 'appid-column' : 'search-appid-column';
+            
             tr.innerHTML = `
-                <td class="copyable" data-value="${cidValue}">${cidValue}</td>
-                <td class="copyable" data-value="${appIdValue}">${appIdValue}</td>
+                <td class="${cidClass} ${!isExpanded ? 'hidden-column' : ''} copyable" data-value="${cidValue}">${cidValue}</td>
+                <td class="${appIdClass} ${!isExpanded ? 'hidden-column' : ''} copyable" data-value="${appIdValue}">${appIdValue}</td>
                 <td class="copyable" data-value="${customerNameValue}">${customerNameValue}</td>
                 <td class="copyable" data-value="${displayMobile}">${displayMobile}</td>
                 <td>${row.Product || ''}</td>
@@ -3621,11 +3850,31 @@ Accounts: ${progressACC}`;
         return `${year}-${month}-${day}`;
     }
 
+    // Fix 2: FINAL Enhanced form population function with proper 2nd ACC and Other handling
     function populateForm(data) {
-        resetForm();
+        console.log('Populating form with data:', data);
         
+        // Reset form first but preserve editing state
+        entryForm.reset();
+        productOptionsContainer.innerHTML = '';
+        loanAmountSection.classList.add('hidden');
+        otherPointsSection.classList.add('hidden');
+        otherBankingSection.classList.add('hidden');
+        otherStatusSection.classList.add('hidden');
+        
+        document.getElementById('nameError').classList.add('hidden');
+        document.getElementById('mobileError').classList.add('hidden');
+        document.getElementById('productsError').classList.add('hidden');
+
+        document.querySelectorAll('.error-field').forEach(field => {
+            field.classList.remove('error-field');
+        });
+        
+        // Set editing data and product string
         editingData = data;
         editingProductString = data.Product || "";
+        
+        console.log('Setting editing product string:', editingProductString);
         
         cidInput.value = data.CID || '';
         cidInput.disabled = false;
@@ -3662,16 +3911,37 @@ Accounts: ${progressACC}`;
         if (data.ccOption2) currentSelections.CCOption2 = data.ccOption2;
         if (data.plOption) currentSelections.PL = data.plOption;
         
+        // Fix 2: FINAL Enhanced product checkbox initialization with comprehensive product detection
         productACC.checked = productStringContains(productString, 'MDSA') || 
                             productStringContains(productString, 'Aspire') ||
                             productStringContains(productString, 'Privilege') ||
-                            productStringContains(productString, 'ACC');
+                            productString.includes('ACC');
                             
-        product2ndACC.checked = productStringContains(productString, '2nd ACC');
+        // Fix 2: FINAL specific 2nd ACC detection - check for exact match and variations
+        product2ndACC.checked = productString.includes('2nd ACC') || 
+                               products.some(p => p.trim() === '2nd ACC') ||
+                               products.filter(p => 
+                                   p.includes('MDSA') || 
+                                   p.includes('Aspire') || 
+                                   p.includes('Privilege')
+                               ).length > 1;
+        
+        console.log('2nd ACC detection result:', product2ndACC.checked);
+        console.log('2nd ACC products found:', products.filter(p => 
+            p.includes('MDSA') || p.includes('Aspire') || p.includes('Privilege')
+        ));
+        
+        // Fix 2: Ensure 2nd ACC is properly enabled when ACC is checked
+        if (productACC.checked) {
+            product2ndACC.disabled = false;
+            productSTL.disabled = false;
+        }
+        
         productSTL.checked = productStringContains(productString, 'STL');
         
         console.log('ACC checked:', productACC.checked);
         console.log('2nd ACC checked:', product2ndACC.checked);
+        console.log('2nd ACC disabled:', product2ndACC.disabled);
         
         productCC.checked = productStringContains(productString, 'Touchpoints') ||
                            productStringContains(productString, 'Cashback') ||
@@ -3683,12 +3953,17 @@ Accounts: ${progressACC}`;
                            productStringContains(productString, 'Traveller') ||
                            productStringContains(productString, 'Betaqti') ||
                            productStringContains(productString, 'Emirati') ||
-                           productStringContains(productString, 'CC');
+                           productString.includes('CC');
         
         product2ndCC.checked = productStringContains(productString, '2ndCC') ||
                                (products.length > 1 && 
                                 (productStringContains(productString, 'Touchpoints') ||
                                  productStringContains(productString, 'Talabat')));
+        
+        // Fix 2: Ensure 2nd CC is properly enabled when CC is checked
+        if (productCC.checked) {
+            product2ndCC.disabled = false;
+        }
         
         productBTCCL.checked = productStringContains(productString, 'BT/CCL');
         
@@ -3696,6 +3971,7 @@ Accounts: ${progressACC}`;
                            productStringContains(productString, 'Privilege Cat') ||
                            productStringContains(productString, 'PL');
                            
+        // Fix 2: FINAL Enhanced Other product handling with proper amount retrieval
         productOther.checked = productStringContains(productString, 'Other');
         
         if (productPL.checked) {
@@ -3703,14 +3979,17 @@ Accounts: ${progressACC}`;
             loanAmountInput.value = data['Loan Amount'] || '';
         }
         
+        // Fix 2: FINAL Enhanced Other section handling with amount retrieval
         if (productOther.checked) {
             otherPointsSection.classList.remove('hidden');
-            otherPointsInput.value = data['Other Points'] || '';
+            // Try multiple possible field names for Other points
+            let otherAmount = data['Other Points'] || data['Other Amount'] || data['Miscellaneous Points'] || '';
+            if (!otherAmount && data.Points && productOther.checked && !productPL.checked && !productCC.checked && !productACC.checked) {
+                // If only Other is selected and no other amount source, use Points value
+                otherAmount = data.Points;
+            }
+            otherPointsInput.value = otherAmount;
         }
-        
-        productSTL.disabled = !productACC.checked;
-        product2ndACC.disabled = !productACC.checked;
-        product2ndCC.disabled = !productCC.checked;
         
         const propositionRadios = document.getElementsByName('proposition');
         for (let radio of propositionRadios) {
@@ -3762,11 +4041,37 @@ Accounts: ${progressACC}`;
         pointsInput.value = data.Points || '';
         
         console.log('Before calling initializeProductOptions');
-        initializeProductOptions();
         
-        if (statusSelect.value === 'Rejected') {
-            pointsInput.value = '0';
-        }
+        // Fix 2: FINAL Extended delay initialization specifically for 2nd ACC and Other handling with multiple retries
+        setTimeout(() => {
+            if (appInitialized) {
+                console.log('App initialized, calling initializeProductOptions');
+                initializeProductOptions();
+                
+                if (statusSelect.value === 'Rejected') {
+                    pointsInput.value = '0';
+                }
+            } else {
+                console.log('App not initialized yet, will retry...');
+                // Multiple retry attempts with increasing delays for better 2nd ACC handling
+                setTimeout(() => {
+                    if (appInitialized) {
+                        initializeProductOptions();
+                        if (statusSelect.value === 'Rejected') {
+                            pointsInput.value = '0';
+                        }
+                    } else {
+                        // Final retry attempt
+                        setTimeout(() => {
+                            initializeProductOptions();
+                            if (statusSelect.value === 'Rejected') {
+                                pointsInput.value = '0';
+                            }
+                        }, 1500);
+                    }
+                }, 1000);
+            }
+        }, 500);
     }
 
     async function checkUniqueness(cid, customerName, mobile) {
@@ -4043,7 +4348,6 @@ Accounts: ${progressACC}`;
             const tr = document.createElement('tr');
             tr.setAttribute('data-cid', record.CID || '');
             
-            // Fix 3: Date format DD/MM/YYYY
             let date = '';
             if (record.Date) {
                 const dateObj = new Date(record.Date);
@@ -4052,6 +4356,7 @@ Accounts: ${progressACC}`;
                 }
             }
             
+            // Enhanced product grouping for export
             const productType = categorizeProductType(record.Product);
             
             let productDisplay = productType;
@@ -4226,7 +4531,6 @@ Accounts: ${progressACC}`;
             
             doc.setFontSize(10);
             doc.setTextColor(0, 0, 0);
-            // Fix 3: Date format DD/MM/YYYY in PDF
             const now = new Date();
             const dateStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
             doc.text(`Generated on: ${dateStr}`, margin, 28);
@@ -4286,9 +4590,9 @@ Accounts: ${progressACC}`;
                 return rowData;
             });
             
-            // Add total row if amounts are included
+            // Add total row with proper styling
             if (includeAmount) {
-                tableData.push({
+                const totalRow = {
                     no: '',
                     cid: '',
                     date: '',
@@ -4296,7 +4600,8 @@ Accounts: ${progressACC}`;
                     product: '',
                     status: 'Total:',
                     amount: totalAmount.toLocaleString('en-US')
-                });
+                };
+                tableData.push(totalRow);
             }
             
             // Use autoTable for proper formatting
@@ -4338,12 +4643,22 @@ Accounts: ${progressACC}`;
                         data.cell.styles.cellWidth = 'wrap';
                     }
                     
-                    // Style total row
+                    // Style total row - merged appearance and no borders
                     if (includeAmount && data.row.index === tableData.length - 1) {
                         data.cell.styles.fillColor = [240, 240, 240];
                         data.cell.styles.fontStyle = 'bold';
-                        data.cell.styles.lineColor = [26, 58, 74];
-                        data.cell.styles.lineWidth = 0.8;
+                        data.cell.styles.lineColor = [255, 255, 255]; // Remove borders
+                        data.cell.styles.lineWidth = 0;
+                        
+                        // Clear content for columns No to Product (0-4) to create merged appearance
+                        if (data.column.index >= 0 && data.column.index <= 4) {
+                            data.cell.text = [''];
+                        }
+                        
+                        // Special styling for Status column in total row
+                        if (data.column.index === 5) {
+                            data.cell.styles.halign = 'right';
+                        }
                     }
                 },
                 didDrawPage: function(data) {
