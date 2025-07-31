@@ -965,7 +965,7 @@
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Loan Amount (AED):</label>
                                     <div class="col-span-2 flex gap-2">
                                         <input type="text" id="loanAmount" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600 flex-grow" pattern="[0-9]*">
-                                        <input type="text" id="loanMultiples" class="border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600 w-16 text-center" readonly>
+                                        <input type="text" id="loanMultiples" class="border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600 w-15 text-center" readonly>
                                     </div>
                                     <p id="loanAmountError" class="col-span-3 text-red-600 dark:text-red-400 text-sm hidden">Error: Loan Amount Will Exceed DBR Limit!</p>
                                 </div>
@@ -1365,7 +1365,7 @@
             const authExpiry = localStorage.getItem('authExpiry');
             const authMode = localStorage.getItem('authMode');
             
-            if (authExpiry && new Date(authExpiry) > new Date() && authMode === 'admin') {
+            if (authExpiry && new Date(authExpiry) > new Date() && authMode === 'flut20') {
                 isAdminMode = true;
                 authModal.classList.add('hidden');
                 setupAdminMode();
@@ -1426,7 +1426,7 @@
                     const expiryDate = new Date();
                     expiryDate.setDate(expiryDate.getDate() + 3);
                     localStorage.setItem('authExpiry', expiryDate.toISOString());
-                    localStorage.setItem('authMode', 'flut20');
+                    localStorage.setItem('authMode', 'admin');
                 }
                 
                 authModal.classList.add('hidden');
