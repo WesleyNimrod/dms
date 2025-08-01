@@ -524,15 +524,6 @@
             margin-top: 16px;
         }
 
-        .table-row-longpress {
-            background-color: #eceff4 !important;
-            cursor: pointer;
-        }
-
-        .longpress-active {
-            background-color: #bbdefb !important;
-        }
-
         .banking-container {
             display: flex;
             gap: 10px;
@@ -748,6 +739,136 @@
             font-size: 1rem;
             padding-bottom: 6px;
             border-bottom: 1px solid #f3f3f3;
+        }
+
+        /* Fix 1: Product Sort Dropdown Styles */
+        .sort-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .sort-btn {
+            background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .sort-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .sort-dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 180px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            border-radius: 8px;
+            z-index: 1000;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+        }
+
+        .sort-dropdown-content.show {
+            display: block;
+        }
+
+        .sort-option {
+            color: #374151;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .sort-option:last-child {
+            border-bottom: none;
+        }
+
+        .sort-option:hover {
+            background-color: #f9fafb;
+        }
+
+        .sort-option.active {
+            background-color: #1A3A4A;
+            color: white;
+        }
+
+        /* Filter Dropdown Styles */
+        .filter-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .filter-btn {
+            background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .filter-dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            border-radius: 8px;
+            z-index: 1000;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+        }
+
+        .filter-dropdown-content.show {
+            display: block;
+        }
+
+        .filter-option {
+            color: #374151;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .filter-option:last-child {
+            border-bottom: none;
+        }
+
+        .filter-option:hover {
+            background-color: #f9fafb;
+        }
+
+        .filter-option.active {
+            background-color: #1A3A4A;
+            color: white;
         }
         
         @media (max-width: 768px) {
@@ -1358,6 +1479,38 @@
                         <i class="fas fa-hourglass-half mr-2"></i> <span id="pendingPointsTotal">0</span></button>
                     <button id="expandBtn" class="bg-gray-600 text-white py-2 px-3 rounded-md hover:bg-gray-700" title="Expand/Collapse Columns">
                         <i class="fas fa-expand-alt"></i></button>
+                    <!-- Fix 1: Product Sort Dropdown -->
+                    <div class="sort-dropdown">
+                        <button class="sort-btn" id="sortDropdownBtn">
+                            <i class="fas fa-sort"></i>
+                            <span>Sort</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="sort-dropdown-content" id="sortDropdownContent">
+                            <div class="sort-option active" data-sort="all">All Products</div>
+                            <div class="sort-option" data-sort="acc">ACC</div>
+                            <div class="sort-option" data-sort="cc">CC</div>
+                            <div class="sort-option" data-sort="pl">PL</div>
+                            <div class="sort-option" data-sort="btccl">BT/CCL</div>
+                            <div class="sort-option" data-sort="other">Other</div>
+                        </div>
+                    </div>
+                    <!-- Filter Dropdown -->
+                    <div class="filter-dropdown">
+                        <button class="filter-btn" id="filterDropdownBtn">
+                            <i class="fas fa-filter"></i>
+                            <span>Filter</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="filter-dropdown-content" id="filterDropdownContent">
+                            <div class="filter-option active" data-filter="all">All Products</div>
+                            <div class="filter-option" data-filter="acc">ACC</div>
+                            <div class="filter-option" data-filter="cc">CC</div>
+                            <div class="filter-option" data-filter="pl">PL</div>
+                            <div class="filter-option" data-filter="btccl">BT/CCL</div>
+                            <div class="filter-option" data-filter="other">Other</div>
+                        </div>
+                    </div>
                     <button id="exportDataBtn" class="custom-btn text-white py-2 px-4 rounded-md flex items-center">
                         <i class="fas fa-file-export mr-2"></i></button>
                     <button id="refreshDataBtn" class="custom-btn text-white py-2 px-4 rounded-md flex items-center">
@@ -1566,6 +1719,8 @@
     let editingFromMaster = false;
     let isExpanded = false;
     let appInitialized = false;
+    let currentFilter = 'all';
+    let currentSort = 'all';
 
     // ==========================================
     // PASTE FUNCTIONALITY
@@ -1691,6 +1846,8 @@
         
         setupKeyboardNavigation();
         setupProductEventListeners();
+        setupFilterDropdown();
+        setupSortDropdown();
         
         // Mark app as initialized with a delay to ensure everything is ready
         setTimeout(() => {
@@ -1702,7 +1859,204 @@
         loadProfiles();
     });
 
-    // Fix 2: Enhanced product event listeners setup with specific 2nd ACC and Other handling
+    // Fix 1: Setup sort dropdown functionality
+    function setupSortDropdown() {
+        const sortBtn = document.getElementById('sortDropdownBtn');
+        const sortContent = document.getElementById('sortDropdownContent');
+        const sortOptions = document.querySelectorAll('.sort-option');
+
+        sortBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            sortContent.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!sortBtn.contains(e.target) && !sortContent.contains(e.target)) {
+                sortContent.classList.remove('show');
+            }
+        });
+
+        // Handle sort option clicks
+        sortOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const sort = this.dataset.sort;
+                
+                // Update active state
+                sortOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Apply sort
+                currentSort = sort;
+                applyProductSort(sort);
+                
+                // Close dropdown
+                sortContent.classList.remove('show');
+            });
+        });
+    }
+
+    // Fix 1: Sort function for products
+    function applyProductSort(sort) {
+        const tableBody = document.getElementById('dataTableBody');
+        const rows = Array.from(tableBody.querySelectorAll('tr'));
+        
+        if (sort === 'all') {
+            // Reset to original order if needed
+            return;
+        }
+        
+        // Sort rows based on product type
+        rows.sort((a, b) => {
+            const productA = a.cells[4]?.textContent.toLowerCase() || '';
+            const productB = b.cells[4]?.textContent.toLowerCase() || '';
+            
+            const matchA = productMatchesSort(productA, sort);
+            const matchB = productMatchesSort(productB, sort);
+            
+            // Sort matching products to top
+            if (matchA && !matchB) return -1;
+            if (!matchA && matchB) return 1;
+            
+            // Within same category, sort alphabetically
+            return productA.localeCompare(productB);
+        });
+        
+        // Re-append sorted rows to table
+        rows.forEach(row => tableBody.appendChild(row));
+    }
+
+    // Fix 1: Helper function to check if product matches sort criteria
+    function productMatchesSort(productText, sort) {
+        switch(sort) {
+            case 'acc':
+                return productText.includes('mdsa') || 
+                       productText.includes('aspire 5k-10k') ||
+                       productText.includes('aspire 10k-20k') ||
+                       productText.includes('privilege 20k-40k') ||
+                       productText.includes('privilege 40k') ||
+                       productText.includes('2nd acc');
+            case 'cc':
+                return productText.includes('touchpoints') ||
+                       productText.includes('cashback') ||
+                       productText.includes('talabat') ||
+                       productText.includes('lulu') ||
+                       productText.includes('etihad') ||
+                       productText.includes('shukran') ||
+                       productText.includes('all ') ||
+                       productText.includes('traveller') ||
+                       productText.includes('betaqti') ||
+                       productText.includes('emirati') ||
+                       productText.includes('visa') ||
+                       productText.includes('mc') ||
+                       productText.includes('2ndcc');
+            case 'pl':
+                return productText.includes('asipire cat a & b') ||
+                       productText.includes('aspire cat c & below') ||
+                       productText.includes('privilege cat a & b') ||
+                       productText.includes('privilege cat c & below') ||
+                       productText.includes('pl');
+            case 'btccl':
+                return productText.includes('bt/ccl');
+            case 'other':
+                return productText.includes('other');
+            default:
+                return true;
+        }
+    }
+
+    // Product filter functionality
+    function setupFilterDropdown() {
+        const filterBtn = document.getElementById('filterDropdownBtn');
+        const filterContent = document.getElementById('filterDropdownContent');
+        const filterOptions = document.querySelectorAll('.filter-option');
+
+        filterBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            filterContent.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!filterBtn.contains(e.target) && !filterContent.contains(e.target)) {
+                filterContent.classList.remove('show');
+            }
+        });
+
+        // Handle filter option clicks
+        filterOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const filter = this.dataset.filter;
+                
+                // Update active state
+                filterOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Apply filter
+                currentFilter = filter;
+                applyProductFilter(filter);
+                
+                // Close dropdown
+                filterContent.classList.remove('show');
+            });
+        });
+    }
+
+    function applyProductFilter(filter) {
+        const tableBody = document.getElementById('dataTableBody');
+        const rows = tableBody.querySelectorAll('tr');
+        
+        rows.forEach(row => {
+            const productCell = row.cells[4]; // Products column
+            if (!productCell) return;
+            
+            const productText = productCell.textContent.toLowerCase();
+            let shouldShow = true;
+            
+            switch(filter) {
+                case 'acc':
+                    shouldShow = productText.includes('mdsa') || 
+                               productText.includes('aspire') || 
+                               productText.includes('privilege') ||
+                               productText.includes('2nd acc');
+                    break;
+                case 'cc':
+                    shouldShow = productText.includes('touchpoints') ||
+                               productText.includes('cashback') ||
+                               productText.includes('talabat') ||
+                               productText.includes('lulu') ||
+                               productText.includes('etihad') ||
+                               productText.includes('shukran') ||
+                               productText.includes('all ') ||
+                               productText.includes('traveller') ||
+                               productText.includes('betaqti') ||
+                               productText.includes('emirati') ||
+                               productText.includes('visa') ||
+                               productText.includes('mc') ||
+                               productText.includes('2ndcc');
+                    break;
+                case 'pl':
+                    shouldShow = productText.includes('asipire cat') ||
+                               productText.includes('privilege cat') ||
+                               productText.includes('pl');
+                    break;
+                case 'btccl':
+                    shouldShow = productText.includes('bt/ccl');
+                    break;
+                case 'other':
+                    shouldShow = productText.includes('other');
+                    break;
+                case 'all':
+                default:
+                    shouldShow = true;
+                    break;
+            }
+            
+            row.style.display = shouldShow ? '' : 'none';
+        });
+    }
+
+    // Enhanced product event listeners setup with specific 2nd ACC and Other handling
     function setupProductEventListeners() {
         console.log('Setting up product event listeners...');
         
@@ -1724,7 +2078,7 @@
             }
         });
 
-        // Fix 2: Enhanced 2nd ACC handling with proper delay
+        // Enhanced 2nd ACC handling with proper delay
         document.getElementById('product2ndACC').addEventListener('change', function() {
             console.log('2nd ACC checkbox changed:', this.checked);
             if (appInitialized) {
@@ -1778,7 +2132,7 @@
             calculateTotalPoints();
         });
 
-        // Fix 2: Enhanced Other product handling
+        // Enhanced Other product handling
         document.getElementById('productOther').addEventListener('change', function() {
             const otherPointsSection = document.getElementById('otherPointsSection');
             const otherPointsInput = document.getElementById('otherPoints');
@@ -2145,7 +2499,7 @@
                 }
             }
             
-            // Fix 2: Enhanced 2nd ACC handling with proper checkbox check and delay
+            // Enhanced 2nd ACC handling with proper checkbox check and delay
             if (product2ndACC.checked) {
                 console.log('Creating 2nd ACC dropdown');
                 const accOptions = getACCOptions(proposition, salary);
@@ -2219,7 +2573,7 @@
         calculateTotalPoints();
     }
 
-    // Fix 2: Enhanced function to initialize product options with specific 2nd ACC handling
+    // Enhanced function to initialize product options with specific 2nd ACC handling
     function initializeProductOptions() {
         if (!editingData) {
             console.log('No editing data available');
@@ -2256,7 +2610,7 @@
                 }
             }
             
-            // Fix 2: Enhanced 2nd ACC initialization with longer delay and better checking
+            // Enhanced 2nd ACC initialization with longer delay and better checking
             if (product2ndACC.checked) {
                 console.log('Initializing 2nd ACC dropdown for editing');
                 const accOptions = getACCOptions(proposition, salary);
@@ -2540,12 +2894,13 @@
     function getACCOptions(proposition, salary) {
         const options = [];
         
-        options.push({ value: "Aspire5K-10K", text: "Aspire 5K-10K (Salary: 5000-9999)", points: 150, minSalary: 5000, maxSalary: 9999, disableSTL: false });
-        options.push({ value: "Aspire10K-20K", text: "Aspire 10K-20K (Salary: 10000-19999)", points: 400, minSalary: 10000, maxSalary: 19999, disableSTL: false });
-        options.push({ value: "Privilege20K-40K", text: "Privilege 20K-40K (Salary: 20000-39999)", points: 550, minSalary: 20000, maxSalary: 39999, disableSTL: false });
-        options.push({ value: "Privilege40K+", text: "Privilege 40K & Above (Salary: 40000+)", points: 800, minSalary: 40000, maxSalary: Infinity, disableSTL: false });
+        options.push({ value: "Aspire5K-10K", text: "Aspire 5K-10K", points: 150, minSalary: 5000, maxSalary: 9999, disableSTL: false });
+        options.push({ value: "Aspire10K-20K", text: "Aspire 10K-20K", points: 400, minSalary: 10000, maxSalary: 19999, disableSTL: false });
+        options.push({ value: "Privilege20K-40K", text: "Privilege 20K-40K", points: 550, minSalary: 20000, maxSalary: 39999, disableSTL: false });
+        options.push({ value: "Privilege40K+", text: "Privilege 40K & Above", points: 800, minSalary: 40000, maxSalary: Infinity, disableSTL: false });
         
         if (proposition === "Islamic" || proposition === "Both") {
+            // Change MDSA points from 175 to 110
             options.push({ 
                 value: "MDSA", 
                 text: "MDSA", 
@@ -2896,7 +3251,7 @@
             document.getElementById('summaryTotalPL').textContent = "AED 0";
             document.getElementById('summaryTotalAccounts').textContent = "0";
             
-            // Fix 1: Account Funding defaults in fixed format
+            // Account Funding defaults in fixed format
             document.getElementById('fundingTotal').textContent = "0 (0 pts)";
             document.getElementById('fundingMDSACount').textContent = "0";
             document.getElementById('fundingMDSAPoints').textContent = "(0 pts)";
@@ -2916,7 +3271,7 @@
         let aspireCount = 0, privilegeCount = 0, mdsaCount = 0;
         let tmlAllCount = 0, tmlCCCount = 0, tmSelectCount = 0, ntmlCount = 0;
         
-        // Fix 1: Account Funding calculations in fixed format
+        // Account Funding calculations in fixed format with corrected MDSA points
         let fundingMDSACount = 0, fundingMDSAPoints = 0;
         let fundingAspireCount = 0, fundingAspirePoints = 0;
         let fundingPrivilegeCount = 0, fundingPrivilegePoints = 0;
@@ -2936,11 +3291,11 @@
                 pendingPoints += points;
             }
             
-            // Fix 1: Account Funding logic - check product string without STL
+            // Account Funding logic - check product string without STL
             if (!isRejected && !productString.includes('STL')) {
                 if (productString.includes('MDSA')) {
                     fundingMDSACount++;
-                    fundingMDSAPoints += 175; // MDSA points value
+                    fundingMDSAPoints += 110; // Fixed MDSA points value
                 } 
                 
                 if (productString.includes('Aspire 5K-10K') || productString.includes('Aspire 10K-20K')) {
@@ -3061,7 +3416,7 @@
         document.getElementById('summaryTotalPL').textContent = formatCurrency(totalLoanAmount > 0 ? totalLoanAmount : 0);
         document.getElementById('summaryTotalAccounts').textContent = totalAccounts > 0 ? totalAccounts : "0";
         
-        // Fix 1: Update Account Funding section in fixed format
+        // Update Account Funding section in fixed format
         const totalFundingCount = fundingMDSACount + fundingAspireCount + fundingPrivilegeCount;
         const totalFundingPoints = fundingMDSAPoints + fundingAspirePoints + fundingPrivilegePoints;
         
@@ -3404,25 +3759,7 @@ Accounts: ${progressACC}`;
         }
     }
 
-    function startLongPress(element, cid) {
-        isLongPressing = false;
-        element.classList.add('longpress-active');
-        
-        longPressTimer = setTimeout(() => {
-            isLongPressing = true;
-            element.classList.remove('longpress-active');
-            editRecord(cid);
-        }, 1000);
-    }
-
-    function endLongPress(element) {
-        if (longPressTimer) {
-            clearTimeout(longPressTimer);
-            longPressTimer = null;
-        }
-        element.classList.remove('longpress-active');
-    }
-
+    // Modified displayDataInTable function to remove long press except on Points column
     function displayDataInTable(data, targetTableId, isMasterSearch = false, isMasterFetch = false, sheetType = 'data') {
         const tableBody = document.getElementById(targetTableId);
         tableBody.innerHTML = '';
@@ -3435,7 +3772,6 @@ Accounts: ${progressACC}`;
         
         data.forEach(row => {
             const tr = document.createElement('tr');
-            tr.classList.add('table-row-longpress');
             const mobileNumber = row.Mobile || '';
             const cidValue = row.CID || '';
             const appIdValue = row['App ID'] || '';
@@ -3504,95 +3840,13 @@ Accounts: ${progressACC}`;
                 ${actionsHtml}
             `;
             
-            if (!isMasterSearch) {
-                tr.addEventListener('mousedown', (e) => {
-                    const cell = e.target.closest('td');
-                    if (e.button === 0 && cell && !cell.classList.contains('action-column')) {
-                        const cellIndex = Array.from(cell.parentElement.children).indexOf(cell);
-                        if (cellIndex !== 6) {
-                            startLongPress(tr, cidValue);
-                        } else {
-                            editingFromMaster = (sheetType === 'master');
-                            editRecord(cidValue);
-                        }
-                    }
-                });
-                
-                tr.addEventListener('mouseup', () => {
-                    endLongPress(tr);
-                });
-                
-                tr.addEventListener('mouseleave', () => {
-                    endLongPress(tr);
-                });
-                
-                tr.addEventListener('touchstart', (e) => {
-                    const cell = e.target.closest('td');
-                    if (cell && !cell.classList.contains('action-column')) {
-                        const cellIndex = Array.from(cell.parentElement.children).indexOf(cell);
-                        if (cellIndex !== 6) {
-                            startLongPress(tr, cidValue);
-                        } else {
-                            editingFromMaster = (sheetType === 'master');
-                            editRecord(cidValue);
-                        }
-                    }
-                });
-                
-                tr.addEventListener('touchend', (e) => {
-                    endLongPress(tr);
-                    if (!isLongPressing) {
-                        // Allow normal touch interactions
-                    }
-                });
-                
-                tr.addEventListener('touchcancel', () => {
-                    endLongPress(tr);
-                });
-            } else if (isMasterFetch) {
-                // Add click functionality for Master fetch data
-                tr.addEventListener('mousedown', (e) => {
-                    const cell = e.target.closest('td');
-                    if (e.button === 0 && cell && !cell.classList.contains('action-column')) {
-                        const cellIndex = Array.from(cell.parentElement.children).indexOf(cell);
-                        if (cellIndex === 6) {
-                            // Points column clicked - edit record
-                            editingFromMaster = true;
-                            editRecord(cidValue);
-                        } else if (cellIndex !== 6) {
-                            startLongPress(tr, cidValue);
-                        }
-                    }
-                });
-                
-                tr.addEventListener('mouseup', () => {
-                    endLongPress(tr);
-                });
-                
-                tr.addEventListener('mouseleave', () => {
-                    endLongPress(tr);
-                });
-                
-                tr.addEventListener('touchstart', (e) => {
-                    const cell = e.target.closest('td');
-                    if (cell && !cell.classList.contains('action-column')) {
-                        const cellIndex = Array.from(cell.parentElement.children).indexOf(cell);
-                        if (cellIndex === 6) {
-                            // Points column clicked - edit record
-                            editingFromMaster = true;
-                            editRecord(cidValue);
-                        } else if (cellIndex !== 6) {
-                            startLongPress(tr, cidValue);
-                        }
-                    }
-                });
-                
-                tr.addEventListener('touchend', (e) => {
-                    endLongPress(tr);
-                });
-                
-                tr.addEventListener('touchcancel', () => {
-                    endLongPress(tr);
+            // Only add click event listeners for Points column (index 6)
+            const pointsCell = tr.cells[6];
+            if (pointsCell) {
+                pointsCell.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    editingFromMaster = (sheetType === 'master');
+                    editRecord(cidValue);
                 });
             }
             
@@ -3623,6 +3877,9 @@ Accounts: ${progressACC}`;
                 }
             });
         });
+
+        // Apply current filter
+        applyProductFilter(currentFilter);
     }
 
     // Custom confirm dialog
@@ -3850,7 +4107,7 @@ Accounts: ${progressACC}`;
         return `${year}-${month}-${day}`;
     }
 
-    // Fix 2: FINAL Enhanced form population function with proper 2nd ACC and Other handling
+    // Fix 2: Enhanced form population function with improved PL and Other handling
     function populateForm(data) {
         console.log('Populating form with data:', data);
         
@@ -3911,13 +4168,13 @@ Accounts: ${progressACC}`;
         if (data.ccOption2) currentSelections.CCOption2 = data.ccOption2;
         if (data.plOption) currentSelections.PL = data.plOption;
         
-        // Fix 2: FINAL Enhanced product checkbox initialization with comprehensive product detection
+        // Fix 2: Enhanced product checkbox initialization with comprehensive product detection
         productACC.checked = productStringContains(productString, 'MDSA') || 
                             productStringContains(productString, 'Aspire') ||
                             productStringContains(productString, 'Privilege') ||
                             productString.includes('ACC');
                             
-        // Fix 2: FINAL specific 2nd ACC detection - check for exact match and variations
+        // Fix 2: Specific 2nd ACC detection - check for exact match and variations
         product2ndACC.checked = productString.includes('2nd ACC') || 
                                products.some(p => p.trim() === '2nd ACC') ||
                                products.filter(p => 
@@ -3931,7 +4188,7 @@ Accounts: ${progressACC}`;
             p.includes('MDSA') || p.includes('Aspire') || p.includes('Privilege')
         ));
         
-        // Fix 2: Ensure 2nd ACC is properly enabled when ACC is checked
+        // Ensure 2nd ACC is properly enabled when ACC is checked
         if (productACC.checked) {
             product2ndACC.disabled = false;
             productSTL.disabled = false;
@@ -3960,26 +4217,30 @@ Accounts: ${progressACC}`;
                                 (productStringContains(productString, 'Touchpoints') ||
                                  productStringContains(productString, 'Talabat')));
         
-        // Fix 2: Ensure 2nd CC is properly enabled when CC is checked
+        // Ensure 2nd CC is properly enabled when CC is checked
         if (productCC.checked) {
             product2ndCC.disabled = false;
         }
         
         productBTCCL.checked = productStringContains(productString, 'BT/CCL');
         
-        productPL.checked = productStringContains(productString, 'Asipire Cat') ||
-                           productStringContains(productString, 'Privilege Cat') ||
+        // Fix 2: Enhanced PL detection with comprehensive matching
+        productPL.checked = productStringContains(productString, 'Asipire Cat A & B') ||
+                           productStringContains(productString, 'Aspire Cat C & Below') ||
+                           productStringContains(productString, 'Privilege Cat A & B') ||
+                           productStringContains(productString, 'Privilege Cat C & Below') ||
                            productStringContains(productString, 'PL');
                            
-        // Fix 2: FINAL Enhanced Other product handling with proper amount retrieval
+        // Fix 2: Enhanced Other product handling with proper amount retrieval
         productOther.checked = productStringContains(productString, 'Other');
         
+        // Fix 2: Enhanced PL section handling with amount retrieval
         if (productPL.checked) {
             loanAmountSection.classList.remove('hidden');
             loanAmountInput.value = data['Loan Amount'] || '';
         }
         
-        // Fix 2: FINAL Enhanced Other section handling with amount retrieval
+        // Fix 2: Enhanced Other section handling with amount retrieval
         if (productOther.checked) {
             otherPointsSection.classList.remove('hidden');
             // Try multiple possible field names for Other points
@@ -4042,7 +4303,7 @@ Accounts: ${progressACC}`;
         
         console.log('Before calling initializeProductOptions');
         
-        // Fix 2: FINAL Extended delay initialization specifically for 2nd ACC and Other handling with multiple retries
+        // Fix 2: Extended delay initialization specifically for 2nd ACC and Other handling with multiple retries
         setTimeout(() => {
             if (appInitialized) {
                 console.log('App initialized, calling initializeProductOptions');
