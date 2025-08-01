@@ -149,6 +149,11 @@
             color: white;
         }
         
+        .full-modal {
+            width: 95%;
+            height: 95%;
+        }
+        
         .toggle-switch {
             position: relative;
             display: inline-block;
@@ -595,6 +600,23 @@
         .dark .paste-btn:hover {
             color: #d1d5db;
         }
+
+        .closure-fee-calculate-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 8px;
+            transition: all 0.3s;
+        }
+
+        .closure-fee-calculate-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200 font-tahoma">
@@ -707,9 +729,6 @@
                 </button>
                 <button class="tab-btn text-white/80 font-medium" data-tab="rategrid" title="Rate Grid">
                     <i class="fas fa-table"></i>
-                </button>
-                <button class="tab-btn text-white/80 font-medium" data-tab="closurefee" title="Closure Fee">
-                    <i class="fas fa-file-invoice-dollar"></i>
                 </button>
                 <button class="tab-btn text-white/80 font-medium" data-tab="finance" title="Finance">
                     <i class="fas fa-hand-holding-usd"></i>
@@ -845,7 +864,7 @@
                                         <div class="flex justify-between items-center mb-1">
                                             <div class="flex items-center gap-1 w-full">
                                                 <label class="text-gray-700 dark:text-gray-300 font-medium flex-1">Credit Card 1:</label>
-                                                <input type="text" placeholder="Settle Amount" class="credit-card-settle-amount border rounded-md p-1 text-xs dark:bg-gray-800 dark:text-white dark:border-gray-600 hidden w-20" pattern="[0-9]*\.?[0-9]*">
+                                                <input type="text" placeholder="Settle Amount" class="credit-card-settle-amount border rounded-md p-1 text-xs dark:bg-gray-800 dark:text-white dark:border-gray-600 w-20" pattern="[0-9]*\.?[0-9]*">
                                                 <button class="settle-card-btn custom-btn text-white px-2 py-1 rounded text-xs w-14 text-center">Settle</button>
                                             </div>
                                         </div>
@@ -927,7 +946,10 @@
                                 
                                 <div id="closureFeeContainer" class="grid grid-cols-3 gap-2 items-center hidden">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Closure Fee (AED):</label>
-                                    <input type="text" id="closureFee" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" placeholder="Enter closure fee" pattern="[0-9]*\.?[0-9]*">
+                                    <div class="col-span-2 flex items-center">
+                                        <input type="text" id="closureFee" class="flex-1 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" placeholder="Enter closure fee" pattern="[0-9]*\.?[0-9]*">
+                                        <button id="calculateClosureFeeBtn" class="closure-fee-calculate-btn">Calculate</button>
+                                    </div>
                                 </div>
                                 
                                 <div class="grid grid-cols-3 gap-2 items-center">
@@ -942,8 +964,8 @@
                                 </div>
                                 
                                 <div class="grid grid-cols-3 gap-2 items-center">
-                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Days Between:</label>
-                                    <input type="text" id="daysBetween" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Payment Date:</label>
+                                    <input type="text" id="paymentDate" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                                 </div>
                                 
                                 <div class="grid grid-cols-3 gap-2 items-center">
@@ -983,7 +1005,7 @@
                                 </div>
                                 
                                 <div class="grid grid-cols-3 gap-2 items-center">
-                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Total Payment (AED):</label>
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium" id="totalPaymentLabel">Total Payment (AED):</label>
                                     <input type="text" id="totalPayment" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                                 </div>
                                 
@@ -1063,10 +1085,6 @@
                     <iframe src="rategrid.html" title="Rate Grid" id="rategridIframe"></iframe>
                 </div>
                 
-                <div id="tab-closurefee" class="tab-content">
-                    <iframe src="ecf.html" title="Closure Fee" id="closurefeeIframe"></iframe>
-                </div>
-                
                 <div id="tab-finance" class="tab-content">
                     <iframe src="finance.html" title="Finance" id="financeIframe"></iframe>
                 </div>
@@ -1084,6 +1102,16 @@
     
     <div id="successIndicator" class="success-indicator hidden">
         <span id="successMessage">Operation successful!</span>
+    </div>
+    
+    <div id="closureFeeModal" class="modal hidden">
+        <div class="modal-content full-modal">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-heading dark:text-white">Closure Fee Calculator</h2>
+                <button class="close-modal text-gray-700 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 text-2xl">&times;</button>
+            </div>
+            <iframe src="ecf.html" title="Closure Fee Calculator" id="closureFeeIframe" style="width: 100%; height: calc(100% - 60px); border: none;"></iframe>
+        </div>
     </div>
     
     <div id="shareModal" class="modal hidden">
@@ -1131,8 +1159,8 @@
                                 <td id="shareMaxLoanEligibility" class="p-2"></td>
                             </tr>
                             <tr>
-                                <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700">Days Between:</td>
-                                <td id="shareDaysBetween" class="p-2"></td>
+                                <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700">Payment Date:</td>
+                                <td id="sharePaymentDate" class="p-2"></td>
                             </tr>
                         </table>
                     </div>
@@ -1144,7 +1172,7 @@
                                 <td id="shareEmi" class="p-2"></td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700">Total Payment (AED):</td>
+                                <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700" id="shareTotalPaymentLabel">Total Payment (AED):</td>
                                 <td id="shareTotalPayment" class="p-2"></td>
                             </tr>
                             <tr class="border-b">
@@ -1557,6 +1585,53 @@
             }
         });
         
+        function getOrdinalSuffix(day) {
+            if (day >= 11 && day <= 13) {
+                return day + 'th';
+            }
+            switch (day % 10) {
+                case 1: return day + 'st';
+                case 2: return day + 'nd';
+                case 3: return day + 'rd';
+                default: return day + 'th';
+            }
+        }
+        
+        function updatePaymentDate() {
+            const firstPaymentDate = document.getElementById('firstPaymentDate').value;
+            const paymentDateInput = document.getElementById('paymentDate');
+            
+            if (firstPaymentDate) {
+                const date = new Date(firstPaymentDate);
+                const day = date.getDate();
+                paymentDateInput.value = getOrdinalSuffix(day);
+            } else {
+                paymentDateInput.value = '';
+            }
+        }
+        
+        function updateTotalPaymentLabel() {
+            const loanType = document.getElementById('loanType').value;
+            const totalPaymentLabel = document.getElementById('totalPaymentLabel');
+            const totalPaymentInput = document.getElementById('totalPayment');
+            const closureFee = parseFloat(document.getElementById('closureFee').value) || 0;
+            
+            if ((loanType === 'topup-0-30' || loanType === 'topup-30-60') && closureFee > 0) {
+                totalPaymentLabel.textContent = 'Closure Fee (AED):';
+                totalPaymentInput.value = formatNumber(closureFee.toFixed(2));
+            } else {
+                totalPaymentLabel.textContent = 'Total Payment (AED):';
+                const loanAmount = parseFloat(document.getElementById('loanAmount').value) || 0;
+                const tenureMonths = parseInt(document.getElementById('tenureMonths').value) || 0;
+                const emi = parseFloat(document.getElementById('emi').value.replace(/,/g, '')) || 0;
+                
+                if (loanAmount > 0 && tenureMonths > 0 && emi > 0) {
+                    const totalPayment = emi * tenureMonths;
+                    totalPaymentInput.value = formatNumber(totalPayment.toFixed(2));
+                }
+            }
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
             const salaryInput = document.getElementById('salary');
             const grossSalaryInput = document.getElementById('grossSalary');
@@ -1589,6 +1664,8 @@
             const loanTypeSelect = document.getElementById('loanType');
             const closureFeeContainer = document.getElementById('closureFeeContainer');
             const closureFeeInput = document.getElementById('closureFee');
+            const calculateClosureFeeBtn = document.getElementById('calculateClosureFeeBtn');
+            const closureFeeModal = document.getElementById('closureFeeModal');
             const multiplesOfSalaryInput = document.getElementById('multiplesOfSalary');
             const maxLoanEligibilityInput = document.getElementById('maxLoanEligibility');
             const tenureMonthsInput = document.getElementById('tenureMonths');
@@ -1608,7 +1685,7 @@
             const resetBtn = document.getElementById('resetBtn');
             const disbursalDateInput = document.getElementById('disbursalDate');
             const firstPaymentDateInput = document.getElementById('firstPaymentDate');
-            const daysBetweenInput = document.getElementById('daysBetween');
+            const paymentDateInput = document.getElementById('paymentDate');
             const dateErrorMsg = document.getElementById('dateError');
             const emiCalculatorSection = document.getElementById('emiCalculator');
             
@@ -1656,7 +1733,7 @@
             nextMonth.setMonth(nextMonth.getMonth() + 1);
             firstPaymentDateInput.value = nextMonth.toISOString().split('T')[0];
             
-            updateDaysBetween();
+            updatePaymentDate();
             
             let addbackCount = 1;
             let addbackData = {};
@@ -1683,12 +1760,24 @@
                 
                 adjustFirstPaymentDate();
                 validatePaymentDate();
-                updateDaysBetween();
+                updatePaymentDate();
                 updateEMICalculator();
+                updateTotalPaymentLabel();
             });
             
             closureFeeInput.addEventListener('input', function() {
                 updateCashInHand();
+                updateTotalPaymentLabel();
+            });
+            
+            calculateClosureFeeBtn.addEventListener('click', function() {
+                closureFeeModal.classList.remove('hidden');
+            });
+            
+            firstPaymentDateInput.addEventListener('change', function() {
+                updatePaymentDate();
+                validatePaymentDate();
+                updateEMICalculator();
             });
             
             whatsappNumberInput.addEventListener('input', function(e) {
@@ -1734,6 +1823,7 @@
             tenureMonthsInput.addEventListener('input', function(e) {
                 this.value = this.value.replace(/[^0-9]/g, '').slice(0, 2);
                 updateEMICalculator();
+                updateTotalPaymentLabel();
             });
             
             loanAmountInput.addEventListener('input', function(e) {
@@ -1742,6 +1832,7 @@
                 updateEMICalculator();
                 updateLoanMultiples();
                 updateCashInHand();
+                updateTotalPaymentLabel();
             });
             
             reducingRateInput.addEventListener('input', function(e) {
@@ -1751,6 +1842,7 @@
                     this.value = this.value.slice(0, -1);
                 }
                 updateEMICalculator();
+                updateTotalPaymentLabel();
             });
             
             closureFeeInput.addEventListener('input', function(e) {
@@ -1760,6 +1852,7 @@
                     this.value = parts[0] + '.' + parts[1];
                 }
                 updateCashInHand();
+                updateTotalPaymentLabel();
             });
             
             preferredEMIInput.addEventListener('input', function(e) {
@@ -1874,7 +1967,7 @@
                     firstPaymentDateInput.value = newPaymentDate.toISOString().split('T')[0];
                 }
                 
-                updateDaysBetween();
+                updatePaymentDate();
             }
             
             document.querySelectorAll('.credit-card-amount, .credit-card-new-limit, .credit-card-outstanding').forEach(input => {
@@ -2009,6 +2102,8 @@
             const initialNewLimitInput = initialCardEntry.querySelector('.credit-card-new-limit');
             const initialOutstandingInput = initialCardEntry.querySelector('.credit-card-outstanding');
             const initialSettleAmountInput = initialCardEntry.querySelector('.credit-card-settle-amount');
+            
+            handleBankSelection(initialCardEntry);
             
             initialBankSelect.addEventListener('change', function() {
                 handleBankSelection(initialCardEntry);
@@ -2383,6 +2478,8 @@
                     updateGrossSalary();
                     updateDBRCalculator();
                     updateEMICalculator();
+                    updatePaymentDate();
+                    updateTotalPaymentLabel();
                     
                     showSuccess('Profile retrieved successfully!');
                 } catch (error) {
@@ -2740,6 +2837,8 @@
                         updateGrossSalary();
                         updateDBRCalculator();
                         updateEMICalculator();
+                        updatePaymentDate();
+                        updateTotalPaymentLabel();
                     }, 500);
                     
                 } catch (error) {
@@ -2952,25 +3051,6 @@
                     return 525;
                 } else {
                     return processingFeePercent;
-                }
-            }
-            
-            function calculateDaysBetween(startDate, endDate) {
-                const start = new Date(startDate);
-                const end = new Date(endDate);
-                const diffTime = Math.abs(end - start);
-                return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            }
-            
-            function updateDaysBetween() {
-                const disbursalDate = disbursalDateInput.value;
-                const firstPaymentDate = firstPaymentDateInput.value;
-                
-                if (disbursalDate && firstPaymentDate) {
-                    const days = calculateDaysBetween(disbursalDate, firstPaymentDate);
-                    daysBetweenInput.value = days;
-                } else {
-                    daysBetweenInput.value = '';
                 }
             }
             
@@ -3359,6 +3439,8 @@
                     processingFeesInput.value = '';
                     loanMultiplesInput.value = '';
                 }
+                
+                updateTotalPaymentLabel();
             }
             
             function validatePaymentDate() {
@@ -3745,12 +3827,28 @@
                 document.getElementById('shareReducingRate').textContent = `${reducingRateInput.value}%`;
                 document.getElementById('shareFlatRate').textContent = `${flatRateInput.value}%`;
                 document.getElementById('shareEmi').textContent = emiInput.value;
-                document.getElementById('shareTotalPayment').textContent = totalPaymentInput.value;
-                document.getElementById('shareTotalInterest').textContent = totalInterestInput.value;
                 document.getElementById('shareProcessingFees').textContent = processingFeesInput.value;
                 document.getElementById('shareTotalOutstanding').textContent = totalOutstandingInput.value;
                 document.getElementById('shareCashInHand').textContent = cashInHandInput.value;
-                document.getElementById('shareDaysBetween').textContent = daysBetweenInput.value;
+                
+                const paymentDate = paymentDateInput.value;
+                document.getElementById('sharePaymentDate').textContent = paymentDate;
+                
+                const loanType = loanTypeSelect.value;
+                const shareTotalPaymentLabel = document.getElementById('shareTotalPaymentLabel');
+                const shareTotalPayment = document.getElementById('shareTotalPayment');
+                const shareTotalInterest = document.getElementById('shareTotalInterest');
+                const closureFee = parseFloat(closureFeeInput.value) || 0;
+                
+                if ((loanType === 'topup-0-30' || loanType === 'topup-30-60') && closureFee > 0) {
+                    shareTotalPaymentLabel.textContent = 'Closure Fee (AED):';
+                    shareTotalPayment.textContent = formatNumber(closureFee.toFixed(2));
+                } else {
+                    shareTotalPaymentLabel.textContent = 'Total Payment (AED):';
+                    shareTotalPayment.textContent = totalPaymentInput.value;
+                }
+                
+                shareTotalInterest.textContent = totalInterestInput.value;
                 
                 const schedule = generateEMISchedule();
                 const scheduleBody = document.getElementById('shareEmiSchedule');
@@ -3878,7 +3976,7 @@
                 const processingFees = parseFloat(processingFeesInput.value.replace(/,/g, '')) || 0;
                 const cashInHand = parseFloat(cashInHandInput.value.replace(/,/g, '')) || 0;
                 const totalOutstanding = parseFloat(totalOutstandingInput.value.replace(/,/g, '')) || 0;
-                const daysBetween = daysBetweenInput.value;
+                const paymentDate = paymentDateInput.value;
                 const customerName = customerNameInput.value.trim();
                 const specialNoteText = specialNote.value;
                 const closureFee = parseFloat(closureFeeInput.value) || 0;
@@ -3896,7 +3994,7 @@
                 message += `Reducing Rate: ${reducingRate}%\n`;
                 message += `Flat Rate: ${flatRate.toFixed(2)}%\n`;
                 message += `Max Loan Eligibity: AED ${formatNumber(maxLoanEligibility.toFixed(2))}\n`;
-                message += `Grace Period: ${daysBetween} days\n`;
+                message += `Grace Period: ${paymentDate}\n`;
                 message += `Total Payment: AED ${formatNumber(totalPayment.toFixed(2))}\n`;
                 message += `Processing Fees(+VAT): AED ${formatNumber(processingFees.toFixed(2))}\n`;
                 message += `Insurance Fees: AED 0\n`;
@@ -3919,7 +4017,19 @@
                     }
                 });
                 
+                const adcbCards = [];
+                let adcbCrossSellingCount = 0;
+                
                 document.querySelectorAll('.credit-card-entry').forEach((entry, index) => {
+                    const bank = entry.querySelector('.card-bank-select').value;
+                    
+                    if (bank === 'ADCB') {
+                        adcbCards.push({ entry, index });
+                    }
+                });
+                
+                adcbCards.forEach((card, position) => {
+                    const { entry, index } = card;
                     const bank = entry.querySelector('.card-bank-select').value;
                     const creditLimit = entry.querySelector('.credit-card-amount').value;
                     const newLimit = entry.querySelector('.credit-card-new-limit').value;
@@ -3929,12 +4039,43 @@
                     if (settledCards.has(index)) {
                         const originalOutstanding = settledCards.get(index) || outstanding;
                         autoSpecialNote += `• ${bank} Credit Card settle amount of AED ${formatNumber(parseFloat(originalOutstanding).toFixed(2))} from loan proceeds.\n`;
-                    } else if (bank === 'ADCB' && newLimit && parseFloat(newLimit) !== parseFloat(creditLimit)) {
-                        let noteText = `• ${bank} Credit Card limit reduce from AED ${formatNumber(parseFloat(creditLimit).toFixed(2))} to AED ${formatNumber(parseFloat(newLimit).toFixed(2))}`;
-                        if (settleAmount && parseFloat(settleAmount) > 0) {
-                            noteText += ` and settle AED ${formatNumber(parseFloat(settleAmount).toFixed(2))} from loan proceeds`;
+                    } else {
+                        if (position > 0 && adcbCrossSellingCount < 3) {
+                            const effectiveLimit = newLimit ? parseFloat(newLimit) : parseFloat(creditLimit);
+                            if (effectiveLimit > 0) {
+                                autoSpecialNote += `• ${bank} Cross sell credit card with the limit of AED ${formatNumber(effectiveLimit.toFixed(2))}\n`;
+                                adcbCrossSellingCount++;
+                            }
                         }
-                        autoSpecialNote += noteText + '\n';
+                        
+                        if (newLimit && parseFloat(newLimit) !== parseFloat(creditLimit)) {
+                            let noteText = `• ${bank} Credit Card limit reduce from AED ${formatNumber(parseFloat(creditLimit).toFixed(2))} to AED ${formatNumber(parseFloat(newLimit).toFixed(2))}`;
+                            if (settleAmount && parseFloat(settleAmount) > 0) {
+                                noteText += ` and settle AED ${formatNumber(parseFloat(settleAmount).toFixed(2))} from loan proceeds`;
+                            }
+                            autoSpecialNote += noteText + '\n';
+                        }
+                    }
+                });
+                
+                document.querySelectorAll('.credit-card-entry').forEach((entry, index) => {
+                    const bank = entry.querySelector('.card-bank-select').value;
+                    const creditLimit = entry.querySelector('.credit-card-amount').value;
+                    const newLimit = entry.querySelector('.credit-card-new-limit').value;
+                    const outstanding = entry.querySelector('.credit-card-outstanding').value;
+                    const settleAmount = entry.querySelector('.credit-card-settle-amount').value;
+                    
+                    if (bank !== 'ADCB') {
+                        if (settledCards.has(index)) {
+                            const originalOutstanding = settledCards.get(index) || outstanding;
+                            autoSpecialNote += `• ${bank} Credit Card settle amount of AED ${formatNumber(parseFloat(originalOutstanding).toFixed(2))} from loan proceeds.\n`;
+                        } else if (newLimit && parseFloat(newLimit) !== parseFloat(creditLimit)) {
+                            let noteText = `• ${bank} Credit Card limit reduce from AED ${formatNumber(parseFloat(creditLimit).toFixed(2))} to AED ${formatNumber(parseFloat(newLimit).toFixed(2))}`;
+                            if (settleAmount && parseFloat(settleAmount) > 0) {
+                                noteText += ` and settle AED ${formatNumber(parseFloat(settleAmount).toFixed(2))} from loan proceeds`;
+                            }
+                            autoSpecialNote += noteText + '\n';
+                        }
                     }
                 });
                 
@@ -3963,6 +4104,11 @@
             
             let cardCount = 1;
             addCreditCardBtn.addEventListener('click', function() {
+                if (cardCount >= 10) {
+                    showSuccess('Maximum 10 credit cards allowed');
+                    return;
+                }
+                
                 cardCount++;
                 const creditCardDiv = document.createElement('div');
                 creditCardDiv.classList.add('credit-card-entry', 'mb-2');
@@ -4047,6 +4193,8 @@
                 newSettleAmountInput.addEventListener('blur', function() {
                     handleSettleAmountChange(creditCardDiv);
                 });
+                
+                handleBankSelection(creditCardDiv);
             });
             
             removeCreditCardBtn.addEventListener('click', function() {
@@ -4138,7 +4286,7 @@
                 document.querySelector('.credit-card-amount').value = '';
                 document.querySelector('.credit-card-new-limit').value = '';
                 document.querySelector('.credit-card-outstanding').value = '';
-                document.querySelector('.credit-card-settle-amount').classList.add('hidden');
+                document.querySelector('.credit-card-settle-amount').classList.remove('hidden');
                 loanTypeSelect.value = 'fresh-0-30';
                 closureFeeInput.value = '';
                 closureFeeContainer.classList.add('hidden');
@@ -4201,7 +4349,7 @@
                 const nextMonth = new Date(today);
                 nextMonth.setMonth(nextMonth.getMonth() + 1);
                 firstPaymentDateInput.value = nextMonth.toISOString().split('T')[0];
-                updateDaysBetween();
+                updatePaymentDate();
                 
                 savedProfilesSelect.value = '';
                 
@@ -4223,6 +4371,7 @@
                 
                 updateDBRCalculator();
                 updateEMICalculator();
+                updateTotalPaymentLabel();
             });
             
             findOptimalLoanBtn.addEventListener('click', findOptimalLoanAmount);
@@ -4230,13 +4379,7 @@
             disbursalDateInput.addEventListener('change', function() {
                 adjustFirstPaymentDate();
                 validatePaymentDate();
-                updateDaysBetween();
-                updateEMICalculator();
-            });
-            
-            firstPaymentDateInput.addEventListener('change', function() {
-                validatePaymentDate();
-                updateDaysBetween();
+                updatePaymentDate();
                 updateEMICalculator();
             });
             
@@ -4263,6 +4406,8 @@
             updateGrossSalary();
             updateDBRCalculator();
             updateEMICalculator();
+            updatePaymentDate();
+            updateTotalPaymentLabel();
         });
     </script>
 </body>
