@@ -250,7 +250,7 @@
         }
         
         .chart-box {
-            width: 32%;
+            width: 24%;
             background: white;
             border-radius: 8px;
             padding: 12px;
@@ -281,6 +281,34 @@
                 #FF5349 0% 60%, 
                 #2197b2 60% 90%, 
                 #d8dee9 90% 100%
+            );
+            position: relative;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .pl-proposition-chart {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto;
+            background: conic-gradient(
+                #FF5349 0% 33%, 
+                #2197b2 33% 66%, 
+                #d8dee9 66% 100%
+            );
+            position: relative;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .cc-proposition-chart {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto;
+            background: conic-gradient(
+                #32CD32 0% 33%, 
+                #FF8C00 33% 66%, 
+                #9370DB 66% 100%
             );
             position: relative;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
@@ -741,7 +769,7 @@
             border-bottom: 1px solid #f3f3f3;
         }
 
-        /* Fix 1: Product Sort Dropdown Styles */
+        /* Product Sort Dropdown Styles */
         .sort-dropdown {
             position: relative;
             display: inline-block;
@@ -870,6 +898,237 @@
             background-color: #1A3A4A;
             color: white;
         }
+
+        /* Autocomplete styles */
+        .autocomplete-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .autocomplete-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .autocomplete-suggestion {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .autocomplete-suggestion:hover,
+        .autocomplete-suggestion.active {
+            background-color: #f0f0f0;
+        }
+
+        .autocomplete-suggestion:last-child {
+            border-bottom: none;
+        }
+
+        /* Fix 4: Enhanced Form Styling */
+        .styled-input {
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .styled-input:focus {
+            outline: none;
+            border-color: #1A3A4A;
+            box-shadow: 0 0 0 3px rgba(26, 58, 74, 0.1);
+            background: #ffffff;
+        }
+
+        .styled-input:hover {
+            border-color: #6c757d;
+        }
+
+        .styled-select {
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 45px;
+        }
+
+        .styled-select:focus {
+            outline: none;
+            border-color: #1A3A4A;
+            box-shadow: 0 0 0 3px rgba(26, 58, 74, 0.1);
+            background: #ffffff;
+        }
+
+        .styled-select:hover {
+            border-color: #6c757d;
+        }
+
+        .styled-radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .styled-radio-item {
+            display: flex;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 2px solid #e9ecef;
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            transition: all 0.3s ease;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .styled-radio-item:hover {
+            border-color: #6c757d;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .styled-radio-item input[type="radio"] {
+            opacity: 0;
+            position: absolute;
+            width: 0;
+            height: 0;
+        }
+
+        .styled-radio-item input[type="radio"]:checked + .radio-label {
+            color: white;
+        }
+
+        .styled-radio-item input[type="radio"]:checked {
+            background: none;
+        }
+
+        .styled-radio-item:has(input[type="radio"]:checked) {
+            background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
+            border-color: #1A3A4A;
+            color: white;
+        }
+
+        .radio-label {
+            font-weight: 500;
+            transition: color 0.3s ease;
+            pointer-events: none;
+        }
+
+        .styled-checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .styled-checkbox-item {
+            display: flex;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+            padding: 12px 16px;
+            border-radius: 6px;
+            border: 2px solid #e9ecef;
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            transition: all 0.3s ease;
+        }
+
+        .styled-checkbox-item:hover {
+            border-color: #6c757d;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .styled-checkbox-item input[type="checkbox"] {
+            opacity: 0;
+            position: absolute;
+            width: 0;
+            height: 0;
+        }
+
+        .styled-checkbox-item input[type="checkbox"]:checked + .checkbox-label {
+            color: white;
+        }
+
+        .styled-checkbox-item:has(input[type="checkbox"]:checked) {
+            background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
+            border-color: #1A3A4A;
+            color: white;
+        }
+
+        .styled-checkbox-item:has(input[type="checkbox"]:disabled) {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f1f3f4;
+            border-color: #d1d5db;
+        }
+
+        .checkbox-label {
+            font-weight: 500;
+            transition: color 0.3s ease;
+            pointer-events: none;
+        }
+
+        .styled-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+            font-size: 14px;
+            letter-spacing: 0.025em;
+        }
+
+        .form-section {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+        }
+
+        .form-row {
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group-wrapper {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .radio-group-wrapper {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
         
         @media (max-width: 768px) {
             .form-grid {
@@ -927,6 +1186,20 @@
             .account-funding-items {
                 flex-direction: column;
                 gap: 3px;
+            }
+
+            .styled-radio-group {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .styled-radio-item {
+                min-width: auto;
+                justify-content: flex-start;
+            }
+
+            .styled-checkbox-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -1050,7 +1323,7 @@
                 </div>
             </div>
             
-            <!-- Fix 1: Account Funding and Target in one line (30% - 70%) -->
+            <!-- Account Funding and Target in one line (30% - 70%) -->
             <div class="funding-target-container">
                 <!-- Account Funding Card (30%) -->
                 <div class="account-funding-card">
@@ -1122,10 +1395,10 @@
                 </div>
                 
                 <div class="visualization-container p-2">
-                    <!-- Proposition Distribution Chart -->
+                    <!-- Personal Loan Proposition Chart -->
                     <div class="chart-box">
-                        <div class="chart-title">Proposition Distribution</div>
-                        <div class="pie-chart">
+                        <div class="chart-title">Personal Loan Proposition</div>
+                        <div class="pl-proposition-chart">
                             <div class="donut-hole"></div>
                         </div>
                         <div class="chart-legend">
@@ -1139,6 +1412,28 @@
                             </div>
                             <div class="legend-item">
                                 <div class="legend-color" style="background-color: #d8dee9;"></div>
+                                <span>Both</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Credit Card Proposition Chart -->
+                    <div class="chart-box">
+                        <div class="chart-title">Credit Card Proposition</div>
+                        <div class="cc-proposition-chart">
+                            <div class="donut-hole"></div>
+                        </div>
+                        <div class="chart-legend">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #32CD32;"></div>
+                                <span>Conventional</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #FF8C00;"></div>
+                                <span>Islamic</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #9370DB;"></div>
                                 <span>Both</span>
                             </div>
                         </div>
@@ -1198,159 +1493,164 @@
     
     <!-- Entry Form Section -->
     <div id="entrySection" class="section">
-        <div class="bg-white p-4 rounded-lg shadow-md">
-            <h2 class="text-xl font-bold text-primary mb-4">Customer Data Entry</h2>
+        <div class="form-section">
+            <h2 class="text-xl font-bold text-primary mb-6">Customer Data Entry</h2>
             
-            <form id="entryForm" class="space-y-4">
+            <form id="entryForm" class="space-y-6">
                 <div class="form-grid">
                     <!-- Left Column -->
-                    <div class="space-y-4">
+                    <div class="space-y-6">
                         <!-- CID with Paste Icon -->
-                        <div>
-                            <label for="cid" class="block text-gray-700 font-medium mb-1">CID (Optional)</label>
+                        <div class="form-row">
+                            <label for="cid" class="styled-label">CID (Optional)</label>
                             <div class="input-with-paste">
-                                <input type="text" id="cid" name="cid" class="w-full border rounded-md p-2 text-base" pattern="[0-9]*" inputmode="numeric" tabindex="1">
+                                <input type="text" id="cid" name="cid" class="styled-input" pattern="[0-9]*" inputmode="numeric" tabindex="1">
                                 <i class="fas fa-paste paste-icon" onclick="pasteToField('cid')" title="Paste"></i>
                             </div>
                         </div>
                         
                         <!-- App ID with Paste Icon -->
-                        <div>
-                            <label for="appId" class="block text-gray-700 font-medium mb-1">App ID</label>
+                        <div class="form-row">
+                            <label for="appId" class="styled-label">App ID</label>
                             <div class="input-with-paste">
-                                <input type="text" id="appId" name="appId" class="w-full border rounded-md p-2 text-base" tabindex="2">
+                                <input type="text" id="appId" name="appId" class="styled-input" tabindex="2">
                                 <i class="fas fa-paste paste-icon" onclick="pasteToField('appId')" title="Paste"></i>
                             </div>
                         </div>
                         
                         <!-- Salary -->
-                        <div>
-                            <label for="salary" class="block text-gray-700 font-medium required mb-1">Salary</label>
-                            <input type="number" id="salary" name="salary" class="w-full border rounded-md p-2 text-base" required tabindex="3">
+                        <div class="form-row">
+                            <label for="salary" class="styled-label required">Salary</label>
+                            <input type="number" id="salary" name="salary" class="styled-input" required tabindex="3">
                         </div>
                         
                         <!-- Customer Name with Paste Icon -->
-                        <div>
-                            <label for="customerName" class="block text-gray-700 font-medium required mb-1">Customer Name</label>
+                        <div class="form-row">
+                            <label for="customerName" class="styled-label required">Customer Name</label>
                             <div class="input-with-paste">
-                                <input type="text" id="customerName" name="customerName" class="w-full border rounded-md p-2 text-base" required style="text-transform: uppercase;" tabindex="4">
+                                <input type="text" id="customerName" name="customerName" class="styled-input" required style="text-transform: uppercase;" tabindex="4">
                                 <i class="fas fa-paste paste-icon" onclick="pasteToField('customerName')" title="Paste"></i>
                             </div>
-                            <p id="nameError" class="text-red-500 text-sm hidden">Customer name must be unique</p>
+                            <p id="nameError" class="text-red-500 text-sm hidden mt-1">Customer name must be unique</p>
                         </div>
                         
                         <!-- Mobile with Paste Icon -->
-                        <div>
-                            <label for="mobile" class="block text-gray-700 font-medium required mb-1">Mobile</label>
+                        <div class="form-row">
+                            <label for="mobile" class="styled-label required">Mobile</label>
                             <div class="input-with-paste">
                                 <div class="mobile-input-container">
                                     <div class="mobile-prefix">971</div>
-                                    <input type="text" id="mobile" name="mobile" class="w-full border rounded-md p-2 text-base" required pattern="[0-9]*" inputmode="numeric" placeholder="Enter 9 digits" tabindex="5">
+                                    <input type="text" id="mobile" name="mobile" class="styled-input" required pattern="[0-9]*" inputmode="numeric" placeholder="Enter 9 digits" tabindex="5">
                                     <i class="fas fa-paste mobile-paste-icon" onclick="pasteToField('mobile')" title="Paste"></i>
                                 </div>
                             </div>
-                            <p id="mobileError" class="text-red-500 text-sm hidden">Mobile number must be unique</p>
+                            <p id="mobileError" class="text-red-500 text-sm hidden mt-1">Mobile number must be unique</p>
                         </div>
                         
-                        <!-- Company Name with Paste Icon -->
-                        <div>
-                            <label for="companyName" class="block text-gray-700 font-medium mb-1">Company Name</label>
-                            <div class="input-with-paste">
-                                <input type="text" id="companyName" name="companyName" class="w-full border rounded-md p-2 text-base" style="text-transform: uppercase;" tabindex="6">
+                        <!-- Company Name with Paste Icon and Autocomplete -->
+                        <div class="form-row">
+                            <label for="companyName" class="styled-label">Company Name</label>
+                            <div class="autocomplete-container">
+                                <input type="text" id="companyName" name="companyName" class="styled-input pr-12" style="text-transform: uppercase;" tabindex="6">
                                 <i class="fas fa-paste paste-icon" onclick="pasteToField('companyName')" title="Paste"></i>
+                                <div id="companySuggestions" class="autocomplete-suggestions"></div>
                             </div>
                         </div>
                         
                         <!-- Proposition -->
-                        <div>
-                            <label class="block text-gray-700 font-medium required mb-1">Proposition</label>
-                            <div class="flex flex-wrap gap-3 mt-2">
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="proposition" value="Conventional" class="form-radio" checked>
-                                    <span class="ml-2 text-gray-700">Conventional</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="proposition" value="Islamic" class="form-radio">
-                                    <span class="ml-2 text-gray-700">Islamic</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="proposition" value="Both" class="form-radio">
-                                    <span class="ml-2 text-gray-700">Both</span>
-                                </label>
+                        <div class="form-row">
+                            <label class="styled-label required">Proposition</label>
+                            <div class="radio-group-wrapper">
+                                <div class="styled-radio-group">
+                                    <label class="styled-radio-item">
+                                        <input type="radio" name="proposition" value="Conventional" checked>
+                                        <span class="radio-label">Conventional</span>
+                                    </label>
+                                    <label class="styled-radio-item">
+                                        <input type="radio" name="proposition" value="Islamic">
+                                        <span class="radio-label">Islamic</span>
+                                    </label>
+                                    <label class="styled-radio-item">
+                                        <input type="radio" name="proposition" value="Both">
+                                        <span class="radio-label">Both</span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         
                         <!-- Date -->
-                        <div>
-                            <label for="date" class="block text-gray-700 font-medium required mb-1">Date</label>
-                            <input type="date" id="date" name="date" pattern="\d{2}/\d{2}/\d{4}" class="w-full border rounded-md p-2 text-base" required>
+                        <div class="form-row">
+                            <label for="date" class="styled-label required">Date</label>
+                            <input type="date" id="date" name="date" pattern="\d{2}/\d{2}/\d{4}" class="styled-input" required>
                         </div>
                     </div>
                     
                     <!-- Right Column -->
-                    <div class="space-y-4">
+                    <div class="space-y-6">
                         <!-- Products -->
-                        <div>
-                            <label class="block text-gray-700 font-medium required mb-1">Products</label>
-                            <div class="grid grid-cols-2 gap-2 mt-2">
-                                <label class="inline-flex items-center">
-                                    <input type="checkbox" name="products" value="ACC" class="form-checkbox" id="productACC">
-                                    <span class="ml-2 text-gray-700">ACC</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="checkbox" name="products" value="2nd ACC" class="form-checkbox" id="product2ndACC" disabled>
-                                    <span class="ml-2 text-gray-700">2nd ACC</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="checkbox" name="products" value="STL" class="form-checkbox" id="productSTL" disabled>
-                                    <span class="ml-2 text-gray-700">STL</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="checkbox" name="products" value="CC" class="form-checkbox" id="productCC">
-                                    <span class="ml-2 text-gray-700">CC</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="checkbox" name="products" value="2ndCC" class="form-checkbox" id="product2ndCC">
-                                    <span class="ml-2 text-gray-700">2nd CC</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="checkbox" name="products" value="BT/CCL" class="form-checkbox" id="productBTCCL">
-                                    <span class="ml-2 text-gray-700">BT/CCL</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="checkbox" name="products" value="PL" class="form-checkbox" id="productPL">
-                                    <span class="ml-2 text-gray-700">PL</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="checkbox" name="products" value="Other" class="form-checkbox" id="productOther">
-                                    <span class="ml-2 text-gray-700">Other</span>
-                                </label>
+                        <div class="form-row">
+                            <label class="styled-label required">Products</label>
+                            <div class="checkbox-group-wrapper">
+                                <div class="styled-checkbox-grid">
+                                    <label class="styled-checkbox-item">
+                                        <input type="checkbox" name="products" value="ACC" id="productACC">
+                                        <span class="checkbox-label">ACC</span>
+                                    </label>
+                                    <label class="styled-checkbox-item">
+                                        <input type="checkbox" name="products" value="2nd ACC" id="product2ndACC" disabled>
+                                        <span class="checkbox-label">2nd ACC</span>
+                                    </label>
+                                    <label class="styled-checkbox-item">
+                                        <input type="checkbox" name="products" value="STL" id="productSTL" disabled>
+                                        <span class="checkbox-label">STL</span>
+                                    </label>
+                                    <label class="styled-checkbox-item">
+                                        <input type="checkbox" name="products" value="CC" id="productCC">
+                                        <span class="checkbox-label">CC</span>
+                                    </label>
+                                    <label class="styled-checkbox-item">
+                                        <input type="checkbox" name="products" value="2ndCC" id="product2ndCC">
+                                        <span class="checkbox-label">2nd CC</span>
+                                    </label>
+                                    <label class="styled-checkbox-item">
+                                        <input type="checkbox" name="products" value="BT/CCL" id="productBTCCL">
+                                        <span class="checkbox-label">BT/CCL</span>
+                                    </label>
+                                    <label class="styled-checkbox-item">
+                                        <input type="checkbox" name="products" value="PL" id="productPL">
+                                        <span class="checkbox-label">PL</span>
+                                    </label>
+                                    <label class="styled-checkbox-item">
+                                        <input type="checkbox" name="products" value="Other" id="productOther">
+                                        <span class="checkbox-label">Other</span>
+                                    </label>
+                                </div>
                             </div>
-                            <p id="productsError" class="text-red-500 text-sm hidden">Please select at least one product</p>
+                            <p id="productsError" class="text-red-500 text-sm hidden mt-1">Please select at least one product</p>
                         </div>
                         
                         <!-- Product Options Container -->
-                        <div id="productOptionsContainer" class="space-y-3">
+                        <div id="productOptionsContainer" class="space-y-4">
                             <!-- Product-specific dropdown sections will be added here dynamically -->
                         </div>
                         
                         <!-- Loan Amount (Only shown for PL) -->
-                        <div id="loanAmountSection" class="hidden">
-                            <label for="loanAmount" class="block text-gray-700 font-medium mb-1">Loan Amount</label>
-                            <input type="number" id="loanAmount" name="loanAmount" class="w-full border rounded-md p-2 text-base">
+                        <div id="loanAmountSection" class="form-row hidden">
+                            <label for="loanAmount" class="styled-label">Loan Amount</label>
+                            <input type="number" id="loanAmount" name="loanAmount" class="styled-input">
                         </div>
                         
                         <!-- Other Points (Only shown for Other product) -->
-                        <div id="otherPointsSection" class="hidden">
-                            <label for="otherPoints" class="block text-gray-700 font-medium mb-1">Other Points (Miscellaneous)</label>
-                            <input type="number" id="otherPoints" name="otherPoints" class="w-full border rounded-md p-2 text-base" placeholder="Enter other points">
+                        <div id="otherPointsSection" class="form-row hidden">
+                            <label for="otherPoints" class="styled-label">Other Points (Miscellaneous)</label>
+                            <input type="number" id="otherPoints" name="otherPoints" class="styled-input" placeholder="Enter other points">
                         </div>
                         
                         <!-- Banking with ADCB checkbox -->
-                        <div>
-                            <label class="block text-gray-700 font-medium mb-1">Banking</label>
+                        <div class="form-row">
+                            <label class="styled-label">Banking</label>
                             <div class="banking-container mt-2">
-                                <select id="banking" name="banking" class="banking-select border rounded-md p-2 text-base" tabindex="7">
+                                <select id="banking" name="banking" class="banking-select styled-select" tabindex="7">
                                     <option value="SELECT">SELECT</option>
                                     <option value="ADCB">ADCB</option>
                                     <option value="ENBD">ENBD</option>
@@ -1366,43 +1666,47 @@
                                     <option value="Other">Other</option>
                                 </select>
                                 <div class="adcb-checkbox-container">
-                                    <input type="checkbox" id="adcbOverride" name="adcbOverride" class="form-checkbox">
-                                    <label for="adcbOverride" class="text-gray-700 text-sm">ADCB</label>
+                                    <label class="styled-checkbox-item" style="padding: 8px 12px; min-height: auto;">
+                                        <input type="checkbox" id="adcbOverride" name="adcbOverride">
+                                        <span class="checkbox-label text-sm">ADCB</span>
+                                    </label>
                                 </div>
                             </div>
                             <div id="otherBankingSection" class="mt-2 hidden">
-                                <input type="text" id="otherBanking" name="otherBanking" placeholder="Specify bank" class="w-full border rounded-md p-2 text-base">
+                                <input type="text" id="otherBanking" name="otherBanking" placeholder="Specify bank" class="styled-input">
                             </div>
                         </div>
                         
                         <!-- Scheme -->
-                        <div>
-                            <label class="block text-gray-700 font-medium required mb-1">Scheme</label>
-                            <div class="flex flex-wrap gap-3 mt-2">
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="scheme" value="TML ALL" class="form-radio" checked>
-                                    <span class="ml-2 text-gray-700">TML ALL</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="scheme" value="TML CC" class="form-radio">
-                                    <span class="ml-2 text-gray-700">TML CC</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="scheme" value="TM SELECT" class="form-radio">
-                                    <span class="ml-2 text-gray-700">TM SELECT</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="scheme" value="NTML" class="form-radio">
-                                    <span class="ml-2 text-gray-700">NTML</span>
-                                </label>
+                        <div class="form-row">
+                            <label class="styled-label required">Scheme</label>
+                            <div class="radio-group-wrapper">
+                                <div class="styled-radio-group">
+                                    <label class="styled-radio-item">
+                                        <input type="radio" name="scheme" value="TML ALL" checked>
+                                        <span class="radio-label">TML ALL</span>
+                                    </label>
+                                    <label class="styled-radio-item">
+                                        <input type="radio" name="scheme" value="TML CC">
+                                        <span class="radio-label">TML CC</span>
+                                    </label>
+                                    <label class="styled-radio-item">
+                                        <input type="radio" name="scheme" value="TM SELECT">
+                                        <span class="radio-label">TM SELECT</span>
+                                    </label>
+                                    <label class="styled-radio-item">
+                                        <input type="radio" name="scheme" value="NTML">
+                                        <span class="radio-label">NTML</span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         
-                        <!-- Status with 40% Deduction checkbox -->
-                        <div>
-                            <label for="status" class="block text-gray-700 font-medium required mb-1">Status</label>
+                        <!-- Status with 50% Deduction checkbox -->
+                        <div class="form-row">
+                            <label for="status" class="styled-label required">Status</label>
                             <div class="status-container mt-2">
-                                <select id="status" name="status" class="status-select border rounded-md p-2 text-base" required tabindex="8">
+                                <select id="status" name="status" class="status-select styled-select" required tabindex="8">
                                     <option value="">Select Status</option>
                                     <option value="Draft">Draft</option>
                                     <option value="Under Review">Under Review</option>
@@ -1414,52 +1718,56 @@
                                     <option value="Other">Other</option>
                                 </select>
                                 <div class="deduction-checkbox-container">
-                                    <input type="checkbox" id="ccDeductionOverride" name="ccDeductionOverride" class="form-checkbox">
-                                    <label for="ccDeductionOverride" class="text-gray-700 text-sm">40%</label>
+                                    <label class="styled-checkbox-item" style="padding: 8px 12px; min-height: auto;">
+                                        <input type="checkbox" id="ccDeductionOverride" name="ccDeductionOverride">
+                                        <span class="checkbox-label text-sm">50%</span>
+                                    </label>
                                 </div>
                             </div>
                             <div id="otherStatusSection" class="mt-2 hidden">
-                                <input type="text" id="otherStatus" name="otherStatus" placeholder="Specify status" class="w-full border rounded-md p-2 text-base">
+                                <input type="text" id="otherStatus" name="otherStatus" placeholder="Specify status" class="styled-input">
                             </div>
                         </div>
                         
                         <!-- Activation -->
-                        <div>
-                            <label class="block text-gray-700 font-medium required mb-1">Activation</label>
-                            <div class="flex flex-wrap gap-3 mt-2">
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="activation" value="Non Activated" class="form-radio" checked>
-                                    <span class="ml-2 text-gray-700">Non Activated</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="activation" value="Activated" class="form-radio">
-                                    <span class="ml-2 text-gray-700">Activated</span>
-                                </label>
+                        <div class="form-row">
+                            <label class="styled-label required">Activation</label>
+                            <div class="radio-group-wrapper">
+                                <div class="styled-radio-group">
+                                    <label class="styled-radio-item">
+                                        <input type="radio" name="activation" value="Non Activated" checked>
+                                        <span class="radio-label">Non Activated</span>
+                                    </label>
+                                    <label class="styled-radio-item">
+                                        <input type="radio" name="activation" value="Activated">
+                                        <span class="radio-label">Activated</span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         
                         <!-- Points (System Generated) -->
-                        <div>
-                            <label for="points" class="block text-gray-700 font-medium mb-1">Points (System Generated)</label>
+                        <div class="form-row">
+                            <label for="points" class="styled-label">Points (System Generated)</label>
                             <div class="points-container mt-2">
-                                <input type="text" id="points" name="points" class="points-input border rounded-md p-2 text-base bg-gray-100" readonly>
+                                <input type="text" id="points" name="points" class="points-input styled-input bg-gray-100" readonly>
                             </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Form Action Buttons -->
-                <div class="flex justify-center gap-3 mt-6 flex-wrap">
-                    <button type="submit" id="submitBtn" class="custom-btn text-white py-2 px-6 rounded-md flex items-center" tabindex="9">
+                <div class="flex justify-center gap-3 mt-8 flex-wrap">
+                    <button type="submit" id="submitBtn" class="custom-btn text-white py-3 px-8 rounded-md flex items-center" tabindex="9">
                         <i class="fas fa-save mr-2"></i> Save Data
                     </button>
-                    <button type="button" id="updateBtn" class="custom-btn bg-blue-600 text-white py-2 px-6 rounded-md flex items-center hidden">
+                    <button type="button" id="updateBtn" class="custom-btn bg-blue-600 text-white py-3 px-8 rounded-md flex items-center hidden">
                         <i class="fas fa-edit mr-2"></i> Update Data
                     </button>
-                    <button type="button" id="deleteBtn" class="bg-red-600 text-white py-2 px-6 rounded-md flex items-center hover:bg-red-700 hidden">
+                    <button type="button" id="deleteBtn" class="bg-red-600 text-white py-3 px-8 rounded-md flex items-center hover:bg-red-700 hidden">
                         <i class="fas fa-trash-alt mr-2"></i> Delete Data
                     </button>
-                    <button type="button" id="resetBtn" class="bg-gray-600 text-white py-2 px-6 rounded-md flex items-center hover:bg-gray-700">
+                    <button type="button" id="resetBtn" class="bg-gray-600 text-white py-3 px-8 rounded-md flex items-center hover:bg-gray-700">
                         <i class="fas fa-redo-alt mr-2"></i> Reset Form
                     </button>
                 </div>
@@ -1479,7 +1787,7 @@
                         <i class="fas fa-hourglass-half mr-2"></i> <span id="pendingPointsTotal">0</span></button>
                     <button id="expandBtn" class="bg-gray-600 text-white py-2 px-3 rounded-md hover:bg-gray-700" title="Expand/Collapse Columns">
                         <i class="fas fa-expand-alt"></i></button>
-                    <!-- Fix 1: Product Sort Dropdown -->
+                    <!-- Product Sort Dropdown -->
                     <div class="sort-dropdown">
                         <button class="sort-btn" id="sortDropdownBtn">
                             <i class="fas fa-sort"></i>
@@ -1503,12 +1811,7 @@
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <div class="filter-dropdown-content" id="filterDropdownContent">
-                            <div class="filter-option active" data-filter="all">All Products</div>
-                            <div class="filter-option" data-filter="acc">ACC</div>
-                            <div class="filter-option" data-filter="cc">CC</div>
-                            <div class="filter-option" data-filter="pl">PL</div>
-                            <div class="filter-option" data-filter="btccl">BT/CCL</div>
-                            <div class="filter-option" data-filter="other">Other</div>
+                            <!-- Filter options will be populated dynamically -->
                         </div>
                     </div>
                     <button id="exportDataBtn" class="custom-btn text-white py-2 px-4 rounded-md flex items-center">
@@ -1721,6 +2024,8 @@
     let appInitialized = false;
     let currentFilter = 'all';
     let currentSort = 'all';
+    let companyNames = [];
+    let statusOptions = [];
 
     // ==========================================
     // PASTE FUNCTIONALITY
@@ -1788,10 +2093,129 @@
     }
 
     // ==========================================
-    // INPUT VALIDATION
+    // INPUT VALIDATION AND AUTOCOMPLETE
     // ==========================================
 
-    // Fix 2: Enhanced DOM loaded initialization with proper 2nd ACC and Other handling
+    // Company autocomplete functionality - fetch from Data sheet column K
+    function setupCompanyAutocomplete() {
+        const companyNameInput = document.getElementById('companyName');
+        const suggestionsDiv = document.getElementById('companySuggestions');
+        
+        let selectedIndex = -1;
+        
+        companyNameInput.addEventListener('input', function() {
+            const value = this.value.toUpperCase();
+            selectedIndex = -1;
+            
+            if (value.length < 2) {
+                suggestionsDiv.style.display = 'none';
+                return;
+            }
+            
+            const filtered = companyNames.filter(company => 
+                company.toUpperCase().includes(value)
+            ).slice(0, 10);
+            
+            if (filtered.length === 0) {
+                suggestionsDiv.style.display = 'none';
+                return;
+            }
+            
+            suggestionsDiv.innerHTML = '';
+            filtered.forEach((company, index) => {
+                const div = document.createElement('div');
+                div.className = 'autocomplete-suggestion';
+                div.textContent = company;
+                div.addEventListener('click', function() {
+                    companyNameInput.value = company;
+                    suggestionsDiv.style.display = 'none';
+                });
+                suggestionsDiv.appendChild(div);
+            });
+            
+            suggestionsDiv.style.display = 'block';
+        });
+        
+        companyNameInput.addEventListener('keydown', function(e) {
+            const suggestions = suggestionsDiv.querySelectorAll('.autocomplete-suggestion');
+            
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                selectedIndex = Math.min(selectedIndex + 1, suggestions.length - 1);
+                updateSelection(suggestions);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                selectedIndex = Math.max(selectedIndex - 1, -1);
+                updateSelection(suggestions);
+            } else if (e.key === 'Enter' && selectedIndex >= 0) {
+                e.preventDefault();
+                companyNameInput.value = suggestions[selectedIndex].textContent;
+                suggestionsDiv.style.display = 'none';
+            } else if (e.key === 'Escape') {
+                suggestionsDiv.style.display = 'none';
+                selectedIndex = -1;
+            }
+        });
+        
+        function updateSelection(suggestions) {
+            suggestions.forEach((suggestion, index) => {
+                suggestion.classList.toggle('active', index === selectedIndex);
+            });
+        }
+        
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!companyNameInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
+                suggestionsDiv.style.display = 'none';
+            }
+        });
+    }
+
+    // Fetch company names from Google Sheets Data column K
+    async function fetchCompanyNames() {
+        try {
+            const response = await fetch(`${scriptURL}?action=getAll`);
+            const data = await response.json();
+            
+            if (data.success && data.data) {
+                // Extract unique company names from the data
+                const uniqueCompanies = [...new Set(
+                    data.data
+                        .map(record => record['Company Name'])
+                        .filter(name => name && name.trim() !== '')
+                        .map(name => name.toUpperCase())
+                )].sort();
+                
+                companyNames = uniqueCompanies;
+            }
+        } catch (error) {
+            console.error('Error fetching company names:', error);
+        }
+    }
+
+    // Fetch status options from Google Sheets column M
+    async function fetchStatusOptions() {
+        try {
+            const response = await fetch(`${scriptURL}?action=getAll`);
+            const data = await response.json();
+            
+            if (data.success && data.data) {
+                // Extract unique status values from the data
+                const uniqueStatuses = [...new Set(
+                    data.data
+                        .map(record => record.Status)
+                        .filter(status => status && status.trim() !== '')
+                )].sort();
+                
+                statusOptions = uniqueStatuses;
+                populateFilterDropdown();
+            }
+        } catch (error) {
+            console.error('Error fetching status options:', error);
+        }
+    }
+
+    // DOM initialization
     document.addEventListener('DOMContentLoaded', function() {
         console.log('DOM Content Loaded - Initializing app...');
         
@@ -1848,6 +2272,11 @@
         setupProductEventListeners();
         setupFilterDropdown();
         setupSortDropdown();
+        setupCompanyAutocomplete();
+        
+        // Fetch company names and status options
+        fetchCompanyNames();
+        fetchStatusOptions();
         
         // Mark app as initialized with a delay to ensure everything is ready
         setTimeout(() => {
@@ -1859,7 +2288,7 @@
         loadProfiles();
     });
 
-    // Fix 1: Setup sort dropdown functionality
+    // Setup sort dropdown functionality
     function setupSortDropdown() {
         const sortBtn = document.getElementById('sortDropdownBtn');
         const sortContent = document.getElementById('sortDropdownContent');
@@ -1896,80 +2325,71 @@
         });
     }
 
-    // Fix 1: Sort function for products
+    // Fix 1: Updated sort function for products with proper categorization
     function applyProductSort(sort) {
         const tableBody = document.getElementById('dataTableBody');
         const rows = Array.from(tableBody.querySelectorAll('tr'));
         
         if (sort === 'all') {
-            // Reset to original order if needed
+            // Show all rows
+            rows.forEach(row => {
+                row.style.display = '';
+            });
             return;
         }
         
-        // Sort rows based on product type
-        rows.sort((a, b) => {
-            const productA = a.cells[4]?.textContent.toLowerCase() || '';
-            const productB = b.cells[4]?.textContent.toLowerCase() || '';
-            
-            const matchA = productMatchesSort(productA, sort);
-            const matchB = productMatchesSort(productB, sort);
-            
-            // Sort matching products to top
-            if (matchA && !matchB) return -1;
-            if (!matchA && matchB) return 1;
-            
-            // Within same category, sort alphabetically
-            return productA.localeCompare(productB);
+        // Hide all rows first
+        rows.forEach(row => {
+            row.style.display = 'none';
         });
         
-        // Re-append sorted rows to table
-        rows.forEach(row => tableBody.appendChild(row));
+        // Show only matching rows
+        rows.forEach(row => {
+            const productCell = row.cells[4];
+            if (!productCell) return;
+            
+            const productText = productCell.textContent.toLowerCase();
+            
+            if (productMatchesSort(productText, sort)) {
+                row.style.display = '';
+            }
+        });
     }
 
-    // Fix 1: Helper function to check if product matches sort criteria
+    // Fix 1: Updated helper function to check if product matches sort criteria with exact matching
     function productMatchesSort(productText, sort) {
+        const accProducts = ['mdsa', 'aspire 5k-10k', 'aspire 10k-20k', 'privilege 20k-40k', 'privilege 40k & above'];
+        const ccProducts = [
+            'touchpoints gold visa', 'touchpoints titanium mc', 'essiential cashback mc', 'talabat mc',
+            'lulu titanium mc', 'lulu platinum mc', 'touchpoints platinum mc', '365 cashback visa',
+            'shukran platinum visa', 'etihad guest platinum visa', 'etihad guest signature visa',
+            'etihad guest infinite visa', 'touchpoints infinite visa', 'traveller mc world elite',
+            'betaqti mc world elite', 'emirati islamic infinite visa'
+        ];
+        const plProducts = ['pl asp-a&b', 'pl asp-c&below', 'pl prv-a&b', 'pl prv-c&below', 'top up'];
+        const btcclProducts = ['bt/ccl'];
+        const otherProducts = ['other'];
+        
         switch(sort) {
             case 'acc':
-                return productText.includes('mdsa') || 
-                       productText.includes('aspire 5k-10k') ||
-                       productText.includes('aspire 10k-20k') ||
-                       productText.includes('privilege 20k-40k') ||
-                       productText.includes('privilege 40k') ||
-                       productText.includes('2nd acc');
+                return accProducts.some(product => productText.includes(product));
             case 'cc':
-                return productText.includes('touchpoints') ||
-                       productText.includes('cashback') ||
-                       productText.includes('talabat') ||
-                       productText.includes('lulu') ||
-                       productText.includes('etihad') ||
-                       productText.includes('shukran') ||
-                       productText.includes('all ') ||
-                       productText.includes('traveller') ||
-                       productText.includes('betaqti') ||
-                       productText.includes('emirati') ||
-                       productText.includes('visa') ||
-                       productText.includes('mc') ||
-                       productText.includes('2ndcc');
+                return ccProducts.some(product => productText.includes(product));
             case 'pl':
-                return productText.includes('asipire cat a & b') ||
-                       productText.includes('aspire cat c & below') ||
-                       productText.includes('privilege cat a & b') ||
-                       productText.includes('privilege cat c & below') ||
-                       productText.includes('pl');
+                return plProducts.some(product => productText.includes(product));
             case 'btccl':
-                return productText.includes('bt/ccl');
+                return btcclProducts.some(product => productText.includes(product));
             case 'other':
-                return productText.includes('other');
+                return otherProducts.some(product => productText.includes(product));
             default:
                 return true;
         }
     }
 
-    // Product filter functionality
+    // Setup filter dropdown with status options from data
     function setupFilterDropdown() {
         const filterBtn = document.getElementById('filterDropdownBtn');
         const filterContent = document.getElementById('filterDropdownContent');
-        const filterOptions = document.querySelectorAll('.filter-option');
 
         filterBtn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -1982,8 +2402,31 @@
                 filterContent.classList.remove('show');
             }
         });
+    }
 
-        // Handle filter option clicks
+    // Populate filter dropdown with status options
+    function populateFilterDropdown() {
+        const filterContent = document.getElementById('filterDropdownContent');
+        filterContent.innerHTML = '';
+
+        // Add "All Status" option
+        const allOption = document.createElement('div');
+        allOption.className = 'filter-option active';
+        allOption.dataset.filter = 'all';
+        allOption.textContent = 'All Status';
+        filterContent.appendChild(allOption);
+
+        // Add status options from data
+        statusOptions.forEach(status => {
+            const option = document.createElement('div');
+            option.className = 'filter-option';
+            option.dataset.filter = status;
+            option.textContent = status;
+            filterContent.appendChild(option);
+        });
+
+        // Add event listeners to new options
+        const filterOptions = filterContent.querySelectorAll('.filter-option');
         filterOptions.forEach(option => {
             option.addEventListener('click', function() {
                 const filter = this.dataset.filter;
@@ -1994,7 +2437,24 @@
                 
                 // Apply filter
                 currentFilter = filter;
-                applyProductFilter(filter);
+                
+                // Fix 3: Show all records when filtering and revert when "All Status" is selected
+                if (filter === 'all') {
+                    // Revert to original state
+                    if (isShowingAllRecords) {
+                        displayDataInTable(allRecordsData, 'dataTableBody', false, false, 'data');
+                    } else {
+                        const displayData = allRecordsData.slice(-maxInitialRecords);
+                        displayDataInTable(displayData, 'dataTableBody', false, false, 'data');
+                    }
+                } else {
+                    // Show all records when filtering
+                    displayDataInTable(allRecordsData, 'dataTableBody', false, false, 'data');
+                    isShowingAllRecords = true;
+                    document.getElementById('showAllRecordsBtn').innerHTML = '<i class="fas fa-list-alt mr-2"></i>';
+                }
+                
+                applyStatusFilter(filter);
                 
                 // Close dropdown
                 filterContent.classList.remove('show');
@@ -2002,61 +2462,29 @@
         });
     }
 
-    function applyProductFilter(filter) {
+    // Apply status filter
+    function applyStatusFilter(filter) {
         const tableBody = document.getElementById('dataTableBody');
         const rows = tableBody.querySelectorAll('tr');
         
         rows.forEach(row => {
-            const productCell = row.cells[4]; // Products column
-            if (!productCell) return;
+            const statusCell = row.cells[5]; // Status column
+            if (!statusCell) return;
             
-            const productText = productCell.textContent.toLowerCase();
+            const statusText = statusCell.textContent.trim();
             let shouldShow = true;
             
-            switch(filter) {
-                case 'acc':
-                    shouldShow = productText.includes('mdsa') || 
-                               productText.includes('aspire') || 
-                               productText.includes('privilege') ||
-                               productText.includes('2nd acc');
-                    break;
-                case 'cc':
-                    shouldShow = productText.includes('touchpoints') ||
-                               productText.includes('cashback') ||
-                               productText.includes('talabat') ||
-                               productText.includes('lulu') ||
-                               productText.includes('etihad') ||
-                               productText.includes('shukran') ||
-                               productText.includes('all ') ||
-                               productText.includes('traveller') ||
-                               productText.includes('betaqti') ||
-                               productText.includes('emirati') ||
-                               productText.includes('visa') ||
-                               productText.includes('mc') ||
-                               productText.includes('2ndcc');
-                    break;
-                case 'pl':
-                    shouldShow = productText.includes('asipire cat') ||
-                               productText.includes('privilege cat') ||
-                               productText.includes('pl');
-                    break;
-                case 'btccl':
-                    shouldShow = productText.includes('bt/ccl');
-                    break;
-                case 'other':
-                    shouldShow = productText.includes('other');
-                    break;
-                case 'all':
-                default:
-                    shouldShow = true;
-                    break;
+            if (filter === 'all') {
+                shouldShow = true;
+            } else {
+                shouldShow = statusText === filter;
             }
             
             row.style.display = shouldShow ? '' : 'none';
         });
     }
 
-    // Enhanced product event listeners setup with specific 2nd ACC and Other handling
+    // Enhanced product event listeners setup
     function setupProductEventListeners() {
         console.log('Setting up product event listeners...');
         
@@ -2078,11 +2506,10 @@
             }
         });
 
-        // Enhanced 2nd ACC handling with proper delay
+        // Enhanced 2nd ACC handling
         document.getElementById('product2ndACC').addEventListener('change', function() {
             console.log('2nd ACC checkbox changed:', this.checked);
             if (appInitialized) {
-                // Add delay specifically for 2nd ACC to ensure proper initialization
                 setTimeout(() => {
                     updateProductOptions();
                 }, 100);
@@ -2132,7 +2559,6 @@
             calculateTotalPoints();
         });
 
-        // Enhanced Other product handling
         document.getElementById('productOther').addEventListener('change', function() {
             const otherPointsSection = document.getElementById('otherPointsSection');
             const otherPointsInput = document.getElementById('otherPoints');
@@ -2181,10 +2607,8 @@
                         e.preventDefault();
                         
                         if (fieldId === 'submitBtn') {
-                            // Trigger save button click
                             field.click();
                         } else {
-                            // Move to next field
                             const nextIndex = index + 1;
                             if (nextIndex < formFields.length) {
                                 const nextField = document.getElementById(formFields[nextIndex]);
@@ -2386,6 +2810,7 @@
         document.getElementById('nameError').classList.add('hidden');
         document.getElementById('mobileError').classList.add('hidden');
         document.getElementById('productsError').classList.add('hidden');
+        document.getElementById('companySuggestions').style.display = 'none';
 
         document.getElementById('submitBtn').classList.remove('hidden');
         document.getElementById('updateBtn').classList.add('hidden');
@@ -2499,7 +2924,6 @@
                 }
             }
             
-            // Enhanced 2nd ACC handling with proper checkbox check and delay
             if (product2ndACC.checked) {
                 console.log('Creating 2nd ACC dropdown');
                 const accOptions = getACCOptions(proposition, salary);
@@ -2512,7 +2936,6 @@
                         calculateTotalPoints();
                     });
                     
-                    // Add delay for 2nd ACC selection restoration
                     setTimeout(() => {
                         if (currentSelections.ACC2 && newAcc2Select.querySelector(`option[value="${currentSelections.ACC2}"]`)) {
                             newAcc2Select.value = currentSelections.ACC2;
@@ -2610,13 +3033,11 @@
                 }
             }
             
-            // Enhanced 2nd ACC initialization with longer delay and better checking
             if (product2ndACC.checked) {
                 console.log('Initializing 2nd ACC dropdown for editing');
                 const accOptions = getACCOptions(proposition, salary);
                 
                 if (accOptions.length > 0) {
-                    // Add longer delay specifically for 2nd ACC during editing
                     setTimeout(() => {
                         const acc2Div = createProductOptionDiv('ACC2', accOptions, '2nd ACC');
                         productOptionsContainer.appendChild(acc2Div);
@@ -2627,7 +3048,6 @@
                                 calculateTotalPoints();
                             });
                             
-                            // Set value from saved data with additional delay
                             setTimeout(() => {
                                 setAccDropdownFromString(acc2Select, editingProductString, 1);
                                 console.log('Set 2nd ACC dropdown value');
@@ -2649,7 +3069,6 @@
                 if (ccSelect) {
                     ccSelect.addEventListener('change', calculateTotalPoints);
                     
-                    // Set value from saved data
                     setTimeout(() => {
                         setCcDropdownFromString(ccSelect, editingProductString, 0);
                     }, 10);
@@ -2667,7 +3086,6 @@
                     if (cc2Select) {
                         cc2Select.addEventListener('change', calculateTotalPoints);
                         
-                        // Set value from saved data
                         setTimeout(() => {
                             setCcDropdownFromString(cc2Select, editingProductString, 1);
                         }, 10);
@@ -2687,7 +3105,6 @@
                 if (plSelect) {
                     plSelect.addEventListener('change', calculateTotalPoints);
                     
-                    // Set value from saved data
                     setTimeout(() => {
                         setPlDropdownFromString(plSelect, editingProductString);
                     }, 10);
@@ -2720,14 +3137,12 @@
             const targetProduct = accProducts[accIndex];
             console.log('Setting ACC dropdown to:', targetProduct);
             
-            // Enhanced matching logic for ACC products
             for (let option of accSelect.options) {
                 const optionValue = option.value;
                 const optionText = option.text;
                 
                 console.log('Checking option:', optionValue, optionText);
                 
-                // Direct matches with improved logic
                 if (targetProduct === 'MDSA' && optionValue === 'MDSA') {
                     accSelect.value = optionValue;
                     console.log('Set MDSA');
@@ -2776,26 +3191,22 @@
             const targetProduct = ccProducts[ccIndex];
             console.log('Setting CC dropdown to:', targetProduct);
             
-            // Find matching option by comparing with option text
             for (let option of ccSelect.options) {
                 const optionText = option.text.toLowerCase();
                 const targetText = targetProduct.toLowerCase();
                 
                 console.log('Checking CC option:', option.value, optionText);
                 
-                // More flexible matching - check if key words match
                 if ((targetText.includes('touchpoints') && optionText.includes('touchpoints')) ||
                     (targetText.includes('cashback') && optionText.includes('cashback')) ||
                     (targetText.includes('talabat') && optionText.includes('talabat')) ||
                     (targetText.includes('lulu') && optionText.includes('lulu')) ||
                     (targetText.includes('etihad') && optionText.includes('etihad')) ||
                     (targetText.includes('shukran') && optionText.includes('shukran')) ||
-                    (targetText.includes('all ') && optionText.includes('all ')) ||
                     (targetText.includes('traveller') && optionText.includes('traveller')) ||
                     (targetText.includes('betaqti') && optionText.includes('betaqti')) ||
                     (targetText.includes('emirati') && optionText.includes('emirati'))) {
                     
-                    // Additional checks for specific variants (gold, platinum, etc.)
                     if ((targetText.includes('gold') && optionText.includes('gold')) ||
                         (targetText.includes('platinum') && optionText.includes('platinum')) ||
                         (targetText.includes('titanium') && optionText.includes('titanium')) ||
@@ -2819,14 +3230,16 @@
         
         console.log('Setting PL dropdown from:', productString);
         
-        if (productString.includes('Asipire Cat A & B')) {
-            selectOptionByValue(plSelect, 'AspireCatAB');
-        } else if (productString.includes('Privilege Cat A & B')) {
-            selectOptionByValue(plSelect, 'PrivilegeCatAB');
-        } else if (productString.includes('Aspire Cat C & Below')) {
-            selectOptionByValue(plSelect, 'AspireCatCBelow');
-        } else if (productString.includes('Privilege Cat C & Below')) {
-            selectOptionByValue(plSelect, 'PrivilegeCatCBelow');
+        if (productString.includes('PL Asp-A&B')) {
+            selectOptionByValue(plSelect, 'PLAspAB');
+        } else if (productString.includes('PL Prv-A&B')) {
+            selectOptionByValue(plSelect, 'PLPrvAB');
+        } else if (productString.includes('PL Asp-C&Below')) {
+            selectOptionByValue(plSelect, 'PLAspCBelow');
+        } else if (productString.includes('PL Prv-C&Below')) {
+            selectOptionByValue(plSelect, 'PLPrvCBelow');
+        } else if (productString.includes('TOP UP')) {
+            selectOptionByValue(plSelect, 'TOPUP');
         }
     }
     
@@ -2882,8 +3295,8 @@
         });
         
         div.innerHTML = `
-            <label for="${id}" class="block text-gray-700 font-medium mb-1">${label}</label>
-            <select id="${id}" class="w-full border rounded-md p-2 text-base" data-product="${productType}">
+            <label for="${id}" class="styled-label">${label}</label>
+            <select id="${id}" class="styled-select" data-product="${productType}">
                 ${optionsHtml}
             </select>
         `;
@@ -2900,7 +3313,6 @@
         options.push({ value: "Privilege40K+", text: "Privilege 40K & Above", points: 800, minSalary: 40000, maxSalary: Infinity, disableSTL: false });
         
         if (proposition === "Islamic" || proposition === "Both") {
-            // Change MDSA points from 175 to 110
             options.push({ 
                 value: "MDSA", 
                 text: "MDSA", 
@@ -2914,7 +3326,7 @@
         return options;
     }
 
-    // Get CC options based on proposition
+    // Fix 2: Get CC options based on proposition with updated points and removed options
     function getCCOptions(proposition) {
         if (proposition === "Conventional") {
             return [
@@ -2926,14 +3338,12 @@
                 { value: "LuluPlatinumMC", text: "Lulu Platinum MC", points: 200, paid: false },
                 { value: "TouchpointsPlatinumMC", text: "Touchpoints Platinum MC", points: 400, paid: true },
                 { value: "365CashbackVisa", text: "365 Cashback Visa", points: 500, paid: true },
-                { value: "ShukranPlatinumVisa", text: "Shukran Platinum Visa", points: 500, paid: true },
+                { value: "ShukranPlatinumVisa", text: "Shukran Platinum Visa", points: 300, paid: true },
                 { value: "EtihadGuestPlatinumVisa", text: "Etihad Guest Platinum Visa", points: 500, paid: true },
-                { value: "AllSignatureVisa", text: "All Signature Visa", points: 500, paid: true },
-                { value: "AllInfiniteVisa", text: "All Infinite Visa", points: 750, paid: true },
                 { value: "EtihadGuestSignatureVisa", text: "Etihad Guest Signature Visa", points: 500, paid: true },
                 { value: "EtihadGuestInfiniteVisa", text: "Etihad Guest Infinite Visa", points: 750, paid: true },
-                { value: "TouchpointsInfiniteVisa", text: "Touchpoints Infinite Visa", points: 750, paid: true },
-                { value: "TravellerMCWorldElite", text: "Traveller MC World Elite", points: 750, paid: true },
+                { value: "TouchpointsInfiniteVisa", text: "Touchpoints Infinite Visa", points: 800, paid: true },
+                { value: "TravellerMCWorldElite", text: "Traveller MC World Elite", points: 800, paid: true },
                 { value: "BetaqtiMCWorldElite", text: "Betaqti MC World Elite", points: 1000, paid: true }
             ];
         } else if (proposition === "Islamic") {
@@ -2942,10 +3352,10 @@
                 { value: "TalabatMC", text: "Talabat MC", points: 150, paid: false },
                 { value: "TouchpointsPlatinumVisa", text: "Touchpoints Platinum Visa", points: 500, paid: true },
                 { value: "365CashbackVisa", text: "365 Cashback Visa", points: 500, paid: true },
-                { value: "ShukranPlatinumVisa", text: "Shukran Platinum Visa", points: 500, paid: true },
+                { value: "ShukranPlatinumVisa", text: "Shukran Platinum Visa", points: 300, paid: true },
                 { value: "EtihadGuestPlatinumVisa", text: "Etihad Guest Platinum Visa", points: 500, paid: true },
                 { value: "EtihadGuestSignatureVisa", text: "Etihad Guest Signature Visa", points: 500, paid: true },
-                { value: "TouchpointsInfiniteVisa", text: "Touchpoints Infinite Visa", points: 750, paid: true },
+                { value: "TouchpointsInfiniteVisa", text: "Touchpoints Infinite Visa", points: 800, paid: true },
                 { value: "EtihadGuestInfiniteVisa", text: "Etihad Guest Infinite Visa", points: 750, paid: true },
                 { value: "EmiratiIslamicInfiniteVisa", text: "Emirati Islamic Infinite Visa", points: 750, paid: true }
             ];
@@ -2966,17 +3376,18 @@
         return [];
     }
 
-    // Get PL options based on proposition
+    // Updated PL options with new names and TOP UP option
     function getPLOptions(proposition) {
         return [
-            { value: "AspireCatAB", text: "Asipire Cat A & B", points: "0.50%" },
-            { value: "PrivilegeCatAB", text: "Privilege Cat A & B", points: "0.50%" },
-            { value: "AspireCatCBelow", text: "Aspire Cat C & Below", points: "0.25%" },
-            { value: "PrivilegeCatCBelow", text: "Privilege Cat C & Below", points: "0.25%" }
+            { value: "PLAspAB", text: "PL Asp-A&B", points: "0.50%" },
+            { value: "PLPrvAB", text: "PL Prv-A&B", points: "0.50%" },
+            { value: "PLAspCBelow", text: "PL Asp-C&Below", points: "0.25%" },
+            { value: "PLPrvCBelow", text: "PL Prv-C&Below", points: "0.25%" },
+            { value: "TOPUP", text: "TOP UP", points: "0%" }
         ];
     }
 
-    // Calculate total points based on selected options
+    // Updated calculate total points function to handle 50% deduction override
     function calculateTotalPoints() {
         if (statusSelect.value === 'Rejected') {
             pointsInput.value = '0';
@@ -2986,9 +3397,8 @@
         let totalPoints = 0;
         const isAccCompletedUnderReview = statusSelect.value === 'ACC Completed, Under Review';
         
-        // Handle ACC Completed, Under Review special case - now counts points like other statuses except Rejected
+        // Handle ACC Completed, Under Review special case
         if (isAccCompletedUnderReview) {
-            // Count ACC points if ACC or 2nd ACC is checked
             if (productACC.checked) {
                 const accSelect = document.getElementById('ACCSelect');
                 if (accSelect && accSelect.value) {
@@ -3007,7 +3417,6 @@
                 }
             }
             
-            // Count CC points as well
             if (productCC.checked) {
                 const ccSelect = document.getElementById('CCSelect');
                 if (ccSelect && ccSelect.value) {
@@ -3015,13 +3424,17 @@
                     let ccPoints = parseInt(selectedOption.dataset.points) || 0;
                     
                     if (!productACC.checked) {
-                        if (!adcbOverrideCheckbox.checked && bankingSelect.value !== 'ADCB') {
+                        // If 50% deduction is checked, ignore ADCB override and apply 50%
+                        if (ccDeductionOverrideCheckbox.checked) {
+                            ccPoints = Math.round(ccPoints * 0.5);
+                        } else if (!adcbOverrideCheckbox.checked && bankingSelect.value !== 'ADCB') {
                             ccPoints = Math.round(ccPoints * 0.7);
                         }
-                    }
-                    
-                    if (ccDeductionOverrideCheckbox.checked) {
-                        ccPoints = Math.round(ccPoints * 0.6);
+                    } else {
+                        // Apply 50% deduction even when ACC is checked if override is selected
+                        if (ccDeductionOverrideCheckbox.checked) {
+                            ccPoints = Math.round(ccPoints * 0.5);
+                        }
                     }
                     
                     totalPoints += ccPoints;
@@ -3038,7 +3451,6 @@
                 }
             }
             
-            // Count other products too
             if (productBTCCL.checked) {
                 totalPoints += 100;
             }
@@ -3056,7 +3468,9 @@
                     const selectedOption = plSelect.options[plSelect.selectedIndex];
                     const pointsPercentage = selectedOption.dataset.points;
                     
-                    if (pointsPercentage === "0.50%") {
+                    if (pointsPercentage === "0%" || plSelect.value === "TOPUP") {
+                        totalPoints += 0;
+                    } else if (pointsPercentage === "0.50%") {
                         totalPoints += loanAmount * 0.005;
                     } else if (pointsPercentage === "0.25%") {
                         totalPoints += loanAmount * 0.0025;
@@ -3100,13 +3514,17 @@
                 let ccPoints = parseInt(selectedOption.dataset.points) || 0;
                 
                 if (!productACC.checked) {
-                    if (!adcbOverrideCheckbox.checked && bankingSelect.value !== 'ADCB') {
+                    // If 50% deduction is checked, ignore ADCB override and apply 50%
+                    if (ccDeductionOverrideCheckbox.checked) {
+                        ccPoints = Math.round(ccPoints * 0.5);
+                    } else if (!adcbOverrideCheckbox.checked && bankingSelect.value !== 'ADCB') {
                         ccPoints = Math.round(ccPoints * 0.7);
                     }
-                }
-                
-                if (ccDeductionOverrideCheckbox.checked) {
-                    ccPoints = Math.round(ccPoints * 0.6);
+                } else {
+                    // Apply 50% deduction even when ACC is checked if override is selected
+                    if (ccDeductionOverrideCheckbox.checked) {
+                        ccPoints = Math.round(ccPoints * 0.5);
+                    }
                 }
                 
                 totalPoints += ccPoints;
@@ -3140,7 +3558,9 @@
                 const selectedOption = plSelect.options[plSelect.selectedIndex];
                 const pointsPercentage = selectedOption.dataset.points;
                 
-                if (pointsPercentage === "0.50%") {
+                if (pointsPercentage === "0%" || plSelect.value === "TOPUP") {
+                    totalPoints += 0;
+                } else if (pointsPercentage === "0.50%") {
                     totalPoints += loanAmount * 0.005;
                 } else if (pointsPercentage === "0.25%") {
                     totalPoints += loanAmount * 0.0025;
@@ -3169,6 +3589,9 @@
                 const displayData = allRecordsData.slice(-maxInitialRecords);
                 displayDataInTable(displayData, 'dataTableBody', false, false, 'data');
                 calculatePointsTotals(allRecordsData);
+                
+                // Update status options for filter dropdown
+                fetchStatusOptions();
             } else {
                 showSuccess(`Error: ${data.error}`);
                 document.getElementById('dataTableBody').innerHTML = '<tr><td colspan="8" class="text-center py-4">Error loading data from server</td></tr>';
@@ -3251,7 +3674,6 @@
             document.getElementById('summaryTotalPL').textContent = "AED 0";
             document.getElementById('summaryTotalAccounts').textContent = "0";
             
-            // Account Funding defaults in fixed format
             document.getElementById('fundingTotal').textContent = "0 (0 pts)";
             document.getElementById('fundingMDSACount').textContent = "0";
             document.getElementById('fundingMDSAPoints').textContent = "(0 pts)";
@@ -3271,7 +3693,12 @@
         let aspireCount = 0, privilegeCount = 0, mdsaCount = 0;
         let tmlAllCount = 0, tmlCCCount = 0, tmSelectCount = 0, ntmlCount = 0;
         
-        // Account Funding calculations in fixed format with corrected MDSA points
+        // Separate Personal Loan and Credit Card proposition counts
+        let plConventionalCount = 0, plIslamicCount = 0, plBothCount = 0;
+        let ccConventionalCount = 0, ccIslamicCount = 0, ccBothCount = 0;
+        let plTotalAmount = 0, ccTotalCount = 0;
+        
+        // Account Funding calculations
         let fundingMDSACount = 0, fundingMDSAPoints = 0;
         let fundingAspireCount = 0, fundingAspirePoints = 0;
         let fundingPrivilegeCount = 0, fundingPrivilegePoints = 0;
@@ -3291,28 +3718,71 @@
                 pendingPoints += points;
             }
             
-            // Account Funding logic - check product string without STL
+            // Check if record has Personal Loan or Credit Card products
+            const hasPL = productString.includes('PL Asp-A&B') || 
+                         productString.includes('PL Asp-C&Below') || 
+                         productString.includes('PL Prv-A&B') || 
+                         productString.includes('PL Prv-C&Below') || 
+                         productString.includes('TOP UP');
+            
+            const hasCC = productString.includes('Touchpoints') ||
+                         productString.includes('Cashback') ||
+                         productString.includes('Talabat') ||
+                         productString.includes('Lulu') ||
+                         productString.includes('Etihad') ||
+                         productString.includes('Shukran') ||
+                         productString.includes('All ') ||
+                         productString.includes('Traveller') ||
+                         productString.includes('Betaqti') ||
+                         productString.includes('Emirati') ||
+                         productString.includes('Visa') ||
+                         productString.includes('MC');
+            
+            // Count proposition distribution for PL and CC separately
+            if (hasPL && loanAmount > 0) {
+                plTotalAmount += loanAmount;
+                if (proposition === 'Conventional') {
+                    plConventionalCount++;
+                } else if (proposition === 'Islamic') {
+                    plIslamicCount++;
+                } else if (proposition === 'Both') {
+                    plBothCount++;
+                }
+            }
+            
+            if (hasCC) {
+                ccTotalCount++;
+                if (proposition === 'Conventional') {
+                    ccConventionalCount++;
+                } else if (proposition === 'Islamic') {
+                    ccIslamicCount++;
+                } else if (proposition === 'Both') {
+                    ccBothCount++;
+                }
+            }
+            
+            // Account Funding logic
             if (!isRejected && !productString.includes('STL')) {
                 if (productString.includes('MDSA')) {
                     fundingMDSACount++;
-                    fundingMDSAPoints += 110; // Fixed MDSA points value
+                    fundingMDSAPoints += 110;
                 } 
                 
                 if (productString.includes('Aspire 5K-10K') || productString.includes('Aspire 10K-20K')) {
                     fundingAspireCount++;
                     if (productString.includes('Aspire 5K-10K')) {
-                        fundingAspirePoints += 150; // Aspire 5K-10K points
+                        fundingAspirePoints += 150;
                     } else if (productString.includes('Aspire 10K-20K')) {
-                        fundingAspirePoints += 400; // Aspire 10K-20K points
+                        fundingAspirePoints += 400;
                     }
                 }
                 
                 if (productString.includes('Privilege 20K-40K') || productString.includes('Privilege 40K')) {
                     fundingPrivilegeCount++;
                     if (productString.includes('Privilege 20K-40K')) {
-                        fundingPrivilegePoints += 550; // Privilege 20K-40K points
+                        fundingPrivilegePoints += 550;
                     } else if (productString.includes('Privilege 40K')) {
-                        fundingPrivilegePoints += 800; // Privilege 40K+ points
+                        fundingPrivilegePoints += 800;
                     }
                 }
             }
@@ -3416,7 +3886,7 @@
         document.getElementById('summaryTotalPL').textContent = formatCurrency(totalLoanAmount > 0 ? totalLoanAmount : 0);
         document.getElementById('summaryTotalAccounts').textContent = totalAccounts > 0 ? totalAccounts : "0";
         
-        // Update Account Funding section in fixed format
+        // Update Account Funding section
         const totalFundingCount = fundingMDSACount + fundingAspireCount + fundingPrivilegeCount;
         const totalFundingPoints = fundingMDSAPoints + fundingAspirePoints + fundingPrivilegePoints;
         
@@ -3432,17 +3902,26 @@
         updateTargetProgress('PL', completedLoanAmount);
         updateTargetProgress('ACC', totalAccounts);
         
-        updateVisualizations(conventionalCount, islamicCount, bothCount, aspireCount, privilegeCount, mdsaCount, tmlAllCount, tmlCCCount, tmSelectCount, ntmlCount);
+        updateVisualizations(conventionalCount, islamicCount, bothCount, aspireCount, privilegeCount, mdsaCount, tmlAllCount, tmlCCCount, tmSelectCount, ntmlCount, plConventionalCount, plIslamicCount, plBothCount, ccConventionalCount, ccIslamicCount, ccBothCount);
     }
 
-    function updateVisualizations(conventional, islamic, both, aspire, privilege, mdsa, tmlAll, tmlCC, tmSelect, ntml) {
+    // Updated visualization function with separate PL and CC charts
+    function updateVisualizations(conventional, islamic, both, aspire, privilege, mdsa, tmlAll, tmlCC, tmSelect, ntml, plConventional, plIslamic, plBoth, ccConventional, ccIslamic, ccBoth) {
         const totalProposition = conventional + islamic + both || 1;
         const totalAccounts = aspire + privilege + mdsa || 1;
         const totalSchemes = tmlAll + tmlCC + tmSelect + ntml || 1;
         
-        const conventionalPercent = Math.round((conventional / totalProposition) * 100);
-        const islamicPercent = Math.round((islamic / totalProposition) * 100);
-        const bothPercent = 100 - conventionalPercent - islamicPercent;
+        // Calculate percentages for PL and CC propositions separately
+        const totalPL = plConventional + plIslamic + plBoth || 1;
+        const totalCC = ccConventional + ccIslamic + ccBoth || 1;
+        
+        const plConventionalPercent = Math.round((plConventional / totalPL) * 100);
+        const plIslamicPercent = Math.round((plIslamic / totalPL) * 100);
+        const plBothPercent = 100 - plConventionalPercent - plIslamicPercent;
+        
+        const ccConventionalPercent = Math.round((ccConventional / totalCC) * 100);
+        const ccIslamicPercent = Math.round((ccIslamic / totalCC) * 100);
+        const ccBothPercent = 100 - ccConventionalPercent - ccIslamicPercent;
         
         const aspirePercent = Math.round((aspire / totalAccounts) * 100);
         const privilegePercent = Math.round((privilege / totalAccounts) * 100);
@@ -3453,10 +3932,18 @@
         const tmSelectPercent = Math.round((tmSelect / totalSchemes) * 100);
         const ntmlPercent = 100 - tmlAllPercent - tmlCCPercent - tmSelectPercent;
         
-        document.querySelector('.pie-chart').style.background = `conic-gradient(
-            #FF5349 0% ${conventionalPercent}%, 
-            #2197b2 ${conventionalPercent}% ${conventionalPercent + islamicPercent}%, 
-            #d8dee9 ${conventionalPercent + islamicPercent}% 100%
+        // Update PL Proposition Chart
+        document.querySelector('.pl-proposition-chart').style.background = `conic-gradient(
+            #FF5349 0% ${plConventionalPercent}%, 
+            #2197b2 ${plConventionalPercent}% ${plConventionalPercent + plIslamicPercent}%, 
+            #d8dee9 ${plConventionalPercent + plIslamicPercent}% 100%
+        )`;
+        
+        // Update CC Proposition Chart
+        document.querySelector('.cc-proposition-chart').style.background = `conic-gradient(
+            #32CD32 0% ${ccConventionalPercent}%, 
+            #FF8C00 ${ccConventionalPercent}% ${ccConventionalPercent + ccIslamicPercent}%, 
+            #9370DB ${ccConventionalPercent + ccIslamicPercent}% 100%
         )`;
         
         document.querySelector('.acc-chart').style.background = `conic-gradient(
@@ -3569,14 +4056,17 @@ Accounts: ${progressACC}`;
     function categorizeProductType(productString) {
         if (!productString) return "Unknown";
         
-        // Check for PL products first and return with amount if applicable
-        if (productString.includes("Cat A & B") || 
-            productString.includes("Cat C & Below") ||
+        // Check for updated PL products first
+        if (productString.includes("PL Asp-A&B") || 
+            productString.includes("PL Asp-C&Below") ||
+            productString.includes("PL Prv-A&B") ||
+            productString.includes("PL Prv-C&Below") ||
+            productString.includes("TOP UP") ||
             productString.includes("PL")) {
             return "PL";
         }
         
-        // Group ACC types together (ACC & 2nd ACC)
+        // Group ACC types together
         if (productString.includes("MDSA") || 
             productString.includes("Aspire") || 
             productString.includes("Privilege") ||
@@ -3585,7 +4075,7 @@ Accounts: ${progressACC}`;
             return "ACC";
         }
         
-        // Group CC types together (CC & 2nd CC)
+        // Group CC types together
         if (productString.includes("Touchpoints") || 
             productString.includes("Cashback") ||
             productString.includes("Talabat") ||
@@ -3653,10 +4143,8 @@ Accounts: ${progressACC}`;
                     return;
                 }
                 
-                // Display first batch
                 displayDataInTable(allMasterData, 'searchResultsBody', false, true, 'master');
                 
-                // Show "Show More" button if there might be more records
                 const showMoreContainer = document.getElementById('masterShowMoreContainer');
                 if (allMasterData.length === 20) {
                     showMoreContainer.classList.remove('hidden');
@@ -3686,14 +4174,11 @@ Accounts: ${progressACC}`;
             const data = await response.json();
             
             if (data.success && data.data && data.data.length > 0) {
-                // Append new data to existing data
                 allMasterData = [...allMasterData, ...data.data];
                 masterDataOffset += 20;
                 
-                // Redisplay all data
                 displayDataInTable(allMasterData, 'searchResultsBody', false, true, 'master');
                 
-                // Hide "Show More" if we got less than 20 records (indicating end of data)
                 if (data.data.length < 20) {
                     document.getElementById('masterShowMoreContainer').classList.add('hidden');
                 }
@@ -3759,7 +4244,7 @@ Accounts: ${progressACC}`;
         }
     }
 
-    // Modified displayDataInTable function to remove long press except on Points column
+    // Modified displayDataInTable function
     function displayDataInTable(data, targetTableId, isMasterSearch = false, isMasterFetch = false, sheetType = 'data') {
         const tableBody = document.getElementById(targetTableId);
         tableBody.innerHTML = '';
@@ -3777,12 +4262,10 @@ Accounts: ${progressACC}`;
             const appIdValue = row['App ID'] || '';
             const customerNameValue = row['Customer Name'] || '';
             
-            // Format mobile number for display and calling
             let displayMobile = mobileNumber;
             let callMobile = mobileNumber;
             
             if (mobileNumber) {
-                // For display, show with proper formatting if it contains 971 prefix
                 if (mobileNumber.toString().startsWith('971')) {
                     displayMobile = mobileNumber.toString();
                     callMobile = mobileNumber.toString();
@@ -3825,7 +4308,6 @@ Accounts: ${progressACC}`;
                 `;
             }
             
-            // Apply column visibility based on expansion state
             const cidClass = targetTableId === 'dataTableBody' ? 'cid-column' : 'search-cid-column';
             const appIdClass = targetTableId === 'dataTableBody' ? 'appid-column' : 'search-appid-column';
             
@@ -3840,7 +4322,6 @@ Accounts: ${progressACC}`;
                 ${actionsHtml}
             `;
             
-            // Only add click event listeners for Points column (index 6)
             const pointsCell = tr.cells[6];
             if (pointsCell) {
                 pointsCell.addEventListener('click', (e) => {
@@ -3853,7 +4334,6 @@ Accounts: ${progressACC}`;
             tableBody.appendChild(tr);
         });
         
-        // Attach delete button event listeners after adding elements to DOM
         document.querySelectorAll('.delete-btn').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -3879,7 +4359,7 @@ Accounts: ${progressACC}`;
         });
 
         // Apply current filter
-        applyProductFilter(currentFilter);
+        applyStatusFilter(currentFilter);
     }
 
     // Custom confirm dialog
@@ -3950,7 +4430,6 @@ Accounts: ${progressACC}`;
     async function updateRecord(formData) {
         showLoading();
         try {
-            // Set the correct action and sheet based on editing source
             if (editingFromMaster) {
                 formData.append('action', 'updateMaster');
             } else {
@@ -4014,11 +4493,9 @@ Accounts: ${progressACC}`;
     async function editRecord(cid) {
         showLoading();
         try {
-            // First check local data
             let localRecord = allRecordsData.find(r => r.CID === cid);
             let fromMaster = false;
             
-            // If not found in Data sheet, check Master sheet
             if (!localRecord) {
                 localRecord = allMasterData.find(r => r.CID === cid);
                 fromMaster = true;
@@ -4041,7 +4518,6 @@ Accounts: ${progressACC}`;
                 return;
             }
             
-            // If not found locally, fetch from server
             const response = await fetch(`${scriptURL}?action=getById&cid=${cid}`);
             const data = await response.json();
             
@@ -4089,6 +4565,18 @@ Accounts: ${progressACC}`;
 
     function productStringContains(productString, product) {
         const products = parseProductString(productString);
+        
+        if (product === 'PL') {
+            return products.some(p => 
+                p.includes('PL Asp-A&B') || 
+                p.includes('PL Asp-C&Below') || 
+                p.includes('PL Prv-A&B') || 
+                p.includes('PL Prv-C&Below') || 
+                p.includes('TOP UP') ||
+                p === 'PL'
+            );
+        }
+        
         return products.some(p => p === product || p.includes(product));
     }
 
@@ -4107,17 +4595,17 @@ Accounts: ${progressACC}`;
         return `${year}-${month}-${day}`;
     }
 
-    // Fix 2: Enhanced form population function with improved PL and Other handling
+    // Enhanced form population function
     function populateForm(data) {
         console.log('Populating form with data:', data);
         
-        // Reset form first but preserve editing state
         entryForm.reset();
         productOptionsContainer.innerHTML = '';
         loanAmountSection.classList.add('hidden');
         otherPointsSection.classList.add('hidden');
         otherBankingSection.classList.add('hidden');
         otherStatusSection.classList.add('hidden');
+        document.getElementById('companySuggestions').style.display = 'none';
         
         document.getElementById('nameError').classList.add('hidden');
         document.getElementById('mobileError').classList.add('hidden');
@@ -4127,7 +4615,6 @@ Accounts: ${progressACC}`;
             field.classList.remove('error-field');
         });
         
-        // Set editing data and product string
         editingData = data;
         editingProductString = data.Product || "";
         
@@ -4145,12 +4632,10 @@ Accounts: ${progressACC}`;
         salaryInput.value = data.Salary || '';
         customerNameInput.value = data['Customer Name'] || '';
         
-        // Handle mobile number - remove 971 prefix if present for display and remove spaces
         let mobileValue = data.Mobile || '';
         if (mobileValue.toString().startsWith('971')) {
             mobileValue = mobileValue.toString().substring(3);
         }
-        // Remove any spaces
         mobileValue = mobileValue.toString().replace(/\s+/g, '');
         mobileInput.value = mobileValue;
         
@@ -4168,13 +4653,11 @@ Accounts: ${progressACC}`;
         if (data.ccOption2) currentSelections.CCOption2 = data.ccOption2;
         if (data.plOption) currentSelections.PL = data.plOption;
         
-        // Fix 2: Enhanced product checkbox initialization with comprehensive product detection
         productACC.checked = productStringContains(productString, 'MDSA') || 
                             productStringContains(productString, 'Aspire') ||
                             productStringContains(productString, 'Privilege') ||
                             productString.includes('ACC');
                             
-        // Fix 2: Specific 2nd ACC detection - check for exact match and variations
         product2ndACC.checked = productString.includes('2nd ACC') || 
                                products.some(p => p.trim() === '2nd ACC') ||
                                products.filter(p => 
@@ -4183,22 +4666,12 @@ Accounts: ${progressACC}`;
                                    p.includes('Privilege')
                                ).length > 1;
         
-        console.log('2nd ACC detection result:', product2ndACC.checked);
-        console.log('2nd ACC products found:', products.filter(p => 
-            p.includes('MDSA') || p.includes('Aspire') || p.includes('Privilege')
-        ));
-        
-        // Ensure 2nd ACC is properly enabled when ACC is checked
         if (productACC.checked) {
             product2ndACC.disabled = false;
             productSTL.disabled = false;
         }
         
         productSTL.checked = productStringContains(productString, 'STL');
-        
-        console.log('ACC checked:', productACC.checked);
-        console.log('2nd ACC checked:', product2ndACC.checked);
-        console.log('2nd ACC disabled:', product2ndACC.disabled);
         
         productCC.checked = productStringContains(productString, 'Touchpoints') ||
                            productStringContains(productString, 'Cashback') ||
@@ -4217,36 +4690,30 @@ Accounts: ${progressACC}`;
                                 (productStringContains(productString, 'Touchpoints') ||
                                  productStringContains(productString, 'Talabat')));
         
-        // Ensure 2nd CC is properly enabled when CC is checked
         if (productCC.checked) {
             product2ndCC.disabled = false;
         }
         
         productBTCCL.checked = productStringContains(productString, 'BT/CCL');
         
-        // Fix 2: Enhanced PL detection with comprehensive matching
-        productPL.checked = productStringContains(productString, 'Asipire Cat A & B') ||
-                           productStringContains(productString, 'Aspire Cat C & Below') ||
-                           productStringContains(productString, 'Privilege Cat A & B') ||
-                           productStringContains(productString, 'Privilege Cat C & Below') ||
+        productPL.checked = productStringContains(productString, 'PL Asp-A&B') ||
+                           productStringContains(productString, 'PL Asp-C&Below') ||
+                           productStringContains(productString, 'PL Prv-A&B') ||
+                           productStringContains(productString, 'PL Prv-C&Below') ||
+                           productStringContains(productString, 'TOP UP') ||
                            productStringContains(productString, 'PL');
                            
-        // Fix 2: Enhanced Other product handling with proper amount retrieval
         productOther.checked = productStringContains(productString, 'Other');
         
-        // Fix 2: Enhanced PL section handling with amount retrieval
         if (productPL.checked) {
             loanAmountSection.classList.remove('hidden');
             loanAmountInput.value = data['Loan Amount'] || '';
         }
         
-        // Fix 2: Enhanced Other section handling with amount retrieval
         if (productOther.checked) {
             otherPointsSection.classList.remove('hidden');
-            // Try multiple possible field names for Other points
             let otherAmount = data['Other Points'] || data['Other Amount'] || data['Miscellaneous Points'] || '';
             if (!otherAmount && data.Points && productOther.checked && !productPL.checked && !productCC.checked && !productACC.checked) {
-                // If only Other is selected and no other amount source, use Points value
                 otherAmount = data.Points;
             }
             otherPointsInput.value = otherAmount;
@@ -4303,7 +4770,6 @@ Accounts: ${progressACC}`;
         
         console.log('Before calling initializeProductOptions');
         
-        // Fix 2: Extended delay initialization specifically for 2nd ACC and Other handling with multiple retries
         setTimeout(() => {
             if (appInitialized) {
                 console.log('App initialized, calling initializeProductOptions');
@@ -4314,7 +4780,6 @@ Accounts: ${progressACC}`;
                 }
             } else {
                 console.log('App not initialized yet, will retry...');
-                // Multiple retry attempts with increasing delays for better 2nd ACC handling
                 setTimeout(() => {
                     if (appInitialized) {
                         initializeProductOptions();
@@ -4322,7 +4787,6 @@ Accounts: ${progressACC}`;
                             pointsInput.value = '0';
                         }
                     } else {
-                        // Final retry attempt
                         setTimeout(() => {
                             initializeProductOptions();
                             if (statusSelect.value === 'Rejected') {
@@ -4447,7 +4911,6 @@ Accounts: ${progressACC}`;
         formData.append('salary', salaryInput.value);
         formData.append('customerName', customerNameInput.value);
         
-        // Always prepend 971 to mobile number for storage and remove spaces
         const mobileValue = mobileInput.value.trim().replace(/\s+/g, '');
         const fullMobile = mobileValue.startsWith('971') ? mobileValue : '971' + mobileValue;
         formData.append('mobile', fullMobile);
@@ -4617,7 +5080,6 @@ Accounts: ${progressACC}`;
                 }
             }
             
-            // Enhanced product grouping for export
             const productType = categorizeProductType(record.Product);
             
             let productDisplay = productType;
@@ -4780,7 +5242,6 @@ Accounts: ${progressACC}`;
         try {
             const doc = new jsPDF('landscape');
             
-            // Use A4 landscape dimensions in mm
             const pageWidth = 297;
             const pageHeight = 210;
             const margin = 10;
@@ -4796,7 +5257,6 @@ Accounts: ${progressACC}`;
             const dateStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
             doc.text(`Generated on: ${dateStr}`, margin, 28);
             
-            // Calculate column widths based on specified percentages
             const columnPercentages = {
                 no: 3,
                 cid: 10,
@@ -4807,7 +5267,6 @@ Accounts: ${progressACC}`;
                 amount: 7
             };
             
-            // Calculate actual widths in mm based on percentages
             const columnWidths = {
                 no: (usableWidth * columnPercentages.no) / 100,
                 cid: (usableWidth * columnPercentages.cid) / 100,
@@ -4818,7 +5277,6 @@ Accounts: ${progressACC}`;
                 amount: includeAmount ? (usableWidth * columnPercentages.amount) / 100 : 0
             };
             
-            // Define columns with exact width specifications
             const columns = [
                 { header: 'No', dataKey: 'no', width: columnWidths.no },
                 { header: 'CID', dataKey: 'cid', width: columnWidths.cid },
@@ -4832,7 +5290,6 @@ Accounts: ${progressACC}`;
                 columns.push({ header: 'Amount', dataKey: 'amount', width: columnWidths.amount });
             }
             
-            // Prepare data for autoTable
             const tableData = data.map((row, index) => {
                 const rowData = {
                     no: (index + 1).toString(),
@@ -4851,7 +5308,6 @@ Accounts: ${progressACC}`;
                 return rowData;
             });
             
-            // Add total row with proper styling
             if (includeAmount) {
                 const totalRow = {
                     no: '',
@@ -4865,7 +5321,6 @@ Accounts: ${progressACC}`;
                 tableData.push(totalRow);
             }
             
-            // Use autoTable for proper formatting
             doc.autoTable({
                 columns: columns,
                 body: tableData,
@@ -4898,32 +5353,27 @@ Accounts: ${progressACC}`;
                     6: { halign: 'right', width: columnWidths.amount }
                 },
                 didParseCell: function(data) {
-                    // Ensure text wrapping for long content
                     if (data.column.dataKey === 'customerName' || data.column.dataKey === 'product') {
                         data.cell.styles.overflow = 'linebreak';
                         data.cell.styles.cellWidth = 'wrap';
                     }
                     
-                    // Style total row - merged appearance and no borders
                     if (includeAmount && data.row.index === tableData.length - 1) {
                         data.cell.styles.fillColor = [240, 240, 240];
                         data.cell.styles.fontStyle = 'bold';
-                        data.cell.styles.lineColor = [255, 255, 255]; // Remove borders
+                        data.cell.styles.lineColor = [255, 255, 255];
                         data.cell.styles.lineWidth = 0;
                         
-                        // Clear content for columns No to Product (0-4) to create merged appearance
                         if (data.column.index >= 0 && data.column.index <= 4) {
                             data.cell.text = [''];
                         }
                         
-                        // Special styling for Status column in total row
                         if (data.column.index === 5) {
                             data.cell.styles.halign = 'right';
                         }
                     }
                 },
                 didDrawPage: function(data) {
-                    // Add page numbers
                     const pageCount = doc.internal.getNumberOfPages();
                     const currentPage = doc.internal.getCurrentPageInfo().pageNumber;
                     
