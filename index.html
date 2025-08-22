@@ -12,13 +12,14 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#5492A8',
-                        secondary: '#38386E',
-                        heading: '#13405E',
-                        lightblue: '#caf0f8',
-                        lightgreen: '#d8f3dc',
-                        lightyellow: '#ffedd8',
-                        lightred: '#ffccd5',
+                        primary: '#0F1E49',
+                        secondary: '#2A418A',
+                        heading: '#314896',
+                        accent: '#40B9FF',
+                        lightblue: '#dbeafe',
+                        lightgreen: '#d1fae5',
+                        lightyellow: '#fef3c7',
+                        lightred: '#fee2e2',
                         lightgray: '#f3f4f6'
                     },
                     fontFamily: {
@@ -38,6 +39,7 @@
         
         body {
             font-family: 'Tahoma', Geneva, sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
         }
         
         @keyframes redFlash {
@@ -45,6 +47,7 @@
             70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
             100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
+        
         .dbr-warning-flash {
             animation: redFlash 1s ease-in-out 3;
             border: 2px solid rgba(239, 68, 68, 0.7) !important;
@@ -121,6 +124,76 @@
             font-weight: bold;
         }
         
+        .clickable-error {
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        
+        .clickable-error:hover {
+            opacity: 0.8;
+        }
+        
+        .payment-date-radio {
+            display: none;
+        }
+        
+        .payment-date-label {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 0 4px;
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+            border: 2px solid #9ca3af;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-align: center;
+            min-width: 60px;
+        }
+        
+        .payment-date-radio:checked + .payment-date-label {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            color: white;
+            border-color: #1e3a8a;
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(30, 58, 138, 0.3);
+        }
+        
+        .dark .payment-date-label {
+            background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+            border-color: #6b7280;
+            color: #e5e7eb;
+        }
+        
+        .dark .payment-date-radio:checked + .payment-date-label {
+            background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+            border-color: #1e40af;
+            color: white;
+        }
+        
+        .cash-out-suggestion {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            border-radius: 6px;
+            color: #10b981;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cash-out-suggestion:hover {
+            background-color: rgba(16, 185, 129, 0.2);
+            transform: translateY(-1px);
+        }
+        
+        .dark .cash-out-suggestion {
+            background-color: rgba(34, 197, 94, 0.1);
+            border-color: #22c55e;
+            color: #22c55e;
+        }
+        
         .modal {
             position: fixed;
             top: 0;
@@ -137,11 +210,12 @@
         .modal-content {
             background: white;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 12px;
             max-width: 90%;
             max-height: 90%;
             overflow-y: auto;
             width: 900px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
         
         .dark .modal-content {
@@ -192,7 +266,7 @@
         }
         
         input:checked + .toggle-slider {
-            background-color: #38386E !important;
+            background-color: #1e3a8a !important;
         }
         
         input:checked + .toggle-slider:before {
@@ -200,16 +274,17 @@
         }
         
         .success-indicator {
-            background: linear-gradient(135deg, #66d9e8 0%, #63e6be 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
             color: white;
-            padding: 8px 12px;
-            border-radius: 4px;
+            padding: 12px 20px;
+            border-radius: 8px;
             position: fixed;
             top: 20px;
             right: 20px;
             animation: fadeOut 2s forwards;
             animation-delay: 1s;
             z-index: 100;
+            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.3);
         }
         
         @keyframes fadeOut {
@@ -218,16 +293,16 @@
         }
         
         .emi-table th {
-            background-color: #5492A8;
+            background-color: #1e3a8a;
             color: white;
             text-align: center;
-            padding: 4px;
+            padding: 8px;
             border: 1px solid #ddd;
         }
         
         .emi-table td {
             text-align: right;
-            padding: 2px 4px;
+            padding: 6px 8px;
             border: 1px solid #ddd;
         }
         
@@ -236,7 +311,7 @@
         }
         
         .dark .emi-table th {
-            background-color: #374151;
+            background-color: #1e40af;
         }
         
         .dark .emi-table td {
@@ -255,33 +330,35 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 10px 20px;
-            border-radius: 12px;
-            margin-bottom: 10px;
+            padding: 15px 25px;
+            border-radius: 16px;
+            margin-bottom: 15px;
             overflow-x: auto;
-            min-height: 60px;
+            min-height: 70px;
             flex-wrap: wrap;
-            gap: 5px;
+            gap: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
         
         .tab-btn {
             position: relative;
-            transition: all 0.3s;
-            padding: 12px 16px;
-            margin: 0 2px;
-            border-radius: 8px;
+            transition: all 0.4s ease;
+            padding: 15px 20px;
+            margin: 0 3px;
+            border-radius: 12px;
             text-align: center;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-width: 50px;
+            min-width: 60px;
             cursor: pointer;
             border: none;
             background: transparent;
+            backdrop-filter: blur(10px);
         }
         
         .tab-btn i {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -289,17 +366,24 @@
         
         .tab-btn.active {
             color: white;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.25);
             transform: scale(1.1);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
         
         .content-container {
             flex: 1;
             height: 100%;
             overflow-y: auto;
-            padding: 20px;
-            border-radius: 12px;
+            padding: 25px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dark .content-container {
+            background: rgba(31, 41, 55, 0.95);
         }
         
         .tab-content {
@@ -311,50 +395,70 @@
         }
         
         .gradient-primary {
-            background: linear-gradient(135deg, #5492A8 0%, #38386E 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
         }
         
         .gradient-card {
-            background: linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .dark .gradient-card {
-            background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);
+            background: linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.05) 100%);
         }
         
         input, select, textarea {
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
         }
         
         input:focus, select:focus, textarea:focus {
-            border-color: #5492A8;
-            box-shadow: 0 0 0 2px rgba(84, 146, 168, 0.2);
+            border-color: #1e3a8a;
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+            background: rgba(255, 255, 255, 1);
+        }
+        
+        .dark input, .dark select, .dark textarea {
+            background: rgba(31, 41, 55, 0.8);
+            border-color: #4b5563;
+        }
+        
+        .dark input:focus, .dark select:focus, .dark textarea:focus {
+            border-color: #1e40af;
+            background: rgba(31, 41, 55, 1);
         }
         
         .custom-btn {
-            background: linear-gradient(135deg, #5492A8 0%, #38386E 100%);
-            transition: all 0.3s;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
         }
         
         .custom-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(30, 58, 138, 0.4);
         }
         
         .compact-form .grid-cols-3 {
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
         
         .compact-form input, 
         .compact-form select, 
         .compact-form textarea {
-            padding: 0.375rem 0.5rem;
+            padding: 0.5rem 0.75rem;
         }
         
         iframe {
             width: 100%;
             height: 80vh;
             border: none;
+            border-radius: 12px;
         }
         
         .auth-modal {
@@ -363,8 +467,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.9) 0%, rgba(30, 64, 175, 0.9) 100%);
+            backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -372,55 +476,58 @@
         }
         
         .auth-container {
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            padding: 30px;
-            width: 400px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 40px;
+            width: 450px;
             max-width: 90%;
         }
         
         .dark .auth-container {
-            background: rgba(31, 41, 55, 0.85);
-            border: 1px solid rgba(75, 85, 99, 0.18);
+            background: rgba(31, 41, 55, 0.95);
+            border: 1px solid rgba(75, 85, 99, 0.2);
         }
         
         .theme-toggle-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 8px 0;
-            margin-right: 15px;
+            padding: 10px 0;
+            margin-right: 20px;
         }
         
         @media (max-width: 768px) {
             .horizontal-tabs {
                 flex-wrap: wrap;
                 justify-content: flex-start;
+                padding: 10px 15px;
             }
             
             .tab-btn {
-                min-width: 45px;
-                padding: 10px 12px;
+                min-width: 50px;
+                padding: 12px 16px;
             }
             
             .tab-btn i {
-                font-size: 1.2rem;
+                font-size: 1.3rem;
             }
         }
         
         .header-controls {
-            background-color: white;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.8) 100%);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .dark .header-controls {
-            background-color: #1f2937;
+            background: linear-gradient(135deg, rgba(31, 41, 55, 0.9) 0%, rgba(31, 41, 55, 0.8) 100%);
         }
         
         .quick-emi-modal {
@@ -428,17 +535,19 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
             z-index: 60;
-            width: 350px;
+            width: 400px;
             max-width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .dark .quick-emi-modal {
-            background: #1f2937;
+            background: rgba(31, 41, 55, 0.95);
             color: white;
         }
         
@@ -464,7 +573,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #5492A8 0%, #38386E 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -475,11 +584,12 @@
 
         .loading-text {
             color: white;
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: bold;
             text-align: center;
             animation: pulse 1.5s ease-in-out infinite alternate;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
         @keyframes pulse {
@@ -489,13 +599,13 @@
 
         .loading-dots {
             display: flex;
-            gap: 8px;
-            margin-top: 20px;
+            gap: 10px;
+            margin-top: 25px;
         }
 
         .loading-dot {
-            width: 12px;
-            height: 12px;
+            width: 15px;
+            height: 15px;
             background-color: white;
             border-radius: 50%;
             animation: bounce 1.4s ease-in-out infinite both;
@@ -552,7 +662,7 @@
         }
         
         input:checked + .dbr-toggle-slider {
-            background-color: #5492A8;
+            background-color: #1e3a8a;
         }
         
         input:checked + .dbr-toggle-slider:before {
@@ -605,21 +715,22 @@
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
+            padding: 10px 15px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
             margin-left: 8px;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
         }
 
         .closure-fee-calculate-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
         }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200 font-tahoma">
+<body class="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 min-h-screen transition-colors duration-200 font-tahoma">
     <div id="loadingScreen" class="loading-screen">
         <div class="loading-text">Management Information System</div>
         <div class="loading-dots">
@@ -631,70 +742,70 @@
 
     <div class="auth-modal" id="authModal">
         <div class="auth-container">
-            <h2 class="text-xl font-bold text-heading dark:text-white mb-4 text-center">Select Access Mode</h2>
+            <h2 class="text-2xl font-bold text-heading dark:text-white mb-6 text-center">Select Access Mode</h2>
             
-            <div class="mb-4">
-                <div class="flex gap-3 mb-3">
-                    <button id="adminModeBtn" class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 px-4 rounded-md hover:opacity-90">
+            <div class="mb-6">
+                <div class="flex gap-4 mb-4">
+                    <button id="adminModeBtn" class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-6 rounded-lg hover:opacity-90 transition-all">
                         <i class="fas fa-user-shield mr-2"></i>Admin Mode
                     </button>
-                    <button id="guestModeBtn" class="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white py-2 px-4 rounded-md hover:opacity-90">
+                    <button id="guestModeBtn" class="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-6 rounded-lg hover:opacity-90 transition-all">
                         <i class="fas fa-user mr-2"></i>Guest Mode
                     </button>
                 </div>
             </div>
             
             <div id="adminPasswordSection" class="hidden">
-                <div class="mb-4">
-                    <label class="block text-gray-700 dark:text-gray-300 mb-2">Admin Password</label>
-                    <input type="password" id="passwordInput" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white" placeholder="Enter admin password">
-                    <p id="passwordError" class="text-red-500 text-sm mt-1 hidden">Invalid password!</p>
+                <div class="mb-6">
+                    <label class="block text-gray-700 dark:text-gray-300 mb-3 font-medium">Admin Password</label>
+                    <input type="password" id="passwordInput" class="w-full border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white" placeholder="Enter admin password">
+                    <p id="passwordError" class="text-red-500 text-sm mt-2 hidden">Invalid password!</p>
                 </div>
-                <div class="flex items-center mb-4">
-                    <input type="checkbox" id="rememberMe" class="mr-2">
+                <div class="flex items-center mb-6">
+                    <input type="checkbox" id="rememberMe" class="mr-3">
                     <label for="rememberMe" class="text-gray-700 dark:text-gray-300">Keep me signed in for 3 days</label>
                 </div>
-                <button id="submitPassword" class="custom-btn text-white py-2 px-4 rounded-md w-full">Login as Admin</button>
+                <button id="submitPassword" class="custom-btn text-white py-3 px-6 rounded-lg w-full font-medium">Login as Admin</button>
             </div>
             
             <div id="guestModeSection" class="hidden">
-                <div class="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg border border-blue-200 dark:border-blue-800 mb-4">
+                <div class="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg border border-blue-200 dark:border-blue-800 mb-6">
                     <p class="text-blue-800 dark:text-blue-300 text-sm">
                         <i class="fas fa-info-circle mr-2"></i>
                         Guest Mode provides access to Main, Advance, and Rate Grid tabs with limited functionality.
                     </p>
                 </div>
-                <button id="enterGuestMode" class="custom-btn text-white py-2 px-4 rounded-md w-full">Enter as Guest</button>
+                <button id="enterGuestMode" class="custom-btn text-white py-3 px-6 rounded-lg w-full font-medium">Enter as Guest</button>
             </div>
         </div>
     </div>
     
     <div id="quickEmiOverlay" class="quick-emi-overlay hidden"></div>
     <div id="quickEmiModal" class="quick-emi-modal hidden">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-bold text-heading dark:text-white">Quick EMI Calculator</h3>
-            <button id="closeQuickEmi" class="text-gray-500 hover:text-red-500 text-xl">&times;</button>
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-bold text-heading dark:text-white">Quick EMI Calculator</h3>
+            <button id="closeQuickEmi" class="text-gray-500 hover:text-red-500 text-2xl">&times;</button>
         </div>
         
-        <div class="space-y-3">
+        <div class="space-y-4">
             <div>
-                <label class="block text-gray-700 dark:text-gray-300 text-sm mb-1">Loan Amount (AED)</label>
-                <input type="number" id="quickLoanAmount" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" placeholder="Enter loan amount">
+                <label class="block text-gray-700 dark:text-gray-300 text-sm mb-2 font-medium">Loan Amount (AED)</label>
+                <input type="number" id="quickLoanAmount" class="w-full border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" placeholder="Enter loan amount">
             </div>
             
             <div>
-                <label class="block text-gray-700 dark:text-gray-300 text-sm mb-1">Tenure (Months)</label>
-                <input type="number" id="quickTenure" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" placeholder="Enter tenure" value="48">
+                <label class="block text-gray-700 dark:text-gray-300 text-sm mb-2 font-medium">Tenure (Months)</label>
+                <input type="number" id="quickTenure" class="w-full border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" placeholder="Enter tenure" value="48">
             </div>
             
             <div>
-                <label class="block text-gray-700 dark:text-gray-300 text-sm mb-1">Interest Rate (%)</label>
-                <input type="number" id="quickRate" step="0.01" class="w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" placeholder="Enter rate" value="10">
+                <label class="block text-gray-700 dark:text-gray-300 text-sm mb-2 font-medium">Interest Rate (%)</label>
+                <input type="number" id="quickRate" step="0.01" class="w-full border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" placeholder="Enter rate" value="10">
             </div>
             
-            <div class="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
-                <label class="block text-gray-700 dark:text-gray-300 text-sm mb-1">Monthly EMI</label>
-                <div id="quickEmiResult" class="text-2xl font-bold text-primary dark:text-blue-400">AED 0</div>
+            <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                <label class="block text-gray-700 dark:text-gray-300 text-sm mb-2 font-medium">Monthly EMI</label>
+                <div id="quickEmiResult" class="text-3xl font-bold text-primary dark:text-blue-400">AED 0</div>
             </div>
         </div>
     </div>
@@ -741,71 +852,74 @@
                 </button>
             </div>
             
-            <div class="content-container bg-white dark:bg-gray-800 shadow-md" id="contentContainer">
+            <div class="content-container bg-white dark:bg-gray-800 shadow-xl" id="contentContainer">
                 <div id="headerControls" class="header-controls">
-                    <div class="flex flex-wrap items-center justify-center gap-2 w-full">
-                        <input type="text" id="customerName" placeholder="Customer Name" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600 max-w-[160px]">
-                        <select id="savedProfiles" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600 max-w-[160px]">
+                    <div class="flex flex-wrap items-center justify-center gap-3 w-full">
+                        <input type="text" id="customerName" placeholder="Customer Name" class="border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600 max-w-[180px] font-medium">
+                        <select id="savedProfiles" class="border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600 max-w-[180px]">
                             <option value="">Select a profile</option>
                         </select>
-                        <button id="retrieveProfileBtn" class="custom-btn text-white p-2 rounded-md flex items-center justify-center" title="Retrieve Profile">
+                        <button id="retrieveProfileBtn" class="custom-btn text-white p-3 rounded-lg flex items-center justify-center" title="Retrieve Profile">
                             <i class="fas fa-download"></i>
                         </button>
-                        <button id="deleteProfileBtn" class="bg-gradient-to-r from-red-500 to-red-600 text-white p-2 rounded-md hover:opacity-90 flex items-center justify-center" title="Delete Profile">
+                        <button id="deleteProfileBtn" class="bg-gradient-to-r from-red-500 to-red-600 text-white p-3 rounded-lg hover:opacity-90 flex items-center justify-center transition-all" title="Delete Profile">
                             <i class="fas fa-trash-alt"></i>
                         </button>
                         
-                        <button id="findOptimalLoanBtn" class="custom-btn text-white p-2 rounded-md flex items-center justify-center" title="Find Optimal Loan">
+                        <button id="findOptimalLoanBtn" class="custom-btn text-white p-3 rounded-lg flex items-center justify-center" title="Find Optimal Loan">
                             <i class="fas fa-search-dollar"></i>
                         </button>
-                        <button id="resetBtn" class="custom-btn text-white p-2 rounded-md flex items-center justify-center" title="Reset">
+                        <button id="resetBtn" class="custom-btn text-white p-3 rounded-lg flex items-center justify-center" title="Reset">
                             <i class="fas fa-redo-alt"></i>
                         </button>
-                        <button id="saveProfileBtn" class="custom-btn text-white p-2 rounded-md flex items-center justify-center" title="Save Profile">
+                        <button id="saveProfileBtn" class="custom-btn text-white p-3 rounded-lg flex items-center justify-center" title="Save Profile">
                             <i class="fas fa-save"></i>
                         </button>
                         
-                        <div class="whatsapp-input-container max-w-[160px]">
-                            <input type="tel" id="whatsappNumber" placeholder="WhatsApp number" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600 w-full pr-10">
+                        <div class="whatsapp-input-container max-w-[180px]">
+                            <input type="tel" id="whatsappNumber" placeholder="WhatsApp number" class="border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600 w-full pr-12">
                             <button id="pasteBtn" class="paste-btn" title="Paste">
                                 <i class="fas fa-paste text-sm"></i>
                             </button>
                         </div>
-                        <button id="sendWhatsAppBtn" class="bg-gradient-to-r from-green-600 to-green-700 text-white p-2 rounded-md hover:opacity-90" title="Send WhatsApp">
+                        <button id="sendWhatsAppBtn" class="bg-gradient-to-r from-green-600 to-green-700 text-white p-3 rounded-lg hover:opacity-90 transition-all" title="Send WhatsApp">
                             <i class="fab fa-whatsapp"></i>
                         </button>
-                        <button id="quickEmiBtn" class="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-2 rounded-md hover:opacity-90" title="Quick EMI Calculator">
+                        <button id="quickEmiBtn" class="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-3 rounded-lg hover:opacity-90 transition-all" title="Quick EMI Calculator">
                             <i class="fas fa-calculator"></i>
                         </button>
-                        <button id="shareLoanBtn" class="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-2 rounded-md hover:opacity-90" title="Share Loan Information">
+                        <button id="shareLoanBtn" class="bg-gradient-to-r from-orange-600 to-orange-700 text-white p-3 rounded-lg hover:opacity-90 transition-all" title="Share Loan Information">
                             <i class="fas fa-share-alt"></i>
                         </button>
-                        <button id="generateEmiChartBtn" class="bg-gradient-to-r from-teal-500 to-teal-600 text-white p-2 rounded-md hover:opacity-90" title="Generate EMI Chart">
+                        <button id="generateEmiChartBtn" class="bg-gradient-to-r from-teal-600 to-teal-700 text-white p-3 rounded-lg hover:opacity-90 transition-all" title="Generate EMI Chart">
                             <i class="fas fa-chart-bar"></i>
                         </button>
-                        <button id="loanComparisonBtn" class="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white p-2 rounded-md hover:opacity-90" title="Loan Comparison">
+                        <button id="loanComparisonBtn" class="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white p-3 rounded-lg hover:opacity-90 transition-all" title="Loan Comparison">
                             <i class="fas fa-balance-scale"></i>
+                        </button>
+                        <button id="cardBtn" class="bg-gradient-to-r from-pink-600 to-pink-700 text-white p-3 rounded-lg hover:opacity-90 transition-all" title="Credit Card Tools">
+                            <i class="fas fa-credit-card"></i>
                         </button>
                     </div>
                 </div>
                 
                 <div id="tab-main" class="tab-content active">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         
-                        <div id="dbrCalculator" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md border-l-4 border-primary compact-form">
-                            <h2 class="text-xl font-bold text-heading dark:text-white mb-4">DBR CALCULATOR</h2>
+                        <div id="dbrCalculator" class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl border-l-4 border-primary compact-form">
+                            <h2 class="text-2xl font-bold text-heading dark:text-white mb-6">DBR CALCULATOR</h2>
                             
-                            <div class="space-y-2">
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                            <div class="space-y-3">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Salary (AED):</label>
-                                    <input type="text" id="salary" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" pattern="[0-9]*">
+                                    <input type="text" id="salary" class="col-span-2 border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" pattern="[0-9]*">
                                 </div>
                                 
                                 <div id="addbacks-container">
-                                    <div class="grid grid-cols-3 gap-2 items-center addback-entry">
+                                    <div class="grid grid-cols-3 gap-3 items-center addback-entry">
                                         <label class="text-gray-700 dark:text-gray-300 font-medium">Add-back:</label>
                                         <div class="col-span-2">
-                                            <select class="addback-type border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600 w-full">
+                                            <select class="addback-type border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600 w-full">
                                                 <option value="">Select Add-back Type</option>
                                                 <option value="hra">HRA</option>
                                                 <option value="airfare">Airfare Allowance</option>
@@ -820,26 +934,26 @@
                                 
                                 <div class="dynamic-addback-fields"></div>
                                 
-                                <div class="flex justify-start gap-2 mb-2">
-                                    <button id="addMoreAddbackBtn" class="custom-btn text-white p-1.5 rounded-md text-sm">+ Add More</button>
-                                    <button id="removeAddbackBtn" class="custom-btn text-white p-1.5 rounded-md text-sm disabled:opacity-50" disabled>- Remove</button>
+                                <div class="flex justify-start gap-3 mb-3">
+                                    <button id="addMoreAddbackBtn" class="custom-btn text-white p-2 rounded-lg text-sm font-medium">+ Add More</button>
+                                    <button id="removeAddbackBtn" class="custom-btn text-white p-2 rounded-lg text-sm disabled:opacity-50 font-medium" disabled>- Remove</button>
                                 </div>
                                 
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Gross Salary:</label>
-                                    <input type="text" id="grossSalary" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                                    <input type="text" id="grossSalary" class="col-span-2 border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                                 </div>
                                 
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Allowed Liability:</label>
-                                    <input type="text" id="allowedLiability" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                                    <input type="text" id="allowedLiability" class="col-span-2 border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                                 </div>
                                 
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">DBR %:</label>
                                     <div class="col-span-2 flex items-center">
-                                        <input type="text" id="dbrPercentage" class="flex-1 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
-                                        <div class="ml-2">
+                                        <input type="text" id="dbrPercentage" class="flex-1 border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                                        <div class="ml-3">
                                             <label class="dbr-toggle-switch">
                                                 <input type="checkbox" id="dbrToggle">
                                                 <span class="dbr-toggle-slider"></span>
@@ -852,24 +966,24 @@
                                     </div>
                                 </div>
                                 
-                                <div class="flex gap-2">
-                                    <button id="addLoansBtn" class="custom-btn text-white p-2 rounded-md flex-1">+ Loans</button>
-                                    <button id="removeLoansBtn" class="custom-btn text-white p-2 rounded-md flex-1 disabled:opacity-50" disabled>- Remove Loans</button>
+                                <div class="flex gap-3">
+                                    <button id="addLoansBtn" class="custom-btn text-white p-3 rounded-lg flex-1 font-medium">+ Loans</button>
+                                    <button id="removeLoansBtn" class="custom-btn text-white p-3 rounded-lg flex-1 disabled:opacity-50 font-medium" disabled>- Remove Loans</button>
                                 </div>
                                 
-                                <div id="existingLoansContainer" class="mt-2 space-y-2 hidden"></div>
+                                <div id="existingLoansContainer" class="mt-3 space-y-3 hidden"></div>
 
                                 <div id="creditCardsContainer">
-                                    <div class="credit-card-entry mb-2">
-                                        <div class="flex justify-between items-center mb-1">
-                                            <div class="flex items-center gap-1 w-full">
+                                    <div class="credit-card-entry mb-3">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <div class="flex items-center gap-2 w-full">
                                                 <label class="text-gray-700 dark:text-gray-300 font-medium flex-1">Credit Card 1:</label>
-                                                <input type="text" placeholder="Settle Amount" class="credit-card-settle-amount border rounded-md p-1 text-xs dark:bg-gray-800 dark:text-white dark:border-gray-600 w-20" pattern="[0-9]*\.?[0-9]*">
-                                                <button class="settle-card-btn custom-btn text-white px-2 py-1 rounded text-xs w-14 text-center">Settle</button>
+                                                <input type="text" placeholder="Settle Amount" class="credit-card-settle-amount border rounded-lg p-2 text-xs dark:bg-gray-800 dark:text-white dark:border-gray-600 w-24" pattern="[0-9]*\.?[0-9]*">
+                                                <button class="settle-card-btn custom-btn text-white px-3 py-2 rounded-lg text-xs w-16 text-center font-medium">Settle</button>
                                             </div>
                                         </div>
-                                        <div class="flex gap-2 items-center">
-                                            <select class="card-bank-select border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 25%;">
+                                        <div class="flex gap-3 items-center">
+                                            <select class="card-bank-select border rounded-lg p-3 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 25%;">
                                                 <option value="ADCB">ADCB</option>
                                                 <option value="ENBD">ENBD</option>
                                                 <option value="EIB">EIB</option>
@@ -884,153 +998,178 @@
                                                 <option value="RAK">RAK</option>
                                                 <option value="OTHER">OTHER</option>
                                             </select>
-                                            <input type="text" placeholder="Credit Limit" class="credit-card-amount border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 25%;" pattern="[0-9]*">
-                                            <input type="text" placeholder="New Limit" class="credit-card-new-limit border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 25%;" pattern="[0-9]*">
-                                            <input type="text" placeholder="Outstanding" class="credit-card-outstanding border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 25%;" pattern="[0-9]*">
+                                            <input type="text" placeholder="Credit Limit" class="credit-card-amount border rounded-lg p-3 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 25%;" pattern="[0-9]*">
+                                            <input type="text" placeholder="New Limit" class="credit-card-new-limit border rounded-lg p-3 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 25%;" pattern="[0-9]*">
+                                            <input type="text" placeholder="Outstanding" class="credit-card-outstanding border rounded-lg p-3 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 25%;" pattern="[0-9]*">
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div class="flex gap-2">
-                                    <button id="addCreditCardBtn" class="custom-btn text-white p-1.5 rounded-md text-sm">+ Add Card</button>
-                                    <button id="removeCreditCardBtn" class="custom-btn text-white p-1.5 rounded-md text-sm disabled:opacity-50" disabled>- Remove Card</button>
+                                <div class="flex gap-3">
+                                    <button id="addCreditCardBtn" class="custom-btn text-white p-2 rounded-lg text-sm font-medium">+ Add Card</button>
+                                    <button id="removeCreditCardBtn" class="custom-btn text-white p-2 rounded-lg text-sm disabled:opacity-50 font-medium" disabled>- Remove Card</button>
                                 </div>
                                 
-                                <div id="ccSuggestionContainer" class="border border-primary p-2 rounded-lg mt-2 hidden">
-                                    <h3 id="suggestionTitle" class="text-base font-bold text-heading mb-1">CREDIT CARD SUGGESTION</h3>
+                                <div id="ccSuggestionContainer" class="border border-primary p-3 rounded-lg mt-3 hidden">
+                                    <h3 id="suggestionTitle" class="text-base font-bold text-heading mb-2">CREDIT CARD SUGGESTION</h3>
                                     <p id="ccSuggestionText" class="text-gray-700 dark:text-gray-300 text-sm"></p>
                                 </div>
                                 
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Total CC Limit:</label>
-                                    <input type="text" id="totalCCLimit" class="col-span-1 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
-                                    <input type="text" id="dbrCC" class="col-span-1 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                                    <input type="text" id="totalCCLimit" class="col-span-1 border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                                    <input type="text" id="dbrCC" class="col-span-1 border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                                 </div>
                                 
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Total Liabilities:</label>
-                                    <input type="text" id="totalLiabilities" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                                    <input type="text" id="totalLiabilities" class="col-span-2 border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                                 </div>
                                 
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Available Liability:</label>
-                                    <input type="text" id="availableLiability" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                                    <input type="text" id="availableLiability" class="col-span-2 border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                                 </div>
                                 
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">New Total Liabilities:</label>
-                                    <input type="text" id="newTotalLiabilities" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                                    <input type="text" id="newTotalLiabilities" class="col-span-2 border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                                 </div>
                                 
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Special Note:</label>
-                                    <textarea id="specialNote" class="col-span-2 w-full border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" rows="2"></textarea>
+                                    <textarea id="specialNote" class="col-span-2 w-full border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" rows="3"></textarea>
                                 </div>
                             </div>
                         </div>
                         
-                        <div id="emiCalculator" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md border-l-4 border-primary compact-form">
-                            <h2 class="text-xl font-bold text-heading dark:text-white mb-4">EMI CALCULATOR</h2>
+                        <div id="emiCalculator" class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl border-l-4 border-primary compact-form">
+                            <h2 class="text-2xl font-bold text-heading dark:text-white mb-6">EMI CALCULATOR</h2>
                             
-                            <div class="space-y-2">
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                            <div class="space-y-3">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Loan Type:</label>
-                                    <select id="loanType" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
+                                    <select id="loanType" class="col-span-2 border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
                                         <option value="fresh-0-30">Fresh (0-30 days)</option>
                                         <option value="fresh-30-60">Fresh (30-60 days)</option>
                                         <option value="topup-0-30">Top-up (0-30 days)</option>
                                         <option value="topup-30-60">Top-up (30-60 days)</option>
+                                        <option value="takeover-30-60">Take over (30-60 days)</option>
                                         <option value="takeover-60-90">Take over (60-90 days)</option>
                                     </select>
                                 </div>
+
+                                <div class="grid grid-cols-3 gap-3 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Payment Date:</label>
+                                    <div class="col-span-2 flex gap-2">
+                                        <input type="radio" id="paymentDate5" name="paymentDate" value="5" class="payment-date-radio">
+                                        <label for="paymentDate5" class="payment-date-label">5th</label>
+                                        
+                                        <input type="radio" id="paymentDate10" name="paymentDate" value="10" class="payment-date-radio">
+                                        <label for="paymentDate10" class="payment-date-label">10th</label>
+                                        
+                                        <input type="radio" id="paymentDate18" name="paymentDate" value="18" class="payment-date-radio">
+                                        <label for="paymentDate18" class="payment-date-label">18th</label>
+                                        
+                                        <input type="radio" id="paymentDate25" name="paymentDate" value="25" class="payment-date-radio">
+                                        <label for="paymentDate25" class="payment-date-label">25th</label>
+                                    </div>
+                                </div>
                                 
-                                <div id="closureFeeContainer" class="grid grid-cols-3 gap-2 items-center hidden">
+                                <div id="closureFeeContainer" class="grid grid-cols-3 gap-3 items-center hidden">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Closure Fee (AED):</label>
                                     <div class="col-span-2 flex items-center">
-                                        <input type="text" id="closureFee" class="flex-1 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" placeholder="Enter closure fee" pattern="[0-9]*\.?[0-9]*">
+                                        <input type="text" id="closureFee" class="flex-1 border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" placeholder="Enter closure fee" pattern="[0-9]*\.?[0-9]*">
                                         <button id="calculateClosureFeeBtn" class="closure-fee-calculate-btn">Calculate</button>
                                     </div>
                                 </div>
                                 
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Disbursal Date:</label>
-                                    <input type="date" id="disbursalDate" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
+                                    <input type="date" id="disbursalDate" class="col-span-2 border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
                                 </div>
                                 
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">First Payment Date:</label>
-                                    <input type="date" id="firstPaymentDate" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
+                                    <input type="date" id="firstPaymentDate" class="col-span-2 border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
                                     <p id="dateError" class="col-span-3 text-red-600 dark:text-red-400 text-sm hidden">Error: Invalid Payment Date</p>
                                 </div>
-                                
-                                <div class="grid grid-cols-3 gap-2 items-center">
-                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Payment Date:</label>
-                                    <input type="text" id="paymentDate" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+
+                                <div class="grid grid-cols-3 gap-3 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Grace Period:</label>
+                                    <input type="text" id="gracePeriod" class="col-span-2 border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                                 </div>
+
+                                <div class="grid grid-cols-3 gap-3 items-center">
+                                    <label class="text-gray-700 dark:text-gray-300 font-medium">Cash-out:</label>
+                                    <input type="text" id="cashOut" class="col-span-2 border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" placeholder="Enter cash-out amount" pattern="[0-9]*\.?[0-9]*">
+                                </div>
+
+                                <div id="cashOutSuggestion" class="hidden"></div>
                                 
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Multiples Of Salary:</label>
-                                    <input type="text" id="multiplesOfSalary" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" value="20" maxlength="2" pattern="[0-9]{1,2}">
+                                    <input type="text" id="multiplesOfSalary" class="col-span-2 border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" value="20" maxlength="2" pattern="[0-9]{1,2}">
                                 </div>
                                 
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Max Eligibility (AED):</label>
-                                    <input type="text" id="maxLoanEligibility" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                                    <input type="text" id="maxLoanEligibility" class="col-span-2 border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                                 </div>
                                 
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Tenure:</label>
-                                    <input type="text" id="tenureMonths" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" value="48" maxlength="2" pattern="[0-9]{1,2}">
+                                    <input type="text" id="tenureMonths" class="col-span-2 border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" value="48" maxlength="2" pattern="[0-9]{1,2}">
                                 </div>
                                 
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Loan Amount (AED):</label>
-                                    <div class="col-span-2 flex gap-2">
-                                        <input type="text" id="loanAmount" class="border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600 flex-grow" pattern="[0-9]*">
-                                        <input type="text" id="loanMultiples" class="border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600 w-15 text-center" readonly>
+                                    <div class="col-span-2 flex gap-3">
+                                        <input type="text" id="loanAmount" class="border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600 flex-grow" pattern="[0-9]*">
+                                        <input type="text" id="loanMultiples" class="border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600 w-20 text-center" readonly>
                                     </div>
-                                    <p id="loanAmountError" class="col-span-3 text-red-600 dark:text-red-400 text-sm hidden">Error: Loan Amount Will Exceed DBR Limit!</p>
+                                    <p id="loanAmountError" class="col-span-3 text-red-600 dark:text-red-400 text-sm hidden clickable-error">Error: Loan Amount Will Exceed DBR Limit!</p>
                                 </div>
                                 
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Rate %:</label>
-                                    <input type="text" id="reducingRate" class="col-span-1 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" value="10" pattern="[0-9]{1,2}(\.[0-9]{1,2})?">
-                                    <input type="text" id="flatRate" class="col-span-1 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                                    <input type="text" id="reducingRate" class="col-span-1 border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" value="10" pattern="[0-9]{1,2}(\.[0-9]{1,2})?">
+                                    <input type="text" id="flatRate" class="col-span-1 border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                                 </div>
                                 
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">EMI (AED):</label>
-                                    <input type="text" id="emi" class="col-span-1 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
-                                    <input type="text" id="preferredEMI" class="col-span-1 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" placeholder="Preferred EMI" pattern="[0-9]*\.?[0-9]*">
+                                    <input type="text" id="emi" class="col-span-1 border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                                    <input type="text" id="preferredEMI" class="col-span-1 border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600" placeholder="Preferred EMI" pattern="[0-9]*\.?[0-9]*">
                                 </div>
                                 
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium" id="totalPaymentLabel">Total Payment (AED):</label>
-                                    <input type="text" id="totalPayment" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                                    <input type="text" id="totalPayment" class="col-span-2 border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                                 </div>
                                 
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Total Interest (AED):</label>
-                                    <input type="text" id="totalInterest" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                                    <input type="text" id="totalInterest" class="col-span-2 border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                                 </div>
                                 
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Processing Fees + VAT (AED):</label>
-                                    <input type="text" id="processingFees" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                                    <input type="text" id="processingFees" class="col-span-2 border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                                 </div>
                                 
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Total Outstanding:</label>
-                                    <input type="text" id="totalOutstanding" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                                    <input type="text" id="totalOutstanding" class="col-span-2 border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                                 </div>
                                 
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Cash In Hand - NetPay (AED):</label>
-                                    <div class="col-span-2 flex items-center gap-2">
-                                        <input type="text" id="cashInHand" class="flex-1 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
-                                        <div class="flex items-center gap-1">
+                                    <div class="col-span-2 flex items-center gap-3">
+                                        <input type="text" id="cashInHand" class="flex-1 border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                                        <div class="flex items-center gap-2">
                                             <input type="checkbox" id="netAmountCheckbox" class="rounded" checked>
-                                            <label for="netAmountCheckbox" class="text-gray-700 dark:text-gray-300 text-sm">Net Amount</label>
+                                            <label for="netAmountCheckbox" class="text-gray-700 dark:text-gray-300 text-sm font-medium">Net Amount</label>
                                         </div>
                                     </div>
                                 </div>
@@ -1038,20 +1177,20 @@
                         </div>
                     </div>
                     
-                    <div id="emiChartSection" class="mt-4 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md border-l-4 border-primary hidden">
-                        <h2 class="text-xl font-bold text-heading dark:text-white mb-4">EMI PAYMENT SCHEDULE</h2>
-                        <div class="relative" style="height: 350px;">
+                    <div id="emiChartSection" class="mt-6 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl border-l-4 border-primary hidden">
+                        <h2 class="text-2xl font-bold text-heading dark:text-white mb-6">EMI PAYMENT SCHEDULE</h2>
+                        <div class="relative" style="height: 400px;">
                             <canvas id="emiChart"></canvas>
                         </div>
-                        <div class="mt-4 overflow-x-auto">
+                        <div class="mt-6 overflow-x-auto">
                             <table class="w-full border-collapse text-sm">
                                 <thead>
                                     <tr class="bg-primary text-white">
-                                        <th class="border border-gray-300 p-2">Month</th>
-                                        <th class="border border-gray-300 p-2">EMI (AED)</th>
-                                        <th class="border border-gray-300 p-2">Principal (AED)</th>
-                                        <th class="border border-gray-300 p-2">Interest (AED)</th>
-                                        <th class="border border-gray-300 p-2">Balance (AED)</th>
+                                        <th class="border border-gray-300 p-3">Month</th>
+                                        <th class="border border-gray-300 p-3">EMI (AED)</th>
+                                        <th class="border border-gray-300 p-3">Principal (AED)</th>
+                                        <th class="border border-gray-300 p-3">Interest (AED)</th>
+                                        <th class="border border-gray-300 p-3">Balance (AED)</th>
                                     </tr>
                                 </thead>
                                 <tbody id="emiScheduleBody">
@@ -1060,8 +1199,7 @@
                         </div>
                     </div>
                 </div>
-                
-                <div id="tab-mis" class="tab-content">
+<div id="tab-mis" class="tab-content">
                     <iframe src="mis.html" title="MIS Information" id="misIframe"></iframe>
                 </div>
                 
@@ -1106,97 +1244,107 @@
     
     <div id="closureFeeModal" class="modal hidden">
         <div class="modal-content full-modal">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-bold text-heading dark:text-white">Closure Fee Calculator</h2>
-                <button class="close-modal text-gray-700 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 text-2xl">&times;</button>
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-heading dark:text-white">Closure Fee Calculator</h2>
+                <button class="close-modal text-gray-700 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 text-3xl">&times;</button>
             </div>
-            <iframe src="ecf.html" title="Closure Fee Calculator" id="closureFeeIframe" style="width: 100%; height: calc(100% - 60px); border: none;"></iframe>
+            <iframe src="ecf.html" title="Closure Fee Calculator" id="closureFeeIframe" style="width: 100%; height: calc(100% - 80px); border: none;"></iframe>
+        </div>
+    </div>
+
+    <div id="cardModal" class="modal hidden">
+        <div class="modal-content full-modal">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-heading dark:text-white">Credit Card Tools</h2>
+                <button class="close-modal text-gray-700 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 text-3xl">&times;</button>
+            </div>
+            <iframe src="card.html" title="Credit Card Tools" id="cardIframe" style="width: 100%; height: calc(100% - 80px); border: none;"></iframe>
         </div>
     </div>
     
     <div id="shareModal" class="modal hidden">
         <div class="modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-bold text-heading dark:text-white">Loan Information</h2>
-                <button class="close-modal text-gray-700 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 text-2xl">&times;</button>
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-heading dark:text-white">Loan Information</h2>
+                <button class="close-modal text-gray-700 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 text-3xl">&times;</button>
             </div>
             
-            <div class="button-container mb-4 flex gap-2">
-                <button id="exportPdfBtn" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:opacity-90 text-white font-bold py-2 px-4 rounded">
+            <div class="button-container mb-6 flex gap-3">
+                <button id="exportPdfBtn" class="bg-gradient-to-r from-blue-600 to-blue-700 hover:opacity-90 text-white font-bold py-3 px-6 rounded-lg transition-all">
                     <i class="fas fa-file-pdf mr-2"></i>Export PDF
                 </button>
-                <button id="printPageBtn" class="bg-gradient-to-r from-green-500 to-green-600 hover:opacity-90 text-white font-bold py-2 px-4 rounded">
+                <button id="printPageBtn" class="bg-gradient-to-r from-green-600 to-green-700 hover:opacity-90 text-white font-bold py-3 px-6 rounded-lg transition-all">
                     <i class="fas fa-print mr-2"></i>Print Page
                 </button>
             </div>
             
             <div class="loan-info-container">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div class="border rounded-lg overflow-hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="border rounded-xl overflow-hidden shadow-lg">
                         <table class="w-full">
                             <tr class="border-b">
-                                <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700 w-1/2">Loan Nature/FPD:</td>
-                                <td id="shareLoanType" class="p-2"></td>
+                                <td class="font-bold p-4 bg-gray-50 dark:bg-gray-700 w-1/2">Loan Nature/FPD:</td>
+                                <td id="shareLoanType" class="p-4"></td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700">Tenure:</td>
-                                <td id="shareTenure" class="p-2"></td>
+                                <td class="font-bold p-4 bg-gray-50 dark:bg-gray-700">Tenure:</td>
+                                <td id="shareTenure" class="p-4"></td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700">Requested Amount (AED):</td>
-                                <td id="shareLoanAmount" class="p-2"></td>
+                                <td class="font-bold p-4 bg-gray-50 dark:bg-gray-700">Requested Amount (AED):</td>
+                                <td id="shareLoanAmount" class="p-4"></td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700">Reducing Rate:</td>
-                                <td id="shareReducingRate" class="p-2"></td>
+                                <td class="font-bold p-4 bg-gray-50 dark:bg-gray-700">Reducing Rate:</td>
+                                <td id="shareReducingRate" class="p-4"></td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700">Flat Rate:</td>
-                                <td id="shareFlatRate" class="p-2"></td>
+                                <td class="font-bold p-4 bg-gray-50 dark:bg-gray-700">Flat Rate:</td>
+                                <td id="shareFlatRate" class="p-4"></td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700">Max Eligibility (AED):</td>
-                                <td id="shareMaxLoanEligibility" class="p-2"></td>
+                                <td class="font-bold p-4 bg-gray-50 dark:bg-gray-700">Max Eligibility (AED):</td>
+                                <td id="shareMaxLoanEligibility" class="p-4"></td>
                             </tr>
                             <tr>
-                                <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700">Payment Date:</td>
-                                <td id="sharePaymentDate" class="p-2"></td>
+                                <td class="font-bold p-4 bg-gray-50 dark:bg-gray-700">Payment Date:</td>
+                                <td id="sharePaymentDate" class="p-4"></td>
                             </tr>
                         </table>
                     </div>
                     
-                    <div class="border rounded-lg overflow-hidden">
+                    <div class="border rounded-xl overflow-hidden shadow-lg">
                         <table class="w-full">
                             <tr class="border-b">
-                                <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700 w-1/2">EMI (AED):</td>
-                                <td id="shareEmi" class="p-2"></td>
+                                <td class="font-bold p-4 bg-gray-50 dark:bg-gray-700 w-1/2">EMI (AED):</td>
+                                <td id="shareEmi" class="p-4"></td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700" id="shareTotalPaymentLabel">Total Payment (AED):</td>
-                                <td id="shareTotalPayment" class="p-2"></td>
+                                <td class="font-bold p-4 bg-gray-50 dark:bg-gray-700" id="shareTotalPaymentLabel">Total Payment (AED):</td>
+                                <td id="shareTotalPayment" class="p-4"></td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700">Total Interest/Profit (AED):</td>
-                                <td id="shareTotalInterest" class="p-2"></td>
+                                <td class="font-bold p-4 bg-gray-50 dark:bg-gray-700">Total Interest/Profit (AED):</td>
+                                <td id="shareTotalInterest" class="p-4"></td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700">Processing Fees + VAT (AED):</td>
-                                <td id="shareProcessingFees" class="p-2"></td>
+                                <td class="font-bold p-4 bg-gray-50 dark:bg-gray-700">Processing Fees + VAT (AED):</td>
+                                <td id="shareProcessingFees" class="p-4"></td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700">Total Outstanding (AED):</td>
-                                <td id="shareTotalOutstanding" class="p-2"></td>
+                                <td class="font-bold p-4 bg-gray-50 dark:bg-gray-700">Total Outstanding (AED):</td>
+                                <td id="shareTotalOutstanding" class="p-4"></td>
                             </tr>
                             <tr>
-                                <td class="font-bold p-2 bg-gray-50 dark:bg-gray-700">Cash in Hand(AED):</td>
-                                <td id="shareCashInHand" class="p-2"></td>
+                                <td class="font-bold p-4 bg-gray-50 dark:bg-gray-700">Cash in Hand(AED):</td>
+                                <td id="shareCashInHand" class="p-4"></td>
                             </tr>
                         </table>
                     </div>
                 </div>
                 
-                <h3 class="text-xl font-bold text-heading dark:text-white mb-3">EMI Payment Schedule</h3>
-                <div class="overflow-x-auto border rounded-lg">
+                <h3 class="text-2xl font-bold text-heading dark:text-white mb-4">EMI Payment Schedule</h3>
+                <div class="overflow-x-auto border rounded-xl shadow-lg">
                     <table class="w-full emi-table">
                         <thead>
                             <tr>
@@ -1217,23 +1365,23 @@
     
     <div id="emiChartModal" class="modal hidden">
         <div class="modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-bold text-heading dark:text-white">EMI Payment Schedule</h2>
-                <button class="close-modal text-gray-700 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 text-2xl">&times;</button>
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-heading dark:text-white">EMI Payment Schedule</h2>
+                <button class="close-modal text-gray-700 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 text-3xl">&times;</button>
             </div>
             
-            <div class="relative mb-4" style="height: 400px;">
+            <div class="relative mb-6" style="height: 450px;">
                 <canvas id="emiChartStandalone"></canvas>
             </div>
-            <div class="mt-4 overflow-x-auto">
+            <div class="mt-6 overflow-x-auto">
                 <table class="w-full border-collapse text-sm">
                     <thead>
                         <tr class="bg-primary text-white">
-                            <th class="border border-gray-300 p-2">Month</th>
-                            <th class="border border-gray-300 p-2">EMI (AED)</th>
-                            <th class="border border-gray-300 p-2">Principal (AED)</th>
-                            <th class="border border-gray-300 p-2">Interest (AED)</th>
-                            <th class="border border-gray-300 p-2">Balance (AED)</th>
+                            <th class="border border-gray-300 p-3">Month</th>
+                            <th class="border border-gray-300 p-3">EMI (AED)</th>
+                            <th class="border border-gray-300 p-3">Principal (AED)</th>
+                            <th class="border border-gray-300 p-3">Interest (AED)</th>
+                            <th class="border border-gray-300 p-3">Balance (AED)</th>
                         </tr>
                     </thead>
                     <tbody id="emiScheduleBodyStandalone">
@@ -1245,80 +1393,80 @@
     
     <div id="loanComparisonModal" class="modal hidden">
         <div class="modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-bold text-heading dark:text-white">LOAN COMPARISON</h2>
-                <button class="close-modal text-gray-700 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 text-2xl">&times;</button>
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-heading dark:text-white">LOAN COMPARISON</h2>
+                <button class="close-modal text-gray-700 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 text-3xl">&times;</button>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="space-y-3">
-                    <div class="grid grid-cols-3 gap-3 items-center">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div class="space-y-4">
+                    <div class="grid grid-cols-3 gap-4 items-center">
                         <label class="text-gray-700 dark:text-gray-300 font-medium">Bank Name:</label>
-                        <input type="text" id="bank1NameModal" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
+                        <input type="text" id="bank1NameModal" class="col-span-2 border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
                     </div>
                     
-                    <div class="grid grid-cols-3 gap-3 items-center">
+                    <div class="grid grid-cols-3 gap-4 items-center">
                         <label class="text-gray-700 dark:text-gray-300 font-medium">Loan Amount (AED):</label>
-                        <input type="number" id="bank1LoanAmountModal" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
+                        <input type="number" id="bank1LoanAmountModal" class="col-span-2 border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
                     </div>
                     
-                    <div class="grid grid-cols-3 gap-3 items-center">
+                    <div class="grid grid-cols-3 gap-4 items-center">
                         <label class="text-gray-700 dark:text-gray-300 font-medium">Tenure (Months):</label>
-                        <input type="number" id="bank1TenureModal" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
+                        <input type="number" id="bank1TenureModal" class="col-span-2 border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
                     </div>
                     
-                    <div class="grid grid-cols-3 gap-3 items-center">
+                    <div class="grid grid-cols-3 gap-4 items-center">
                         <label class="text-gray-700 dark:text-gray-300 font-medium">Reducing Rate (%):</label>
-                        <input type="number" id="bank1RateModal" step="0.01" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
+                        <input type="number" id="bank1RateModal" step="0.01" class="col-span-2 border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
                     </div>
                     
-                    <div class="grid grid-cols-3 gap-3 items-center">
+                    <div class="grid grid-cols-3 gap-4 items-center">
                         <label class="text-gray-700 dark:text-gray-300 font-medium">EMI (AED):</label>
-                        <input type="text" id="bank1EMIModal" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                        <input type="text" id="bank1EMIModal" class="col-span-2 border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                     </div>
                     
-                    <div class="grid grid-cols-3 gap-3 items-center">
+                    <div class="grid grid-cols-3 gap-4 items-center">
                         <label class="text-gray-700 dark:text-gray-300 font-medium">Total Interest (AED):</label>
-                        <input type="text" id="bank1TotalInterestModal" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                        <input type="text" id="bank1TotalInterestModal" class="col-span-2 border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                     </div>
                 </div>
                 
-                <div class="space-y-3">
-                    <div class="grid grid-cols-3 gap-3 items-center">
+                <div class="space-y-4">
+                    <div class="grid grid-cols-3 gap-4 items-center">
                         <label class="text-gray-700 dark:text-gray-300 font-medium">Bank Name:</label>
-                        <input type="text" id="bank2NameModal" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
+                        <input type="text" id="bank2NameModal" class="col-span-2 border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
                     </div>
                     
-                    <div class="grid grid-cols-3 gap-3 items-center">
+                    <div class="grid grid-cols-3 gap-4 items-center">
                         <label class="text-gray-700 dark:text-gray-300 font-medium">Loan Amount (AED):</label>
-                        <input type="number" id="bank2LoanAmountModal" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
+                        <input type="number" id="bank2LoanAmountModal" class="col-span-2 border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
                     </div>
                     
-                    <div class="grid grid-cols-3 gap-3 items-center">
+                    <div class="grid grid-cols-3 gap-4 items-center">
                         <label class="text-gray-700 dark:text-gray-300 font-medium">Tenure (Months):</label>
-                        <input type="number" id="bank2TenureModal" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
+                        <input type="number" id="bank2TenureModal" class="col-span-2 border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
                     </div>
                     
-                    <div class="grid grid-cols-3 gap-3 items-center">
+                    <div class="grid grid-cols-3 gap-4 items-center">
                         <label class="text-gray-700 dark:text-gray-300 font-medium">Reducing Rate (%):</label>
-                        <input type="number" id="bank2RateModal" step="0.01" class="col-span-2 border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
+                        <input type="number" id="bank2RateModal" step="0.01" class="col-span-2 border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600">
                     </div>
                     
-                    <div class="grid grid-cols-3 gap-3 items-center">
+                    <div class="grid grid-cols-3 gap-4 items-center">
                         <label class="text-gray-700 dark:text-gray-300 font-medium">EMI (AED):</label>
-                        <input type="text" id="bank2EMIModal" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                        <input type="text" id="bank2EMIModal" class="col-span-2 border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                     </div>
                     
-                    <div class="grid grid-cols-3 gap-3 items-center">
+                    <div class="grid grid-cols-3 gap-4 items-center">
                         <label class="text-gray-700 dark:text-gray-300 font-medium">Total Interest (AED):</label>
-                        <input type="text" id="bank2TotalInterestModal" class="col-span-2 border rounded-md p-2 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
+                        <input type="text" id="bank2TotalInterestModal" class="col-span-2 border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600" readonly>
                     </div>
                 </div>
             </div>
             
-            <div class="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                <h3 class="text-xl font-semibold text-heading dark:text-white mb-2">COMPARISON RESULT</h3>
-                <p id="comparisonResult" class="text-gray-700 dark:text-gray-300">Enter Details For Both Banks To Compare.</p>
+            <div class="mt-8 p-6 bg-gray-100 dark:bg-gray-700 rounded-xl">
+                <h3 class="text-2xl font-semibold text-heading dark:text-white mb-3">COMPARISON RESULT</h3>
+                <p id="comparisonResult" class="text-gray-700 dark:text-gray-300 text-lg">Enter Details For Both Banks To Compare.</p>
             </div>
         </div>
     </div>
@@ -1393,7 +1541,7 @@
             const authExpiry = localStorage.getItem('authExpiry');
             const authMode = localStorage.getItem('authMode');
             
-            if (authExpiry && new Date(authExpiry) > new Date() && authMode === 'flut20') {
+            if (authExpiry && new Date(authExpiry) > new Date() && authMode === 'admin') {
                 isAdminMode = true;
                 authModal.classList.add('hidden');
                 setupAdminMode();
@@ -1521,6 +1669,7 @@
         });
         
         function formatNumber(num) {
+            if (isNaN(num) || !isFinite(num)) return '0';
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
         
@@ -1597,16 +1746,16 @@
             }
         }
         
-        function updatePaymentDate() {
-            const firstPaymentDate = document.getElementById('firstPaymentDate').value;
-            const paymentDateInput = document.getElementById('paymentDate');
+        function updateGracePeriod() {
+            const disbursalDate = new Date(document.getElementById('disbursalDate').value);
+            const firstPaymentDate = new Date(document.getElementById('firstPaymentDate').value);
+            const gracePeriodInput = document.getElementById('gracePeriod');
             
-            if (firstPaymentDate) {
-                const date = new Date(firstPaymentDate);
-                const day = date.getDate();
-                paymentDateInput.value = getOrdinalSuffix(day);
+            if (disbursalDate && firstPaymentDate && firstPaymentDate > disbursalDate) {
+                const daysDifference = Math.floor((firstPaymentDate - disbursalDate) / (1000 * 60 * 60 * 24));
+                gracePeriodInput.value = `${daysDifference} days`;
             } else {
-                paymentDateInput.value = '';
+                gracePeriodInput.value = '';
             }
         }
         
@@ -1666,6 +1815,8 @@
             const closureFeeInput = document.getElementById('closureFee');
             const calculateClosureFeeBtn = document.getElementById('calculateClosureFeeBtn');
             const closureFeeModal = document.getElementById('closureFeeModal');
+            const cardBtn = document.getElementById('cardBtn');
+            const cardModal = document.getElementById('cardModal');
             const multiplesOfSalaryInput = document.getElementById('multiplesOfSalary');
             const maxLoanEligibilityInput = document.getElementById('maxLoanEligibility');
             const tenureMonthsInput = document.getElementById('tenureMonths');
@@ -1685,7 +1836,9 @@
             const resetBtn = document.getElementById('resetBtn');
             const disbursalDateInput = document.getElementById('disbursalDate');
             const firstPaymentDateInput = document.getElementById('firstPaymentDate');
-            const paymentDateInput = document.getElementById('paymentDate');
+            const gracePeriodInput = document.getElementById('gracePeriod');
+            const cashOutInput = document.getElementById('cashOut');
+            const cashOutSuggestion = document.getElementById('cashOutSuggestion');
             const dateErrorMsg = document.getElementById('dateError');
             const emiCalculatorSection = document.getElementById('emiCalculator');
             
@@ -1721,9 +1874,187 @@
             const bank2TotalInterestModal = document.getElementById('bank2TotalInterestModal');
             const comparisonResult = document.getElementById('comparisonResult');
             
+            // Payment date radio buttons
+            const paymentDateRadios = document.querySelectorAll('input[name="paymentDate"]');
+            
             let emiChart = null;
             let emiChartStandalone = null;
             let existingLoanCount = 0;
+            
+            // Set default payment date to 10th
+            document.getElementById('paymentDate10').checked = true;
+            
+            // Payment date change handler
+            paymentDateRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.checked) {
+                        updateFirstPaymentDateFromPaymentDate();
+                    }
+                });
+            });
+            
+            function updateFirstPaymentDateFromPaymentDate() {
+                const selectedPaymentDate = document.querySelector('input[name="paymentDate"]:checked');
+                if (!selectedPaymentDate) return;
+                
+                const disbursalDate = new Date(disbursalDateInput.value);
+                if (!disbursalDate || isNaN(disbursalDate)) return;
+                
+                const loanType = loanTypeSelect.value;
+                const [minDays, maxDays] = getDayRangeFromLoanType(loanType);
+                const paymentDay = parseInt(selectedPaymentDate.value);
+                
+                // Find the best date within the loan type's day range
+                let targetDate = new Date(disbursalDate);
+                targetDate.setMonth(targetDate.getMonth() + 1);
+                targetDate.setDate(paymentDay);
+                
+                // If the date is before disbursal, move to next month
+                if (targetDate <= disbursalDate) {
+                    targetDate.setMonth(targetDate.getMonth() + 1);
+                }
+                
+                // Check if it's within the allowed range
+                const daysDifference = Math.floor((targetDate - disbursalDate) / (1000 * 60 * 60 * 24));
+                
+                if (daysDifference < minDays || daysDifference > maxDays) {
+                    // If outside range, adjust to the nearest valid date
+                    if (daysDifference < minDays) {
+                        targetDate = new Date(disbursalDate);
+                        targetDate.setDate(disbursalDate.getDate() + minDays);
+                        // Set to nearest payment day
+                        const targetMonth = targetDate.getMonth();
+                        targetDate.setDate(paymentDay);
+                        if (targetDate.getMonth() !== targetMonth) {
+                            targetDate.setMonth(targetMonth + 1);
+                            targetDate.setDate(paymentDay);
+                        }
+                    } else {
+                        targetDate = new Date(disbursalDate);
+                        targetDate.setDate(disbursalDate.getDate() + maxDays);
+                        // Set to nearest payment day
+                        const targetMonth = targetDate.getMonth();
+                        targetDate.setDate(paymentDay);
+                        if (targetDate.getMonth() !== targetMonth) {
+                            targetDate.setMonth(targetMonth);
+                            targetDate.setDate(paymentDay);
+                        }
+                    }
+                }
+                
+                firstPaymentDateInput.value = targetDate.toISOString().split('T')[0];
+                updateGracePeriod();
+                validatePaymentDate();
+                updateEMICalculator();
+            }
+
+            // Card button handler
+            cardBtn.addEventListener('click', function() {
+                cardModal.classList.remove('hidden');
+            });
+            
+            // Cash-out input handler
+            cashOutInput.addEventListener('input', function() {
+                const cashOutAmount = parseFloat(this.value) || 0;
+                const totalOutstanding = parseFloat(totalOutstandingInput.value.replace(/,/g, '')) || 0;
+                
+                if (cashOutAmount > 0) {
+                    const adjustedOutstanding = totalOutstanding + cashOutAmount;
+                    
+                    // Calculate ideal loan amount with cash-out
+                    const grossSalary = parseFloat(grossSalaryInput.value.replace(/,/g, '')) || 0;
+                    const reducingRate = parseFloat(reducingRateInput.value) || 0;
+                    const tenureMonths = parseInt(tenureMonthsInput.value) || 0;
+                    const loanType = loanTypeSelect.value;
+                    
+                    if (grossSalary > 0 && reducingRate > 0 && tenureMonths > 0) {
+                        let totalExistingLoansInstallments = 0;
+                        document.querySelectorAll('.existing-loan-entry').forEach((entry, index) => {
+                            if (!settledLoans.has(index)) {
+                                const installmentInput = entry.querySelector('.loan-installment');
+                                totalExistingLoansInstallments += parseFloat(installmentInput.value) || 0;
+                            }
+                        });
+                        
+                        let totalCCLimit = 0;
+                        document.querySelectorAll('.credit-card-entry').forEach((entry, index) => {
+                            if (!settledCards.has(index)) {
+                                const limitInput = entry.querySelector('.credit-card-amount');
+                                const newLimitInput = entry.querySelector('.credit-card-new-limit');
+                                
+                                const originalLimit = parseFloat(limitInput.value) || 0;
+                                const newLimitValue = newLimitInput.value;
+                                const newLimit = newLimitValue !== '' ? parseFloat(newLimitValue) : null;
+                                
+                                const effectiveLimit = newLimit !== null ? newLimit : originalLimit;
+                                totalCCLimit += effectiveLimit;
+                            }
+                        });
+                        
+                        const dbrRate = 0.05;
+                        const dbrCC = totalCCLimit * dbrRate;
+                        const currentLiabilities = totalExistingLoansInstallments + dbrCC;
+                        const allowedLiability = grossSalary * (dbrThreshold / 100);
+                        const availableForEMI = allowedLiability - currentLiabilities;
+                        
+                        // Calculate ideal loan amount to cover the adjusted outstanding
+                        let low = adjustedOutstanding;
+                        let high = grossSalary * 100;
+                        let idealLoanAmount = adjustedOutstanding;
+                        
+                        while (high - low > 1) {
+                            const mid = (low + high) / 2;
+                            const emi = calculateEMIWithGracePeriod(mid, reducingRate, tenureMonths, loanType);
+                            
+                            if (emi <= availableForEMI) {
+                                low = mid;
+                                idealLoanAmount = mid;
+                            } else {
+                                high = mid;
+                            }
+                        }
+                        
+                        if (idealLoanAmount > adjustedOutstanding) {
+                            const suggestionText = `Suggested loan amount with cash-out: AED ${formatNumber(Math.floor(idealLoanAmount))}`;
+                            cashOutSuggestion.innerHTML = `
+                                <div class="cash-out-suggestion" onclick="applyCashOutIdealAmount(${Math.floor(idealLoanAmount)})">
+                                    ${suggestionText}
+                                </div>
+                            `;
+                            cashOutSuggestion.classList.remove('hidden');
+                        } else {
+                            cashOutSuggestion.classList.add('hidden');
+                        }
+                    }
+                } else {
+                    cashOutSuggestion.classList.add('hidden');
+                }
+            });
+
+            window.applyCashOutIdealAmount = function(amount) {
+                document.getElementById('loanAmount').value = amount.toString();
+                updateEMICalculator();
+                updateLoanMultiples();
+                updateCashInHand();
+                updateTotalPaymentLabel();
+                showSuccess(`Loan amount updated to AED ${formatNumber(amount)}`);
+            };
+            
+            // Make DBR error clickable
+            document.addEventListener('click', function(e) {
+                if (e.target.id === 'loanAmountError' && e.target.textContent.includes('Ideal amount:')) {
+                    const match = e.target.textContent.match(/AED\s+([\d,]+)/);
+                    if (match) {
+                        const idealAmount = match[1].replace(/,/g, '');
+                        document.getElementById('loanAmount').value = idealAmount;
+                        updateEMICalculator();
+                        updateLoanMultiples();
+                        updateCashInHand();
+                        updateTotalPaymentLabel();
+                        showSuccess(`Loan amount updated to AED ${formatNumber(parseFloat(idealAmount))}`);
+                    }
+                }
+            });
             
             const today = new Date();
             const formattedDate = today.toISOString().split('T')[0];
@@ -1731,9 +2062,10 @@
             
             const nextMonth = new Date(today);
             nextMonth.setMonth(nextMonth.getMonth() + 1);
+            nextMonth.setDate(10); // Default to 10th
             firstPaymentDateInput.value = nextMonth.toISOString().split('T')[0];
             
-            updatePaymentDate();
+            updateGracePeriod();
             
             let addbackCount = 1;
             let addbackData = {};
@@ -1758,9 +2090,9 @@
                     closureFeeInput.value = '';
                 }
                 
-                adjustFirstPaymentDate();
+                updateFirstPaymentDateFromPaymentDate();
                 validatePaymentDate();
-                updatePaymentDate();
+                updateGracePeriod();
                 updateEMICalculator();
                 updateTotalPaymentLabel();
             });
@@ -1775,8 +2107,15 @@
             });
             
             firstPaymentDateInput.addEventListener('change', function() {
-                updatePaymentDate();
+                updateGracePeriod();
                 validatePaymentDate();
+                updateEMICalculator();
+            });
+            
+            disbursalDateInput.addEventListener('change', function() {
+                updateFirstPaymentDateFromPaymentDate();
+                validatePaymentDate();
+                updateGracePeriod();
                 updateEMICalculator();
             });
             
@@ -1913,7 +2252,7 @@
                     
                     if (loanType === 'fresh-0-30' || loanType === 'topup-0-30') {
                         loanAmount = preferredEMI / (monthlyRate * Math.pow(1 + monthlyRate, tenureMonths) / (Math.pow(1 + monthlyRate, tenureMonths) - 1));
-                    } else if (loanType === 'fresh-30-60' || loanType === 'topup-30-60') {
+                    } else if (loanType === 'fresh-30-60' || loanType === 'topup-30-60' || loanType === 'takeover-30-60') {
                         const adjustedEMI = preferredEMI / (1 + monthlyRate);
                         loanAmount = adjustedEMI / (monthlyRate * Math.pow(1 + monthlyRate, tenureMonths) / (Math.pow(1 + monthlyRate, tenureMonths) - 1));
                     } else if (loanType === 'takeover-60-90') {
@@ -1926,48 +2265,6 @@
                         updateEMICalculator();
                     }
                 }
-            }
-            
-            function adjustFirstPaymentDate() {
-                const disbursalDate = new Date(disbursalDateInput.value);
-                if (!disbursalDate) return;
-                
-                const loanType = loanTypeSelect.value;
-                const [minDays, maxDays] = getDayRangeFromLoanType(loanType);
-                
-                const optimalDates = [5, 10, 15, 19, 24];
-                let bestDate = null;
-                let bestDaysBetween = null;
-                
-                for (const day of optimalDates) {
-                    let testDate = new Date(disbursalDate);
-                    testDate.setMonth(testDate.getMonth() + 1);
-                    testDate.setDate(day);
-                    
-                    if (testDate <= disbursalDate) {
-                        testDate.setMonth(testDate.getMonth() + 1);
-                    }
-                    
-                    const daysBetween = Math.floor((testDate - disbursalDate) / (1000 * 60 * 60 * 24));
-                    
-                    if (daysBetween >= minDays && daysBetween <= maxDays) {
-                        if (!bestDate || Math.abs(daysBetween - (minDays + maxDays) / 2) < Math.abs(bestDaysBetween - (minDays + maxDays) / 2)) {
-                            bestDate = testDate;
-                            bestDaysBetween = daysBetween;
-                        }
-                    }
-                }
-                
-                if (bestDate) {
-                    firstPaymentDateInput.value = bestDate.toISOString().split('T')[0];
-                } else {
-                    const midDays = Math.floor((minDays + maxDays) / 2);
-                    const newPaymentDate = new Date(disbursalDate);
-                    newPaymentDate.setDate(disbursalDate.getDate() + midDays);
-                    firstPaymentDateInput.value = newPaymentDate.toISOString().split('T')[0];
-                }
-                
-                updatePaymentDate();
             }
             
             document.querySelectorAll('.credit-card-amount, .credit-card-new-limit, .credit-card-outstanding').forEach(input => {
@@ -2168,11 +2465,11 @@
             function addExistingLoan() {
                 existingLoanCount++;
                 const loanDiv = document.createElement('div');
-                loanDiv.classList.add('existing-loan-entry', 'mb-2');
+                loanDiv.classList.add('existing-loan-entry', 'mb-3');
                 
                 loanDiv.innerHTML = `
-                    <div class="flex gap-2 items-center w-full">
-                        <select class="loan-bank border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 25%;">
+                    <div class="flex gap-3 items-center w-full">
+                        <select class="loan-bank border rounded-lg p-3 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 25%;">
                             <option value="ADCB">ADCB</option>
                             <option value="ENBD">ENBD</option>
                             <option value="EIB">EIB</option>
@@ -2187,14 +2484,14 @@
                             <option value="RAK">RAK</option>
                             <option value="OTHER">OTHER</option>
                         </select>
-                        <select class="loan-type border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 35%;">
+                        <select class="loan-type border rounded-lg p-3 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 35%;">
                             <option value="Personal Loan">Personal Loan</option>
                             <option value="Auto Loan">Auto Loan</option>
                             <option value="Mortgage Loan">Mortgage Loan</option>
                         </select>
-                        <input type="number" placeholder="Installment" class="loan-installment border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 15%;">
-                        <input type="number" placeholder="Outstanding" class="loan-outstanding border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 15%;">
-                        <button class="settle-loan-btn custom-btn text-white px-3 py-2 rounded text-sm whitespace-nowrap" style="width: 10%;">Settle</button>
+                        <input type="number" placeholder="Installment" class="loan-installment border rounded-lg p-3 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 15%;">
+                        <input type="number" placeholder="Outstanding" class="loan-outstanding border rounded-lg p-3 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 15%;">
+                        <button class="settle-loan-btn custom-btn text-white px-4 py-3 rounded-lg text-sm whitespace-nowrap font-medium" style="width: 10%;">Settle</button>
                     </div>
                 `;
                 
@@ -2245,6 +2542,8 @@
                     return;
                 }
                 
+                const selectedPaymentDate = document.querySelector('input[name="paymentDate"]:checked');
+                
                 const profileData = {
                     customerName: customerName,
                     whatsappNumber: whatsappNumberInput.value,
@@ -2253,6 +2552,8 @@
                     closureFee: closureFeeInput.value,
                     disbursalDate: disbursalDateInput.value,
                     firstPaymentDate: firstPaymentDateInput.value,
+                    paymentDate: selectedPaymentDate ? selectedPaymentDate.value : '10',
+                    cashOut: cashOutInput.value,
                     multiplesOfSalary: multiplesOfSalaryInput.value,
                     tenureMonths: tenureMonthsInput.value,
                     loanAmount: loanAmountInput.value,
@@ -2370,6 +2671,7 @@
                     closureFeeInput.value = profileData.closureFee || '';
                     disbursalDateInput.value = profileData.disbursalDate;
                     firstPaymentDateInput.value = profileData.firstPaymentDate;
+                    cashOutInput.value = profileData.cashOut || '';
                     multiplesOfSalaryInput.value = profileData.multiplesOfSalary;
                     tenureMonthsInput.value = profileData.tenureMonths;
                     loanAmountInput.value = profileData.loanAmount;
@@ -2377,6 +2679,13 @@
                     preferredEMIInput.value = profileData.preferredEMI || '';
                     specialNote.value = profileData.specialNote;
                     netAmountCheckbox.checked = profileData.netAmountChecked !== undefined ? profileData.netAmountChecked : true;
+                    
+                    // Set payment date radio button
+                    const paymentDateValue = profileData.paymentDate || '10';
+                    const paymentDateRadio = document.getElementById(`paymentDate${paymentDateValue}`);
+                    if (paymentDateRadio) {
+                        paymentDateRadio.checked = true;
+                    }
                     
                     if (profileData.dbrThreshold !== undefined) {
                         dbrThreshold = profileData.dbrThreshold;
@@ -2478,7 +2787,7 @@
                     updateGrossSalary();
                     updateDBRCalculator();
                     updateEMICalculator();
-                    updatePaymentDate();
+                    updateGracePeriod();
                     updateTotalPaymentLabel();
                     
                     showSuccess('Profile retrieved successfully!');
@@ -2534,11 +2843,11 @@
                 const modal = document.createElement('div');
                 modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
                 modal.innerHTML = `
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full mx-4">
-                        <p class="text-gray-700 dark:text-gray-300 mb-4">${message}</p>
-                        <div class="flex justify-end space-x-3">
-                            <button class="cancel-btn px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">Cancel</button>
-                            <button class="confirm-btn px-4 py-2 bg-red-500 text-white hover:bg-red-600 rounded">Confirm</button>
+                    <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl max-w-md w-full mx-4">
+                        <p class="text-gray-700 dark:text-gray-300 mb-6 text-lg">${message}</p>
+                        <div class="flex justify-end space-x-4">
+                            <button class="cancel-btn px-6 py-3 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all">Cancel</button>
+                            <button class="confirm-btn px-6 py-3 bg-red-500 text-white hover:bg-red-600 rounded-lg transition-all">Confirm</button>
                         </div>
                     </div>
                 `;
@@ -2672,6 +2981,8 @@
             }
             
             function saveTemporaryState() {
+                const selectedPaymentDate = document.querySelector('input[name="paymentDate"]:checked');
+                
                 const tempState = {
                     customerName: customerNameInput.value,
                     whatsappNumber: whatsappNumberInput.value, 
@@ -2680,6 +2991,8 @@
                     closureFee: closureFeeInput.value,
                     disbursalDate: disbursalDateInput.value,
                     firstPaymentDate: firstPaymentDateInput.value,
+                    paymentDate: selectedPaymentDate ? selectedPaymentDate.value : '10',
+                    cashOut: cashOutInput.value,
                     multiplesOfSalary: multiplesOfSalaryInput.value,
                     tenureMonths: tenureMonthsInput.value,
                     loanAmount: loanAmountInput.value,
@@ -2730,6 +3043,7 @@
                     closureFeeInput.value = tempState.closureFee || '';
                     disbursalDateInput.value = tempState.disbursalDate || today.toISOString().split('T')[0];
                     firstPaymentDateInput.value = tempState.firstPaymentDate || nextMonth.toISOString().split('T')[0];
+                    cashOutInput.value = tempState.cashOut || '';
                     multiplesOfSalaryInput.value = tempState.multiplesOfSalary || '20';
                     tenureMonthsInput.value = tempState.tenureMonths || '48';
                     loanAmountInput.value = tempState.loanAmount || '';
@@ -2737,6 +3051,13 @@
                     preferredEMIInput.value = tempState.preferredEMI || '';
                     specialNote.value = tempState.specialNote || '';
                     netAmountCheckbox.checked = tempState.netAmountChecked !== undefined ? tempState.netAmountChecked : true;
+                    
+                    // Set payment date radio button
+                    const paymentDateValue = tempState.paymentDate || '10';
+                    const paymentDateRadio = document.getElementById(`paymentDate${paymentDateValue}`);
+                    if (paymentDateRadio) {
+                        paymentDateRadio.checked = true;
+                    }
                     
                     if (tempState.dbrThreshold !== undefined) {
                         dbrThreshold = tempState.dbrThreshold;
@@ -2837,7 +3158,7 @@
                         updateGrossSalary();
                         updateDBRCalculator();
                         updateEMICalculator();
-                        updatePaymentDate();
+                        updateGracePeriod();
                         updateTotalPaymentLabel();
                     }, 500);
                     
@@ -2861,7 +3182,7 @@
                 
                 const fieldsContainer = document.createElement('div');
                 fieldsContainer.id = `addback-fields-${index}`;
-                fieldsContainer.classList.add('mt-2', 'p-3', 'border', 'border-gray-200', 'dark:border-gray-600', 'rounded-lg');
+                fieldsContainer.classList.add('mt-3', 'p-4', 'border', 'border-gray-200', 'dark:border-gray-600', 'rounded-xl', 'bg-gray-50', 'dark:bg-gray-700');
                 
                 let html = '';
                 
@@ -2874,21 +3195,21 @@
                     case 'hra':
                     case 'airfare':
                         html = `
-                            <h3 class="font-semibold mb-2 text-gray-700 dark:text-gray-300 text-sm">${addbackType === 'hra' ? 'HRA' : 'Airfare Allowance'}</h3>
-                            <div class="flex items-center gap-4 mb-2">
+                            <h3 class="font-semibold mb-3 text-gray-700 dark:text-gray-300 text-base">${addbackType === 'hra' ? 'HRA' : 'Airfare Allowance'}</h3>
+                            <div class="flex items-center gap-6 mb-3">
                                 <div class="flex items-center">
-                                    <input type="radio" id="${addbackType}Yearly-${index}" name="${addbackType}Period-${index}" value="yearly" class="mr-2">
-                                    <label for="${addbackType}Yearly-${index}" class="text-gray-700 dark:text-gray-300 text-sm">Yearly</label>
+                                    <input type="radio" id="${addbackType}Yearly-${index}" name="${addbackType}Period-${index}" value="yearly" class="mr-3">
+                                    <label for="${addbackType}Yearly-${index}" class="text-gray-700 dark:text-gray-300 font-medium">Yearly</label>
                                 </div>
                                 <div class="flex items-center">
-                                    <input type="radio" id="${addbackType}Monthly-${index}" name="${addbackType}Period-${index}" value="monthly" class="mr-2">
-                                    <label for="${addbackType}Monthly-${index}" class="text-gray-700 dark:text-gray-300 text-sm">Monthly</label>
+                                    <input type="radio" id="${addbackType}Monthly-${index}" name="${addbackType}Period-${index}" value="monthly" class="mr-3">
+                                    <label for="${addbackType}Monthly-${index}" class="text-gray-700 dark:text-gray-300 font-medium">Monthly</label>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-1 gap-2">
+                            <div class="grid grid-cols-1 gap-3">
                                 <div class="flex items-center">
-                                    <label class="text-gray-700 dark:text-gray-300 w-1/3 text-sm">Amount:</label>
-                                    <input type="number" class="${addbackType}-amount border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600 w-2/3">
+                                    <label class="text-gray-700 dark:text-gray-300 w-1/3 font-medium">Amount:</label>
+                                    <input type="number" class="${addbackType}-amount border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600 w-2/3">
                                 </div>
                             </div>
                         `;
@@ -2904,14 +3225,14 @@
                             'telephone': 'Telephone Allowance'
                         }[addbackType];
                         
-                        html = `<h3 class="font-semibold mb-2 text-gray-700 dark:text-gray-300 text-sm">${title}</h3>`;
+                        html = `<h3 class="font-semibold mb-3 text-gray-700 dark:text-gray-300 text-base">${title}</h3>`;
                         
-                        html += '<div class="grid grid-cols-2 gap-2">';
+                        html += '<div class="grid grid-cols-2 gap-3">';
                         for (let i = 1; i <= 6; i++) {
                             html += `
                                 <div class="flex items-center">
-                                    <label class="text-gray-700 dark:text-gray-300 w-1/3 text-sm">Month ${i}:</label>
-                                    <input type="number" class="${addbackType}-amount-${i} border rounded-md p-1.5 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600 w-2/3">
+                                    <label class="text-gray-700 dark:text-gray-300 w-1/3 font-medium">Month ${i}:</label>
+                                    <input type="number" class="${addbackType}-amount-${i} border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600 w-2/3">
                                 </div>
                             `;
                         }
@@ -3013,6 +3334,7 @@
                         return 0;
                     case 'fresh-30-60':
                     case 'topup-30-60':
+                    case 'takeover-30-60':
                         return 1;
                     case 'takeover-60-90':
                         return 2;
@@ -3061,6 +3383,7 @@
                         return [0, 30];
                     case 'fresh-30-60':
                     case 'topup-30-60':
+                    case 'takeover-30-60':
                         return [31, 60];
                     case 'takeover-60-90':
                         return [61, 90];
@@ -3102,6 +3425,16 @@
             
             function updateDBRCalculator() {
                 const grossSalary = parseFloat(grossSalaryInput.value.replace(/,/g, '')) || 0;
+                
+                // Prevent division by zero which causes Infinity
+                if (grossSalary <= 0) {
+                    dbrPercentageInput.value = '0.00';
+                    allowedLiabilityInput.value = '0.00';
+                    availableLiabilityInput.value = '0.00';
+                    newTotalLiabilitiesInput.value = '0.00';
+                    totalLiabilitiesInput.value = '0.00';
+                    return;
+                }
                 
                 let totalExistingLoansInstallments = 0;
                 document.querySelectorAll('.existing-loan-entry').forEach((entry, index) => {
@@ -3591,11 +3924,11 @@
                     const entry = schedule[i];
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td class="border border-gray-300 p-2 text-center">${entry.month}</td>
-                        <td class="border border-gray-300 p-2 text-right">${formatNumber(entry.emi.toFixed(2))}</td>
-                        <td class="border border-gray-300 p-2 text-right">${formatNumber(entry.principal.toFixed(2))}</td>
-                        <td class="border border-gray-300 p-2 text-right">${formatNumber(entry.interest.toFixed(2))}</td>
-                        <td class="border border-gray-300 p-2 text-right">${formatNumber(entry.balance.toFixed(2))}</td>
+                        <td class="border border-gray-300 p-3 text-center">${entry.month}</td>
+                        <td class="border border-gray-300 p-3 text-right">${formatNumber(entry.emi.toFixed(2))}</td>
+                        <td class="border border-gray-300 p-3 text-right">${formatNumber(entry.principal.toFixed(2))}</td>
+                        <td class="border border-gray-300 p-3 text-right">${formatNumber(entry.interest.toFixed(2))}</td>
+                        <td class="border border-gray-300 p-3 text-right">${formatNumber(entry.balance.toFixed(2))}</td>
                     `;
                     tableBody.appendChild(row);
                 }
@@ -3678,11 +4011,11 @@
                     const entry = schedule[i];
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td class="border border-gray-300 p-2 text-center">${entry.month}</td>
-                        <td class="border border-gray-300 p-2 text-right">${formatNumber(entry.emi.toFixed(2))}</td>
-                        <td class="border border-gray-300 p-2 text-right">${formatNumber(entry.principal.toFixed(2))}</td>
-                        <td class="border border-gray-300 p-2 text-right">${formatNumber(entry.interest.toFixed(2))}</td>
-                        <td class="border border-gray-300 p-2 text-right">${formatNumber(entry.balance.toFixed(2))}</td>
+                        <td class="border border-gray-300 p-3 text-center">${entry.month}</td>
+                        <td class="border border-gray-300 p-3 text-right">${formatNumber(entry.emi.toFixed(2))}</td>
+                        <td class="border border-gray-300 p-3 text-right">${formatNumber(entry.principal.toFixed(2))}</td>
+                        <td class="border border-gray-300 p-3 text-right">${formatNumber(entry.interest.toFixed(2))}</td>
+                        <td class="border border-gray-300 p-3 text-right">${formatNumber(entry.balance.toFixed(2))}</td>
                     `;
                     tableBody.appendChild(row);
                 }
@@ -3831,7 +4164,8 @@
                 document.getElementById('shareTotalOutstanding').textContent = totalOutstandingInput.value;
                 document.getElementById('shareCashInHand').textContent = cashInHandInput.value;
                 
-                const paymentDate = paymentDateInput.value;
+                const selectedPaymentDate = document.querySelector('input[name="paymentDate"]:checked');
+                const paymentDate = selectedPaymentDate ? getOrdinalSuffix(parseInt(selectedPaymentDate.value)) : '';
                 document.getElementById('sharePaymentDate').textContent = paymentDate;
                 
                 const loanType = loanTypeSelect.value;
@@ -3935,7 +4269,7 @@
                     td:first-child { background-color: #f5f5f5; font-weight: bold; width: 50%; }
                     h3 { margin-top: 20px; margin-bottom: 10px; }
                     .emi-table { width: 100%; border-collapse: collapse; }
-                    .emi-table th { background-color: #5492A8; color: white; text-align: center; padding: 6px; border: 1px solid #ddd; }
+                    .emi-table th { background-color: #1e3a8a; color: white; text-align: center; padding: 6px; border: 1px solid #ddd; }
                     .emi-table td { text-align: right; padding: 4px 6px; border: 1px solid #ddd; }
                     .emi-table td:first-child { text-align: center; }
                     @media print { body { margin: 0; } }
@@ -3976,7 +4310,10 @@
                 const processingFees = parseFloat(processingFeesInput.value.replace(/,/g, '')) || 0;
                 const cashInHand = parseFloat(cashInHandInput.value.replace(/,/g, '')) || 0;
                 const totalOutstanding = parseFloat(totalOutstandingInput.value.replace(/,/g, '')) || 0;
-                const paymentDate = paymentDateInput.value;
+                
+                const selectedPaymentDate = document.querySelector('input[name="paymentDate"]:checked');
+                const paymentDate = selectedPaymentDate ? getOrdinalSuffix(parseInt(selectedPaymentDate.value)) : '';
+                
                 const customerName = customerNameInput.value.trim();
                 const specialNoteText = specialNote.value;
                 const closureFee = parseFloat(closureFeeInput.value) || 0;
@@ -4111,17 +4448,17 @@
                 
                 cardCount++;
                 const creditCardDiv = document.createElement('div');
-                creditCardDiv.classList.add('credit-card-entry', 'mb-2');
+                creditCardDiv.classList.add('credit-card-entry', 'mb-3');
                 creditCardDiv.innerHTML = `
-                    <div class="flex justify-between items-center mb-1">
-                        <div class="flex items-center gap-1 w-full">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center gap-2 w-full">
                             <label class="text-gray-700 dark:text-gray-300 font-medium flex-1">Credit Card ${cardCount}:</label>
-                            <input type="text" placeholder="Settle Amount" class="credit-card-settle-amount border rounded-md p-1 text-xs dark:bg-gray-800 dark:text-white dark:border-gray-600 hidden w-20" pattern="[0-9]*\.?[0-9]*">
-                            <button class="settle-card-btn custom-btn text-white px-2 py-1 rounded text-xs w-14 text-center">Settle</button>
+                            <input type="text" placeholder="Settle Amount" class="credit-card-settle-amount border rounded-lg p-2 text-xs dark:bg-gray-800 dark:text-white dark:border-gray-600 hidden w-24" pattern="[0-9]*\.?[0-9]*">
+                            <button class="settle-card-btn custom-btn text-white px-3 py-2 rounded-lg text-xs w-16 text-center font-medium">Settle</button>
                         </div>
                     </div>
-                    <div class="flex gap-2 items-center">
-                        <select class="card-bank-select border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 25%;">
+                    <div class="flex gap-3 items-center">
+                        <select class="card-bank-select border rounded-lg p-3 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 25%;">
                             <option value="ADCB">ADCB</option>
                             <option value="ENBD">ENBD</option>
                             <option value="EIB">EIB</option>
@@ -4136,9 +4473,9 @@
                             <option value="RAK">RAK</option>
                             <option value="OTHER">OTHER</option>
                         </select>
-                        <input type="text" placeholder="Credit Limit" class="credit-card-amount border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 25%;" pattern="[0-9]*">
-                        <input type="text" placeholder="New Limit" class="credit-card-new-limit border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 25%;" pattern="[0-9]*">
-                        <input type="text" placeholder="Outstanding" class="credit-card-outstanding border rounded-md p-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 25%;" pattern="[0-9]*">
+                        <input type="text" placeholder="Credit Limit" class="credit-card-amount border rounded-lg p-3 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 25%;" pattern="[0-9]*">
+                        <input type="text" placeholder="New Limit" class="credit-card-new-limit border rounded-lg p-3 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 25%;" pattern="[0-9]*">
+                        <input type="text" placeholder="Outstanding" class="credit-card-outstanding border rounded-lg p-3 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 25%;" pattern="[0-9]*">
                     </div>
                 `;
                 creditCardsContainer.appendChild(creditCardDiv);
@@ -4231,11 +4568,11 @@
                 addbackCount++;
                 
                 const addbackDiv = document.createElement('div');
-                addbackDiv.classList.add('grid', 'grid-cols-3', 'gap-2', 'items-center', 'addback-entry', 'mt-2');
+                addbackDiv.classList.add('grid', 'grid-cols-3', 'gap-3', 'items-center', 'addback-entry', 'mt-3');
                 addbackDiv.innerHTML = `
                     <label class="text-gray-700 dark:text-gray-300 font-medium">Add-back ${addbackCount}:</label>
                     <div class="col-span-2">
-                        <select class="addback-type border rounded-md p-2 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600 w-full">
+                        <select class="addback-type border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600 w-full">
                             <option value="">Select Add-back Type</option>
                             <option value="hra">HRA</option>
                             <option value="airfare">Airfare Allowance</option>
@@ -4297,7 +4634,11 @@
                 reducingRateInput.value = '10';
                 preferredEMIInput.value = '';
                 specialNote.value = '';
+                cashOutInput.value = '';
                 netAmountCheckbox.checked = true;
+                
+                // Reset payment date to 10th
+                document.getElementById('paymentDate10').checked = true;
                 
                 dbrThreshold = 49.00;
                 dbrToggle.checked = false;
@@ -4348,10 +4689,13 @@
                 disbursalDateInput.value = today.toISOString().split('T')[0];
                 const nextMonth = new Date(today);
                 nextMonth.setMonth(nextMonth.getMonth() + 1);
+                nextMonth.setDate(10);
                 firstPaymentDateInput.value = nextMonth.toISOString().split('T')[0];
-                updatePaymentDate();
+                
+                updateGracePeriod();
                 
                 savedProfilesSelect.value = '';
+                cashOutSuggestion.classList.add('hidden');
                 
                 localStorage.removeItem('lastUsedProfile');
                 
@@ -4376,13 +4720,6 @@
             
             findOptimalLoanBtn.addEventListener('click', findOptimalLoanAmount);
             
-            disbursalDateInput.addEventListener('change', function() {
-                adjustFirstPaymentDate();
-                validatePaymentDate();
-                updatePaymentDate();
-                updateEMICalculator();
-            });
-            
             bank1NameModal.addEventListener('input', updateBankComparisonModal);
             bank1LoanAmountModal.addEventListener('input', updateBankComparisonModal);
             bank1TenureModal.addEventListener('input', updateBankComparisonModal);
@@ -4406,7 +4743,7 @@
             updateGrossSalary();
             updateDBRCalculator();
             updateEMICalculator();
-            updatePaymentDate();
+            updateGracePeriod();
             updateTotalPaymentLabel();
         });
     </script>
