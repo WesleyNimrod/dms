@@ -284,6 +284,9 @@
             );
             position: relative;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .pl-proposition-chart {
@@ -298,6 +301,9 @@
             );
             position: relative;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .cc-proposition-chart {
@@ -312,6 +318,9 @@
             );
             position: relative;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .acc-chart {
@@ -326,6 +335,9 @@
             );
             position: relative;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .scheme-chart {
@@ -341,6 +353,9 @@
             );
             position: relative;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .donut-hole {
@@ -353,6 +368,18 @@
             left: 50%;
             transform: translate(-50%, -50%);
             box-shadow: inset 0 1px 4px rgba(0,0,0,0.1);
+        }
+
+        .chart-percentage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            font-size: 14px;
+            color: #1A3A4A;
+            text-align: center;
+            z-index: 10;
         }
         
         .chart-legend {
@@ -936,7 +963,7 @@
             border-bottom: none;
         }
 
-        /* Fix 4: Enhanced Form Styling */
+        /* Fix 1: Enhanced Form Styling with consistent sizing */
         .styled-input {
             background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
             border: 2px solid #e9ecef;
@@ -945,6 +972,9 @@
             font-size: 16px;
             transition: all 0.3s ease;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            width: 100%;
+            min-height: 48px;
+            box-sizing: border-box;
         }
 
         .styled-input:focus {
@@ -973,6 +1003,9 @@
             background-position: right 12px center;
             background-size: 16px;
             padding-right: 45px;
+            width: 100%;
+            min-height: 48px;
+            box-sizing: border-box;
         }
 
         .styled-select:focus {
@@ -986,11 +1019,27 @@
             border-color: #6c757d;
         }
 
+        /* Fix 1: Smaller and better organized radio buttons */
         .styled-radio-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
+            display: grid;
+            gap: 8px;
             margin-top: 8px;
+        }
+
+        .styled-radio-group.proposition-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .styled-radio-group.scheme-grid {
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        }
+
+        .styled-radio-group.activation-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .styled-radio-group.products-grid {
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
         }
 
         .styled-radio-item {
@@ -998,13 +1047,14 @@
             align-items: center;
             position: relative;
             cursor: pointer;
-            padding: 8px 16px;
+            padding: 8px 12px;
             border-radius: 6px;
             border: 2px solid #e9ecef;
             background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
             transition: all 0.3s ease;
-            min-width: 120px;
             justify-content: center;
+            text-align: center;
+            min-height: 40px;
         }
 
         .styled-radio-item:hover {
@@ -1038,12 +1088,13 @@
             font-weight: 500;
             transition: color 0.3s ease;
             pointer-events: none;
+            font-size: 14px;
         }
 
         .styled-checkbox-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 8px;
             margin-top: 8px;
         }
 
@@ -1052,11 +1103,14 @@
             align-items: center;
             position: relative;
             cursor: pointer;
-            padding: 12px 16px;
+            padding: 8px 12px;
             border-radius: 6px;
             border: 2px solid #e9ecef;
             background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
             transition: all 0.3s ease;
+            justify-content: center;
+            text-align: center;
+            min-height: 40px;
         }
 
         .styled-checkbox-item:hover {
@@ -1093,6 +1147,7 @@
             font-weight: 500;
             transition: color 0.3s ease;
             pointer-events: none;
+            font-size: 14px;
         }
 
         .styled-label {
@@ -1128,6 +1183,15 @@
             padding: 16px;
             border-radius: 8px;
             border: 1px solid #e9ecef;
+        }
+
+        /* Fix 2: Activation section styling */
+        .activation-section {
+            display: none;
+        }
+
+        .activation-section.show {
+            display: block;
         }
         
         @media (max-width: 768px) {
@@ -1188,18 +1252,20 @@
                 gap: 3px;
             }
 
-            .styled-radio-group {
-                flex-direction: column;
-                gap: 8px;
+            .styled-radio-group.proposition-grid {
+                grid-template-columns: 1fr;
             }
 
-            .styled-radio-item {
-                min-width: auto;
-                justify-content: flex-start;
+            .styled-radio-group.scheme-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .styled-radio-group.activation-grid {
+                grid-template-columns: 1fr;
             }
 
             .styled-checkbox-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
@@ -1231,9 +1297,6 @@
         <div class="bg-white p-3 rounded-lg shadow-md">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-bold text-primary">Summary Dashboard</h2>
-                <button id="copySummaryBtn" class="bg-gray-600 text-white p-2 rounded-md hover:bg-gray-700 no-print">
-                    <i class="fas fa-copy"></i>
-                </button>
             </div>
             
             <!-- Points Summary Card -->
@@ -1399,6 +1462,7 @@
                     <div class="chart-box">
                         <div class="chart-title">Personal Loan Proposition</div>
                         <div class="pl-proposition-chart">
+                            <div class="chart-percentage" id="plChartPercentage">33%</div>
                             <div class="donut-hole"></div>
                         </div>
                         <div class="chart-legend">
@@ -1421,6 +1485,7 @@
                     <div class="chart-box">
                         <div class="chart-title">Credit Card Proposition</div>
                         <div class="cc-proposition-chart">
+                            <div class="chart-percentage" id="ccChartPercentage">33%</div>
                             <div class="donut-hole"></div>
                         </div>
                         <div class="chart-legend">
@@ -1443,6 +1508,7 @@
                     <div class="chart-box">
                         <div class="chart-title">Account Types</div>
                         <div class="acc-chart">
+                            <div class="chart-percentage" id="accChartPercentage">40%</div>
                             <div class="donut-hole"></div>
                         </div>
                         <div class="chart-legend">
@@ -1465,6 +1531,7 @@
                     <div class="chart-box">
                         <div class="chart-title">Scheme Distribution</div>
                         <div class="scheme-chart">
+                            <div class="chart-percentage" id="schemeChartPercentage">45%</div>
                             <div class="donut-hole"></div>
                         </div>
                         <div class="chart-legend">
@@ -1561,7 +1628,7 @@
                         <div class="form-row">
                             <label class="styled-label required">Proposition</label>
                             <div class="radio-group-wrapper">
-                                <div class="styled-radio-group">
+                                <div class="styled-radio-group proposition-grid">
                                     <label class="styled-radio-item">
                                         <input type="radio" name="proposition" value="Conventional" checked>
                                         <span class="radio-label">Conventional</span>
@@ -1591,7 +1658,7 @@
                         <div class="form-row">
                             <label class="styled-label required">Products</label>
                             <div class="checkbox-group-wrapper">
-                                <div class="styled-checkbox-grid">
+                                <div class="styled-checkbox-grid products-grid">
                                     <label class="styled-checkbox-item">
                                         <input type="checkbox" name="products" value="ACC" id="productACC">
                                         <span class="checkbox-label">ACC</span>
@@ -1681,7 +1748,7 @@
                         <div class="form-row">
                             <label class="styled-label required">Scheme</label>
                             <div class="radio-group-wrapper">
-                                <div class="styled-radio-group">
+                                <div class="styled-radio-group scheme-grid">
                                     <label class="styled-radio-item">
                                         <input type="radio" name="scheme" value="TML ALL" checked>
                                         <span class="radio-label">TML ALL</span>
@@ -1729,11 +1796,11 @@
                             </div>
                         </div>
                         
-                        <!-- Activation -->
-                        <div class="form-row">
+                        <!-- Activation - Fix 2: Only show when CC or 2nd CC is selected -->
+                        <div class="form-row activation-section" id="activationSection">
                             <label class="styled-label required">Activation</label>
                             <div class="radio-group-wrapper">
-                                <div class="styled-radio-group">
+                                <div class="styled-radio-group activation-grid">
                                     <label class="styled-radio-item">
                                         <input type="radio" name="activation" value="Non Activated" checked>
                                         <span class="radio-label">Non Activated</span>
@@ -2026,6 +2093,7 @@
     let currentSort = 'all';
     let companyNames = [];
     let statusOptions = [];
+    let selectedCCOptions = new Set();
 
     // ==========================================
     // PASTE FUNCTIONALITY
@@ -2096,7 +2164,7 @@
     // INPUT VALIDATION AND AUTOCOMPLETE
     // ==========================================
 
-    // Company autocomplete functionality - fetch from Data sheet column K
+    // Fix 4: Enhanced company autocomplete functionality - fetch from both Data and Master sheets
     function setupCompanyAutocomplete() {
         const companyNameInput = document.getElementById('companyName');
         const suggestionsDiv = document.getElementById('companySuggestions');
@@ -2171,23 +2239,35 @@
         });
     }
 
-    // Fetch company names from Google Sheets Data column K
+    // Fix 4: Fetch company names from both Data and Master sheets
     async function fetchCompanyNames() {
         try {
-            const response = await fetch(`${scriptURL}?action=getAll`);
-            const data = await response.json();
+            const uniqueCompanies = new Set();
             
-            if (data.success && data.data) {
-                // Extract unique company names from the data
-                const uniqueCompanies = [...new Set(
-                    data.data
-                        .map(record => record['Company Name'])
-                        .filter(name => name && name.trim() !== '')
-                        .map(name => name.toUpperCase())
-                )].sort();
-                
-                companyNames = uniqueCompanies;
+            // Fetch from Data sheet
+            const dataResponse = await fetch(`${scriptURL}?action=getAll`);
+            const dataResult = await dataResponse.json();
+            
+            if (dataResult.success && dataResult.data) {
+                dataResult.data
+                    .map(record => record['Company Name'])
+                    .filter(name => name && name.trim() !== '')
+                    .forEach(name => uniqueCompanies.add(name.toUpperCase()));
             }
+            
+            // Fetch from Master sheet
+            const masterResponse = await fetch(`${scriptURL}?action=getMasterCompanies`);
+            const masterResult = await masterResponse.json();
+            
+            if (masterResult.success && masterResult.data) {
+                masterResult.data
+                    .map(record => record['Company Name'])
+                    .filter(name => name && name.trim() !== '')
+                    .forEach(name => uniqueCompanies.add(name.toUpperCase()));
+            }
+            
+            companyNames = Array.from(uniqueCompanies).sort();
+            
         } catch (error) {
             console.error('Error fetching company names:', error);
         }
@@ -2317,6 +2397,23 @@
                 
                 // Apply sort
                 currentSort = sort;
+                
+                // Fix 6: Show all records when sorting and revert when "All Products" is selected
+                if (sort === 'all') {
+                    // Revert to original state
+                    if (isShowingAllRecords) {
+                        displayDataInTable(allRecordsData, 'dataTableBody', false, false, 'data');
+                    } else {
+                        const displayData = allRecordsData.slice(-maxInitialRecords);
+                        displayDataInTable(displayData, 'dataTableBody', false, false, 'data');
+                    }
+                } else {
+                    // Show all records when sorting
+                    displayDataInTable(allRecordsData, 'dataTableBody', false, false, 'data');
+                    isShowingAllRecords = true;
+                    document.getElementById('showAllRecordsBtn').innerHTML = '<i class="fas fa-list-alt mr-2"></i>';
+                }
+                
                 applyProductSort(sort);
                 
                 // Close dropdown
@@ -2325,7 +2422,7 @@
         });
     }
 
-    // Fix 1: Updated sort function for products with proper categorization
+    // Fix 6: Updated sort function for products with proper categorization
     function applyProductSort(sort) {
         const tableBody = document.getElementById('dataTableBody');
         const rows = Array.from(tableBody.querySelectorAll('tr'));
@@ -2356,7 +2453,7 @@
         });
     }
 
-    // Fix 1: Updated helper function to check if product matches sort criteria with exact matching
+    // Fix 6: Updated helper function to check if product matches sort criteria with exact matching
     function productMatchesSort(productText, sort) {
         const accProducts = ['mdsa', 'aspire 5k-10k', 'aspire 10k-20k', 'privilege 20k-40k', 'privilege 40k & above'];
         const ccProducts = [
@@ -2438,7 +2535,7 @@
                 // Apply filter
                 currentFilter = filter;
                 
-                // Fix 3: Show all records when filtering and revert when "All Status" is selected
+                // Show all records when filtering and revert when "All Status" is selected
                 if (filter === 'all') {
                     // Revert to original state
                     if (isShowingAllRecords) {
@@ -2504,6 +2601,7 @@
             if (appInitialized) {
                 updateProductOptions();
             }
+            updateActivationVisibility();
         });
 
         // Enhanced 2nd ACC handling
@@ -2547,12 +2645,14 @@
             if (appInitialized) {
                 updateProductOptions();
             }
+            updateActivationVisibility();
         });
 
         document.getElementById('product2ndCC').addEventListener('change', function() {
             if (appInitialized) {
                 updateProductOptions();
             }
+            updateActivationVisibility();
         });
 
         document.getElementById('productBTCCL').addEventListener('change', function() {
@@ -2591,6 +2691,19 @@
         });
 
         console.log('Product event listeners setup complete');
+    }
+
+    // Fix 2: Function to show/hide activation section based on CC selection
+    function updateActivationVisibility() {
+        const activationSection = document.getElementById('activationSection');
+        const productCC = document.getElementById('productCC');
+        const product2ndCC = document.getElementById('product2ndCC');
+        
+        if (productCC.checked || product2ndCC.checked) {
+            activationSection.classList.add('show');
+        } else {
+            activationSection.classList.remove('show');
+        }
     }
 
     function setupKeyboardNavigation() {
@@ -2834,6 +2947,7 @@
         editingData = null;
         editingProductString = "";
         editingFromMaster = false;
+        selectedCCOptions.clear();
         
         adcbOverrideCheckbox.checked = false;
         ccDeductionOverrideCheckbox.checked = false;
@@ -2841,6 +2955,9 @@
         // Reset date to current date
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('date').value = today;
+        
+        // Reset activation visibility
+        updateActivationVisibility();
     }
 
     // Banking select change event
@@ -2953,7 +3070,11 @@
                 productOptionsContainer.appendChild(ccDiv);
                 
                 const newCcSelect = ccDiv.querySelector('select');
-                newCcSelect.addEventListener('change', calculateTotalPoints);
+                newCcSelect.addEventListener('change', function() {
+                    // Fix 3: Update selected CC options
+                    updateSelectedCCOptions();
+                    calculateTotalPoints();
+                });
                 
                 if (currentSelections.CC && newCcSelect.querySelector(`option[value="${currentSelections.CC}"]`)) {
                     newCcSelect.value = currentSelections.CC;
@@ -2967,7 +3088,11 @@
                     productOptionsContainer.appendChild(cc2Div);
                     
                     const newCc2Select = cc2Div.querySelector('select');
-                    newCc2Select.addEventListener('change', calculateTotalPoints);
+                    newCc2Select.addEventListener('change', function() {
+                        // Fix 3: Update selected CC options
+                        updateSelectedCCOptions();
+                        calculateTotalPoints();
+                    });
                     
                     if (currentSelections.CCOption2 && newCc2Select.querySelector(`option[value="${currentSelections.CCOption2}"]`)) {
                         newCc2Select.value = currentSelections.CCOption2;
@@ -2993,7 +3118,53 @@
             }
         }
         
+        // Fix 3: Update CC options after creating dropdowns
+        setTimeout(() => {
+            updateSelectedCCOptions();
+        }, 100);
+        
         calculateTotalPoints();
+    }
+
+    // Fix 3: Function to update selected CC options and disable them in other dropdowns
+    function updateSelectedCCOptions() {
+        selectedCCOptions.clear();
+        
+        const ccSelect = document.getElementById('CCSelect');
+        const cc2Select = document.getElementById('CCSelect2');
+        
+        if (ccSelect && ccSelect.value) {
+            selectedCCOptions.add(ccSelect.value);
+        }
+        
+        if (cc2Select && cc2Select.value) {
+            selectedCCOptions.add(cc2Select.value);
+        }
+        
+        // Disable selected options in other dropdowns
+        if (ccSelect) {
+            updateCCDropdownOptions(ccSelect, 'CC');
+        }
+        
+        if (cc2Select) {
+            updateCCDropdownOptions(cc2Select, 'CC2');
+        }
+    }
+
+    // Fix 3: Helper function to update CC dropdown options
+    function updateCCDropdownOptions(selectElement, selectType) {
+        const currentValue = selectElement.value;
+        const options = selectElement.querySelectorAll('option');
+        
+        options.forEach(option => {
+            if (option.value === '') return; // Skip the default option
+            
+            const isCurrentSelection = option.value === currentValue;
+            const isSelectedElsewhere = selectedCCOptions.has(option.value) && !isCurrentSelection;
+            
+            option.disabled = isSelectedElsewhere;
+            option.style.display = isSelectedElsewhere ? 'none' : 'block';
+        });
     }
 
     // Enhanced function to initialize product options with specific 2nd ACC handling
@@ -3067,7 +3238,10 @@
                 
                 const ccSelect = document.getElementById('CCSelect');
                 if (ccSelect) {
-                    ccSelect.addEventListener('change', calculateTotalPoints);
+                    ccSelect.addEventListener('change', function() {
+                        updateSelectedCCOptions();
+                        calculateTotalPoints();
+                    });
                     
                     setTimeout(() => {
                         setCcDropdownFromString(ccSelect, editingProductString, 0);
@@ -3084,7 +3258,10 @@
                     
                     const cc2Select = document.getElementById('CCSelect2');
                     if (cc2Select) {
-                        cc2Select.addEventListener('change', calculateTotalPoints);
+                        cc2Select.addEventListener('change', function() {
+                            updateSelectedCCOptions();
+                            calculateTotalPoints();
+                        });
                         
                         setTimeout(() => {
                             setCcDropdownFromString(cc2Select, editingProductString, 1);
@@ -3116,6 +3293,7 @@
         
         // Calculate points after initialization with longer delay
         setTimeout(() => {
+            updateSelectedCCOptions();
             calculateTotalPoints();
         }, 300);
     }
@@ -3326,7 +3504,7 @@
         return options;
     }
 
-    // Fix 2: Get CC options based on proposition with updated points and removed options
+    // Get CC options based on proposition with updated points and removed options
     function getCCOptions(proposition) {
         if (proposition === "Conventional") {
             return [
@@ -3654,6 +3832,7 @@
         }
     }
 
+    // Fix 5: Updated summary data population with ACC Completed, Under Review logic
     function populateSummaryData(data) {
         if (!data || data.length === 0) {
             document.getElementById('summaryEarnedPoints').textContent = "0";
@@ -3707,6 +3886,8 @@
             const points = parseFloat(record.Points) || 0;
             const isCompleted = record.Status === 'Completed';
             const isRejected = record.Status === 'Rejected';
+            // Fix 5: Special handling for ACC Completed, Under Review
+            const isAccCompletedUnderReview = record.Status === 'ACC Completed, Under Review';
             const productString = record.Product || '';
             const proposition = record.Proposition || '';
             const scheme = record.Scheme || '';
@@ -3814,20 +3995,34 @@
             const hasMDSA = productString.includes('MDSA');
             const hasPrivilege = productString.includes('Privilege');
 
-            if (isCompleted) {
-                completedCC += ccCount;
-                if (loanAmount > 0) {
-                    completedLoanAmount += loanAmount;
-                }
+            // Fix 5: Special logic for ACC Completed, Under Review
+            if (isAccCompletedUnderReview) {
+                // For ACC products (MDSA/Privilege), count as completed
                 if (hasMDSA) completedMDSA++;
                 if (hasPrivilege) completedPrivilege++;
-            } else if (!isRejected) {
-                inProgressCC += ccCount;
-                if (loanAmount > 0) {
+                
+                // For other products (CC/PL), count as in progress
+                if (hasCC) inProgressCC += ccCount;
+                if (hasPL && loanAmount > 0) {
                     inProgressLoanAmount += loanAmount;
                 }
-                if (hasMDSA) inProgressMDSA++;
-                if (hasPrivilege) inProgressPrivilege++;
+            } else {
+                // Regular logic for other statuses
+                if (isCompleted) {
+                    completedCC += ccCount;
+                    if (loanAmount > 0) {
+                        completedLoanAmount += loanAmount;
+                    }
+                    if (hasMDSA) completedMDSA++;
+                    if (hasPrivilege) completedPrivilege++;
+                } else if (!isRejected) {
+                    inProgressCC += ccCount;
+                    if (loanAmount > 0) {
+                        inProgressLoanAmount += loanAmount;
+                    }
+                    if (hasMDSA) inProgressMDSA++;
+                    if (hasPrivilege) inProgressPrivilege++;
+                }
             }
             
             if (proposition === 'Conventional') {
@@ -3905,7 +4100,7 @@
         updateVisualizations(conventionalCount, islamicCount, bothCount, aspireCount, privilegeCount, mdsaCount, tmlAllCount, tmlCCCount, tmSelectCount, ntmlCount, plConventionalCount, plIslamicCount, plBothCount, ccConventionalCount, ccIslamicCount, ccBothCount);
     }
 
-    // Updated visualization function with separate PL and CC charts
+    // Fix 7: Updated visualization function with percentage display
     function updateVisualizations(conventional, islamic, both, aspire, privilege, mdsa, tmlAll, tmlCC, tmSelect, ntml, plConventional, plIslamic, plBoth, ccConventional, ccIslamic, ccBoth) {
         const totalProposition = conventional + islamic + both || 1;
         const totalAccounts = aspire + privilege + mdsa || 1;
@@ -3958,6 +4153,17 @@
             #B2EC5D ${tmlAllPercent + tmlCCPercent}% ${tmlAllPercent + tmlCCPercent + tmSelectPercent}%, 
             #A2ADD0 ${tmlAllPercent + tmlCCPercent + tmSelectPercent}% 100%
         )`;
+        
+        // Fix 7: Update percentage displays
+        const plDominantPercent = Math.max(plConventionalPercent, plIslamicPercent, plBothPercent);
+        const ccDominantPercent = Math.max(ccConventionalPercent, ccIslamicPercent, ccBothPercent);
+        const accDominantPercent = Math.max(aspirePercent, privilegePercent, mdsaPercent);
+        const schemeDominantPercent = Math.max(tmlAllPercent, tmlCCPercent, tmSelectPercent, ntmlPercent);
+        
+        document.getElementById('plChartPercentage').textContent = `${plDominantPercent}%`;
+        document.getElementById('ccChartPercentage').textContent = `${ccDominantPercent}%`;
+        document.getElementById('accChartPercentage').textContent = `${accDominantPercent}%`;
+        document.getElementById('schemeChartPercentage').textContent = `${schemeDominantPercent}%`;
     }
     
     function updateTargetProgress(type, completed) {
@@ -3978,80 +4184,6 @@
         });
     }
     
-    document.getElementById('copySummaryBtn').addEventListener('click', async function() {
-        const summaryText = generateSummaryText();
-        try {
-            const result = await copyToClipboard(summaryText);
-            if (result) {
-                showSuccess('Summary copied to clipboard successfully!');
-            } else {
-                showSuccess('Failed to copy summary. Please try again.');
-            }
-        } catch (error) {
-            showSuccess('Failed to copy summary. Please try again.');
-        }
-    });
-    
-    function generateSummaryText() {
-        const inProgressCC = document.getElementById('summaryInProgressCC').textContent;
-        const inProgressPL = document.getElementById('summaryInProgressPL').textContent;
-        const inProgressMDSA = document.getElementById('summaryInProgressMDSA').textContent;
-        const inProgressPrivilege = document.getElementById('summaryInProgressPrivilege').textContent;
-        
-        const completedCC = document.getElementById('summaryCompletedCC').textContent;
-        const completedPL = document.getElementById('summaryCompletedPL').textContent;
-        const completedMDSA = document.getElementById('summaryCompletedMDSA').textContent;
-        const completedPrivilege = document.getElementById('summaryCompletedPrivilege').textContent;
-        
-        const totalCC = document.getElementById('summaryTotalCC').textContent;
-        const totalPL = document.getElementById('summaryTotalPL').textContent;
-        const totalAccounts = document.getElementById('summaryTotalAccounts').textContent;
-        
-        const fundingTotal = document.getElementById('fundingTotal').textContent;
-        const fundingMDSA = `${document.getElementById('fundingMDSACount').textContent} ${document.getElementById('fundingMDSAPoints').textContent}`;
-        const fundingAspire = `${document.getElementById('fundingAspireCount').textContent} ${document.getElementById('fundingAspirePoints').textContent}`;
-        const fundingPrivilege = `${document.getElementById('fundingPrivilegeCount').textContent} ${document.getElementById('fundingPrivilegePoints').textContent}`;
-        
-        const progressCC = document.getElementById('progressCC').textContent;
-        const progressPL = document.getElementById('progressPL').textContent;
-        const progressACC = document.getElementById('progressACC').textContent;
-        
-        const now = new Date();
-        const dateStr = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
-        const timeStr = now.toLocaleTimeString();
-        
-        const summaryText = `SUMMARY REPORT [Generated on: ${dateStr} at ${timeStr}]
-
-IN PROGRESS
-Credit Cards: ${inProgressCC}
-Personal Loans: ${inProgressPL}
-MDSA: ${inProgressMDSA}
-Privilege: ${inProgressPrivilege}
-
-COMPLETED
-Credit Cards: ${completedCC}
-Personal Loans: ${completedPL}
-MDSA: ${completedMDSA}
-Privilege: ${completedPrivilege}
-
-TOTAL SUBMISSIONS
-Credit Cards: ${totalCC}
-Personal Loans: ${totalPL}
-Accounts: ${totalAccounts}
-
-ACCOUNT FUNDING: ${fundingTotal}
-MDSA: ${fundingMDSA}
-Aspire: ${fundingAspire}
-Privilege: ${fundingPrivilege}
-
-TARGET PROGRESS
-Credit Cards: ${progressCC}
-Personal Loans: ${progressPL}
-Accounts: ${progressACC}`;
-        
-        return summaryText;
-    }
-
     // Enhanced product grouping for export
     function categorizeProductType(productString) {
         if (!productString) return "Unknown";
@@ -4617,6 +4749,7 @@ Accounts: ${progressACC}`;
         
         editingData = data;
         editingProductString = data.Product || "";
+        selectedCCOptions.clear();
         
         console.log('Setting editing product string:', editingProductString);
         
@@ -4767,6 +4900,9 @@ Accounts: ${progressACC}`;
         }
         
         pointsInput.value = data.Points || '';
+        
+        // Update activation visibility
+        updateActivationVisibility();
         
         console.log('Before calling initializeProductOptions');
         
