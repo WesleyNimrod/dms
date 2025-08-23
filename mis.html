@@ -573,12 +573,6 @@
             color: white;
         }
 
-        .search-container {
-            border-top: 1px solid #e9ecef;
-            padding-top: 16px;
-            margin-top: 16px;
-        }
-
         .banking-container {
             display: flex;
             gap: 10px;
@@ -725,7 +719,6 @@
             display: none;
         }
 
-        /* Fix 1: Account Funding and Target layout - 30% and 70% */
         .funding-target-container {
             display: grid;
             grid-template-columns: 30fr 70fr;
@@ -796,7 +789,6 @@
             border-bottom: 1px solid #f3f3f3;
         }
 
-        /* Product Sort Dropdown Styles */
         .sort-dropdown {
             position: relative;
             display: inline-block;
@@ -861,7 +853,6 @@
             color: white;
         }
 
-        /* Filter Dropdown Styles */
         .filter-dropdown {
             position: relative;
             display: inline-block;
@@ -926,7 +917,6 @@
             color: white;
         }
 
-        /* Autocomplete styles */
         .autocomplete-container {
             position: relative;
             display: flex;
@@ -963,7 +953,6 @@
             border-bottom: none;
         }
 
-        /* Fix 1: Enhanced Form Styling with consistent sizing */
         .styled-input {
             background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
             border: 2px solid #e9ecef;
@@ -1019,7 +1008,6 @@
             border-color: #6c757d;
         }
 
-        /* Fix 1: Smaller and better organized radio buttons */
         .styled-radio-group {
             display: grid;
             gap: 8px;
@@ -1185,13 +1173,129 @@
             border: 1px solid #e9ecef;
         }
 
-        /* Fix 2: Activation section styling */
         .activation-section {
             display: none;
         }
 
         .activation-section.show {
             display: block;
+        }
+
+        /* Fix 1: Universal Search Styles */
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-icon-btn {
+            background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .search-icon-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .search-textbox {
+            display: none;
+            width: 300px;
+            padding: 8px 12px;
+            border: 2px solid #1A3A4A;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .search-textbox.active {
+            display: block;
+        }
+
+        .search-textbox:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(26, 58, 74, 0.1);
+        }
+
+        /* Fix 2: Toggle Switch Styles */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 200px;
+            height: 40px;
+            background: linear-gradient(135deg, #1A3A4A 0%, #3C063D 100%);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 96px;
+            height: 34px;
+            background: white;
+            border-radius: 17px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+            color: #1A3A4A;
+        }
+
+        .toggle-switch.find-mode .toggle-slider {
+            transform: translateX(96px);
+        }
+
+        .toggle-labels {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+        .toggle-labels .label-left {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .toggle-labels .label-right {
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+
+        .toggle-switch.find-mode .toggle-labels .label-left {
+            opacity: 0.5;
+        }
+
+        .toggle-switch.find-mode .toggle-labels .label-right {
+            opacity: 1;
         }
         
         @media (max-width: 768px) {
@@ -1267,13 +1371,30 @@
             .styled-checkbox-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+
+            /* Mobile responsive for search and toggle */
+            .search-textbox {
+                width: 250px;
+            }
+
+            .toggle-switch {
+                width: 180px;
+            }
+
+            .toggle-slider {
+                width: 86px;
+            }
+
+            .toggle-switch.find-mode .toggle-slider {
+                transform: translateX(86px);
+            }
         }
     </style>
 </head>
 <body class="bg-gray-50 font-tahoma">
 <div class="container mx-auto px-2 py-2 max-w-full">
-    <!-- Section Navigation Buttons -->
-    <div class="mb-3 flex justify-center gap-2 flex-wrap">
+    <!-- Section Navigation Buttons with Search -->
+    <div class="mb-3 flex justify-center gap-2 flex-wrap items-center">
         <button id="showSummaryBtn" class="custom-btn text-white py-2 px-4 rounded-md flex items-center text-sm">
             <i class="fas fa-chart-pie mr-2"></i> Summary
         </button>
@@ -1289,6 +1410,15 @@
         <button id="showKPIBtn" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-md flex items-center text-sm">
             <i class="fas fa-chart-line mr-2"></i> KPI
         </button>
+        
+        <!-- Fix 1: Universal Search -->
+        <div class="search-container ml-4">
+            <button id="searchIconBtn" class="search-icon-btn">
+                <i class="fas fa-search"></i>
+                <span>Search</span>
+            </button>
+            <input type="text" id="universalSearch" class="search-textbox" placeholder="Search by CID, Name, or Mobile...">
+        </div>
     </div>
     
     <!-- Section Content Containers -->
@@ -1318,7 +1448,7 @@
                 </div>
             </div>
             
-            <!-- Progress Cards - Fixed layout alignment -->
+            <!-- Progress Cards -->
             <div class="summary-progress-grid mb-2">
                 <!-- In Progress Card -->
                 <div class="summary-card mb-0">
@@ -1796,7 +1926,7 @@
                             </div>
                         </div>
                         
-                        <!-- Activation - Fix 2: Only show when CC or 2nd CC is selected -->
+                        <!-- Activation -->
                         <div class="form-row activation-section" id="activationSection">
                             <label class="styled-label required">Activation</label>
                             <div class="radio-group-wrapper">
@@ -1845,8 +1975,15 @@
     <!-- View Data Section -->
     <div id="viewSection" class="section">
         <div class="bg-white p-4 rounded-lg shadow-md">
+            <!-- Fix 2: Toggle Switch for View All / Find Records -->
             <div class="flex flex-wrap justify-between items-center mb-4">
-                <h2 class="text-xl font-bold text-primary">View All Records</h2>
+                <div class="toggle-switch" id="viewToggleSwitch">
+                    <div class="toggle-slider">View All</div>
+                    <div class="toggle-labels">
+                        <span class="label-left">View All</span>
+                        <span class="label-right">Find Records</span>
+                    </div>
+                </div>
                 <div class="flex flex-wrap gap-2 mt-2 sm:mt-0">
                     <button id="earnPointsBtn" class="points-btn earned">
                         <i class="fas fa-check-circle mr-2"></i><span id="earnedPointsTotal">0</span></button>
@@ -1890,57 +2027,31 @@
                 </div>
             </div>
             
-            <div class="overflow-x-auto">
-                <table id="dataTable" class="data-table">
-                    <thead>
-                        <tr>
-                            <th class="cid-column hidden-column">CID</th>
-                            <th class="appid-column hidden-column">App ID</th>
-                            <th>Customer Name</th>
-                            <th>Mobile</th>
-                            <th>Products</th>
-                            <th>Status</th>
-                            <th>Points</th>
-                            <th class="action-column hidden-column w-20">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dataTableBody">
-                        <!-- Data will be populated here -->
-                    </tbody>
-                </table>
+            <!-- View All Records Table -->
+            <div id="viewAllContainer">
+                <div class="overflow-x-auto">
+                    <table id="dataTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th class="cid-column hidden-column">CID</th>
+                                <th class="appid-column hidden-column">App ID</th>
+                                <th>Customer Name</th>
+                                <th>Mobile</th>
+                                <th>Products</th>
+                                <th>Status</th>
+                                <th>Points</th>
+                                <th class="action-column hidden-column w-20">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody">
+                            <!-- Data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
             
-            <!-- Search Container -->
-            <div class="search-container">
-                <h3 class="text-lg font-semibold text-primary mb-3">Find Records</h3>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <div>
-                        <label for="searchCID" class="block text-gray-700 font-medium mb-2">Search by CID</label>
-                        <input type="number" id="searchCID" class="w-full border rounded-md p-2 text-base">
-                    </div>
-                    <div>
-                        <label for="searchName" class="block text-gray-700 font-medium mb-2">Search by Customer Name</label>
-                        <input type="text" id="searchName" class="w-full border rounded-md p-2 text-base">
-                    </div>
-                    <div>
-                        <label for="searchMobile" class="block text-gray-700 font-medium mb-2">Search by Mobile</label>
-                        <input type="number" id="searchMobile" class="w-full border rounded-md p-2 text-base">
-                    </div>
-                </div>
-                
-                <div class="flex justify-center gap-2 mb-4 flex-wrap">
-                    <button id="fetchAllBtn" class="custom-btn text-white py-2 px-6 rounded-md flex items-center">
-                        <i class="fas fa-download mr-2"></i> Fetch All
-                    </button>
-                    <button id="searchBtn" class="custom-btn text-white py-2 px-6 rounded-md flex items-center">
-                        <i class="fas fa-search mr-2"></i> Search Master
-                    </button>
-                    <button id="clearSearchBtn" class="bg-gray-600 text-white py-2 px-6 rounded-md flex items-center hover:bg-gray-700">
-                        <i class="fas fa-times mr-2"></i> Clear
-                    </button>
-                </div>
-                
+            <!-- Find Records Container -->
+            <div id="findRecordsContainer" style="display: none;">
                 <div class="overflow-x-auto">
                     <table class="data-table">
                         <thead>
@@ -2094,6 +2205,7 @@
     let companyNames = [];
     let statusOptions = [];
     let selectedCCOptions = new Set();
+    let isFindMode = false; // Fix 2: Track current mode
 
     // ==========================================
     // PASTE FUNCTIONALITY
@@ -2161,10 +2273,178 @@
     }
 
     // ==========================================
+    // Fix 1: UNIVERSAL SEARCH FUNCTIONALITY
+    // ==========================================
+
+    function setupUniversalSearch() {
+        const searchIconBtn = document.getElementById('searchIconBtn');
+        const searchTextbox = document.getElementById('universalSearch');
+        const navigationButtons = document.querySelectorAll('.mb-3 .flex button, .mb-3 .flex a');
+        
+        let isSearchMode = false;
+
+        searchIconBtn.addEventListener('click', function() {
+            isSearchMode = !isSearchMode;
+            
+            if (isSearchMode) {
+                // Show search textbox and hide other buttons
+                searchTextbox.classList.add('active');
+                searchTextbox.focus();
+                
+                navigationButtons.forEach(btn => {
+                    if (btn !== searchIconBtn && !btn.closest('.search-container')) {
+                        btn.style.display = 'none';
+                    }
+                });
+                
+                searchIconBtn.innerHTML = '<i class="fas fa-times"></i><span>Close</span>';
+            } else {
+                // Hide search textbox and show other buttons
+                searchTextbox.classList.remove('active');
+                searchTextbox.value = '';
+                
+                navigationButtons.forEach(btn => {
+                    btn.style.display = '';
+                });
+                
+                searchIconBtn.innerHTML = '<i class="fas fa-search"></i><span>Search</span>';
+                
+                // Clear search results
+                clearUniversalSearch();
+            }
+        });
+
+        // Search functionality
+        searchTextbox.addEventListener('input', function() {
+            const searchTerm = this.value.trim();
+            
+            if (searchTerm.length >= 2) {
+                performUniversalSearch(searchTerm);
+            } else if (searchTerm.length === 0) {
+                clearUniversalSearch();
+            }
+        });
+
+        // Enter key to search
+        searchTextbox.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const searchTerm = this.value.trim();
+                if (searchTerm.length >= 1) {
+                    performUniversalSearch(searchTerm);
+                }
+            }
+        });
+    }
+
+    async function performUniversalSearch(searchTerm) {
+        showLoading();
+        try {
+            // Search both Data and Master sheets
+            const [dataResponse, masterResponse] = await Promise.all([
+                fetch(`${scriptURL}?action=getAll`),
+                fetch(`${scriptURL}?action=searchMaster&cid=${encodeURIComponent(searchTerm)}&name=${encodeURIComponent(searchTerm)}&mobile=${encodeURIComponent(searchTerm)}`)
+            ]);
+
+            const dataResult = await dataResponse.json();
+            const masterResult = await masterResponse.json();
+
+            let combinedResults = [];
+
+            // Filter Data sheet results
+            if (dataResult.success && dataResult.data) {
+                const filteredData = dataResult.data.filter(record => {
+                    const cid = (record.CID || '').toString().toLowerCase();
+                    const name = (record['Customer Name'] || '').toLowerCase();
+                    const mobile = (record.Mobile || '').toString().toLowerCase();
+                    const searchLower = searchTerm.toLowerCase();
+                    
+                    return cid.includes(searchLower) || 
+                           name.includes(searchLower) || 
+                           mobile.includes(searchLower);
+                });
+                
+                combinedResults = [...filteredData];
+            }
+
+            // Add Master sheet results
+            if (masterResult.success && masterResult.data) {
+                const filteredMaster = masterResult.data.filter(record => {
+                    // Avoid duplicates based on CID
+                    const cid = record.CID;
+                    return !combinedResults.some(existing => existing.CID === cid);
+                });
+                
+                combinedResults = [...combinedResults, ...filteredMaster];
+            }
+
+            // Display results
+            if (isFindMode) {
+                displayDataInTable(combinedResults, 'searchResultsBody', true, false, 'mixed');
+            } else {
+                displayDataInTable(combinedResults, 'dataTableBody', false, false, 'mixed');
+            }
+
+            showSuccess(`Found ${combinedResults.length} matching records`);
+
+        } catch (error) {
+            console.error('Error in universal search:', error);
+            showSuccess('Error performing search');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    function clearUniversalSearch() {
+        // Restore original data view
+        if (isFindMode) {
+            document.getElementById('searchResultsBody').innerHTML = '';
+            fetchAllMasterData(); // Load default find records data
+        } else {
+            fetchAllData(); // Load default view all data
+        }
+    }
+
+    // ==========================================
+    // Fix 2: VIEW TOGGLE FUNCTIONALITY
+    // ==========================================
+
+    function setupViewToggle() {
+        const toggleSwitch = document.getElementById('viewToggleSwitch');
+        const viewAllContainer = document.getElementById('viewAllContainer');
+        const findRecordsContainer = document.getElementById('findRecordsContainer');
+
+        toggleSwitch.addEventListener('click', function() {
+            isFindMode = !isFindMode;
+            
+            if (isFindMode) {
+                // Switch to Find Records mode
+                toggleSwitch.classList.add('find-mode');
+                toggleSwitch.querySelector('.toggle-slider').textContent = 'Find Records';
+                
+                viewAllContainer.style.display = 'none';
+                findRecordsContainer.style.display = 'block';
+                
+                // Load find records data (Master sheet by default)
+                fetchAllMasterData();
+                
+            } else {
+                // Switch to View All mode
+                toggleSwitch.classList.remove('find-mode');
+                toggleSwitch.querySelector('.toggle-slider').textContent = 'View All';
+                
+                findRecordsContainer.style.display = 'none';
+                viewAllContainer.style.display = 'block';
+                
+                // Load view all data (Data sheet)
+                fetchAllData();
+            }
+        });
+    }
+
+    // ==========================================
     // INPUT VALIDATION AND AUTOCOMPLETE
     // ==========================================
 
-    // Fix 4: Enhanced company autocomplete functionality - fetch from both Data and Master sheets
     function setupCompanyAutocomplete() {
         const companyNameInput = document.getElementById('companyName');
         const suggestionsDiv = document.getElementById('companySuggestions');
@@ -2239,7 +2519,6 @@
         });
     }
 
-    // Fix 4: Fetch company names from both Data and Master sheets
     async function fetchCompanyNames() {
         try {
             const uniqueCompanies = new Set();
@@ -2353,6 +2632,8 @@
         setupFilterDropdown();
         setupSortDropdown();
         setupCompanyAutocomplete();
+        setupUniversalSearch(); // Fix 1
+        setupViewToggle(); // Fix 2
         
         // Fetch company names and status options
         fetchCompanyNames();
@@ -2398,7 +2679,6 @@
                 // Apply sort
                 currentSort = sort;
                 
-                // Fix 6: Show all records when sorting and revert when "All Products" is selected
                 if (sort === 'all') {
                     // Revert to original state
                     if (isShowingAllRecords) {
@@ -2422,7 +2702,6 @@
         });
     }
 
-    // Fix 6: Updated sort function for products with proper categorization
     function applyProductSort(sort) {
         const tableBody = document.getElementById('dataTableBody');
         const rows = Array.from(tableBody.querySelectorAll('tr'));
@@ -2453,7 +2732,6 @@
         });
     }
 
-    // Fix 6: Updated helper function to check if product matches sort criteria with exact matching
     function productMatchesSort(productText, sort) {
         const accProducts = ['mdsa', 'aspire 5k-10k', 'aspire 10k-20k', 'privilege 20k-40k', 'privilege 40k & above'];
         const ccProducts = [
@@ -2693,7 +2971,6 @@
         console.log('Product event listeners setup complete');
     }
 
-    // Fix 2: Function to show/hide activation section based on CC selection
     function updateActivationVisibility() {
         const activationSection = document.getElementById('activationSection');
         const productCC = document.getElementById('productCC');
@@ -2776,7 +3053,12 @@
             viewSection.classList.add('active');
             showViewBtn.classList.remove('bg-gray-500', 'hover:bg-gray-600');
             showViewBtn.classList.add('custom-btn');
-            fetchAllData();
+            // Initialize based on current mode
+            if (isFindMode) {
+                fetchAllMasterData();
+            } else {
+                fetchAllData();
+            }
         } else if (section === 'summary') {
             summarySection.classList.add('active');
             showSummaryBtn.classList.remove('bg-gray-500', 'hover:bg-gray-600');
@@ -3071,7 +3353,6 @@
                 
                 const newCcSelect = ccDiv.querySelector('select');
                 newCcSelect.addEventListener('change', function() {
-                    // Fix 3: Update selected CC options
                     updateSelectedCCOptions();
                     calculateTotalPoints();
                 });
@@ -3089,7 +3370,6 @@
                     
                     const newCc2Select = cc2Div.querySelector('select');
                     newCc2Select.addEventListener('change', function() {
-                        // Fix 3: Update selected CC options
                         updateSelectedCCOptions();
                         calculateTotalPoints();
                     });
@@ -3118,7 +3398,6 @@
             }
         }
         
-        // Fix 3: Update CC options after creating dropdowns
         setTimeout(() => {
             updateSelectedCCOptions();
         }, 100);
@@ -3126,7 +3405,6 @@
         calculateTotalPoints();
     }
 
-    // Fix 3: Function to update selected CC options and disable them in other dropdowns
     function updateSelectedCCOptions() {
         selectedCCOptions.clear();
         
@@ -3151,7 +3429,6 @@
         }
     }
 
-    // Fix 3: Helper function to update CC dropdown options
     function updateCCDropdownOptions(selectElement, selectType) {
         const currentValue = selectElement.value;
         const options = selectElement.querySelectorAll('option');
@@ -3832,7 +4109,6 @@
         }
     }
 
-    // Fix 5: Updated summary data population with ACC Completed, Under Review logic
     function populateSummaryData(data) {
         if (!data || data.length === 0) {
             document.getElementById('summaryEarnedPoints').textContent = "0";
@@ -3886,7 +4162,6 @@
             const points = parseFloat(record.Points) || 0;
             const isCompleted = record.Status === 'Completed';
             const isRejected = record.Status === 'Rejected';
-            // Fix 5: Special handling for ACC Completed, Under Review
             const isAccCompletedUnderReview = record.Status === 'ACC Completed, Under Review';
             const productString = record.Product || '';
             const proposition = record.Proposition || '';
@@ -3995,7 +4270,6 @@
             const hasMDSA = productString.includes('MDSA');
             const hasPrivilege = productString.includes('Privilege');
 
-            // Fix 5: Special logic for ACC Completed, Under Review
             if (isAccCompletedUnderReview) {
                 // For ACC products (MDSA/Privilege), count as completed
                 if (hasMDSA) completedMDSA++;
@@ -4100,7 +4374,6 @@
         updateVisualizations(conventionalCount, islamicCount, bothCount, aspireCount, privilegeCount, mdsaCount, tmlAllCount, tmlCCCount, tmSelectCount, ntmlCount, plConventionalCount, plIslamicCount, plBothCount, ccConventionalCount, ccIslamicCount, ccBothCount);
     }
 
-    // Fix 7: Updated visualization function with percentage display
     function updateVisualizations(conventional, islamic, both, aspire, privilege, mdsa, tmlAll, tmlCC, tmSelect, ntml, plConventional, plIslamic, plBoth, ccConventional, ccIslamic, ccBoth) {
         const totalProposition = conventional + islamic + both || 1;
         const totalAccounts = aspire + privilege + mdsa || 1;
@@ -4154,7 +4427,6 @@
             #A2ADD0 ${tmlAllPercent + tmlCCPercent + tmSelectPercent}% 100%
         )`;
         
-        // Fix 7: Update percentage displays
         const plDominantPercent = Math.max(plConventionalPercent, plIslamicPercent, plBothPercent);
         const ccDominantPercent = Math.max(ccConventionalPercent, ccIslamicPercent, ccBothPercent);
         const accDominantPercent = Math.max(aspirePercent, privilegePercent, mdsaPercent);
@@ -4223,39 +4495,6 @@
         if (productString.includes("STL")) return "STL";
         
         return "Unknown";
-    }
-
-    async function searchData() {
-        const cid = document.getElementById('searchCID').value.trim();
-        const name = document.getElementById('searchName').value.trim();
-        const mobile = document.getElementById('searchMobile').value.trim();
-        
-        if (!cid && !name && !mobile) {
-            showSuccess('Please enter at least one search criteria');
-            return;
-        }
-        
-        showLoading();
-        try {
-            const response = await fetch(`${scriptURL}?action=searchMaster&cid=${encodeURIComponent(cid)}&name=${encodeURIComponent(name)}&mobile=${encodeURIComponent(mobile)}`);
-            const data = await response.json();
-            
-            if (data.success) {
-                displayDataInTable(data.data, 'searchResultsBody', true, false, 'master');
-                if (data.data.length === 0) {
-                    document.getElementById('searchResultsBody').innerHTML = '<tr><td colspan="8" class="text-center py-4">No matching records found in Master sheet</td></tr>';
-                }
-            } else {
-                showSuccess(`Error: ${data.error}`);
-                document.getElementById('searchResultsBody').innerHTML = '<tr><td colspan="8" class="text-center py-4">Error searching Master sheet</td></tr>';
-            }
-        } catch (error) {
-            console.error('Error searching Master sheet:', error);
-            showSuccess('Error connecting to Master sheet');
-            document.getElementById('searchResultsBody').innerHTML = '<tr><td colspan="8" class="text-center py-4">Error connecting to Master sheet</td></tr>';
-        } finally {
-            hideLoading();
-        }
     }
 
     // Fetch All functionality for Master Sheet
@@ -4328,18 +4567,6 @@
         }
     }
 
-    function clearSearch() {
-        document.getElementById('searchCID').value = '';
-        document.getElementById('searchName').value = '';
-        document.getElementById('searchMobile').value = '';
-        document.getElementById('searchResultsBody').innerHTML = '';
-        document.getElementById('masterShowMoreContainer').classList.add('hidden');
-        allMasterData = [];
-        masterDataOffset = 0;
-    }
-
-    document.getElementById('clearSearchBtn').addEventListener('click', clearSearch);
-    document.getElementById('fetchAllBtn').addEventListener('click', fetchAllMasterData);
     document.getElementById('showMoreMasterBtn').addEventListener('click', showMoreMasterData);
 
     function copyToClipboard(text) {
@@ -5720,51 +5947,6 @@
     document.getElementById('refreshDataBtn').addEventListener('click', function() {
         fetchAllData();
         fetchAllDataForSummary();
-    });
-
-    document.getElementById('searchBtn').addEventListener('click', function() {
-        searchData();
-    });
-
-    document.getElementById('searchName').addEventListener('input', async function() {
-        const searchTerm = this.value.toLowerCase().trim();
-        
-        if (searchTerm.length < 2) {
-            document.getElementById('searchResultsBody').innerHTML = '';
-            return;
-        }
-        
-        try {
-            const response = await fetch(`${scriptURL}?action=searchMaster&cid=&name=${encodeURIComponent(searchTerm)}&mobile=`);
-            const data = await response.json();
-            
-            if (data.success) {
-                displayDataInTable(data.data, 'searchResultsBody', true, false, 'master');
-            } else {
-                document.getElementById('searchResultsBody').innerHTML = '<tr><td colspan="8" class="text-center py-4">Error searching Master sheet</td></tr>';
-            }
-        } catch (error) {
-            console.error('Error searching Master sheet:', error);
-            document.getElementById('searchResultsBody').innerHTML = '<tr><td colspan="8" class="text-center py-4">Error connecting to Master sheet</td></tr>';
-        }
-    });
-
-    document.getElementById('searchCID').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            searchData();
-        }
-    });
-
-    document.getElementById('searchName').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            searchData();
-        }
-    });
-
-    document.getElementById('searchMobile').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            searchData();
-        }
     });
 </script>
 </body>
