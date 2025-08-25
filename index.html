@@ -519,7 +519,7 @@
         .header-controls {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.8) 100%);
             backdrop-filter: blur(10px);
-            padding: 20px;
+            padding: 15px;
             border-radius: 16px;
             margin-bottom: 20px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -528,6 +528,18 @@
         
         .dark .header-controls {
             background: linear-gradient(135deg, rgba(31, 41, 55, 0.9) 0%, rgba(31, 41, 55, 0.8) 100%);
+        }
+        
+        .header-controls input,
+        .header-controls select,
+        .header-controls button {
+            height: 42px;
+            min-width: 42px;
+            font-size: 14px;
+        }
+        
+        .header-controls .flex {
+            align-items: center;
         }
         
         .quick-emi-modal {
@@ -854,51 +866,48 @@
             
             <div class="content-container bg-white dark:bg-gray-800 shadow-xl" id="contentContainer">
                 <div id="headerControls" class="header-controls">
-                    <div class="flex flex-wrap items-center justify-center gap-3 w-full">
-                        <input type="text" id="customerName" placeholder="Customer Name" class="border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600 max-w-[180px] font-medium">
-                        <select id="savedProfiles" class="border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600 max-w-[180px]">
+                    <div class="flex flex-wrap items-center justify-center gap-2 w-full">
+                        <input type="text" id="customerName" placeholder="Customer Name" class="border rounded-lg px-3 py-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600 flex-1 min-w-[140px] max-w-[160px] font-medium">
+                        <select id="savedProfiles" class="border rounded-lg px-3 py-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600 flex-1 min-w-[140px] max-w-[160px]">
                             <option value="">Select a profile</option>
                         </select>
-                        <button id="retrieveProfileBtn" class="custom-btn text-white p-3 rounded-lg flex items-center justify-center" title="Retrieve Profile">
-                            <i class="fas fa-download"></i>
+                        <button id="retrieveProfileBtn" class="custom-btn text-white rounded-lg flex items-center justify-center" title="Retrieve Profile">
+                            <i class="fas fa-download text-sm"></i>
                         </button>
-                        <button id="deleteProfileBtn" class="bg-gradient-to-r from-red-500 to-red-600 text-white p-3 rounded-lg hover:opacity-90 flex items-center justify-center transition-all" title="Delete Profile">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                        
-                        <button id="findOptimalLoanBtn" class="custom-btn text-white p-3 rounded-lg flex items-center justify-center" title="Find Optimal Loan">
-                            <i class="fas fa-search-dollar"></i>
-                        </button>
-                        <button id="resetBtn" class="custom-btn text-white p-3 rounded-lg flex items-center justify-center" title="Reset">
-                            <i class="fas fa-redo-alt"></i>
-                        </button>
-                        <button id="saveProfileBtn" class="custom-btn text-white p-3 rounded-lg flex items-center justify-center" title="Save Profile">
-                            <i class="fas fa-save"></i>
+                        <button id="deleteProfileBtn" class="bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:opacity-90 flex items-center justify-center transition-all" title="Delete Profile">
+                            <i class="fas fa-trash-alt text-sm"></i>
                         </button>
                         
-                        <div class="whatsapp-input-container max-w-[180px]">
-                            <input type="tel" id="whatsappNumber" placeholder="WhatsApp number" class="border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600 w-full pr-12">
+                        <button id="resetBtn" class="custom-btn text-white rounded-lg flex items-center justify-center" title="Reset">
+                            <i class="fas fa-redo-alt text-sm"></i>
+                        </button>
+                        <button id="saveProfileBtn" class="custom-btn text-white rounded-lg flex items-center justify-center" title="Save Profile">
+                            <i class="fas fa-save text-sm"></i>
+                        </button>
+                        
+                        <div class="whatsapp-input-container flex-1 min-w-[140px] max-w-[160px]">
+                            <input type="tel" id="whatsappNumber" placeholder="WhatsApp number" class="border rounded-lg px-3 py-2 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600 w-full pr-10">
                             <button id="pasteBtn" class="paste-btn" title="Paste">
-                                <i class="fas fa-paste text-sm"></i>
+                                <i class="fas fa-paste text-xs"></i>
                             </button>
                         </div>
-                        <button id="sendWhatsAppBtn" class="bg-gradient-to-r from-green-600 to-green-700 text-white p-3 rounded-lg hover:opacity-90 transition-all" title="Send WhatsApp">
-                            <i class="fab fa-whatsapp"></i>
+                        <button id="sendWhatsAppBtn" class="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:opacity-90 transition-all" title="Send WhatsApp">
+                            <i class="fab fa-whatsapp text-sm"></i>
                         </button>
-                        <button id="quickEmiBtn" class="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-3 rounded-lg hover:opacity-90 transition-all" title="Quick EMI Calculator">
-                            <i class="fas fa-calculator"></i>
+                        <button id="quickEmiBtn" class="bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg hover:opacity-90 transition-all" title="Quick EMI Calculator">
+                            <i class="fas fa-calculator text-sm"></i>
                         </button>
-                        <button id="shareLoanBtn" class="bg-gradient-to-r from-orange-600 to-orange-700 text-white p-3 rounded-lg hover:opacity-90 transition-all" title="Share Loan Information">
-                            <i class="fas fa-share-alt"></i>
+                        <button id="shareLoanBtn" class="bg-gradient-to-r from-orange-600 to-orange-700 text-white rounded-lg hover:opacity-90 transition-all" title="Share Loan Information">
+                            <i class="fas fa-share-alt text-sm"></i>
                         </button>
-                        <button id="generateEmiChartBtn" class="bg-gradient-to-r from-teal-600 to-teal-700 text-white p-3 rounded-lg hover:opacity-90 transition-all" title="Generate EMI Chart">
-                            <i class="fas fa-chart-bar"></i>
+                        <button id="generateEmiChartBtn" class="bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-lg hover:opacity-90 transition-all" title="Generate EMI Chart">
+                            <i class="fas fa-chart-bar text-sm"></i>
                         </button>
-                        <button id="loanComparisonBtn" class="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white p-3 rounded-lg hover:opacity-90 transition-all" title="Loan Comparison">
-                            <i class="fas fa-balance-scale"></i>
+                        <button id="loanComparisonBtn" class="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-lg hover:opacity-90 transition-all" title="Loan Comparison">
+                            <i class="fas fa-balance-scale text-sm"></i>
                         </button>
-                        <button id="cardBtn" class="bg-gradient-to-r from-pink-600 to-pink-700 text-white p-3 rounded-lg hover:opacity-90 transition-all" title="Credit Card Tools">
-                            <i class="fas fa-credit-card"></i>
+                        <button id="cardBtn" class="bg-gradient-to-r from-pink-600 to-pink-700 text-white rounded-lg hover:opacity-90 transition-all" title="Credit Card Tools">
+                            <i class="fas fa-credit-card text-sm"></i>
                         </button>
                     </div>
                 </div>
@@ -1124,8 +1133,11 @@
                                 
                                 <div class="grid grid-cols-3 gap-3 items-center">
                                     <label class="text-gray-700 dark:text-gray-300 font-medium">Loan Amount (AED):</label>
-                                    <div class="col-span-2 flex gap-3">
+                                    <div class="col-span-2 flex gap-3 items-center">
                                         <input type="text" id="loanAmount" class="border rounded-lg p-3 text-base dark:bg-gray-800 dark:text-white dark:border-gray-600 flex-grow" pattern="[0-9]*">
+                                        <button id="findOptimalLoanBtn" class="custom-btn text-white p-3 rounded-lg text-xs" title="Find Optimal Loan">
+                                            <i class="fas fa-search-dollar"></i>
+                                        </button>
                                         <input type="text" id="loanMultiples" class="border rounded-lg p-3 bg-lightgray dark:bg-gray-700 dark:text-white dark:border-gray-600 w-20 text-center" readonly>
                                     </div>
                                     <p id="loanAmountError" class="col-span-3 text-red-600 dark:text-red-400 text-sm hidden clickable-error">Error: Loan Amount Will Exceed DBR Limit!</p>
@@ -1181,21 +1193,6 @@
                         <h2 class="text-2xl font-bold text-heading dark:text-white mb-6">EMI PAYMENT SCHEDULE</h2>
                         <div class="relative" style="height: 400px;">
                             <canvas id="emiChart"></canvas>
-                        </div>
-                        <div class="mt-6 overflow-x-auto">
-                            <table class="w-full border-collapse text-sm">
-                                <thead>
-                                    <tr class="bg-primary text-white">
-                                        <th class="border border-gray-300 p-3">Month</th>
-                                        <th class="border border-gray-300 p-3">EMI (AED)</th>
-                                        <th class="border border-gray-300 p-3">Principal (AED)</th>
-                                        <th class="border border-gray-300 p-3">Interest (AED)</th>
-                                        <th class="border border-gray-300 p-3">Balance (AED)</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="emiScheduleBody">
-                                </tbody>
-                            </table>
                         </div>
                     </div>
                 </div>
@@ -1372,21 +1369,6 @@
             
             <div class="relative mb-6" style="height: 450px;">
                 <canvas id="emiChartStandalone"></canvas>
-            </div>
-            <div class="mt-6 overflow-x-auto">
-                <table class="w-full border-collapse text-sm">
-                    <thead>
-                        <tr class="bg-primary text-white">
-                            <th class="border border-gray-300 p-3">Month</th>
-                            <th class="border border-gray-300 p-3">EMI (AED)</th>
-                            <th class="border border-gray-300 p-3">Principal (AED)</th>
-                            <th class="border border-gray-300 p-3">Interest (AED)</th>
-                            <th class="border border-gray-300 p-3">Balance (AED)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="emiScheduleBodyStandalone">
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>
@@ -1953,19 +1935,35 @@
                 cardModal.classList.remove('hidden');
             });
             
-            // Cash-out input handler
+            // Cash-out input handler with automatic loan amount calculation
             cashOutInput.addEventListener('input', function() {
                 const cashOutAmount = parseFloat(this.value) || 0;
-                const totalOutstanding = parseFloat(totalOutstandingInput.value.replace(/,/g, '')) || 0;
                 
                 if (cashOutAmount > 0) {
-                    const adjustedOutstanding = totalOutstanding + cashOutAmount;
+                    // Get current values
+                    const processingFees = parseFloat(processingFeesInput.value.replace(/,/g, '')) || 0;
+                    const totalOutstanding = parseFloat(totalOutstandingInput.value.replace(/,/g, '')) || 0;
                     
-                    // Calculate ideal loan amount with cash-out
+                    // Calculate required loan amount: Processing Fees + VAT + Cash-out + Total Outstanding
+                    const requiredLoanAmount = processingFees + cashOutAmount + totalOutstanding;
+                    
+                    if (requiredLoanAmount > 0) {
+                        // Auto-fill the loan amount
+                        loanAmountInput.value = Math.ceil(requiredLoanAmount).toString();
+                        
+                        // Update all related calculations
+                        updateEMICalculator();
+                        updateLoanMultiples();
+                        updateCashInHand();
+                        updateTotalPaymentLabel();
+                        
+                        showSuccess(`Loan amount automatically updated to AED ${formatNumber(Math.ceil(requiredLoanAmount))} based on cash-out requirement`);
+                    }
+                    
+                    // Show optimization suggestion
                     const grossSalary = parseFloat(grossSalaryInput.value.replace(/,/g, '')) || 0;
                     const reducingRate = parseFloat(reducingRateInput.value) || 0;
                     const tenureMonths = parseInt(tenureMonthsInput.value) || 0;
-                    const loanType = loanTypeSelect.value;
                     
                     if (grossSalary > 0 && reducingRate > 0 && tenureMonths > 0) {
                         let totalExistingLoansInstallments = 0;
@@ -1997,27 +1995,27 @@
                         const allowedLiability = grossSalary * (dbrThreshold / 100);
                         const availableForEMI = allowedLiability - currentLiabilities;
                         
-                        // Calculate ideal loan amount to cover the adjusted outstanding
-                        let low = adjustedOutstanding;
+                        // Calculate optimal loan amount that fits within DBR
+                        let low = requiredLoanAmount;
                         let high = grossSalary * 100;
-                        let idealLoanAmount = adjustedOutstanding;
+                        let optimalLoanAmount = requiredLoanAmount;
                         
                         while (high - low > 1) {
                             const mid = (low + high) / 2;
-                            const emi = calculateEMIWithGracePeriod(mid, reducingRate, tenureMonths, loanType);
+                            const emi = calculateEMIWithGracePeriod(mid, reducingRate, tenureMonths, loanTypeSelect.value);
                             
                             if (emi <= availableForEMI) {
                                 low = mid;
-                                idealLoanAmount = mid;
+                                optimalLoanAmount = mid;
                             } else {
                                 high = mid;
                             }
                         }
                         
-                        if (idealLoanAmount > adjustedOutstanding) {
-                            const suggestionText = `Suggested loan amount with cash-out: AED ${formatNumber(Math.floor(idealLoanAmount))}`;
+                        if (optimalLoanAmount > requiredLoanAmount) {
+                            const suggestionText = `Suggested optimal loan amount with cash-out: AED ${formatNumber(Math.floor(optimalLoanAmount))}`;
                             cashOutSuggestion.innerHTML = `
-                                <div class="cash-out-suggestion" onclick="applyCashOutIdealAmount(${Math.floor(idealLoanAmount)})">
+                                <div class="cash-out-suggestion" onclick="applyCashOutOptimalAmount(${Math.floor(optimalLoanAmount)})">
                                     ${suggestionText}
                                 </div>
                             `;
@@ -2031,13 +2029,13 @@
                 }
             });
 
-            window.applyCashOutIdealAmount = function(amount) {
+            window.applyCashOutOptimalAmount = function(amount) {
                 document.getElementById('loanAmount').value = amount.toString();
                 updateEMICalculator();
                 updateLoanMultiples();
                 updateCashInHand();
                 updateTotalPaymentLabel();
-                showSuccess(`Loan amount updated to AED ${formatNumber(amount)}`);
+                showSuccess(`Loan amount updated to optimal amount: AED ${formatNumber(amount)}`);
             };
             
             // Make DBR error clickable
@@ -3599,7 +3597,8 @@
                 let high = grossSalary * 100;
                 let idealLoanAmount = 0;
                 
-                while (high - low > 1) {
+                // Binary search to find optimal loan amount
+                for (let iteration = 0; iteration < 50 && high - low > 1; iteration++) {
                     const mid = (low + high) / 2;
                     const testEMI = calculateEMIWithGracePeriod(mid, reducingRate, tenureMonths, loanType);
                     
@@ -3611,7 +3610,7 @@
                     }
                 }
                 
-                if (dbrPercentage >= dbrThreshold) {
+                if (dbrPercentage >= dbrThreshold && idealLoanAmount > 0) {
                     loanAmountError.textContent = `Error: Loan Amount Will Exceed DBR Limit! Ideal amount: AED ${formatNumber(Math.floor(idealLoanAmount))}`;
                     loanAmountError.classList.remove('hidden');
                 } else {
@@ -3916,22 +3915,6 @@
                         }
                     }
                 });
-                
-                const tableBody = document.getElementById('emiScheduleBody');
-                tableBody.innerHTML = '';
-                
-                for (let i = 0; i < schedule.length; i++) {
-                    const entry = schedule[i];
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td class="border border-gray-300 p-3 text-center">${entry.month}</td>
-                        <td class="border border-gray-300 p-3 text-right">${formatNumber(entry.emi.toFixed(2))}</td>
-                        <td class="border border-gray-300 p-3 text-right">${formatNumber(entry.principal.toFixed(2))}</td>
-                        <td class="border border-gray-300 p-3 text-right">${formatNumber(entry.interest.toFixed(2))}</td>
-                        <td class="border border-gray-300 p-3 text-right">${formatNumber(entry.balance.toFixed(2))}</td>
-                    `;
-                    tableBody.appendChild(row);
-                }
             }
             
             function displayEMIChartStandalone() {
@@ -4003,22 +3986,6 @@
                         }
                     }
                 });
-                
-                const tableBody = document.getElementById('emiScheduleBodyStandalone');
-                tableBody.innerHTML = '';
-                
-                for (let i = 0; i < schedule.length; i++) {
-                    const entry = schedule[i];
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td class="border border-gray-300 p-3 text-center">${entry.month}</td>
-                        <td class="border border-gray-300 p-3 text-right">${formatNumber(entry.emi.toFixed(2))}</td>
-                        <td class="border border-gray-300 p-3 text-right">${formatNumber(entry.principal.toFixed(2))}</td>
-                        <td class="border border-gray-300 p-3 text-right">${formatNumber(entry.interest.toFixed(2))}</td>
-                        <td class="border border-gray-300 p-3 text-right">${formatNumber(entry.balance.toFixed(2))}</td>
-                    `;
-                    tableBody.appendChild(row);
-                }
             }
             
             function findOptimalLoanAmount() {
@@ -4085,7 +4052,8 @@
                 let high = grossSalary * 100;
                 let optimalLoanAmount = 0;
                 
-                while (high - low > 1) {
+                // Binary search to find optimal loan amount
+                for (let iteration = 0; iteration < 50 && high - low > 1; iteration++) {
                     const mid = (low + high) / 2;
                     const emi = calculateEMIWithGracePeriod(mid, reducingRate, tenureMonths, loanType);
                     
@@ -4311,8 +4279,7 @@
                 const cashInHand = parseFloat(cashInHandInput.value.replace(/,/g, '')) || 0;
                 const totalOutstanding = parseFloat(totalOutstandingInput.value.replace(/,/g, '')) || 0;
                 
-                const selectedPaymentDate = document.querySelector('input[name="paymentDate"]:checked');
-                const paymentDate = selectedPaymentDate ? getOrdinalSuffix(parseInt(selectedPaymentDate.value)) : '';
+                const gracePeriodDays = gracePeriodInput.value;
                 
                 const customerName = customerNameInput.value.trim();
                 const specialNoteText = specialNote.value;
@@ -4331,7 +4298,7 @@
                 message += `Reducing Rate: ${reducingRate}%\n`;
                 message += `Flat Rate: ${flatRate.toFixed(2)}%\n`;
                 message += `Max Loan Eligibity: AED ${formatNumber(maxLoanEligibility.toFixed(2))}\n`;
-                message += `Grace Period: ${paymentDate}\n`;
+                message += `Grace Period: ${gracePeriodDays}\n`;
                 message += `Total Payment: AED ${formatNumber(totalPayment.toFixed(2))}\n`;
                 message += `Processing Fees(+VAT): AED ${formatNumber(processingFees.toFixed(2))}\n`;
                 message += `Insurance Fees: AED 0\n`;
