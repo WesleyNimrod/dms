@@ -25,25 +25,28 @@
         
         body {
             font-family: 'Tahoma', Geneva, sans-serif;
-            background-color: #f5f5f5;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             color: #333;
+            min-height: 100vh;
         }
         
         .main-container {
             width: 100%;
             min-height: 100vh;
-            padding: 8px 8px 8px 8px;
+            padding: 8px;
             margin: 0;
         }
         
         .custom-btn {
             background: linear-gradient(135deg, #6F2C4F 0%, #262a5a 100%);
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(111, 44, 79, 0.2);
         }
         
         .custom-btn:hover {
             opacity: 0.9;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(111, 44, 79, 0.3);
         }
         
         .gradient-primary {
@@ -51,21 +54,22 @@
         }
         
         .success-indicator {
-            background: rgb(22, 163, 74);
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
             color: white;
-            padding: 8px 12px;
-            border-radius: 4px;
+            padding: 12px 16px;
+            border-radius: 8px;
             position: fixed;
             top: 20px;
             right: 20px;
             animation: fadeOut 2s forwards;
             animation-delay: 1s;
             z-index: 100;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
         }
         
         @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
         }
 
         .loading-indicator {
@@ -74,20 +78,22 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0,0,0,0.6);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            backdrop-filter: blur(4px);
         }
 
         .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #6F2C4F;
+            width: 60px;
+            height: 60px;
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #6F2C4F;
             border-radius: 50%;
             animation: spin 1s linear infinite;
+            box-shadow: 0 4px 15px rgba(111, 44, 79, 0.3);
         }
 
         @keyframes spin {
@@ -95,34 +101,43 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Table styling */
+        /* Elegant Table styling */
         .calling-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 14px;
+            font-size: 13px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
         .calling-table tr:nth-child(even) {
-            background-color: #f2f2f2;
+            background: linear-gradient(90deg, #f8fafc 0%, #f1f5f9 100%);
         }
 
         .calling-table tr:hover {
-            background-color: #ddd;
+            background: linear-gradient(90deg, #e2e8f0 0%, #cbd5e1 100%);
+            transform: scale(1.001);
+            transition: all 0.2s ease;
         }
 
         .calling-table td {
-            padding: 8px;
+            padding: 8px 6px;
             position: relative;
+            border-bottom: 1px solid #e2e8f0;
         }
 
         /* Row selection */
         .calling-table tr.selected {
-            background-color: rgba(111, 44, 79, 0.2) !important;
+            background: linear-gradient(90deg, rgba(111, 44, 79, 0.15) 0%, rgba(111, 44, 79, 0.25) 100%) !important;
+            box-shadow: inset 3px 0 0 #6F2C4F;
         }
 
         /* Duplicate group styling */
         .calling-table tr.duplicate-group {
             border-left: 4px solid #f59e0b;
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%);
         }
 
         .calling-table tr.duplicate-group:first-of-type {
@@ -134,25 +149,28 @@
         }
 
         .selection-checkbox {
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             cursor: pointer;
+            accent-color: #6F2C4F;
         }
 
         /* Editable cell styling */
         .editable {
             position: relative;
             cursor: text;
-            transition: background-color 0.2s;
+            transition: all 0.3s ease;
+            border-radius: 6px;
         }
 
         .editable:hover {
-            background-color: rgba(111, 44, 79, 0.1);
+            background: linear-gradient(135deg, rgba(111, 44, 79, 0.1) 0%, rgba(111, 44, 79, 0.05) 100%);
         }
 
         .editable.active {
-            background-color: rgba(111, 44, 79, 0.15);
+            background: linear-gradient(135deg, rgba(111, 44, 79, 0.15) 0%, rgba(111, 44, 79, 0.1) 100%);
             outline: 2px solid #6F2C4F;
+            box-shadow: 0 4px 15px rgba(111, 44, 79, 0.2);
         }
 
         /* Copyable cell styling */
@@ -160,22 +178,31 @@
             cursor: pointer;
             position: relative;
             user-select: all;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .copyable:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            transform: scale(1.02);
         }
 
         .copyable::after {
             content: "Copied!";
             position: absolute;
-            top: -20px;
+            top: -25px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #333;
+            background: linear-gradient(135deg, #333 0%, #111 100%);
             color: white;
-            padding: 2px 6px;
-            border-radius: 3px;
+            padding: 4px 8px;
+            border-radius: 6px;
             font-size: 12px;
             opacity: 0;
             transition: opacity 0.2s;
             pointer-events: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
         .copyable.copied::after {
@@ -184,32 +211,43 @@
         }
 
         @keyframes fadeAfterCopy {
-            0% { opacity: 1; }
-            70% { opacity: 1; }
-            100% { opacity: 0; }
+            0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            70% { opacity: 1; transform: translateX(-50%) translateY(-5px); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
         }
 
         /* Draggable styling */
         .draggable {
             cursor: grab;
+            transition: all 0.2s ease;
+        }
+
+        .draggable:hover {
+            transform: scale(1.02);
         }
 
         .draggable.dragging {
-            opacity: 0.5;
+            opacity: 0.6;
             cursor: grabbing;
+            transform: rotate(2deg) scale(1.05);
         }
 
         .drop-zone {
-            background-color: rgba(111, 44, 79, 0.1);
+            background: linear-gradient(135deg, rgba(111, 44, 79, 0.2) 0%, rgba(111, 44, 79, 0.1) 100%);
             border: 2px dashed #6F2C4F;
+            border-radius: 8px;
         }
 
-        /* Filter inputs */
+        /* Enhanced Filter container */
         .filter-container {
             display: flex;
             gap: 8px;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
             flex-wrap: wrap;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
 
         .filter-item {
@@ -217,211 +255,455 @@
             min-width: 120px;
         }
 
+        /* Enhanced filter inputs */
+        .filter-item input, .filter-item select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .filter-item input:focus, .filter-item select:focus {
+            outline: none;
+            border-color: #6F2C4F;
+            box-shadow: 0 0 0 3px rgba(111, 44, 79, 0.1), 0 4px 15px rgba(111, 44, 79, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .filter-item input:hover, .filter-item select:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
         /* Scrollable table container */
         .table-container {
             overflow-x: auto;
-            max-height: 600px;
+            max-height: 650px;
             overflow-y: auto;
             width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
         }
 
-        /* Call buttons */
+        /* Enhanced Call buttons - Made smaller */
         .call-btn {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border-radius: 4px;
+            border-radius: 8px;
             color: white;
-            margin-right: 8px;
-            transition: transform 0.2s;
+            margin-right: 4px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
         }
         
         .call-btn:hover {
-            transform: scale(1.1);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
         }
 
         .direct-call {
-            background-color: #16a34a;
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
         }
         
         .teams-call {
-            background-color: #4f46e5;
+            background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
         }
         
         .whatsapp-call {
-            background-color: #25D366;
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
         }
         
         .comment-btn {
-            background-color: #eab308;
+            background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
         }
 
-        /* Icon buttons */
+        /* Enhanced Icon buttons - Made smaller and closer */
         .icon-btn {
             padding: 8px 12px;
-            border-radius: 4px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             cursor: pointer;
             border: none;
             color: white;
-            min-width: 40px;
-            height: 40px;
+            min-width: 36px;
+            height: 36px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+            font-size: 14px;
+        }
+
+        .icon-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .icon-btn:hover::before {
+            left: 100%;
         }
 
         .icon-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .icon-btn:active {
             transform: translateY(-1px);
-            opacity: 0.9;
         }
 
         .icon-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .btn-refresh { background-color: #6F2C4F; }
-        .btn-sheet { background-color: #16a34a; }
-        .btn-undo { background-color: #6b7280; }
-        .btn-show-more { background-color: #6b7280; }
-        .btn-add-new { background-color: #059669; }
-        .btn-copy { background-color: #3b82f6; }
-        .btn-delete { background-color: #ef4444; }
-        .btn-duplicate { background-color: #f59e0b; }
-        .btn-duplicate.active { background-color: #d97706; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); }
-        .btn-filter { background-color: #8b5cf6; }
-        .btn-filter.active { background-color: #7c3aed; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); }
+        .btn-refresh { background: linear-gradient(135deg, #6F2C4F 0%, #8B5A6B 100%); }
+        .btn-sheet { background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%); }
+        .btn-undo { background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%); }
+        .btn-show-more { background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%); }
+        .btn-add-new { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
+        .btn-copy { background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); }
+        .btn-delete { background: linear-gradient(135deg, #ef4444 0%, #f87171 100%); }
+        .btn-duplicate { background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); }
+        .btn-duplicate.active { 
+            background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); 
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.3), 0 8px 25px rgba(217, 119, 6, 0.3);
+            transform: translateY(1px);
+        }
+        .btn-filter { background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%); }
+        .btn-filter.active { 
+            background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%); 
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.3), 0 8px 25px rgba(124, 58, 237, 0.3);
+            transform: translateY(1px);
+        }
 
-        /* Result dropdown styling */
+        /* Enhanced Multi-select dropdown styling */
+        .multi-select-container {
+            position: relative;
+        }
+
+        .multi-select-display {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            cursor: pointer;
+            min-height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .multi-select-display:hover {
+            border-color: #6F2C4F;
+            box-shadow: 0 4px 15px rgba(111, 44, 79, 0.1);
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        .multi-select-display.active {
+            border-color: #6F2C4F;
+            box-shadow: 0 0 0 3px rgba(111, 44, 79, 0.1), 0 4px 15px rgba(111, 44, 79, 0.15);
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        }
+
+        .multi-select-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #6F2C4F;
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 10000;
+            display: none;
+            box-shadow: 0 8px 25px rgba(111, 44, 79, 0.2);
+        }
+
+        .multi-select-option {
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .multi-select-option:last-child {
+            border-bottom: none;
+        }
+
+        .multi-select-option:hover {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        .multi-select-option.selected {
+            background: linear-gradient(135deg, rgba(111, 44, 79, 0.1) 0%, rgba(111, 44, 79, 0.05) 100%);
+            color: #6F2C4F;
+            font-weight: 600;
+        }
+
+        .multi-select-option input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #6F2C4F;
+            cursor: pointer;
+        }
+
+        .multi-select-option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .multi-select-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            max-width: calc(100% - 30px);
+        }
+
+        .multi-select-tag {
+            background: linear-gradient(135deg, #6F2C4F 0%, #8B5A6B 100%);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 16px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            box-shadow: 0 2px 6px rgba(111, 44, 79, 0.3);
+        }
+
+        .multi-select-tag .remove-tag {
+            cursor: pointer;
+            font-weight: bold;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .multi-select-tag .remove-tag:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .multi-select-arrow {
+            font-size: 14px;
+            transition: transform 0.3s;
+            color: #6F2C4F;
+            font-weight: bold;
+        }
+
+        .multi-select-display.active .multi-select-arrow {
+            transform: rotate(180deg);
+        }
+
+        .placeholder {
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        /* Enhanced Result dropdown styling */
         .result-dropdown {
             width: 100%;
-            padding: 6px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 6px 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 13px;
+            background: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
-        /* Table header */
+        .result-dropdown:focus {
+            outline: none;
+            border-color: #6F2C4F;
+            box-shadow: 0 0 0 3px rgba(111, 44, 79, 0.1);
+        }
+
+        .result-dropdown:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Enhanced Table header */
         .calling-table th {
-            background-color: #6F2C4F;
+            background: linear-gradient(135deg, #6F2C4F 0%, #8B5A6B 100%);
             color: white;
             text-align: left;
-            padding: 10px 8px;
+            padding: 12px 8px;
             position: sticky;
             top: 0;
             z-index: 10;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 11px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        /* Salary sorting buttons */
+        /* Enhanced Salary sorting buttons */
         .salary-sort {
             display: flex;
             flex-direction: column;
-            margin-left: 5px;
+            margin-left: 8px;
         }
 
         .salary-sort button {
-            background: #6F2C4F;
+            background: linear-gradient(135deg, #6F2C4F 0%, #8B5A6B 100%);
             color: white;
             border: none;
-            padding: 2px 4px;
+            padding: 3px 5px;
             cursor: pointer;
-            font-size: 10px;
+            font-size: 9px;
             margin: 1px 0;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .salary-sort button:hover {
-            background: #5a2340;
+            background: linear-gradient(135deg, #5a2340 0%, #6F2C4F 100%);
+            transform: scale(1.1);
         }
 
         .salary-sort button.active {
-            background: #8b5cf6;
+            background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+            box-shadow: 0 4px 8px rgba(139, 92, 246, 0.3);
         }
         
-        /* Error message */
+        /* Enhanced Error message */
         .error-message {
             color: #ef4444;
             margin: 20px 0;
-            padding: 15px;
-            border: 1px solid #ef4444;
-            border-radius: 4px;
-            background-color: rgba(239, 68, 68, 0.1);
+            padding: 16px;
+            border: 2px solid #ef4444;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
         }
         
-        /* Placeholder content for empty table */
+        /* Enhanced Placeholder content for empty table */
         .table-placeholder {
-            padding: 30px;
+            padding: 40px;
             text-align: center;
             color: #6b7280;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
         }
         
-        /* Semi-transparent section background */
+        /* Enhanced Semi-transparent section background */
         .section-header {
-            background-color: rgba(111, 44, 79, 0.08);
+            background: linear-gradient(135deg, rgba(111, 44, 79, 0.1) 0%, rgba(111, 44, 79, 0.05) 100%);
             border-left: 4px solid #6F2C4F;
-            padding: 10px 15px;
-            border-radius: 0 4px 4px 0;
+            padding: 12px 16px;
+            border-radius: 0 12px 12px 0;
+            box-shadow: 0 4px 15px rgba(111, 44, 79, 0.1);
         }
         
-        /* Undo indicator */
+        /* Enhanced Undo indicator */
         .undo-indicator {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: rgba(0, 0, 0, 0.8);
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.8) 100%);
             color: white;
-            padding: 10px 15px;
-            border-radius: 4px;
+            padding: 12px 16px;
+            border-radius: 12px;
             z-index: 100;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
         }
         
         .undo-btn {
-            background: white;
-            color: black;
-            border-radius: 4px;
-            padding: 4px 8px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            color: #333;
+            border-radius: 8px;
+            padding: 6px 12px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
+            border: none;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         
         .undo-btn:hover {
-            background: #eee;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
         
-        /* Tooltip */
+        /* Enhanced Tooltip */
         .tooltip {
             position: relative;
         }
         
         .tooltip .tooltip-text {
             visibility: hidden;
-            width: 120px;
-            background-color: rgba(0, 0, 0, 0.8);
+            width: 140px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.8) 100%);
             color: #fff;
             text-align: center;
-            border-radius: 4px;
-            padding: 5px;
+            border-radius: 8px;
+            padding: 8px;
             position: absolute;
-            z-index: 1;
+            z-index: 1000;
             bottom: 125%;
             left: 50%;
             transform: translateX(-50%);
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: all 0.3s ease;
             font-size: 12px;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
         }
         
         .tooltip:hover .tooltip-text {
             visibility: visible;
             opacity: 1;
+            transform: translateX(-50%) translateY(-5px);
         }
         
-        /* Modal */
+        /* Enhanced Modal */
         .modal {
             display: none;
             position: fixed;
@@ -429,160 +711,171 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.6);
             z-index: 1000;
             justify-content: center;
             align-items: center;
+            backdrop-filter: blur(8px);
         }
         
         .modal-content {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            padding: 24px;
+            border-radius: 16px;
             width: 90%;
             max-width: 500px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             position: relative;
             max-height: 90vh;
             overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
         }
         
         .modal-close {
-            font-size: 24px;
+            font-size: 28px;
             cursor: pointer;
-            color: #666;
+            color: #6b7280;
+            transition: all 0.2s ease;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
         }
         
         .modal-close:hover {
-            color: black;
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            transform: scale(1.1);
         }
         
         .modal-body {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
         
         .modal-footer {
             display: flex;
             justify-content: flex-end;
-            gap: 10px;
+            gap: 12px;
         }
         
         .comment-textarea {
             width: 100%;
-            min-height: 100px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            min-height: 120px;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
             resize: vertical;
             font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
-        /* Form styling */
+        .comment-textarea:focus {
+            outline: none;
+            border-color: #6F2C4F;
+            box-shadow: 0 0 0 3px rgba(111, 44, 79, 0.1);
+        }
+
+        /* Enhanced Form styling */
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
 
         .form-label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #333;
+            margin-bottom: 6px;
+            font-weight: 700;
+            color: #374151;
+            font-size: 14px;
         }
 
-        .form-input {
+        .form-input, .form-select {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
             font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
-        .form-input:focus {
+        .form-input:focus, .form-select:focus {
             outline: none;
             border-color: #6F2C4F;
-            box-shadow: 0 0 0 2px rgba(111, 44, 79, 0.2);
+            box-shadow: 0 0 0 3px rgba(111, 44, 79, 0.1);
+            transform: translateY(-1px);
         }
 
-        .form-select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-            background-color: white;
+        .form-input:hover, .form-select:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .form-select:focus {
-            outline: none;
-            border-color: #6F2C4F;
-            box-shadow: 0 0 0 2px rgba(111, 44, 79, 0.2);
+        /* Input with inline paste button */
+        .input-with-paste {
+            position: relative;
         }
 
-        /* Input with button */
-        .input-with-button {
-            display: flex;
-            gap: 8px;
-            align-items: center;
+        .input-with-paste input {
+            padding-right: 40px;
         }
 
-        .input-with-button input {
-            flex: 1;
-        }
-
-        .paste-btn {
-            background-color: #6F2C4F;
-            color: white;
+        .paste-icon-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
             border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
+            color: #6b7280;
             cursor: pointer;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            font-size: 16px;
         }
 
-        .paste-btn:hover {
-            background-color: #5a2340;
+        .paste-icon-btn:hover {
+            color: #6F2C4F;
+            background: rgba(111, 44, 79, 0.1);
         }
 
-        /* Comment toggle */
-        .comment-mode-toggle {
-            margin-top: 10px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        
-        /* Call Counter */
+        /* Enhanced Call Counter */
         .call-counter {
             display: inline-flex;
             align-items: center;
-            background-color: #6F2C4F;
+            background: linear-gradient(135deg, #6F2C4F 0%, #8B5A6B 100%);
             color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            margin-left: 10px;
-            font-size: 14px;
+            padding: 6px 10px;
+            border-radius: 10px;
+            margin-left: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(111, 44, 79, 0.2);
         }
         
         .call-counter i {
-            margin-right: 5px;
+            margin-right: 6px;
         }
         
-        /* Editable cells */
+        /* Enhanced Editable cells */
         .editable-cell {
             position: relative;
             cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s ease;
         }
         
         .editable-cell.editing {
@@ -592,52 +885,125 @@
         .editable-cell input {
             width: 100%;
             padding: 8px;
-            border: 1px solid #6F2C4F;
-            border-radius: 4px;
+            border: 2px solid #6F2C4F;
+            border-radius: 6px;
+            box-shadow: 0 4px 15px rgba(111, 44, 79, 0.2);
         }
 
-        /* Selection info */
+        /* Enhanced Selection info */
         .selection-info {
-            background-color: rgba(111, 44, 79, 0.1);
-            border: 1px solid #6F2C4F;
-            border-radius: 4px;
-            padding: 8px 12px;
-            margin-bottom: 10px;
+            background: linear-gradient(135deg, rgba(111, 44, 79, 0.1) 0%, rgba(111, 44, 79, 0.05) 100%);
+            border: 2px solid #6F2C4F;
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-bottom: 14px;
             display: none;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(111, 44, 79, 0.1);
         }
 
         .selection-info.show {
             display: block;
         }
 
-        /* Confirm Dialog */
+        /* Enhanced Confirm Dialog */
         .confirm-dialog {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.6);
             z-index: 1001;
             display: none;
             justify-content: center;
             align-items: center;
+            backdrop-filter: blur(8px);
         }
 
         .confirm-content {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            padding: 24px;
+            border-radius: 16px;
             max-width: 400px;
             width: 90%;
             text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .confirm-buttons {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             justify-content: center;
-            margin-top: 20px;
+            margin-top: 24px;
+        }
+
+        /* Enhanced button styles for modals */
+        .modal-footer button, .confirm-buttons button {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-footer button:hover, .confirm-buttons button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Auto-refresh indicator - Made draggable */
+        .auto-refresh-indicator {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            cursor: move;
+            user-select: none;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .auto-refresh-indicator:hover {
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+            transform: scale(1.02);
+        }
+
+        .auto-refresh-indicator.dragging {
+            opacity: 0.8;
+            transform: scale(1.05);
+            z-index: 200;
+        }
+
+        /* Pending changes indicator */
+        .pending-changes-indicator {
+            position: fixed;
+            top: 120px;
+            right: 20px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); }
+            50% { box-shadow: 0 6px 25px rgba(245, 158, 11, 0.5); }
+            100% { box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); }
         }
 
         /* Filter visibility toggle */
@@ -645,18 +1011,64 @@
             display: none !important;
         }
 
+        /* Enhanced Card styling */
+        .card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Clear filters button styling */
+        .clear-filters-btn {
+            background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+        }
+
+        .clear-filters-btn:hover {
+            background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .main-container {
-                padding: 4px 4px 4px 4px;
+                padding: 6px;
             }
             
             .filter-container {
-                gap: 4px;
+                gap: 6px;
+                padding: 12px;
             }
             
             .filter-item {
                 min-width: 100px;
+            }
+
+            .icon-btn {
+                min-width: 32px;
+                height: 32px;
+                padding: 6px 8px;
+            }
+
+            .call-btn {
+                width: 24px;
+                height: 24px;
             }
         }
     </style>
@@ -664,8 +1076,8 @@
 <body class="bg-gray-50 font-tahoma">
     <div class="main-container">
         
-        <div class="bg-white p-3 rounded-lg shadow-md mb-3">
-            <div class="flex flex-wrap justify-between items-center mb-4">
+        <div class="card p-3 mb-3">
+            <div class="flex flex-wrap justify-between items-center mb-3">
                 <div class="section-header flex items-center">
                     <h2 class="text-xl font-bold text-[#6F2C4F]">Calling List</h2>
                     <div class="call-counter ml-3">
@@ -711,6 +1123,10 @@
                         <i class="fas fa-search"></i>
                         <span class="tooltip-text">Contains Search</span>
                     </button>
+                    <button id="clearFiltersBtn" class="clear-filters-btn tooltip" title="Clear All Filters">
+                        <i class="fas fa-broom"></i> Clear
+                        <span class="tooltip-text">Clear All Filters</span>
+                    </button>
                 </div>
             </div>
             
@@ -718,55 +1134,108 @@
                 <span id="selectionCount">0</span> rows selected
             </div>
 
-            <div class="mb-4" id="filtersContainer">
-                <div class="flex justify-between items-center">
-                    <h3 class="font-semibold text-lg mb-2 text-[#6F2C4F]">Filters</h3>
-                    <button id="clearFiltersBtn" class="text-sm text-blue-600">Clear All</button>
+            <div class="filter-container">
+                <div class="filter-item">
+                    <div class="multi-select-container">
+                        <div class="multi-select-display" id="resultFilterDisplay">
+                            <div class="multi-select-tags" id="resultFilterTags">
+                                <span class="placeholder">All Results</span>
+                            </div>
+                            <div class="multi-select-arrow">▼</div>
+                        </div>
+                        <div class="multi-select-options" id="resultFilterOptions">
+                            <div class="multi-select-option" data-value="">
+                                <input type="checkbox" id="all-results" checked>
+                                <label for="all-results">All Results</label>
+                            </div>
+                            <div class="multi-select-option" data-value="To Call">
+                                <input type="checkbox" id="to-call">
+                                <label for="to-call">To Call</label>
+                            </div>
+                            <div class="multi-select-option" data-value="No Answer">
+                                <input type="checkbox" id="no-answer">
+                                <label for="no-answer">No Answer</label>
+                            </div>
+                            <div class="multi-select-option" data-value="Busy">
+                                <input type="checkbox" id="busy">
+                                <label for="busy">Busy</label>
+                            </div>
+                            <div class="multi-select-option" data-value="DNCR">
+                                <input type="checkbox" id="dncr">
+                                <label for="dncr">DNCR</label>
+                            </div>
+                            <div class="multi-select-option" data-value="Not Interested">
+                                <input type="checkbox" id="not-interested">
+                                <label for="not-interested">Not Interested</label>
+                            </div>
+                            <div class="multi-select-option" data-value="Interested">
+                                <input type="checkbox" id="interested">
+                                <label for="interested">Interested</label>
+                            </div>
+                            <div class="multi-select-option" data-value="ROI Inquired">
+                                <input type="checkbox" id="roi-inquired">
+                                <label for="roi-inquired">ROI Inquired</label>
+                            </div>
+                            <div class="multi-select-option" data-value="Call back">
+                                <input type="checkbox" id="call-back">
+                                <label for="call-back">Call back</label>
+                            </div>
+                            <div class="multi-select-option" data-value="On Hold">
+                                <input type="checkbox" id="on-hold">
+                                <label for="on-hold">On Hold</label>
+                            </div>
+                            <div class="multi-select-option" data-value="In Future, Shared details">
+                                <input type="checkbox" id="in-future">
+                                <label for="in-future">In Future, Shared details</label>
+                            </div>
+                            <div class="multi-select-option" data-value="Switched off">
+                                <input type="checkbox" id="switched-off">
+                                <label for="switched-off">Switched off</label>
+                            </div>
+                            <div class="multi-select-option" data-value="Referal">
+                                <input type="checkbox" id="referal">
+                                <label for="referal">Referal</label>
+                            </div>
+                            <div class="multi-select-option" data-value="Completed">
+                                <input type="checkbox" id="completed">
+                                <label for="completed">Completed</label>
+                            </div>
+                            <div class="multi-select-option" data-value="Rejected">
+                                <input type="checkbox" id="rejected">
+                                <label for="rejected">Rejected</label>
+                            </div>
+                            <div class="multi-select-option" data-value="Option 1">
+                                <input type="checkbox" id="option-1">
+                                <label for="option-1">Option 1</label>
+                            </div>
+                            <div class="multi-select-option" data-value="Option 2">
+                                <input type="checkbox" id="option-2">
+                                <label for="option-2">Option 2</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="filter-container">
-                    <div class="filter-item">
-                        <select id="resultFilter" class="w-full border rounded-md p-2 text-base">
-                            <option value="">All Results</option>
-                            <option value="To Call">To Call</option>
-                            <option value="No Answer">No Answer</option>
-                            <option value="Busy">Busy</option>
-                            <option value="DNCR">DNCR</option>
-                            <option value="Not Interested">Not Interested</option>
-                            <option value="Interested">Interested</option>
-                            <option value="ROI Inquired">ROI Inquired</option>
-                            <option value="Call back">Call back</option>
-                            <option value="On Hold">On Hold</option>
-                            <option value="In Future, Shared details">In Future, Shared details</option>
-                            <option value="Switched off">Switched off</option>
-                            <option value="Referal">Referal</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Rejected">Rejected</option>
-                            <option value="Option 1">Option 1</option>
-                            <option value="Option 2">Option 2</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <input type="text" id="mobileFilter" placeholder="Filter by mobile" class="w-full border rounded-md p-2 text-base">
-                    </div>
-                    <div class="filter-item">
-                        <input type="text" id="nameFilter" placeholder="Filter by name" class="w-full border rounded-md p-2 text-base">
-                    </div>
-                    <div class="filter-item">
-                        <input type="text" id="companyFilter" placeholder="Filter by company" class="w-full border rounded-md p-2 text-base">
-                    </div>
-                    <div class="filter-item">
-                        <input type="text" id="schemeFilter" placeholder="Filter by scheme" class="w-full border rounded-md p-2 text-base">
-                    </div>
-                    <div class="filter-item">
-                        <input type="text" id="bankFilter" placeholder="Filter by bank" class="w-full border rounded-md p-2 text-base">
-                    </div>
-                    <div class="filter-item">
-                        <input type="number" id="salaryFilter" placeholder="Min salary" class="w-full border rounded-md p-2 text-base">
-                    </div>
+                <div class="filter-item">
+                    <input type="text" id="mobileFilter" placeholder="Filter by mobile" class="w-full border rounded-md p-2 text-base">
+                </div>
+                <div class="filter-item">
+                    <input type="text" id="nameFilter" placeholder="Filter by name" class="w-full border rounded-md p-2 text-base">
+                </div>
+                <div class="filter-item">
+                    <input type="text" id="companyFilter" placeholder="Filter by company" class="w-full border rounded-md p-2 text-base">
+                </div>
+                <div class="filter-item">
+                    <input type="text" id="schemeFilter" placeholder="Filter by scheme" class="w-full border rounded-md p-2 text-base">
+                </div>
+                <div class="filter-item">
+                    <input type="text" id="bankFilter" placeholder="Filter by bank" class="w-full border rounded-md p-2 text-base">
+                </div>
+                <div class="filter-item">
+                    <input type="number" id="salaryFilter" placeholder="Min salary" class="w-full border rounded-md p-2 text-base">
                 </div>
             </div>
         </div>
-        <div class="bg-white p-3 rounded-lg shadow-md">
+        <div class="card p-3">
             <div class="table-container">
                 <table id="callingTable" class="calling-table" style="border-spacing: 0;">
                     <thead>
@@ -774,14 +1243,14 @@
                             <th style="width: 40px;">
                                 <input type="checkbox" id="selectAllCheckbox" class="selection-checkbox">
                             </th>
-                            <th style="width: 110px;">Actions</th>
-                            <th style="width: 150px;">Result</th>
-                            <th style="width: 120px;">Mobile</th>
+                            <th style="width: 90px;">Actions</th>
+                            <th style="width: 130px;">Result</th>
+                            <th style="width: 100px;">Mobile</th>
                             <th>Name</th>
                             <th>Company</th>
                             <th>Scheme</th>
                             <th>Bank</th>
-                            <th style="width: 100px;">
+                            <th style="width: 80px;">
                                 <div style="display: flex; align-items: center;">
                                     Salary
                                     <div class="salary-sort">
@@ -812,6 +1281,14 @@
 
     <div id="successIndicator" class="success-indicator hidden">
         <span id="successMessage">Operation successful!</span>
+    </div>
+
+    <div id="autoRefreshIndicator" class="auto-refresh-indicator">
+        Auto-refresh in <span id="autoRefreshCountdown">300</span>s
+    </div>
+
+    <div id="pendingChangesIndicator" class="pending-changes-indicator">
+        <span id="pendingChangesCount">0</span> changes pending
     </div>
 
     <div id="loadingIndicator" class="loading-indicator hidden">
@@ -862,30 +1339,30 @@
                     
                     <div class="form-group">
                         <label class="form-label" for="newMobile">Mobile *</label>
-                        <div class="input-with-button">
+                        <div class="input-with-paste">
                             <input type="text" id="newMobile" class="form-input" required pattern="[0-9]*" title="Only numbers allowed" tabindex="3">
-                            <button type="button" class="paste-btn" id="pasteMobileBtn" tabindex="-1">
-                                <i class="fas fa-paste"></i> Paste
+                            <button type="button" class="paste-icon-btn" id="pasteMobileBtn" tabindex="-1">
+                                <i class="fas fa-paste"></i>
                             </button>
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label" for="newCmName">CM Name</label>
-                        <div class="input-with-button">
+                        <div class="input-with-paste">
                             <input type="text" id="newCmName" class="form-input" tabindex="4">
-                            <button type="button" class="paste-btn" id="pasteCmNameBtn" tabindex="-1">
-                                <i class="fas fa-paste"></i> Paste
+                            <button type="button" class="paste-icon-btn" id="pasteCmNameBtn" tabindex="-1">
+                                <i class="fas fa-paste"></i>
                             </button>
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label" for="newCompanyName">Company Name *</label>
-                        <div class="input-with-button">
+                        <div class="input-with-paste">
                             <input type="text" id="newCompanyName" class="form-input" required style="text-transform: uppercase;" tabindex="5">
-                            <button type="button" class="paste-btn" id="pasteCompanyNameBtn" tabindex="-1">
-                                <i class="fas fa-paste"></i> Paste
+                            <button type="button" class="paste-icon-btn" id="pasteCompanyNameBtn" tabindex="-1">
+                                <i class="fas fa-paste"></i>
                             </button>
                         </div>
                     </div>
@@ -958,6 +1435,8 @@
         // *** IMPORTANT: Replace 'YOUR_WEB_APP_URL_HERE' with your actual Google Apps Script Web App URL ***
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwBKFBLV1ayE1-RIsdbr11-dZ0yGcFxnwkyoOJXnQrH-vbtSH1sjTCQzBlJTdyufOeOXA/exec'; 
         const BATCH_SIZE = 50; // Number of records to load initially / per "Show More" click
+        const AUTO_REFRESH_INTERVAL = 300000; // 5 minutes in milliseconds (Fix 2)
+        
         let allData = [];
         let displayedData = [];
         let currentIndex = 0;
@@ -965,7 +1444,9 @@
         const columnNames = ["Select", "Actions", "Result", "Mobile", "Name", "Company", "Scheme", "Bank", "Salary"];
         let callCount = 0;
         let longPressTimer;
-        let priorityResultOptions = ["To Call", "Interested", "Referal", "Option 1", "Option 2", "No Answer", "Busy"];
+        let copyDragTimer;
+        // Updated priority order (Fix 4)
+        let priorityResultOptions = ["To Call", "", "Interested", "No Answer", "Busy"];
         let changedRows = {}; // Track which rows have been changed today
         let selectedRows = new Set();
         let isDuplicateMode = false;
@@ -973,6 +1454,13 @@
         let currentSalarySortOrder = 'none'; // none, asc, desc
         let draggedElement = null;
         let dragSourceRowIndex = null;
+        let autoRefreshTimer = null;
+        let autoRefreshCountdown = null;
+        let autoRefreshSeconds = 300; // Changed to 5 minutes (Fix 2)
+        let selectedResultFilters = new Set(); // For multi-select result filter
+        let pendingChanges = new Map(); // Store pending changes
+        let dragOffset = { x: 0, y: 0 };
+        let isDragging = false;
 
         document.addEventListener('DOMContentLoaded', function() {
             // Load call count and changed rows from localStorage if available
@@ -987,8 +1475,17 @@
             // Initial data load
             fetchCallingData();
 
+            // Start auto-refresh timer
+            startAutoRefresh();
+
+            // Setup auto-refresh indicator dragging
+            setupAutoRefreshDragging();
+
+            // Setup multi-select result filter
+            setupMultiSelectFilter();
+
             // Event Listeners
-            document.getElementById('refreshBtn').addEventListener('click', fetchCallingData);
+            document.getElementById('refreshBtn').addEventListener('click', handleManualRefresh);
             document.getElementById('showMoreBtn').addEventListener('click', loadMoreData);
             document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
             document.getElementById('undoBtn').addEventListener('click', undoLastChange);
@@ -1021,13 +1518,284 @@
             document.getElementById('confirmOk').addEventListener('click', executeConfirmedAction);
 
             // Filter listeners
-            document.getElementById('resultFilter').addEventListener('change', applyFilters);
             document.getElementById('mobileFilter').addEventListener('input', applyFilters);
             document.getElementById('nameFilter').addEventListener('input', applyFilters);
             document.getElementById('companyFilter').addEventListener('input', applyFilters);
             document.getElementById('schemeFilter').addEventListener('input', applyFilters);
             document.getElementById('bankFilter').addEventListener('input', applyFilters);
             document.getElementById('salaryFilter').addEventListener('input', applyFilters);
+
+            // Setup multi-select result filter
+            function setupMultiSelectFilter() {
+                const display = document.getElementById('resultFilterDisplay');
+                const options = document.getElementById('resultFilterOptions');
+                
+                display.addEventListener('click', function() {
+                    const isActive = options.style.display === 'block';
+                    if (isActive) {
+                        options.style.display = 'none';
+                        display.classList.remove('active');
+                    } else {
+                        options.style.display = 'block';
+                        display.classList.add('active');
+                    }
+                });
+
+                // Handle option clicks
+                options.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    
+                    const option = e.target.closest('.multi-select-option');
+                    if (option) {
+                        const checkbox = option.querySelector('input[type="checkbox"]');
+                        const value = option.dataset.value;
+                        
+                        if (value === '') {
+                            // "All Results" option
+                            if (checkbox.checked) {
+                                // Uncheck all others
+                                selectedResultFilters.clear();
+                                options.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                                    if (cb.id !== 'all-results') cb.checked = false;
+                                });
+                            } else {
+                                checkbox.checked = true; // Keep "All Results" checked if trying to uncheck
+                            }
+                        } else {
+                            // Specific result option
+                            if (checkbox.checked) {
+                                selectedResultFilters.add(value);
+                                // Uncheck "All Results"
+                                document.getElementById('all-results').checked = false;
+                            } else {
+                                selectedResultFilters.delete(value);
+                                // If no options selected, check "All Results"
+                                if (selectedResultFilters.size === 0) {
+                                    document.getElementById('all-results').checked = true;
+                                }
+                            }
+                        }
+                        
+                        updateMultiSelectDisplay();
+                        applyFilters();
+                    }
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!display.contains(e.target) && !options.contains(e.target)) {
+                        options.style.display = 'none';
+                        display.classList.remove('active');
+                    }
+                });
+            }
+
+            function updateMultiSelectDisplay() {
+                const tagsContainer = document.getElementById('resultFilterTags');
+                const allResultsChecked = document.getElementById('all-results').checked;
+                
+                tagsContainer.innerHTML = '';
+                
+                if (allResultsChecked || selectedResultFilters.size === 0) {
+                    const placeholder = document.createElement('span');
+                    placeholder.className = 'placeholder';
+                    placeholder.textContent = 'All Results';
+                    tagsContainer.appendChild(placeholder);
+                } else {
+                    selectedResultFilters.forEach(value => {
+                        const tag = document.createElement('div');
+                        tag.className = 'multi-select-tag';
+                        tag.innerHTML = `
+                            <span>${value}</span>
+                            <span class="remove-tag" data-value="${value}">×</span>
+                        `;
+                        
+                        // Handle tag removal
+                        tag.querySelector('.remove-tag').addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            selectedResultFilters.delete(value);
+                            document.querySelector(`input[id="${value.toLowerCase().replace(/[^a-z0-9]/g, '-')}"]`).checked = false;
+                            
+                            if (selectedResultFilters.size === 0) {
+                                document.getElementById('all-results').checked = true;
+                            }
+                            
+                            updateMultiSelectDisplay();
+                            applyFilters();
+                        });
+                        
+                        tagsContainer.appendChild(tag);
+                    });
+                }
+            }
+
+            // Setup auto-refresh indicator dragging
+            function setupAutoRefreshDragging() {
+                const indicator = document.getElementById('autoRefreshIndicator');
+                
+                indicator.addEventListener('mousedown', startDrag);
+                indicator.addEventListener('touchstart', startDrag);
+                
+                function startDrag(e) {
+                    e.preventDefault();
+                    isDragging = true;
+                    indicator.classList.add('dragging');
+                    
+                    const rect = indicator.getBoundingClientRect();
+                    const clientX = e.clientX || e.touches[0].clientX;
+                    const clientY = e.clientY || e.touches[0].clientY;
+                    
+                    dragOffset.x = clientX - rect.left;
+                    dragOffset.y = clientY - rect.top;
+                    
+                    document.addEventListener('mousemove', drag);
+                    document.addEventListener('touchmove', drag);
+                    document.addEventListener('mouseup', stopDrag);
+                    document.addEventListener('touchend', stopDrag);
+                }
+                
+                function drag(e) {
+                    if (!isDragging) return;
+                    e.preventDefault();
+                    
+                    const clientX = e.clientX || e.touches[0].clientX;
+                    const clientY = e.clientY || e.touches[0].clientY;
+                    
+                    const newX = clientX - dragOffset.x;
+                    const newY = clientY - dragOffset.y;
+                    
+                    // Keep within viewport bounds
+                    const maxX = window.innerWidth - indicator.offsetWidth;
+                    const maxY = window.innerHeight - indicator.offsetHeight;
+                    
+                    const boundedX = Math.max(0, Math.min(newX, maxX));
+                    const boundedY = Math.max(0, Math.min(newY, maxY));
+                    
+                    indicator.style.left = boundedX + 'px';
+                    indicator.style.top = boundedY + 'px';
+                    indicator.style.right = 'auto';
+                }
+                
+                function stopDrag() {
+                    isDragging = false;
+                    indicator.classList.remove('dragging');
+                    
+                    document.removeEventListener('mousemove', drag);
+                    document.removeEventListener('touchmove', drag);
+                    document.removeEventListener('mouseup', stopDrag);
+                    document.removeEventListener('touchend', stopDrag);
+                }
+            }
+
+            // Auto-refresh functions
+            function startAutoRefresh() {
+                // Reset countdown
+                autoRefreshSeconds = 300; // 5 minutes (Fix 2)
+                updateAutoRefreshDisplay();
+                
+                // Show indicator
+                document.getElementById('autoRefreshIndicator').style.display = 'block';
+                
+                // Start countdown
+                autoRefreshCountdown = setInterval(function() {
+                    autoRefreshSeconds--;
+                    updateAutoRefreshDisplay();
+                    
+                    if (autoRefreshSeconds <= 0) {
+                        clearInterval(autoRefreshCountdown);
+                        document.getElementById('autoRefreshIndicator').style.display = 'none';
+                        
+                        // Process pending changes before refresh
+                        if (pendingChanges.size > 0) {
+                            processPendingChanges().then(() => {
+                                fetchCallingData().then(() => {
+                                    setTimeout(startAutoRefresh, 1000);
+                                });
+                            });
+                        } else {
+                            fetchCallingData().then(() => {
+                                setTimeout(startAutoRefresh, 1000);
+                            });
+                        }
+                    }
+                }, 1000);
+            }
+
+            function updateAutoRefreshDisplay() {
+                document.getElementById('autoRefreshCountdown').textContent = autoRefreshSeconds;
+            }
+
+            function stopAutoRefresh() {
+                if (autoRefreshCountdown) {
+                    clearInterval(autoRefreshCountdown);
+                    autoRefreshCountdown = null;
+                }
+                document.getElementById('autoRefreshIndicator').style.display = 'none';
+            }
+
+            function handleManualRefresh() {
+                // Stop auto-refresh
+                stopAutoRefresh();
+                
+                // Process pending changes first
+                if (pendingChanges.size > 0) {
+                    processPendingChanges().then(() => {
+                        fetchCallingData().then(() => {
+                            setTimeout(startAutoRefresh, 2000);
+                        });
+                    });
+                } else {
+                    fetchCallingData().then(() => {
+                        setTimeout(startAutoRefresh, 2000);
+                    });
+                }
+            }
+
+            // Pending changes management
+            function addPendingChange(rowIndex, columnName, newValue, oldValue) {
+                const key = `${rowIndex}-${columnName}`;
+                pendingChanges.set(key, {
+                    rowIndex,
+                    columnName,
+                    newValue,
+                    oldValue,
+                    timestamp: Date.now()
+                });
+                updatePendingChangesDisplay();
+            }
+
+            function updatePendingChangesDisplay() {
+                const indicator = document.getElementById('pendingChangesIndicator');
+                const count = document.getElementById('pendingChangesCount');
+                
+                if (pendingChanges.size > 0) {
+                    count.textContent = pendingChanges.size;
+                    indicator.style.display = 'block';
+                } else {
+                    indicator.style.display = 'none';
+                }
+            }
+
+            async function processPendingChanges() {
+                if (pendingChanges.size === 0) return;
+                
+                showLoadingIndicator();
+                const changesToProcess = Array.from(pendingChanges.values());
+                pendingChanges.clear();
+                updatePendingChangesDisplay();
+                
+                try {
+                    for (const change of changesToProcess) {
+                        await updateCellImmediate(change.rowIndex, change.columnName, change.newValue, change.oldValue);
+                    }
+                    showSuccessIndicator(`Processed ${changesToProcess.length} changes`);
+                } catch (error) {
+                    console.error('Error processing pending changes:', error);
+                    showError('Failed to process some pending changes');
+                } finally {
+                    hideLoadingIndicator();
+                }
+            }
 
             // Mobile number validation
             document.getElementById('newMobile').addEventListener('input', function(e) {
@@ -1177,7 +1945,7 @@
                 return '971' + digits;
             }
 
-            // Get result priority order
+            // Get result priority order (Fix 4)
             function getResultPriority(result) {
                 const priority = priorityResultOptions.indexOf(result);
                 return priority === -1 ? 999 : priority;
@@ -1197,12 +1965,15 @@
                         updateSelectionUI();
                         applyFilters(); // Apply filters to the newly fetched data
                         showSuccessIndicator('Data refreshed!');
+                        return true;
                     } else {
                         showError(result.error || 'Failed to fetch data.');
+                        return false;
                     }
                 } catch (error) {
                     console.error('Error fetching data:', error);
                     showError('Network error or invalid Apps Script URL. Check console for details.');
+                    return false;
                 } finally {
                     hideLoadingIndicator();
                 }
@@ -1272,7 +2043,10 @@
 
             // Apply filters and populate table
             function applyFilters() {
-                const resultFilter = document.getElementById('resultFilter').value.toLowerCase();
+                // Get selected result filters
+                const allResultsChecked = document.getElementById('all-results').checked;
+                const resultFilters = allResultsChecked ? [] : Array.from(selectedResultFilters);
+                
                 const mobileFilter = document.getElementById('mobileFilter').value.toLowerCase();
                 const nameFilter = document.getElementById('nameFilter').value.toLowerCase();
                 const companyFilter = document.getElementById('companyFilter').value.toLowerCase();
@@ -1284,9 +2058,15 @@
                 let filteredData = allData.filter(record => {
                     let matchesResult, matchesMobile, matchesName, matchesCompany, matchesScheme, matchesBank;
                     
+                    // Result filter
+                    if (allResultsChecked || resultFilters.length === 0) {
+                        matchesResult = true;
+                    } else {
+                        matchesResult = record.Result && resultFilters.includes(record.Result);
+                    }
+                    
                     if (isExactSearch) {
                         // Exact search mode
-                        matchesResult = resultFilter === "" || (record.Result && record.Result.toLowerCase() === resultFilter);
                         matchesMobile = mobileFilter === "" || (record.Mobile && record.Mobile.toString().toLowerCase() === mobileFilter);
                         matchesName = nameFilter === "" || (record.Name && record.Name.toLowerCase() === nameFilter);
                         matchesCompany = companyFilter === "" || (record.Company && record.Company.toLowerCase() === companyFilter);
@@ -1294,7 +2074,6 @@
                         matchesBank = bankFilter === "" || (record.Bank && record.Bank.toLowerCase() === bankFilter);
                     } else {
                         // Contains search mode (default)
-                        matchesResult = resultFilter === "" || (record.Result && record.Result.toLowerCase().includes(resultFilter));
                         matchesMobile = mobileFilter === "" || (record.Mobile && record.Mobile.toString().toLowerCase().includes(mobileFilter));
                         matchesName = nameFilter === "" || (record.Name && record.Name.toLowerCase().includes(nameFilter));
                         matchesCompany = companyFilter === "" || (record.Company && record.Company.toLowerCase().includes(companyFilter));
@@ -1312,8 +2091,8 @@
                     filteredData = filterDuplicates(filteredData);
                 }
 
-                // Apply default priority sorting if no filters applied
-                if (!resultFilter && !mobileFilter && !nameFilter && !companyFilter && !schemeFilter && !bankFilter && isNaN(salaryFilter) && !isDuplicateMode) {
+                // Apply default priority sorting if no filters applied (Fix 4)
+                if (resultFilters.length === 0 && !mobileFilter && !nameFilter && !companyFilter && !schemeFilter && !bankFilter && isNaN(salaryFilter) && !isDuplicateMode) {
                     filteredData.sort((a, b) => getResultPriority(a.Result) - getResultPriority(b.Result));
                 }
 
@@ -1470,7 +2249,7 @@
                     
                     // Actions column
                     const actionsCell = document.createElement('td');
-                    actionsCell.style.width = '110px';
+                    actionsCell.style.width = '90px';
                     
                     // Format the mobile number with country code
                     const formattedMobile = formatPhoneWithCountryCode(record.Mobile || '');
@@ -1615,178 +2394,110 @@
                             cell.addEventListener('dragleave', (e) => handleDragLeave(e, cell));
                             cell.addEventListener('drop', (e) => handleDrop(e, cell, record.rowIndex, colName));
                             
-                        } else if (colName === 'Name') {
-                            // Click to copy, long press to edit (title case), drag to move
+                        } else if (colName === 'Name' || colName === 'Company' || colName === 'Scheme' || colName === 'Bank' || colName === 'Salary') {
+                            // Fix 3: New interaction behavior for these columns
                             cell.textContent = value;
                             cell.classList.add('copyable', 'editable-cell', 'draggable');
                             cell.draggable = true;
                             
-                            // Click to copy
+                            let copyDragTimer = null;
+                            let longPressTimer = null;
+                            let canDrag = false;
+                            
+                            // Click to copy immediately
                             cell.addEventListener('click', function(e) {
-                                if (!longPressTimer) {
+                                if (!copyDragTimer && !longPressTimer) {
                                     copyToClipboard(this.textContent, this);
                                 }
                             });
                             
-                            // Long press to edit
+                            // Mouse down: Start timers
                             cell.addEventListener('mousedown', function(e) {
                                 const element = this;
+                                
+                                // Timer for enabling drag after 0.2 seconds
+                                copyDragTimer = setTimeout(function() {
+                                    canDrag = true;
+                                    element.style.cursor = 'grab';
+                                    copyDragTimer = null;
+                                }, 200);
+                                
+                                // Timer for editing after 2 seconds
                                 longPressTimer = setTimeout(function() {
-                                    makeEditableTitleCase(element, record.rowIndex, colName, value);
-                                    longPressTimer = null;
-                                }, 1000);
-                            });
-                            
-                            cell.addEventListener('mouseup', function() {
-                                if (longPressTimer) {
-                                    clearTimeout(longPressTimer);
-                                    longPressTimer = null;
-                                }
-                            });
-                            
-                            cell.addEventListener('mouseleave', function() {
-                                if (longPressTimer) {
-                                    clearTimeout(longPressTimer);
-                                    longPressTimer = null;
-                                }
-                            });
-                            
-                            // Touch events
-                            cell.addEventListener('touchstart', function(e) {
-                                const element = this;
-                                longPressTimer = setTimeout(function() {
-                                    makeEditableTitleCase(element, record.rowIndex, colName, value);
-                                    longPressTimer = null;
-                                }, 1000);
-                            });
-                            
-                            cell.addEventListener('touchend', function() {
-                                if (longPressTimer) {
-                                    clearTimeout(longPressTimer);
-                                    longPressTimer = null;
-                                }
-                            });
-                            
-                            // Drag events
-                            cell.addEventListener('dragstart', (e) => handleDragStart(e, cell, record.rowIndex, colName, value));
-                            cell.addEventListener('dragend', (e) => handleDragEnd(e, cell));
-                            cell.addEventListener('dragover', handleDragOver);
-                            cell.addEventListener('dragenter', (e) => handleDragEnter(e, cell));
-                            cell.addEventListener('dragleave', (e) => handleDragLeave(e, cell));
-                            cell.addEventListener('drop', (e) => handleDrop(e, cell, record.rowIndex, colName));
-                            
-                        } else if (colName === 'Company' || colName === 'Bank' || colName === 'Scheme') {
-                            // Click to copy for Company, long press to edit (uppercase), drag to move
-                            cell.textContent = value;
-                            cell.classList.add('editable-cell', 'draggable');
-                            if (colName === 'Company') {
-                                cell.classList.add('copyable');
-                            }
-                            cell.draggable = true;
-                            
-                            // Click to copy for Company only
-                            if (colName === 'Company') {
-                                cell.addEventListener('click', function(e) {
-                                    if (!longPressTimer) {
-                                        copyToClipboard(this.textContent, this);
+                                    if (colName === 'Name') {
+                                        makeEditableTitleCase(element, record.rowIndex, colName, value);
+                                    } else if (colName === 'Company' || colName === 'Scheme' || colName === 'Bank') {
+                                        makeEditableUppercase(element, record.rowIndex, colName, value);
+                                    } else if (colName === 'Salary') {
+                                        makeEditable(element, record.rowIndex, colName, value);
                                     }
-                                });
-                            }
-                            
-                            // Long press to edit
-                            cell.addEventListener('mousedown', function(e) {
-                                const element = this;
-                                longPressTimer = setTimeout(function() {
-                                    makeEditableUppercase(element, record.rowIndex, colName, value);
                                     longPressTimer = null;
-                                }, 1000);
+                                    canDrag = false;
+                                }, 2000);
                             });
                             
                             cell.addEventListener('mouseup', function() {
+                                if (copyDragTimer) {
+                                    clearTimeout(copyDragTimer);
+                                    copyDragTimer = null;
+                                }
                                 if (longPressTimer) {
                                     clearTimeout(longPressTimer);
                                     longPressTimer = null;
                                 }
+                                canDrag = false;
+                                this.style.cursor = 'pointer';
                             });
                             
                             cell.addEventListener('mouseleave', function() {
+                                if (copyDragTimer) {
+                                    clearTimeout(copyDragTimer);
+                                    copyDragTimer = null;
+                                }
                                 if (longPressTimer) {
                                     clearTimeout(longPressTimer);
                                     longPressTimer = null;
                                 }
+                                canDrag = false;
+                                this.style.cursor = 'pointer';
                             });
                             
                             // Touch events
                             cell.addEventListener('touchstart', function(e) {
                                 const element = this;
+                                
+                                // Timer for editing after 2 seconds
                                 longPressTimer = setTimeout(function() {
-                                    makeEditableUppercase(element, record.rowIndex, colName, value);
+                                    if (colName === 'Name') {
+                                        makeEditableTitleCase(element, record.rowIndex, colName, value);
+                                    } else if (colName === 'Company' || colName === 'Scheme' || colName === 'Bank') {
+                                        makeEditableUppercase(element, record.rowIndex, colName, value);
+                                    } else if (colName === 'Salary') {
+                                        makeEditable(element, record.rowIndex, colName, value);
+                                    }
                                     longPressTimer = null;
-                                }, 1000);
+                                }, 2000);
                             });
                             
                             cell.addEventListener('touchend', function() {
                                 if (longPressTimer) {
                                     clearTimeout(longPressTimer);
                                     longPressTimer = null;
+                                } else {
+                                    // If no long press, copy to clipboard
+                                    copyToClipboard(this.textContent, this);
                                 }
                             });
                             
-                            // Drag events
-                            cell.addEventListener('dragstart', (e) => handleDragStart(e, cell, record.rowIndex, colName, value));
-                            cell.addEventListener('dragend', (e) => handleDragEnd(e, cell));
-                            cell.addEventListener('dragover', handleDragOver);
-                            cell.addEventListener('dragenter', (e) => handleDragEnter(e, cell));
-                            cell.addEventListener('dragleave', (e) => handleDragLeave(e, cell));
-                            cell.addEventListener('drop', (e) => handleDrop(e, cell, record.rowIndex, colName));
-                            
-                        } else if (colName === 'Salary') {
-                            // Long press to edit, drag to move
-                            cell.textContent = value;
-                            cell.classList.add('editable-cell', 'draggable');
-                            cell.draggable = true;
-                            
-                            // Long press to edit
-                            cell.addEventListener('mousedown', function(e) {
-                                const element = this;
-                                longPressTimer = setTimeout(function() {
-                                    makeEditable(element, record.rowIndex, colName, value);
-                                    longPressTimer = null;
-                                }, 1000);
-                            });
-                            
-                            cell.addEventListener('mouseup', function() {
-                                if (longPressTimer) {
-                                    clearTimeout(longPressTimer);
-                                    longPressTimer = null;
+                            // Modified drag events to respect the timer
+                            cell.addEventListener('dragstart', function(e) {
+                                if (canDrag) {
+                                    handleDragStart(e, cell, record.rowIndex, colName, value);
+                                } else {
+                                    e.preventDefault();
                                 }
                             });
                             
-                            cell.addEventListener('mouseleave', function() {
-                                if (longPressTimer) {
-                                    clearTimeout(longPressTimer);
-                                    longPressTimer = null;
-                                }
-                            });
-                            
-                            // Touch events
-                            cell.addEventListener('touchstart', function(e) {
-                                const element = this;
-                                longPressTimer = setTimeout(function() {
-                                    makeEditable(element, record.rowIndex, colName, value);
-                                    longPressTimer = null;
-                                }, 1000);
-                            });
-                            
-                            cell.addEventListener('touchend', function() {
-                                if (longPressTimer) {
-                                    clearTimeout(longPressTimer);
-                                    longPressTimer = null;
-                                }
-                            });
-                            
-                            // Drag events
-                            cell.addEventListener('dragstart', (e) => handleDragStart(e, cell, record.rowIndex, colName, value));
                             cell.addEventListener('dragend', (e) => handleDragEnd(e, cell));
                             cell.addEventListener('dragover', handleDragOver);
                             cell.addEventListener('dragenter', (e) => handleDragEnter(e, cell));
@@ -2073,7 +2784,14 @@
 
             // Clear filter inputs
             function clearFilters() {
-                document.getElementById('resultFilter').value = "";
+                // Reset multi-select filter
+                selectedResultFilters.clear();
+                document.getElementById('all-results').checked = true;
+                document.querySelectorAll('#resultFilterOptions input[type="checkbox"]').forEach(cb => {
+                    if (cb.id !== 'all-results') cb.checked = false;
+                });
+                updateMultiSelectDisplay();
+                
                 document.getElementById('mobileFilter').value = "";
                 document.getElementById('nameFilter').value = "";
                 document.getElementById('companyFilter').value = "";
@@ -2149,36 +2867,37 @@
                 }
             }
 
-            // Update cell value in Google Sheet
-            async function updateCell(rowIndex, columnName, newValue, oldValue) {
-                showLoadingIndicator();
-                hideError();
+            // Update cell value - now adds to pending changes instead of immediate update
+            function updateCell(rowIndex, columnName, newValue, oldValue) {
+                // Add to pending changes instead of immediate update
+                addPendingChange(rowIndex, columnName, newValue, oldValue);
+                
+                // Store undo information
+                lastUndoAction = {
+                    action: 'update',
+                    rowIndex: rowIndex,
+                    columnName: columnName,
+                    oldValue: oldValue,
+                    newValue: newValue
+                };
+                
+                showSuccessIndicator('Change queued for next refresh');
+            }
+
+            // Immediate update function (used for processing pending changes)
+            async function updateCellImmediate(rowIndex, columnName, newValue, oldValue) {
                 try {
                     const response = await fetch(`${WEB_APP_URL}?action=updateCallingCell&row=${rowIndex}&column=${columnName}&value=${encodeURIComponent(newValue)}`);
                     const result = await response.json();
 
-                    if (result.success) {
-                        showSuccessIndicator('Cell updated successfully!');
-                        // Store undo information
-                        lastUndoAction = {
-                            action: 'update',
-                            rowIndex: rowIndex,
-                            columnName: columnName,
-                            oldValue: oldValue,
-                            newValue: newValue
-                        };
-                        showUndoNotification();
-                    } else {
-                        showError(result.error || 'Failed to update cell.');
-                        // Revert the UI change if update failed
-                        revertCellUpdate(rowIndex, columnName, oldValue);
+                    if (!result.success) {
+                        throw new Error(result.error || 'Failed to update cell');
                     }
+                    
+                    return result;
                 } catch (error) {
                     console.error('Error updating cell:', error);
-                    showError('Network error during cell update. Check console for details.');
-                    revertCellUpdate(rowIndex, columnName, oldValue);
-                } finally {
-                    hideLoadingIndicator();
+                    throw error;
                 }
             }
 
@@ -2432,6 +3151,11 @@
                     hideConfirmDialog();
                 }
                 // Note: Add New Modal doesn't close on outside click as requested
+            });
+
+            // Cleanup on page unload
+            window.addEventListener('beforeunload', function() {
+                stopAutoRefresh();
             });
         });
     </script>
