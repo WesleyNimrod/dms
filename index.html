@@ -1007,6 +1007,7 @@
                                             <select class="card-bank-select border rounded-lg p-3 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 25%;">
                                                 <option value="">Select bank</option>
                                                 <option value="ADCB">ADCB</option>
+                                                <option value="X-Sell">X-Sell</option>
                                                 <option value="ENBD">ENBD</option>
                                                 <option value="EIB">EIB</option>
                                                 <option value="FAB">FAB</option>
@@ -2544,6 +2545,7 @@
                         <select class="loan-bank border rounded-lg p-3 text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600" style="width: 25%;">
                             <option value="">Select bank</option>
                             <option value="ADCB">ADCB</option>
+                            <option value="X-Sell">X-Sell</option>
                             <option value="ENBD">ENBD</option>
                             <option value="EIB">EIB</option>
                             <option value="FAB">FAB</option>
@@ -4272,7 +4274,13 @@
                 message += `Max Loan Eligibity: AED ${formatNumber(maxLoanEligibility.toFixed(2))}\n`;
                 message += `Grace Period: ${gracePeriodDays}\n`;
                 message += `Total Payment: AED ${formatNumber(totalPayment.toFixed(2))}\n`;
-                message += `Processing Fees(+VAT): AED ${formatNumber(processingFees.toFixed(2))}\n`;
+                // Show processing fees with discount information
+                const discountPercent = parseInt(processingFeesDiscountSelect.value) || 0;
+                if (discountPercent > 0) {
+                    message += `Processing Fees(+VAT) Discount (${discountPercent}%): AED ${formatNumber(processingFees.toFixed(2))}\n`;
+                } else {
+                    message += `Processing Fees(+VAT): AED ${formatNumber(processingFees.toFixed(2))}\n`;
+                }
                 message += `Insurance Fees: AED 0\n`;
                 
                 if (closureFee > 0) {
@@ -4341,7 +4349,15 @@
                     const outstanding = entry.querySelector('.credit-card-outstanding').value;
                     const settleAmount = entry.querySelector('.credit-card-settle-amount').value;
                     
-                    if (bank !== 'ADCB') {
+                    // Check for X-Sell selection
+                    if (bank === 'X-Sell') {
+                        const limitValue = newLimit || creditLimit;
+                        if (limitValue) {
+                            autoSpecialNote += `• ADCB credit card will be issued with the limit of AED ${formatNumber(parseFloat(limitValue).toFixed(2))}\n`;
+                        }
+                    }
+                    
+                    if (bank !== 'ADCB' && bank !== 'X-Sell') {
                         if (settledCards.has(index)) {
                             const originalOutstanding = settledCards.get(index) || outstanding;
                             autoSpecialNote += `• ${bank} Credit Card settle amount of AED ${formatNumber(parseFloat(originalOutstanding).toFixed(2))} from loan proceeds.\n`;
