@@ -602,7 +602,7 @@
 
         .status-select {
             flex: 1;
-            min-width: 200px;
+            min-width: 160px;
         }
 
         .deduction-checkbox-container {
@@ -622,7 +622,12 @@
 
         .points-input {
             flex: 1;
-            min-width: 200px;
+            min-width: 120px;
+        }
+
+        .total-points-input {
+            flex: 1;
+            min-width: 120px;
         }
 
         .text-primary {
@@ -1388,6 +1393,18 @@
             .toggle-switch.find-mode .toggle-slider {
                 transform: translateX(86px);
             }
+
+            .points-container {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 5px;
+            }
+
+            .points-input,
+            .total-points-input {
+                min-width: 0;
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -1899,7 +1916,7 @@
                             </div>
                         </div>
                         
-                        <!-- Status with 50% Deduction checkbox -->
+                        <!-- Status with 50% and 30% Deduction checkboxes -->
                         <div class="form-row">
                             <label for="status" class="styled-label required">Status</label>
                             <div class="status-container mt-2">
@@ -1918,6 +1935,12 @@
                                     <label class="styled-checkbox-item" style="padding: 8px 12px; min-height: auto;">
                                         <input type="checkbox" id="ccDeductionOverride" name="ccDeductionOverride">
                                         <span class="checkbox-label text-sm">50%</span>
+                                    </label>
+                                </div>
+                                <div class="deduction-checkbox-container">
+                                    <label class="styled-checkbox-item" style="padding: 8px 12px; min-height: auto;">
+                                        <input type="checkbox" id="ccDeduction30Override" name="ccDeduction30Override">
+                                        <span class="checkbox-label text-sm">30%</span>
                                     </label>
                                 </div>
                             </div>
@@ -1943,11 +1966,12 @@
                             </div>
                         </div>
                         
-                        <!-- Points (System Generated) -->
+                        <!-- Points (System Generated) and Total Points -->
                         <div class="form-row">
-                            <label for="points" class="styled-label">Points (System Generated)</label>
+                            <label class="styled-label">Points (System Generated)</label>
                             <div class="points-container mt-2">
                                 <input type="text" id="points" name="points" class="points-input styled-input bg-gray-100" readonly>
+                                <input type="text" id="totalPoints" name="totalPoints" class="total-points-input styled-input bg-gray-200" readonly placeholder="Total Points">
                             </div>
                         </div>
                     </div>
@@ -2737,11 +2761,10 @@
         const ccProducts = [
             'touchpoints gold visa', 'touchpoints titanium mc', 'essiential cashback mc', 'talabat mc',
             'lulu titanium mc', 'lulu platinum mc', 'touchpoints platinum mc', '365 cashback visa',
-            'shukran platinum visa', 'etihad guest platinum visa', 'etihad guest signature visa',
-            'etihad guest infinite visa', 'touchpoints infinite visa', 'traveller mc world elite',
+            'shukran platinum visa', 'touchpoints infinite visa', 'traveller mc world elite',
             'betaqti mc world elite', 'emirati islamic infinite visa'
         ];
-        const plProducts = ['pl asp-a&b', 'pl asp-c&below', 'pl prv-a&b', 'pl prv-c&below', 'top up'];
+        const plProducts = ['pl asp a,b,c', 'pl prv-a,b,c', 'pl asp-d&below', 'pl prv-d&below', 'top up'];
         const btcclProducts = ['bt/ccl'];
         const otherProducts = ['other'];
         
@@ -2880,6 +2903,7 @@
                 updateProductOptions();
             }
             updateActivationVisibility();
+            updateTotalPoints();
         });
 
         // Enhanced 2nd ACC handling
@@ -2894,6 +2918,7 @@
 
         document.getElementById('productSTL').addEventListener('change', function() {
             calculateTotalPoints();
+            updateTotalPoints();
         });
 
         document.getElementById('productPL').addEventListener('change', function() {
@@ -2910,6 +2935,7 @@
             if (appInitialized) {
                 updateProductOptions();
             }
+            updateTotalPoints();
         });
 
         document.getElementById('productCC').addEventListener('change', function() {
@@ -2924,6 +2950,7 @@
                 updateProductOptions();
             }
             updateActivationVisibility();
+            updateTotalPoints();
         });
 
         document.getElementById('product2ndCC').addEventListener('change', function() {
@@ -2931,10 +2958,12 @@
                 updateProductOptions();
             }
             updateActivationVisibility();
+            updateTotalPoints();
         });
 
         document.getElementById('productBTCCL').addEventListener('change', function() {
             calculateTotalPoints();
+            updateTotalPoints();
         });
 
         document.getElementById('productOther').addEventListener('change', function() {
@@ -2948,10 +2977,12 @@
                 otherPointsInput.value = '';
             }
             calculateTotalPoints();
+            updateTotalPoints();
         });
 
         document.getElementById('otherPoints').addEventListener('input', function() {
             calculateTotalPoints();
+            updateTotalPoints();
         });
 
         document.querySelectorAll('input[name="proposition"]').forEach(radio => {
@@ -3169,11 +3200,13 @@
     const otherBankingInput = document.getElementById('otherBanking');
     const adcbOverrideCheckbox = document.getElementById('adcbOverride');
     const ccDeductionOverrideCheckbox = document.getElementById('ccDeductionOverride');
+    const ccDeduction30OverrideCheckbox = document.getElementById('ccDeduction30Override');
     const companyNameInput = document.getElementById('companyName');
     const statusSelect = document.getElementById('status');
     const otherStatusSection = document.getElementById('otherStatusSection');
     const otherStatusInput = document.getElementById('otherStatus');
     const pointsInput = document.getElementById('points');
+    const totalPointsInput = document.getElementById('totalPoints');
     const productACC = document.getElementById('productACC');
     const product2ndACC = document.getElementById('product2ndACC');
     const productSTL = document.getElementById('productSTL');
@@ -3212,6 +3245,7 @@
         document.getElementById('deleteBtn').classList.add('hidden');
 
         pointsInput.value = '';
+        totalPointsInput.value = '';
         
         productSTL.disabled = true;
         product2ndACC.disabled = true;
@@ -3233,6 +3267,7 @@
         
         adcbOverrideCheckbox.checked = false;
         ccDeductionOverrideCheckbox.checked = false;
+        ccDeduction30OverrideCheckbox.checked = false;
         
         // Reset date to current date
         const today = new Date().toISOString().split('T')[0];
@@ -3250,14 +3285,22 @@
             otherBankingSection.classList.add('hidden');
         }
         calculateTotalPoints();
+        updateTotalPoints();
     });
 
     adcbOverrideCheckbox.addEventListener('change', function() {
         calculateTotalPoints();
+        updateTotalPoints();
     });
 
     ccDeductionOverrideCheckbox.addEventListener('change', function() {
         calculateTotalPoints();
+        updateTotalPoints();
+    });
+
+    ccDeduction30OverrideCheckbox.addEventListener('change', function() {
+        calculateTotalPoints();
+        updateTotalPoints();
     });
 
     statusSelect.addEventListener('change', function() {
@@ -3272,6 +3315,7 @@
         } else {
             calculateTotalPoints();
         }
+        updateTotalPoints();
     });
 
     // Initialize product options when proposition or products change
@@ -3316,6 +3360,7 @@
                 const newAccSelect = accDiv.querySelector('select');
                 newAccSelect.addEventListener('change', function() {
                     calculateTotalPoints();
+                    updateTotalPoints();
                 });
                 
                 if (currentSelections.ACC && newAccSelect.querySelector(`option[value="${currentSelections.ACC}"]`)) {
@@ -3333,6 +3378,7 @@
                     const newAcc2Select = acc2Div.querySelector('select');
                     newAcc2Select.addEventListener('change', function() {
                         calculateTotalPoints();
+                        updateTotalPoints();
                     });
                     
                     setTimeout(() => {
@@ -3355,6 +3401,7 @@
                 newCcSelect.addEventListener('change', function() {
                     updateSelectedCCOptions();
                     calculateTotalPoints();
+                    updateTotalPoints();
                 });
                 
                 if (currentSelections.CC && newCcSelect.querySelector(`option[value="${currentSelections.CC}"]`)) {
@@ -3372,6 +3419,7 @@
                     newCc2Select.addEventListener('change', function() {
                         updateSelectedCCOptions();
                         calculateTotalPoints();
+                        updateTotalPoints();
                     });
                     
                     if (currentSelections.CCOption2 && newCc2Select.querySelector(`option[value="${currentSelections.CCOption2}"]`)) {
@@ -3388,13 +3436,19 @@
                 productOptionsContainer.appendChild(plDiv);
                 
                 const newPlSelect = plDiv.querySelector('select');
-                newPlSelect.addEventListener('change', calculateTotalPoints);
+                newPlSelect.addEventListener('change', function() {
+                    calculateTotalPoints();
+                    updateTotalPoints();
+                });
                 
                 if (currentSelections.PL && newPlSelect.querySelector(`option[value="${currentSelections.PL}"]`)) {
                     newPlSelect.value = currentSelections.PL;
                 }
                 
-                loanAmountInput.addEventListener('input', calculateTotalPoints);
+                loanAmountInput.addEventListener('input', function() {
+                    calculateTotalPoints();
+                    updateTotalPoints();
+                });
             }
         }
         
@@ -3403,6 +3457,7 @@
         }, 100);
         
         calculateTotalPoints();
+        updateTotalPoints();
     }
 
     function updateSelectedCCOptions() {
@@ -3472,6 +3527,7 @@
                 if (accSelect) {
                     accSelect.addEventListener('change', function() {
                         calculateTotalPoints();
+                        updateTotalPoints();
                     });
                     
                     // Set value from saved data
@@ -3494,6 +3550,7 @@
                         if (acc2Select) {
                             acc2Select.addEventListener('change', function() {
                                 calculateTotalPoints();
+                                updateTotalPoints();
                             });
                             
                             setTimeout(() => {
@@ -3518,6 +3575,7 @@
                     ccSelect.addEventListener('change', function() {
                         updateSelectedCCOptions();
                         calculateTotalPoints();
+                        updateTotalPoints();
                     });
                     
                     setTimeout(() => {
@@ -3538,6 +3596,7 @@
                         cc2Select.addEventListener('change', function() {
                             updateSelectedCCOptions();
                             calculateTotalPoints();
+                            updateTotalPoints();
                         });
                         
                         setTimeout(() => {
@@ -3557,14 +3616,20 @@
                 
                 const plSelect = document.getElementById('PLSelect');
                 if (plSelect) {
-                    plSelect.addEventListener('change', calculateTotalPoints);
+                    plSelect.addEventListener('change', function() {
+                        calculateTotalPoints();
+                        updateTotalPoints();
+                    });
                     
                     setTimeout(() => {
                         setPlDropdownFromString(plSelect, editingProductString);
                     }, 10);
                 }
                 
-                loanAmountInput.addEventListener('input', calculateTotalPoints);
+                loanAmountInput.addEventListener('input', function() {
+                    calculateTotalPoints();
+                    updateTotalPoints();
+                });
             }
         }
         
@@ -3572,6 +3637,7 @@
         setTimeout(() => {
             updateSelectedCCOptions();
             calculateTotalPoints();
+            updateTotalPoints();
         }, 300);
     }
     
@@ -3632,7 +3698,6 @@
             p.includes('Cashback') ||
             p.includes('Talabat') ||
             p.includes('Lulu') ||
-            p.includes('Etihad') ||
             p.includes('Shukran') ||
             p.includes('All ') ||
             p.includes('Traveller') ||
@@ -3656,7 +3721,6 @@
                     (targetText.includes('cashback') && optionText.includes('cashback')) ||
                     (targetText.includes('talabat') && optionText.includes('talabat')) ||
                     (targetText.includes('lulu') && optionText.includes('lulu')) ||
-                    (targetText.includes('etihad') && optionText.includes('etihad')) ||
                     (targetText.includes('shukran') && optionText.includes('shukran')) ||
                     (targetText.includes('traveller') && optionText.includes('traveller')) ||
                     (targetText.includes('betaqti') && optionText.includes('betaqti')) ||
@@ -3685,14 +3749,14 @@
         
         console.log('Setting PL dropdown from:', productString);
         
-        if (productString.includes('PL Asp-A&B')) {
-            selectOptionByValue(plSelect, 'PLAspAB');
-        } else if (productString.includes('PL Prv-A&B')) {
-            selectOptionByValue(plSelect, 'PLPrvAB');
-        } else if (productString.includes('PL Asp-C&Below')) {
-            selectOptionByValue(plSelect, 'PLAspCBelow');
-        } else if (productString.includes('PL Prv-C&Below')) {
-            selectOptionByValue(plSelect, 'PLPrvCBelow');
+        if (productString.includes('PL Asp A,B,C')) {
+            selectOptionByValue(plSelect, 'PLAspABC');
+        } else if (productString.includes('PL Prv-A,B,C')) {
+            selectOptionByValue(plSelect, 'PLPrvABC');
+        } else if (productString.includes('PL Asp-D&Below')) {
+            selectOptionByValue(plSelect, 'PLAspDBelow');
+        } else if (productString.includes('PL Prv-D&Below')) {
+            selectOptionByValue(plSelect, 'PLPrvDBelow');
         } else if (productString.includes('TOP UP')) {
             selectOptionByValue(plSelect, 'TOPUP');
         }
@@ -3781,7 +3845,7 @@
         return options;
     }
 
-    // Get CC options based on proposition with updated points and removed options
+    // Get CC options based on proposition with updated points and removed options (Fix 2)
     function getCCOptions(proposition) {
         if (proposition === "Conventional") {
             return [
@@ -3794,9 +3858,6 @@
                 { value: "TouchpointsPlatinumMC", text: "Touchpoints Platinum MC", points: 400, paid: true },
                 { value: "365CashbackVisa", text: "365 Cashback Visa", points: 500, paid: true },
                 { value: "ShukranPlatinumVisa", text: "Shukran Platinum Visa", points: 300, paid: true },
-                { value: "EtihadGuestPlatinumVisa", text: "Etihad Guest Platinum Visa", points: 500, paid: true },
-                { value: "EtihadGuestSignatureVisa", text: "Etihad Guest Signature Visa", points: 500, paid: true },
-                { value: "EtihadGuestInfiniteVisa", text: "Etihad Guest Infinite Visa", points: 750, paid: true },
                 { value: "TouchpointsInfiniteVisa", text: "Touchpoints Infinite Visa", points: 800, paid: true },
                 { value: "TravellerMCWorldElite", text: "Traveller MC World Elite", points: 800, paid: true },
                 { value: "BetaqtiMCWorldElite", text: "Betaqti MC World Elite", points: 1000, paid: true }
@@ -3808,10 +3869,7 @@
                 { value: "TouchpointsPlatinumVisa", text: "Touchpoints Platinum Visa", points: 500, paid: true },
                 { value: "365CashbackVisa", text: "365 Cashback Visa", points: 500, paid: true },
                 { value: "ShukranPlatinumVisa", text: "Shukran Platinum Visa", points: 300, paid: true },
-                { value: "EtihadGuestPlatinumVisa", text: "Etihad Guest Platinum Visa", points: 500, paid: true },
-                { value: "EtihadGuestSignatureVisa", text: "Etihad Guest Signature Visa", points: 500, paid: true },
                 { value: "TouchpointsInfiniteVisa", text: "Touchpoints Infinite Visa", points: 800, paid: true },
-                { value: "EtihadGuestInfiniteVisa", text: "Etihad Guest Infinite Visa", points: 750, paid: true },
                 { value: "EmiratiIslamicInfiniteVisa", text: "Emirati Islamic Infinite Visa", points: 750, paid: true }
             ];
         } else if (proposition === "Both") {
@@ -3831,18 +3889,18 @@
         return [];
     }
 
-    // Updated PL options with new names and TOP UP option
+    // Updated PL options with new names (Fix 1)
     function getPLOptions(proposition) {
         return [
-            { value: "PLAspAB", text: "PL Asp-A&B", points: "0.50%" },
-            { value: "PLPrvAB", text: "PL Prv-A&B", points: "0.50%" },
-            { value: "PLAspCBelow", text: "PL Asp-C&Below", points: "0.25%" },
-            { value: "PLPrvCBelow", text: "PL Prv-C&Below", points: "0.25%" },
+            { value: "PLAspABC", text: "PL Asp A,B,C", points: "0.50%" },
+            { value: "PLPrvABC", text: "PL Prv-A,B,C", points: "0.50%" },
+            { value: "PLAspDBelow", text: "PL Asp-D&Below", points: "0.25%" },
+            { value: "PLPrvDBelow", text: "PL Prv-D&Below", points: "0.25%" },
             { value: "TOPUP", text: "TOP UP", points: "0%" }
         ];
     }
 
-    // Updated calculate total points function to handle 50% deduction override
+    // Updated calculate total points function to handle 50% and 30% deduction override (Fix 3)
     function calculateTotalPoints() {
         if (statusSelect.value === 'Rejected') {
             pointsInput.value = '0';
@@ -3879,16 +3937,20 @@
                     let ccPoints = parseInt(selectedOption.dataset.points) || 0;
                     
                     if (!productACC.checked) {
-                        // If 50% deduction is checked, ignore ADCB override and apply 50%
+                        // Check for 50% or 30% deduction overrides
                         if (ccDeductionOverrideCheckbox.checked) {
                             ccPoints = Math.round(ccPoints * 0.5);
+                        } else if (ccDeduction30OverrideCheckbox.checked) {
+                            ccPoints = Math.round(ccPoints * 0.7);
                         } else if (!adcbOverrideCheckbox.checked && bankingSelect.value !== 'ADCB') {
                             ccPoints = Math.round(ccPoints * 0.7);
                         }
                     } else {
-                        // Apply 50% deduction even when ACC is checked if override is selected
+                        // Apply deduction even when ACC is checked if override is selected
                         if (ccDeductionOverrideCheckbox.checked) {
                             ccPoints = Math.round(ccPoints * 0.5);
+                        } else if (ccDeduction30OverrideCheckbox.checked) {
+                            ccPoints = Math.round(ccPoints * 0.7);
                         }
                     }
                     
@@ -3969,16 +4031,20 @@
                 let ccPoints = parseInt(selectedOption.dataset.points) || 0;
                 
                 if (!productACC.checked) {
-                    // If 50% deduction is checked, ignore ADCB override and apply 50%
+                    // Check for 50% or 30% deduction overrides
                     if (ccDeductionOverrideCheckbox.checked) {
                         ccPoints = Math.round(ccPoints * 0.5);
+                    } else if (ccDeduction30OverrideCheckbox.checked) {
+                        ccPoints = Math.round(ccPoints * 0.7);
                     } else if (!adcbOverrideCheckbox.checked && bankingSelect.value !== 'ADCB') {
                         ccPoints = Math.round(ccPoints * 0.7);
                     }
                 } else {
-                    // Apply 50% deduction even when ACC is checked if override is selected
+                    // Apply deduction even when ACC is checked if override is selected
                     if (ccDeductionOverrideCheckbox.checked) {
                         ccPoints = Math.round(ccPoints * 0.5);
+                    } else if (ccDeduction30OverrideCheckbox.checked) {
+                        ccPoints = Math.round(ccPoints * 0.7);
                     }
                 }
                 
@@ -4024,6 +4090,103 @@
         }
         
         pointsInput.value = totalPoints.toFixed(2);
+    }
+
+    // Fix 4: Update total points calculation for illustration purpose
+    function updateTotalPoints() {
+        if (statusSelect.value === 'Rejected') {
+            totalPointsInput.value = '0';
+            return;
+        }
+        
+        let totalPoints = 0;
+        
+        // Calculate ACC points including STL
+        if (productACC.checked) {
+            const accSelect = document.getElementById('ACCSelect');
+            if (accSelect && accSelect.value) {
+                const selectedOption = accSelect.options[accSelect.selectedIndex];
+                const accPoints = parseInt(selectedOption.dataset.points) || 0;
+                totalPoints += accPoints;
+            }
+        }
+        
+        if (product2ndACC.checked) {
+            const acc2Select = document.getElementById('ACC2Select');
+            if (acc2Select && acc2Select.value) {
+                const selectedOption = acc2Select.options[acc2Select.selectedIndex];
+                const acc2Points = parseInt(selectedOption.dataset.points) || 0;
+                totalPoints += acc2Points;
+            }
+        }
+        
+        // Calculate CC points
+        if (productCC.checked) {
+            const ccSelect = document.getElementById('CCSelect');
+            if (ccSelect && ccSelect.value) {
+                const selectedOption = ccSelect.options[ccSelect.selectedIndex];
+                let ccPoints = parseInt(selectedOption.dataset.points) || 0;
+                
+                if (!productACC.checked) {
+                    // Check for 50% or 30% deduction overrides
+                    if (ccDeductionOverrideCheckbox.checked) {
+                        ccPoints = Math.round(ccPoints * 0.5);
+                    } else if (ccDeduction30OverrideCheckbox.checked) {
+                        ccPoints = Math.round(ccPoints * 0.7);
+                    } else if (!adcbOverrideCheckbox.checked && bankingSelect.value !== 'ADCB') {
+                        ccPoints = Math.round(ccPoints * 0.7);
+                    }
+                } else {
+                    // Apply deduction even when ACC is checked if override is selected
+                    if (ccDeductionOverrideCheckbox.checked) {
+                        ccPoints = Math.round(ccPoints * 0.5);
+                    } else if (ccDeduction30OverrideCheckbox.checked) {
+                        ccPoints = Math.round(ccPoints * 0.7);
+                    }
+                }
+                
+                totalPoints += ccPoints;
+                
+                if (product2ndCC.checked) {
+                    const cc2Select = document.getElementById('CCSelect2');
+                    if (cc2Select && cc2Select.value) {
+                        const selectedOption2 = cc2Select.options[cc2Select.selectedIndex];
+                        const isPaid = selectedOption2.dataset.paid === "true";
+                        
+                        totalPoints += isPaid ? 250 : 80;
+                    }
+                }
+            }
+        }
+        
+        if (productBTCCL.checked) {
+            totalPoints += 100;
+        }
+        
+        if (productOther.checked) {
+            const otherPointsValue = parseFloat(otherPointsInput.value) || 0;
+            totalPoints += otherPointsValue;
+        }
+        
+        if (productPL.checked) {
+            const plSelect = document.getElementById('PLSelect');
+            const loanAmount = parseFloat(loanAmountInput.value) || 0;
+            
+            if (plSelect && plSelect.value && loanAmount > 0) {
+                const selectedOption = plSelect.options[plSelect.selectedIndex];
+                const pointsPercentage = selectedOption.dataset.points;
+                
+                if (pointsPercentage === "0%" || plSelect.value === "TOPUP") {
+                    totalPoints += 0;
+                } else if (pointsPercentage === "0.50%") {
+                    totalPoints += loanAmount * 0.005;
+                } else if (pointsPercentage === "0.25%") {
+                    totalPoints += loanAmount * 0.0025;
+                }
+            }
+        }
+        
+        totalPointsInput.value = totalPoints.toFixed(2);
     }
 
     // ==========================================
@@ -4174,18 +4337,17 @@
                 pendingPoints += points;
             }
             
-            // Check if record has Personal Loan or Credit Card products
-            const hasPL = productString.includes('PL Asp-A&B') || 
-                         productString.includes('PL Asp-C&Below') || 
-                         productString.includes('PL Prv-A&B') || 
-                         productString.includes('PL Prv-C&Below') || 
+            // Check if record has Personal Loan or Credit Card products (updated with Fix 1 product names)
+            const hasPL = productString.includes('PL Asp A,B,C') || 
+                         productString.includes('PL Asp-D&Below') || 
+                         productString.includes('PL Prv-A,B,C') || 
+                         productString.includes('PL Prv-D&Below') || 
                          productString.includes('TOP UP');
             
             const hasCC = productString.includes('Touchpoints') ||
                          productString.includes('Cashback') ||
                          productString.includes('Talabat') ||
                          productString.includes('Lulu') ||
-                         productString.includes('Etihad') ||
                          productString.includes('Shukran') ||
                          productString.includes('All ') ||
                          productString.includes('Traveller') ||
@@ -4456,15 +4618,15 @@
         });
     }
     
-    // Enhanced product grouping for export
+    // Enhanced product grouping for export (updated with Fix 1 product names)
     function categorizeProductType(productString) {
         if (!productString) return "Unknown";
         
-        // Check for updated PL products first
-        if (productString.includes("PL Asp-A&B") || 
-            productString.includes("PL Asp-C&Below") ||
-            productString.includes("PL Prv-A&B") ||
-            productString.includes("PL Prv-C&Below") ||
+        // Check for updated PL products first (Fix 1)
+        if (productString.includes("PL Asp A,B,C") || 
+            productString.includes("PL Asp-D&Below") ||
+            productString.includes("PL Prv-A,B,C") ||
+            productString.includes("PL Prv-D&Below") ||
             productString.includes("TOP UP") ||
             productString.includes("PL")) {
             return "PL";
@@ -4927,10 +5089,10 @@
         
         if (product === 'PL') {
             return products.some(p => 
-                p.includes('PL Asp-A&B') || 
-                p.includes('PL Asp-C&Below') || 
-                p.includes('PL Prv-A&B') || 
-                p.includes('PL Prv-C&Below') || 
+                p.includes('PL Asp A,B,C') || 
+                p.includes('PL Asp-D&Below') || 
+                p.includes('PL Prv-A,B,C') || 
+                p.includes('PL Prv-D&Below') || 
                 p.includes('TOP UP') ||
                 p === 'PL'
             );
@@ -5037,7 +5199,6 @@
                            productStringContains(productString, 'Cashback') ||
                            productStringContains(productString, 'Talabat') ||
                            productStringContains(productString, 'Lulu') ||
-                           productStringContains(productString, 'Etihad') ||
                            productStringContains(productString, 'Shukran') ||
                            productStringContains(productString, 'All ') ||
                            productStringContains(productString, 'Traveller') ||
@@ -5056,10 +5217,11 @@
         
         productBTCCL.checked = productStringContains(productString, 'BT/CCL');
         
-        productPL.checked = productStringContains(productString, 'PL Asp-A&B') ||
-                           productStringContains(productString, 'PL Asp-C&Below') ||
-                           productStringContains(productString, 'PL Prv-A&B') ||
-                           productStringContains(productString, 'PL Prv-C&Below') ||
+        // Updated product matching for Fix 1
+        productPL.checked = productStringContains(productString, 'PL Asp A,B,C') ||
+                           productStringContains(productString, 'PL Asp-D&Below') ||
+                           productStringContains(productString, 'PL Prv-A,B,C') ||
+                           productStringContains(productString, 'PL Prv-D&Below') ||
                            productStringContains(productString, 'TOP UP') ||
                            productStringContains(productString, 'PL');
                            
@@ -5115,6 +5277,7 @@
         
         adcbOverrideCheckbox.checked = data.adcbOverride === 'true' || data.adcbOverride === true;
         ccDeductionOverrideCheckbox.checked = data.ccDeductionOverride === 'true' || data.ccDeductionOverride === true;
+        ccDeduction30OverrideCheckbox.checked = data.ccDeduction30Override === 'true' || data.ccDeduction30Override === true;
         
         if (data.Status) {
             if (['Draft', 'Under Review', 'Completed', 'ACC Completed, Under Review', 'HR CPV', 'Compliance', 'Rejected'].includes(data.Status)) {
@@ -5127,6 +5290,7 @@
         }
         
         pointsInput.value = data.Points || '';
+        totalPointsInput.value = data.Points || '';
         
         // Update activation visibility
         updateActivationVisibility();
@@ -5140,6 +5304,7 @@
                 
                 if (statusSelect.value === 'Rejected') {
                     pointsInput.value = '0';
+                    totalPointsInput.value = '0';
                 }
             } else {
                 console.log('App not initialized yet, will retry...');
@@ -5148,12 +5313,14 @@
                         initializeProductOptions();
                         if (statusSelect.value === 'Rejected') {
                             pointsInput.value = '0';
+                            totalPointsInput.value = '0';
                         }
                     } else {
                         setTimeout(() => {
                             initializeProductOptions();
                             if (statusSelect.value === 'Rejected') {
                                 pointsInput.value = '0';
+                                totalPointsInput.value = '0';
                             }
                         }, 1500);
                     }
@@ -5286,6 +5453,7 @@
         
         formData.append('adcbOverride', adcbOverrideCheckbox.checked);
         formData.append('ccDeductionOverride', ccDeductionOverrideCheckbox.checked);
+        formData.append('ccDeduction30Override', ccDeduction30OverrideCheckbox.checked);
         formData.append('companyName', companyNameInput.value);
         
         const scheme = document.querySelector('input[name="scheme"]:checked').value;
@@ -5950,4 +6118,4 @@
     });
 </script>
 </body>
-</html>
+</html>	
