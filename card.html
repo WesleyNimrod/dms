@@ -3,1007 +3,659 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Balance Transfer & Credit Card Loan Calculator</title>
+    <title>Loan Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'red-theme': '#C0392B',
-                        'red-light': '#E74C3C',
-                        'cyan-theme': '#008B8B',
-                        'cyan-light': '#20B2AA',
-                    }
-                }
-            }
+        tailwind.config = { darkMode: 'class' };
+    </script>
+    <script>
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
         }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+            if (e.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
     </script>
     <style>
-        .proposition-btn {
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+        :root {
+            --primary: #b91c1c;
         }
-        
-        .proposition-btn input[type="radio"] {
-            position: absolute;
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .proposition-btn.conventional.active {
-            background: linear-gradient(135deg, #C0392B 0%, #E74C3C 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(192, 57, 43, 0.3);
-        }
-        
-        .proposition-btn.islamic.active {
-            background: linear-gradient(135deg, #008B8B 0%, #20B2AA 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(0, 139, 139, 0.3);
-        }
-        
-        .proposition-btn:not(.active) {
-            background: #f1f5f9;
-            color: #64748b;
-            border: 2px solid #e2e8f0;
-        }
-        
-        .theme-conventional {
-            --primary-color: #C0392B;
-            --primary-light: #E74C3C;
-            --primary-bg: rgba(192, 57, 43, 0.05);
-        }
-        
         .theme-islamic {
-            --primary-color: #008B8B;
-            --primary-light: #20B2AA;
-            --primary-bg: rgba(0, 139, 139, 0.05);
+            --primary: #0d7377;
         }
-        
-        .btn-theme {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
-            transition: all 0.3s ease;
+
+        /* Sticky proposition bar */
+        .sticky-bar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
         }
-        
-        .btn-theme:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        
-        .card-border {
-            border-left: 3px solid var(--primary-color);
-        }
-        
-        /* Enhanced Switch Toggle - CCL first, then BT */
-        .switch {
-            position: relative;
-            width: 160px;
-            height: 32px;
-            background: #e2e8f0;
-            border-radius: 16px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            margin: 0 auto;
-            border: 2px solid #cbd5e1;
-        }
-        
-        .switch.active {
-            background: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-        
-        .switch-slider {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 74px;
-            height: 26px;
-            background: white;
-            border-radius: 13px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 700;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-            color: var(--primary-color);
-        }
-        
-        .switch.bt .switch-slider {
-            transform: translateX(80px);
-        }
-        
-        .switch-label {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 10px;
-            font-weight: 700;
-            transition: all 0.3s ease;
-        }
-        
-        .switch-label.left {
-            left: 8px;
-            color: #64748b;
-        }
-        
-        .switch-label.right {
-            right: 8px;
-            color: #64748b;
-        }
-        
-        .switch.ccl .switch-label.left,
-        .switch.bt .switch-label.right {
-            color: white;
-        }
-        
-        /* Custom Radio Buttons for Tenure */
-        .tenure-radio {
-            appearance: none;
-            width: 0;
-            height: 0;
-            position: absolute;
-        }
-        
-        .tenure-btn {
-            padding: 6px 10px;
-            border: 2px solid #e2e8f0;
-            border-radius: 6px;
-            background: white;
-            color: #64748b;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 38px;
-            text-align: center;
-        }
-        
-        .tenure-radio:checked + .tenure-btn {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-        }
-        
-        /* Custom Slider */
-        .slider {
+
+        /* Range slider */
+        input[type="range"] {
             -webkit-appearance: none;
+            appearance: none;
             width: 100%;
             height: 6px;
             border-radius: 3px;
-            background: #e2e8f0;
+            background: #d1d5db;
             outline: none;
+            margin: 8px 0;
         }
-        
-        .slider::-webkit-slider-thumb {
+        .dark input[type="range"] {
+            background: #4b5563;
+        }
+        input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            appearance: none;
-            width: 16px;
-            height: 16px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
-            background: var(--primary-color);
+            background: var(--primary);
             cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-        
-        .slider::-moz-range-thumb {
-            width: 16px;
-            height: 16px;
+        input[type="range"]::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
-            background: var(--primary-color);
+            background: var(--primary);
             cursor: pointer;
             border: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-        
-        /* Styled Input Fields */
-        .styled-input {
-            background: linear-gradient(145deg, #ffffff, #f8fafc);
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-        
-        .styled-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
-            background: white;
-        }
-        
-        /* Editable fields */
-        .editable {
-            background: linear-gradient(145deg, #f8fafc, #ffffff);
-            border: 2px dashed #e2e8f0;
-            padding: 4px 6px;
+
+        /* Editable rate/fee fields */
+        .editable-field {
+            display: inline-block;
+            border: 1px dashed #9ca3af;
+            padding: 5px 10px;
             border-radius: 6px;
-            transition: all 0.3s ease;
-            cursor: pointer;
             font-weight: 600;
-            font-size: 12px;
+            font-size: 14px;
+            text-align: center;
+            cursor: text;
+            min-width: 64px;
+            transition: border-color 0.2s;
         }
-        
-        .editable:hover {
-            border-color: var(--primary-color);
-            background: white;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        .dark .editable-field {
+            border-color: #6b7280;
+            color: #e5e7eb;
         }
-        
-        .editable:focus {
+        .editable-field:hover {
+            border-color: var(--primary);
+        }
+        .editable-field:focus {
             outline: none;
-            border-color: var(--primary-color);
+            border-color: var(--primary);
             border-style: solid;
-            background: white;
-            box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
         }
-        
-        /* Light Summary Card Styling */
-        .summary-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border: 2px solid var(--primary-color);
-            border-radius: 12px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-        }
-        
-        .summary-item {
-            background: var(--primary-bg);
+
+        /* Product toggle */
+        .prod-toggle {
+            display: inline-flex;
+            background: #e5e7eb;
             border-radius: 8px;
-            border: 1px solid rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: 1px solid #d1d5db;
         }
-        
-        /* Print Styles */
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            
-            .printable, .printable * {
-                visibility: visible;
-            }
-            
-            .printable {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                font-size: 12px !important;
-            }
-            
-            .no-print {
-                display: none !important;
-            }
-            
-            .summary-card, .card-border {
-                break-inside: avoid;
-                page-break-inside: avoid;
-                margin-bottom: 10px !important;
-                padding: 10px !important;
-            }
-            
-            .grid {
-                display: block !important;
-            }
-            
-            .grid > div {
-                display: inline-block !important;
-                width: 48% !important;
-                margin: 1% !important;
-            }
-            
-            h1, h2, h3, h4 {
-                font-size: 14px !important;
-                margin: 5px 0 !important;
-            }
-            
-            .text-xl, .text-lg {
-                font-size: 12px !important;
-            }
-            
-            .p-6, .p-4, .p-3 {
-                padding: 5px !important;
-            }
-            
-            .mb-6, .mb-4, .mb-3, .mb-2 {
-                margin-bottom: 5px !important;
-            }
+        .dark .prod-toggle {
+            background: #374151;
+            border-color: #4b5563;
         }
-        
-        /* Button Styling */
-        .print-btn {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-            transition: all 0.3s ease;
+        .prod-toggle button {
+            padding: 6px 22px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b7280;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
         }
-        
-        .pdf-btn {
-            background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
-            transition: all 0.3s ease;
+        .dark .prod-toggle button {
+            color: #9ca3af;
         }
-        
-        .print-btn:hover, .pdf-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        .prod-toggle button.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Tenure buttons */
+        .t-btn {
+            padding: 6px 14px;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b7280;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .dark .t-btn {
+            background: #374151;
+            border-color: #4b5563;
+            color: #9ca3af;
+        }
+        .t-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Proposition tab buttons */
+        .prop-tab {
+            flex: 1;
+            padding: 10px 0;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: transparent;
+            color: #6b7280;
+            border-bottom: 3px solid transparent;
+        }
+        .dark .prop-tab {
+            color: #9ca3af;
+        }
+        .prop-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen theme-conventional" id="mainBody">
+<body class="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200" id="app">
 
-<div class="container mx-auto px-3 py-4 max-w-xl">
-    <!-- Header -->
-    <div class="text-center mb-4">
-        <h1 class="text-xl font-bold mb-1" style="color: var(--primary-color)">Loan Calculator</h1>
-        <p class="text-gray-500 text-xs">Calculate instantly for up to 2 cards</p>
-    </div>
+<div class="max-w-lg mx-auto">
 
-    <!-- Proposition Selection -->
-    <div class="bg-white rounded-lg shadow-md p-4 mb-4 text-center no-print">
-        <h3 class="text-sm font-semibold text-gray-700 mb-3">Select Proposition Type</h3>
-        <div class="flex justify-center space-x-3">
-            <label class="proposition-btn conventional active cursor-pointer px-6 py-2 rounded-lg font-semibold text-sm">
-                <input type="radio" name="proposition" value="conventional" checked>
-                Conventional
-            </label>
-            <label class="proposition-btn islamic cursor-pointer px-6 py-2 rounded-lg font-semibold text-sm">
-                <input type="radio" name="proposition" value="islamic">
-                Islamic
-            </label>
+    <!-- Sticky Proposition Tabs -->
+    <div class="sticky-bar bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        <div class="flex px-4">
+            <button class="prop-tab active" id="propConv" onclick="setProposition('conventional')">Conventional</button>
+            <button class="prop-tab" id="propIslam" onclick="setProposition('islamic')">Islamic</button>
         </div>
     </div>
 
-    <!-- Printable Content -->
-    <div class="printable">
+    <div class="px-4 py-4">
         <!-- Cards Container -->
-        <div class="space-y-4 mb-4" id="cardsContainer">
-            <!-- Cards will be added here -->
-        </div>
+        <div id="cardsContainer" class="space-y-4 mb-4"></div>
 
         <!-- Total Summary -->
-        <div id="totalSummary" class="summary-card p-4 text-center" style="display: none;">
-            <h3 class="text-sm font-bold mb-3" style="color: var(--primary-color)">💰 Total Summary</h3>
-            <div class="grid grid-cols-2 gap-2">
-                <div class="summary-item p-2">
-                    <div class="text-xs text-gray-600 mb-1">Total Loan</div>
-                    <div class="font-bold text-sm" style="color: var(--primary-color)" id="totalLoanAmount">$0</div>
+        <div id="totalSummary" class="bg-white dark:bg-gray-800 rounded-lg p-4 mb-4 shadow-sm" style="display:none; border: 2px solid var(--primary);">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-sm font-bold" style="color: var(--primary)">Total Summary</h3>
+                <button onclick="copyAll()" class="text-xs px-3 py-1 rounded font-semibold border-2" style="border-color:var(--primary);color:var(--primary)">Copy All</button>
+            </div>
+            <div id="copySumMsg" class="text-xs text-green-600 font-semibold mb-2" style="display:none">Copied to clipboard</div>
+            <div class="grid grid-cols-3 gap-2 text-center">
+                <div class="p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">Total Loan</div>
+                    <div class="font-bold text-sm" style="color: var(--primary)" id="sumLoan">0</div>
                 </div>
-                <div class="summary-item p-2">
-                    <div class="text-xs text-gray-600 mb-1">Total Fees</div>
-                    <div class="font-bold text-sm text-red-600" id="totalProcessingFees">$0</div>
+                <div class="p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">Total Fees</div>
+                    <div class="font-bold text-sm text-red-600" id="sumFees">0</div>
                 </div>
-                <div class="summary-item p-2">
-                    <div class="text-xs text-gray-600 mb-1">💵 Total Cash-out</div>
-                    <div class="font-bold text-sm text-green-600" id="totalCashOut">$0</div>
-                </div>
-                <div class="summary-item p-2">
-                    <div class="text-xs text-gray-600 mb-1">💳 Total Payment</div>
-                    <div class="font-bold text-lg" style="color: var(--primary-color)" id="totalPayment">$0</div>
+                <div class="p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">Monthly Installment</div>
+                    <div class="font-bold text-sm text-green-600" id="sumMonthly">0</div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Add Second Card Button -->
-    <div id="addCardBtn" class="text-center mb-4 no-print">
-        <button onclick="addSecondCard()" class="btn-theme text-white px-5 py-2 rounded-lg font-semibold text-sm shadow-md">
-            + Add Second Card
-        </button>
-    </div>
-
-    <!-- Action Buttons -->
-    <div class="flex justify-center space-x-3 mt-4 no-print">
-        <button onclick="printCalculation()" class="print-btn text-white px-4 py-2 rounded-lg font-semibold text-sm shadow-md">
-            🖨️ Print
-        </button>
-        <button onclick="downloadPDF()" class="pdf-btn text-white px-4 py-2 rounded-lg font-semibold text-sm shadow-md">
-            📄 Download PDF
-        </button>
+        <!-- Add Card Button -->
+        <div id="addCardBtn" class="text-center mb-4">
+            <button onclick="addCard()" class="text-white px-5 py-2 rounded-lg font-semibold text-sm shadow-sm" style="background: var(--primary)">
+                + Add Second Card
+            </button>
+        </div>
     </div>
 </div>
 
 <script>
-    // Fee structures
-    const conventionalFees = {
-        3: 2.10, 6: 3.15, 9: 4.20, 12: 5.25
+    // --- Data ---
+    var convFees = { 3: 2.10, 6: 3.15, 9: 4.20, 12: 5.25 };
+    var islamFees = {
+        bt: { 9: 2.10, 12: 2.10 },
+        ccl: { 9: 2.63, 12: 2.63 }
     };
+    var proposition = 'conventional';
+    var cardCount = 0;
 
-    const islamicFees = {
-        balanceTransfer: { 9: 2.10, 12: 2.10 },
-        creditCardLoan: { 9: 2.63, 12: 2.63 }
-    };
+    // --- Proposition ---
+    function setProposition(type) {
+        proposition = type;
+        var appEl = document.getElementById('app');
+        if (type === 'islamic') {
+            appEl.classList.add('theme-islamic');
+        } else {
+            appEl.classList.remove('theme-islamic');
+        }
+        document.getElementById('propConv').classList.toggle('active', type === 'conventional');
+        document.getElementById('propIslam').classList.toggle('active', type === 'islamic');
 
-    let cardCount = 0;
-
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
-        addCard(); // Add first card
-        
-        // Proposition change listener
-        document.querySelectorAll('input[name="proposition"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                updateTheme();
-                updateAllCards();
-            });
-        });
-    });
-
-    function updateTheme() {
-        const proposition = document.querySelector('input[name="proposition"]:checked').value;
-        const body = document.getElementById('mainBody');
-        
-        // Update proposition buttons
-        document.querySelectorAll('.proposition-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        document.querySelector(`.proposition-btn.${proposition}`).classList.add('active');
-        
-        // Update theme class
-        body.className = body.className.replace(/theme-\w+/, `theme-${proposition}`);
+        for (var i = 1; i <= cardCount; i++) {
+            if (document.getElementById('card-' + i)) {
+                rebuildTenure(i);
+                syncFee(i);
+                calc(i);
+            }
+        }
     }
 
+    // --- Card Management ---
     function addCard() {
         if (cardCount >= 2) return;
-        
         cardCount++;
-        const container = document.getElementById('cardsContainer');
-        
-        const cardDiv = document.createElement('div');
-        cardDiv.className = 'bg-white rounded-lg shadow-md p-4 card-border';
-        cardDiv.id = `card-${cardCount}`;
-        cardDiv.innerHTML = createCardHTML(cardCount);
-        
-        container.appendChild(cardDiv);
-        setupCardEventListeners(cardCount);
-        updateCardTitles();
-        updateAllCards();
-        
+        var id = cardCount;
+        var el = document.createElement('div');
+        el.id = 'card-' + id;
+        el.className = 'bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm';
+        el.innerHTML = cardHTML(id);
+        document.getElementById('cardsContainer').appendChild(el);
+
+        rebuildTenure(id);
+        setTimeout(function() {
+            var btn12 = document.querySelector('#tenure-' + id + ' .t-btn[data-v="12"]');
+            if (btn12) btn12.click();
+        }, 10);
+
+        updateTitles();
         if (cardCount >= 2) {
             document.getElementById('addCardBtn').style.display = 'none';
         }
     }
 
-    function addSecondCard() {
-        addCard();
+    function cardHTML(id) {
+        var removeBtn = id > 1
+            ? '<button onclick="removeCard(' + id + ')" class="text-red-500 hover:text-red-700 font-bold text-xl leading-none">&times;</button>'
+            : '';
+
+        return ''
+            + '<div class="flex justify-between items-center mb-1">'
+            +   '<span class="card-title text-sm font-bold" style="color:var(--primary)">Credit Card</span>'
+            +   '<div class="flex items-center gap-2">'
+            +     '<button onclick="copyCard(' + id + ')" class="text-xs px-3 py-1 rounded font-semibold border-2" style="border-color:var(--primary);color:var(--primary)">Copy</button>'
+            +     removeBtn
+            +   '</div>'
+            + '</div>'
+            + '<div id="copyMsg-' + id + '" class="text-xs text-green-600 font-semibold mb-2" style="display:none">Copied to clipboard</div>'
+
+            // Credit Limit
+            + '<div class="mb-3">'
+            +   '<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">Credit Limit (optional)</label>'
+            +   '<input type="text" id="limit-' + id + '" placeholder="Enter credit limit" style="font-size:16px"'
+            +   ' class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-semibold bg-white dark:bg-gray-700 dark:text-gray-200"'
+            +   ' oninput="fmtCommas(this);onLimitChange(' + id + ')">'
+            + '</div>'
+
+            // Loan Amount
+            + '<div class="mb-3">'
+            +   '<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">Loan Amount</label>'
+            +   '<input type="text" id="amt-' + id + '" placeholder="Enter loan amount" style="font-size:16px"'
+            +   ' class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-semibold bg-white dark:bg-gray-700 dark:text-gray-200 mb-1"'
+            +   ' oninput="fmtCommas(this);fromInput(' + id + ')">'
+            +   '<input type="range" id="slider-' + id + '" min="0" max="100000" step="500" value="0" oninput="fromSlider(' + id + ')">'
+            +   '<div class="flex justify-between text-xs text-gray-400 dark:text-gray-500">'
+            +     '<span>0</span>'
+            +     '<span class="font-bold" style="color:var(--primary)" id="sVal-' + id + '">0</span>'
+            +     '<span id="sliderMaxLabel-' + id + '">100,000</span>'
+            +   '</div>'
+            +   '<div id="warn-' + id + '" class="text-xs text-red-600 font-semibold mt-1" style="display:none">Warning: Amount is less than 3,500</div>'
+            + '</div>'
+
+            // Product Type
+            + '<div class="mb-3 text-center">'
+            +   '<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2">Product Type</label>'
+            +   '<div class="prod-toggle" id="prodToggle-' + id + '">'
+            +     '<button class="active" data-type="ccl" onclick="setProd(' + id + ',\'ccl\')">CCL</button>'
+            +     '<button data-type="bt" onclick="setProd(' + id + ',\'bt\')">BT</button>'
+            +   '</div>'
+            + '</div>'
+
+            // Tenure
+            + '<div class="mb-3 text-center">'
+            +   '<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2">Tenure</label>'
+            +   '<div class="flex justify-center gap-2" id="tenure-' + id + '"></div>'
+            + '</div>'
+
+            // Rate & Fee
+            + '<div class="grid grid-cols-2 gap-4 mb-3 text-center">'
+            +   '<div>'
+            +     '<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">Profit / Interest</label>'
+            +     '<div class="editable-field" id="rate-' + id + '" contenteditable="true" onblur="vRate(' + id + ')" onkeypress="return kp(event)">0%</div>'
+            +   '</div>'
+            +   '<div>'
+            +     '<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">Processing Fee</label>'
+            +     '<div class="editable-field" id="fee-' + id + '" contenteditable="true" onblur="vFee(' + id + ')" onkeypress="return kp(event)">0%</div>'
+            +   '</div>'
+            + '</div>'
+
+            // Results
+            + '<div class="grid grid-cols-3 gap-2 text-center">'
+            +   '<div class="p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">'
+            +     '<div class="text-xs text-gray-500 dark:text-gray-400 mb-1">Monthly Installment</div>'
+            +     '<div class="font-bold text-sm" style="color:var(--primary)" id="resMonthly-' + id + '">0</div>'
+            +   '</div>'
+            +   '<div class="p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">'
+            +     '<div class="text-xs text-gray-500 dark:text-gray-400 mb-1">Fees</div>'
+            +     '<div class="font-bold text-sm text-red-600" id="resFees-' + id + '">0</div>'
+            +   '</div>'
+            +   '<div class="p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">'
+            +     '<div class="text-xs text-gray-500 dark:text-gray-400 mb-1">Tenure</div>'
+            +     '<div class="font-bold text-sm dark:text-gray-200" id="resTenure-' + id + '">-</div>'
+            +   '</div>'
+            + '</div>';
     }
 
-    function updateCardTitles() {
-        for (let i = 1; i <= cardCount; i++) {
-            const cardElement = document.getElementById(`card-${i}`);
-            if (cardElement) {
-                const titleElement = cardElement.querySelector('.card-title');
-                if (titleElement) {
-                    if (cardCount === 1) {
-                        titleElement.textContent = '💳 Credit Card';
-                    } else {
-                        titleElement.textContent = `💳 Credit Card ${i}`;
-                    }
-                }
+    function updateTitles() {
+        for (var i = 1; i <= cardCount; i++) {
+            var el = document.getElementById('card-' + i);
+            if (!el) continue;
+            el.querySelector('.card-title').textContent = cardCount === 1 ? 'Credit Card' : 'Credit Card ' + i;
+        }
+    }
+
+    function removeCard(id) {
+        document.getElementById('card-' + id).remove();
+        document.getElementById('addCardBtn').style.display = 'block';
+        updateTitles();
+        updateSummary();
+    }
+
+    // --- Formatting ---
+    function fmtCommas(inp) {
+        var v = inp.value.replace(/[^\d]/g, '');
+        if (v.length > 3) {
+            v = v.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+        inp.value = v;
+    }
+
+    function numVal(el) {
+        return parseFloat(el.value.replace(/,/g, '')) || 0;
+    }
+
+    // --- Credit Limit Change ---
+    function onLimitChange(id) {
+        var lim = numVal(document.getElementById('limit-' + id));
+        var slider = document.getElementById('slider-' + id);
+        var maxLabel = document.getElementById('sliderMaxLabel-' + id);
+
+        if (lim > 0) {
+            var maxLoan = Math.floor((lim * 0.9) / 500) * 500;
+            if (maxLoan < 0) maxLoan = 0;
+            slider.max = maxLoan;
+            maxLabel.textContent = maxLoan.toLocaleString();
+
+            // Clamp current value
+            var curVal = parseInt(slider.value, 10);
+            if (curVal > maxLoan) {
+                slider.value = maxLoan;
+                document.getElementById('amt-' + id).value = maxLoan.toLocaleString();
+                document.getElementById('sVal-' + id).textContent = maxLoan.toLocaleString();
+                checkWarn(id, maxLoan);
             }
-        }
-    }
-
-    function formatNumberWithCommas(input) {
-        // Remove all non-numeric characters except decimal point
-        let value = input.value.replace(/[^\d]/g, '');
-        
-        // Add commas for thousands
-        if (value.length > 3) {
-            value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        }
-        
-        input.value = value;
-        return parseFloat(value.replace(/,/g, '')) || 0;
-    }
-
-    function createCardHTML(cardId) {
-        const cardTitle = cardCount === 1 ? '💳 Credit Card' : `💳 Credit Card ${cardId}`;
-        
-        return `
-            <div class="text-center mb-3">
-                <div class="flex justify-center items-center space-x-2">
-                    <h4 class="card-title text-sm font-bold" style="color: var(--primary-color)">${cardTitle}</h4>
-                    ${cardId > 1 ? `<button onclick="removeCard(${cardId})" class="text-red-500 hover:text-red-700 font-bold text-lg no-print">×</button>` : ''}
-                </div>
-            </div>
-            
-            <!-- Card Limit -->
-            <div class="mb-3 text-center">
-                <label class="block text-xs font-semibold text-gray-700 mb-1">💰 Card Limit</label>
-                <input type="text" id="cardLimit-${cardId}" placeholder="Enter card limit (min 3,000)" 
-                       class="styled-input w-full px-3 py-2 text-center text-sm font-bold no-print"
-                       oninput="formatNumberWithCommas(this); updateEligibleAmount(${cardId}); updateLoanSlider(${cardId})">
-                <div class="mt-1">
-                    <span class="text-xs font-medium text-gray-600">Eligible: </span>
-                    <span class="text-sm font-bold" style="color: var(--primary-color)" id="eligible-${cardId}">$0</span>
-                </div>
-            </div>
-            
-            <!-- Loan Amount Slider -->
-            <div class="mb-3 text-center">
-                <div class="flex justify-center items-center space-x-2 mb-1">
-                    <label class="text-xs font-semibold text-gray-700">💸 Loan Amount</label>
-                    <input type="number" id="customAmount-${cardId}" placeholder="Custom" 
-                           class="styled-input w-16 px-1 py-1 text-center text-xs font-bold no-print">
-                </div>
-                <input type="range" id="loanSlider-${cardId}" min="1000" max="1000" value="1000"
-                       class="slider w-full mb-1 no-print">
-                <div class="text-center">
-                    <span class="text-sm font-bold" style="color: var(--primary-color)" id="loanDisplay-${cardId}">$1,000</span>
-                </div>
-            </div>
-            
-            <!-- Product Switch -->
-            <div class="mb-3 text-center">
-                <label class="block text-xs font-semibold text-gray-700 mb-2">📋 Product Type</label>
-                <div class="switch ccl" id="productSwitch-${cardId}" onclick="toggleProduct(${cardId})">
-                    <div class="switch-slider">CCL</div>
-                    <div class="switch-label left">CCL</div>
-                    <div class="switch-label right">BT</div>
-                </div>
-            </div>
-            
-            <!-- Tenure Radio Buttons -->
-            <div class="mb-3 text-center">
-                <label class="block text-xs font-semibold text-gray-700 mb-1">⏰ Tenure</label>
-                <div class="flex justify-center gap-1" id="tenureOptions-${cardId}">
-                    <!-- Tenure options will be populated here -->
-                </div>
-            </div>
-            
-            <!-- Rate and Processing Fee -->
-            <div class="grid grid-cols-2 gap-2 mb-3">
-                <div class="text-center">
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">📊 Interest/Profit</label>
-                    <div class="editable text-center py-1 font-bold no-print" 
-                         id="rate-${cardId}" contenteditable="true" 
-                         onblur="validateRate(${cardId})" 
-                         onkeypress="return handleKeyPress(event, ${cardId})">0%</div>
-                    <div class="styled-input text-center py-1 font-bold print-only text-xs" style="display: none;" id="ratePrint-${cardId}">0%</div>
-                </div>
-                <div class="text-center">
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">💳 Processing Fee</label>
-                    <div class="editable text-center py-1 font-bold no-print" 
-                         id="processingFee-${cardId}" contenteditable="true" 
-                         onblur="validateProcessingFee(${cardId})" 
-                         onkeypress="return handleKeyPress(event, ${cardId})">0%</div>
-                    <div class="styled-input text-center py-1 font-bold print-only text-xs" style="display: none;" id="processingFeePrint-${cardId}">0%</div>
-                </div>
-            </div>
-            
-            <!-- Results -->
-            <div class="grid grid-cols-3 gap-2 text-center">
-                <div class="p-2 bg-green-50 rounded-lg border border-green-200">
-                    <div class="text-xs text-gray-600 mb-1">💰 Monthly</div>
-                    <div class="font-bold text-green-600 text-xs" id="installment-${cardId}">$0</div>
-                </div>
-                <div class="p-2 bg-red-50 rounded-lg border border-red-200">
-                    <div class="text-xs text-gray-600 mb-1">💸 Fees</div>
-                    <div class="font-bold text-red-600 text-xs" id="processingFeesAmount-${cardId}">$0</div>
-                </div>
-                <div class="p-2 rounded-lg border" style="background: var(--primary-bg); border-color: var(--primary-color)">
-                    <div class="text-xs text-gray-600 mb-1">💵 Cash-out</div>
-                    <div class="font-bold text-xs" style="color: var(--primary-color)" id="cashOut-${cardId}">$0</div>
-                </div>
-            </div>
-        `;
-    }
-
-    function setupCardEventListeners(cardId) {
-        // Loan slider
-        document.getElementById(`loanSlider-${cardId}`).addEventListener('input', () => {
-            updateLoanDisplay(cardId);
-            calculateCard(cardId);
-        });
-        
-        // Custom amount
-        document.getElementById(`customAmount-${cardId}`).addEventListener('input', () => {
-            const customAmount = parseFloat(document.getElementById(`customAmount-${cardId}`).value) || 0;
-            const slider = document.getElementById(`loanSlider-${cardId}`);
-            if (customAmount >= 1000 && customAmount <= parseFloat(slider.max)) {
-                slider.value = customAmount;
-                updateLoanDisplay(cardId);
-                calculateCard(cardId);
-            }
-        });
-        
-        updateTenureOptions(cardId);
-        updateEligibleAmount(cardId);
-        
-        // Set defaults
-        setTimeout(() => {
-            setDefaults(cardId);
-        }, 100);
-    }
-
-    function setDefaults(cardId) {
-        // Set default tenure to 12m
-        const tenure12 = document.querySelector(`input[name="tenure-${cardId}"][value="12"]`);
-        if (tenure12) {
-            tenure12.checked = true;
-            updateProcessingFee(cardId);
-        }
-        
-        // Set loan amount to max eligible
-        const eligible = updateEligibleAmount(cardId);
-        if (eligible >= 1000) {
-            document.getElementById(`loanSlider-${cardId}`).value = eligible;
-            updateLoanDisplay(cardId);
-        }
-        
-        calculateCard(cardId);
-    }
-
-    function updateEligibleAmount(cardId) {
-        const limitInput = document.getElementById(`cardLimit-${cardId}`);
-        const limit = parseFloat(limitInput.value.replace(/,/g, '')) || 0;
-        
-        if (limit === 0 || limit < 3000) {
-            // Reset all values to 0 when credit limit is 0 or less than 3000
-            document.getElementById(`eligible-${cardId}`).textContent = `$0`;
-            document.getElementById(`loanDisplay-${cardId}`).textContent = `$0`;
-            document.getElementById(`installment-${cardId}`).textContent = `$0`;
-            document.getElementById(`processingFeesAmount-${cardId}`).textContent = `$0`;
-            document.getElementById(`cashOut-${cardId}`).textContent = `$0`;
-            
-            // Reset slider
-            const slider = document.getElementById(`loanSlider-${cardId}`);
-            slider.value = 0;
-            slider.max = 2700;
-            
-            // Reset custom amount
-            document.getElementById(`customAmount-${cardId}`).value = '';
-            
-            updateTotalSummary();
-            return 0;
-        }
-        
-        const eligible = limit >= 3000 ? limit * 0.9 : 0;
-        document.getElementById(`eligible-${cardId}`).textContent = `$${eligible.toLocaleString()}`;
-        updateTotalSummary();
-        return eligible;
-    }
-
-    function updateLoanSlider(cardId) {
-        const eligible = updateEligibleAmount(cardId);
-        const slider = document.getElementById(`loanSlider-${cardId}`);
-        slider.max = Math.max(1000, eligible);
-        
-        // Set slider to max eligible if it's valid
-        if (eligible >= 2700) {
-            slider.value = eligible;
         } else {
-            slider.value = Math.min(slider.value, slider.max);
+            slider.max = 100000;
+            maxLabel.textContent = '100,000';
         }
-        
-        updateLoanDisplay(cardId);
+        calc(id);
     }
 
-    function updateLoanDisplay(cardId) {
-        const amount = document.getElementById(`loanSlider-${cardId}`).value;
-        document.getElementById(`loanDisplay-${cardId}`).textContent = `$${parseInt(amount).toLocaleString()}`;
-        updateTotalSummary();
+    // --- Loan Amount Sync ---
+    function fromInput(id) {
+        var v = numVal(document.getElementById('amt-' + id));
+        var s = document.getElementById('slider-' + id);
+        var maxVal = parseInt(s.max, 10);
+
+        // Clamp to slider max if credit limit is set
+        var lim = numVal(document.getElementById('limit-' + id));
+        if (lim > 0 && v > maxVal) {
+            v = maxVal;
+            document.getElementById('amt-' + id).value = v.toLocaleString();
+        }
+
+        var rounded = Math.min(Math.round(v / 500) * 500, maxVal);
+        s.value = rounded;
+        document.getElementById('sVal-' + id).textContent = v.toLocaleString();
+        checkWarn(id, v);
+        calc(id);
     }
 
-    function toggleProduct(cardId) {
-        const switchEl = document.getElementById(`productSwitch-${cardId}`);
-        if (switchEl.classList.contains('ccl')) {
-            switchEl.classList.remove('ccl');
-            switchEl.classList.add('bt');
-            switchEl.querySelector('.switch-slider').textContent = 'BT';
+    function fromSlider(id) {
+        var v = parseInt(document.getElementById('slider-' + id).value, 10);
+        document.getElementById('amt-' + id).value = v.toLocaleString();
+        document.getElementById('sVal-' + id).textContent = v.toLocaleString();
+        checkWarn(id, v);
+        calc(id);
+    }
+
+    function checkWarn(id, v) {
+        var show = v > 0 && v < 3500;
+        document.getElementById('warn-' + id).style.display = show ? 'block' : 'none';
+        var input = document.getElementById('amt-' + id);
+        var sVal = document.getElementById('sVal-' + id);
+        if (show) {
+            input.classList.add('border-red-500', 'text-red-600');
+            input.classList.remove('border-gray-300');
+            sVal.style.color = '#dc2626';
         } else {
-            switchEl.classList.remove('bt');
-            switchEl.classList.add('ccl');
-            switchEl.querySelector('.switch-slider').textContent = 'CCL';
+            input.classList.remove('border-red-500', 'text-red-600');
+            input.classList.add('border-gray-300');
+            sVal.style.color = 'var(--primary)';
         }
-        updateProcessingFee(cardId);
-        calculateCard(cardId);
     }
 
-    function updateTenureOptions(cardId) {
-        const proposition = document.querySelector('input[name="proposition"]:checked').value;
-        const container = document.getElementById(`tenureOptions-${cardId}`);
-        
-        container.innerHTML = '';
-        
-        const tenures = proposition === 'conventional' ? [3, 6, 9, 12] : [9, 12];
-        
-        tenures.forEach((months, index) => {
-            const label = document.createElement('label');
-            label.className = 'cursor-pointer';
-            // Default to 12m
-            const isDefault = months === 12;
-            label.innerHTML = `
-                <input type="radio" name="tenure-${cardId}" value="${months}" 
-                       class="tenure-radio" ${isDefault ? 'checked' : ''}
-                       onchange="updateProcessingFee(${cardId}); calculateCard(${cardId})">
-                <span class="tenure-btn">${months}m</span>
-            `;
-            container.appendChild(label);
+    // --- Product Type ---
+    function setProd(id, type) {
+        var btns = document.querySelectorAll('#prodToggle-' + id + ' button');
+        btns.forEach(function(b) {
+            b.classList.toggle('active', b.getAttribute('data-type') === type);
         });
-        
-        updateProcessingFee(cardId);
+        syncFee(id);
+        calc(id);
     }
 
-    function updateProcessingFee(cardId) {
-        const proposition = document.querySelector('input[name="proposition"]:checked').value;
-        const productType = document.getElementById(`productSwitch-${cardId}`).classList.contains('ccl') ? 'credit-card-loan' : 'balance-transfer';
-        const tenure = parseInt(document.querySelector(`input[name="tenure-${cardId}"]:checked`)?.value) || 0;
-        
-        let fee = 0;
-        if (tenure) {
+    function getProd(id) {
+        var active = document.querySelector('#prodToggle-' + id + ' button.active');
+        return active ? active.getAttribute('data-type') : 'ccl';
+    }
+
+    // --- Tenure ---
+    function rebuildTenure(id) {
+        var c = document.getElementById('tenure-' + id);
+        var months = proposition === 'conventional' ? [3, 6, 9, 12] : [9, 12];
+        var cur = c.querySelector('.t-btn.active');
+        var curVal = cur ? parseInt(cur.getAttribute('data-v'), 10) : 12;
+        if (months.indexOf(curVal) === -1) curVal = months[months.length - 1];
+
+        c.innerHTML = '';
+        months.forEach(function(m) {
+            var b = document.createElement('button');
+            b.className = 't-btn' + (m === curVal ? ' active' : '');
+            b.setAttribute('data-v', m);
+            b.textContent = m + 'm';
+            b.onclick = function() {
+                c.querySelectorAll('.t-btn').forEach(function(x) { x.classList.remove('active'); });
+                b.classList.add('active');
+                syncFee(id);
+                calc(id);
+            };
+            c.appendChild(b);
+        });
+        syncFee(id);
+    }
+
+    function getTenure(id) {
+        var a = document.querySelector('#tenure-' + id + ' .t-btn.active');
+        return a ? parseInt(a.getAttribute('data-v'), 10) : 0;
+    }
+
+    // --- Processing Fee Auto-fill ---
+    function syncFee(id) {
+        var t = getTenure(id);
+        var p = getProd(id);
+        var f = 0;
+        if (t) {
             if (proposition === 'conventional') {
-                fee = conventionalFees[tenure];
+                f = convFees[t] || 0;
             } else {
-                if (productType === 'balance-transfer') {
-                    fee = islamicFees.balanceTransfer[tenure];
-                } else {
-                    fee = islamicFees.creditCardLoan[tenure];
-                }
+                f = (p === 'bt' ? islamFees.bt[t] : islamFees.ccl[t]) || 0;
             }
         }
-        
-        const feeText = `${fee}%`;
-        document.getElementById(`processingFee-${cardId}`).textContent = feeText;
-        
-        // Update print version if it exists
-        const printElement = document.getElementById(`processingFeePrint-${cardId}`);
-        if (printElement) {
-            printElement.textContent = feeText;
-        }
+        document.getElementById('fee-' + id).textContent = f + '%';
     }
 
-    function validateProcessingFee(cardId) {
-        const element = document.getElementById(`processingFee-${cardId}`);
-        let value = element.textContent.replace('%', '');
-        const numValue = parseFloat(value);
-        
-        if (isNaN(numValue) || numValue < 0) {
-            element.textContent = '0%';
-        } else {
-            element.textContent = `${numValue.toFixed(2)}%`;
-        }
-        
-        // Update print version
-        const printElement = document.getElementById(`processingFeePrint-${cardId}`);
-        if (printElement) {
-            printElement.textContent = element.textContent;
-        }
-        
-        calculateCard(cardId);
+    // --- Editable Fields ---
+    function vRate(id) {
+        var el = document.getElementById('rate-' + id);
+        var v = parseFloat(el.textContent.replace('%', ''));
+        if (isNaN(v) || v < 0) v = 0;
+        el.textContent = v.toFixed(2) + '%';
+        calc(id);
     }
 
-    function validateRate(cardId) {
-        const element = document.getElementById(`rate-${cardId}`);
-        let value = element.textContent.replace('%', '');
-        const numValue = parseFloat(value);
-        
-        if (isNaN(numValue) || numValue < 0) {
-            element.textContent = '0%';
-        } else {
-            element.textContent = `${numValue.toFixed(2)}%`;
-        }
-        
-        // Update print version
-        const printElement = document.getElementById(`ratePrint-${cardId}`);
-        if (printElement) {
-            printElement.textContent = element.textContent;
-        }
-        
-        calculateCard(cardId);
+    function vFee(id) {
+        var el = document.getElementById('fee-' + id);
+        var v = parseFloat(el.textContent.replace('%', ''));
+        if (isNaN(v) || v < 0) v = 0;
+        el.textContent = v.toFixed(2) + '%';
+        calc(id);
     }
 
-    function handleKeyPress(event, cardId) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            event.target.blur();
+    function kp(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            e.target.blur();
             return false;
         }
         return true;
     }
 
-    function calculateCard(cardId) {
-        // Check if credit limit is zero or less than 3000 first
-        const limitInput = document.getElementById(`cardLimit-${cardId}`);
-        const limit = parseFloat(limitInput.value.replace(/,/g, '')) || 0;
-        
-        if (limit === 0 || limit < 3000) {
-            // Set all calculations to 0 when credit limit is 0 or less than 3000
-            document.getElementById(`installment-${cardId}`).textContent = `$0`;
-            document.getElementById(`processingFeesAmount-${cardId}`).textContent = `$0`;
-            document.getElementById(`cashOut-${cardId}`).textContent = `$0`;
-            updateTotalSummary();
+    // --- Calculation ---
+    function calc(id) {
+        var loan = numVal(document.getElementById('amt-' + id));
+        var tenure = getTenure(id);
+        var feeRate = parseFloat(document.getElementById('fee-' + id).textContent) || 0;
+        var rate = parseFloat(document.getElementById('rate-' + id).textContent) || 0;
+
+        document.getElementById('resTenure-' + id).textContent = tenure ? tenure + ' months' : '-';
+
+        if (!loan || !tenure) {
+            document.getElementById('resMonthly-' + id).textContent = '0';
+            document.getElementById('resFees-' + id).textContent = '0';
+            updateSummary();
             return;
         }
-        
-        const loanAmount = parseFloat(document.getElementById(`loanSlider-${cardId}`).value) || 0;
-        const tenure = parseInt(document.querySelector(`input[name="tenure-${cardId}"]:checked`)?.value) || 0;
-        const processingFeeRate = parseFloat(document.getElementById(`processingFee-${cardId}`).textContent.replace('%', '')) || 0;
-        const interestRate = parseFloat(document.getElementById(`rate-${cardId}`).textContent.replace('%', '')) || 0;
-        
-        if (!loanAmount || !tenure) {
-            // Set to 0 if no loan amount or tenure
-            document.getElementById(`installment-${cardId}`).textContent = `$0`;
-            document.getElementById(`processingFeesAmount-${cardId}`).textContent = `$0`;
-            document.getElementById(`cashOut-${cardId}`).textContent = `$0`;
-            updateTotalSummary();
-            return;
-        }
-        
-        // Monthly payment calculation with interest
-        // Formula: (Principal / Tenure) + (Principal * Monthly Interest Rate)
-        const monthlyInterestRate = interestRate / 100; // Convert percentage to decimal
-        const principalPayment = loanAmount / tenure;
-        const interestPayment = loanAmount * monthlyInterestRate;
-        const installment = principalPayment + interestPayment;
-        
-        const processingFees = (loanAmount * processingFeeRate) / 100;
-        const cashOut = loanAmount - processingFees;
-        
-        // Display results
-        document.getElementById(`installment-${cardId}`).textContent = `$${installment.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-        document.getElementById(`processingFeesAmount-${cardId}`).textContent = `$${processingFees.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
-        document.getElementById(`cashOut-${cardId}`).textContent = `$${cashOut.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
-        
-        updateTotalSummary();
+
+        var monthly = (loan / tenure) + (loan * rate / 100);
+        var fees = loan * feeRate / 100;
+
+        document.getElementById('resMonthly-' + id).textContent = monthly.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('resFees-' + id).textContent = fees.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        updateSummary();
     }
 
-    function updateTotalSummary() {
-        let totalLoanAmount = 0;
-        let totalProcessingFees = 0;
-        let totalCashOut = 0;
-        let totalPayment = 0;
-        let hasCalculations = false;
-        
-        for (let i = 1; i <= cardCount; i++) {
-            if (!document.getElementById(`card-${i}`)) continue;
-            
-            // Loan amount
-            const loanAmount = parseFloat(document.getElementById(`loanSlider-${i}`).value) || 0;
-            totalLoanAmount += loanAmount;
-            
-            // Check if calculated
-            const cashOutEl = document.getElementById(`cashOut-${i}`);
-            if (cashOutEl.textContent !== '$0') {
-                hasCalculations = true;
-                const processingFees = parseFloat(document.getElementById(`processingFeesAmount-${i}`).textContent.replace(/[$,]/g, '')) || 0;
-                const cashOut = parseFloat(cashOutEl.textContent.replace(/[$,]/g, '')) || 0;
-                totalProcessingFees += processingFees;
-                totalCashOut += cashOut;
-                
-                // Calculate total payment (Monthly * Tenure)
-                const monthlyPayment = parseFloat(document.getElementById(`installment-${i}`).textContent.replace(/[$,]/g, '')) || 0;
-                const tenure = parseInt(document.querySelector(`input[name="tenure-${i}"]:checked`)?.value) || 0;
-                totalPayment += monthlyPayment * tenure;
+    // --- Summary ---
+    function updateSummary() {
+        var tLoan = 0;
+        var tFees = 0;
+        var tMonthly = 0;
+        var hasCalc = false;
+
+        for (var i = 1; i <= cardCount; i++) {
+            if (!document.getElementById('card-' + i)) continue;
+            tLoan += numVal(document.getElementById('amt-' + i));
+            var mText = document.getElementById('resMonthly-' + i).textContent;
+            if (mText !== '0') {
+                hasCalc = true;
+                tFees += parseFloat(document.getElementById('resFees-' + i).textContent.replace(/,/g, '')) || 0;
+                tMonthly += parseFloat(mText.replace(/,/g, '')) || 0;
             }
         }
-        
-        // Update display
-        document.getElementById('totalLoanAmount').textContent = `$${totalLoanAmount.toLocaleString()}`;
-        document.getElementById('totalProcessingFees').textContent = `$${totalProcessingFees.toLocaleString()}`;
-        document.getElementById('totalCashOut').textContent = `$${totalCashOut.toLocaleString()}`;
-        document.getElementById('totalPayment').textContent = `$${totalPayment.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-        
-        document.getElementById('totalSummary').style.display = hasCalculations ? 'block' : 'none';
+
+        document.getElementById('sumLoan').textContent = tLoan.toLocaleString();
+        document.getElementById('sumFees').textContent = tFees.toLocaleString();
+        document.getElementById('sumMonthly').textContent = tMonthly.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('totalSummary').style.display = (cardCount > 1 && hasCalc) ? 'block' : 'none';
     }
 
-    function updateAllCards() {
-        for (let i = 1; i <= cardCount; i++) {
-            if (document.getElementById(`card-${i}`)) {
-                updateTenureOptions(i);
-                updateEligibleAmount(i);
-                updateLoanSlider(i);
-                calculateCard(i);
-            }
+    // --- Build copy text for a single card ---
+    function buildCardCopyText(id, label) {
+        var prod = getProd(id);
+        var heading = prod === 'ccl' ? 'CREDIT CARD LOAN' : 'BALANCE TRANSFER';
+        var loan = numVal(document.getElementById('amt-' + id));
+        var tenure = getTenure(id);
+        var rate = document.getElementById('rate-' + id).textContent;
+        var monthly = document.getElementById('resMonthly-' + id).textContent;
+        var feePct = document.getElementById('fee-' + id).textContent;
+        var feeAmt = document.getElementById('resFees-' + id).textContent;
+
+        var lines = '';
+        if (label) {
+            lines += label + '\n';
         }
+        lines += heading
+            + '\nAmount: AED ' + loan.toLocaleString()
+            + '\nTenure: ' + tenure + ' months'
+            + '\nProfit/Interest: ' + rate
+            + '\nMonthly: AED ' + monthly
+            + '\nProcessing Fees (' + feePct + '): AED ' + feeAmt;
+        return lines;
     }
 
-    function removeCard(cardId) {
-        document.getElementById(`card-${cardId}`).remove();
-        if (cardCount > 1) {
-            document.getElementById('addCardBtn').style.display = 'block';
-        }
-        updateCardTitles();
-        updateTotalSummary();
-    }
-
-    function printCalculation() {
-        // Show print versions of editable elements
-        document.querySelectorAll('.print-only').forEach(el => {
-            el.style.display = 'block';
-        });
-        
-        // Update print versions with current values
-        for (let i = 1; i <= cardCount; i++) {
-            if (document.getElementById(`card-${i}`)) {
-                const rate = document.getElementById(`rate-${i}`);
-                const ratePrint = document.getElementById(`ratePrint-${i}`);
-                if (rate && ratePrint) {
-                    ratePrint.textContent = rate.textContent;
-                }
-                
-                const fee = document.getElementById(`processingFee-${i}`);
-                const feePrint = document.getElementById(`processingFeePrint-${i}`);
-                if (fee && feePrint) {
-                    feePrint.textContent = fee.textContent;
-                }
-            }
-        }
-        
-        window.print();
-        
-        // Hide print versions after printing
-        setTimeout(() => {
-            document.querySelectorAll('.print-only').forEach(el => {
-                el.style.display = 'none';
+    // --- Copy single card ---
+    function copyCard(id) {
+        var txt = buildCardCopyText(id, '');
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(txt).then(function() {
+                showCopyMsg(id);
             });
-        }, 1000);
+        }
     }
 
-    async function downloadPDF() {
-        const { jsPDF } = window.jspdf;
-        
-        // Show print versions
-        document.querySelectorAll('.print-only').forEach(el => {
-            el.style.display = 'block';
-        });
-        
-        // Update print versions with current values
-        for (let i = 1; i <= cardCount; i++) {
-            if (document.getElementById(`card-${i}`)) {
-                const rate = document.getElementById(`rate-${i}`);
-                const ratePrint = document.getElementById(`ratePrint-${i}`);
-                if (rate && ratePrint) {
-                    ratePrint.textContent = rate.textContent;
-                }
-                
-                const fee = document.getElementById(`processingFee-${i}`);
-                const feePrint = document.getElementById(`processingFeePrint-${i}`);
-                if (fee && feePrint) {
-                    feePrint.textContent = fee.textContent;
-                }
-            }
+    // --- Copy All (both cards + summary) ---
+    function copyAll() {
+        var parts = [];
+        for (var i = 1; i <= cardCount; i++) {
+            if (!document.getElementById('card-' + i)) continue;
+            var label = 'Card ' + i;
+            parts.push(buildCardCopyText(i, label));
         }
-        
-        try {
-            const printableContent = document.querySelector('.printable');
-            
-            const canvas = await html2canvas(printableContent, {
-                scale: 2,
-                useCORS: true,
-                backgroundColor: '#ffffff'
+
+        var tLoan = document.getElementById('sumLoan').textContent;
+        var tFees = document.getElementById('sumFees').textContent;
+        var tMonthly = document.getElementById('sumMonthly').textContent;
+
+        parts.push('TOTAL SUMMARY'
+            + '\nTotal Loan: AED ' + tLoan
+            + '\nTotal Fees: AED ' + tFees
+            + '\nMonthly Installment: AED ' + tMonthly);
+
+        var txt = parts.join('\n\n');
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(txt).then(function() {
+                var msg = document.getElementById('copySumMsg');
+                msg.style.display = 'block';
+                setTimeout(function() { msg.style.display = 'none'; }, 2000);
             });
-            
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = pdf.internal.pageSize.getHeight();
-            const imgWidth = canvas.width;
-            const imgHeight = canvas.height;
-            const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-            const imgX = (pdfWidth - imgWidth * ratio) / 2;
-            const imgY = 10;
-            
-            pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
-            pdf.save('loan-calculation.pdf');
-            
-        } catch (error) {
-            console.error('PDF generation failed:', error);
-            alert('PDF generation failed. Please try using the Print button instead.');
         }
-        
-        // Hide print versions
-        setTimeout(() => {
-            document.querySelectorAll('.print-only').forEach(el => {
-                el.style.display = 'none';
-            });
-        }, 1000);
     }
+
+    function showCopyMsg(id) {
+        var msg = document.getElementById('copyMsg-' + id);
+        msg.style.display = 'block';
+        setTimeout(function() {
+            msg.style.display = 'none';
+        }, 2000);
+    }
+
+    // --- Init ---
+    addCard();
 </script>
 
 </body>
